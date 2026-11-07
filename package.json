@@ -5,7 +5,14 @@
   "scripts": {
     "build": "node scripts/build-static.cjs",
     "test": "node --test tests/r2.test.mjs",
-    "dev": "netlify dev"
+    "dev": "node scripts/local-dev.cjs",
+    "test:subtitles": "node tests/movie-subtitle-settings.browser.cjs && node tests/movie-subtitles.browser.cjs"
   },
-  "dependencies": { "aws4fetch": "1.0.20" }
+  "dependencies": {
+    "aws4fetch": "1.0.20"
+  },
+  "devDependencies": {
+    "netlify-cli": "^27.16.2",
+    "playwright": "^1.65.0"
+  }
 }

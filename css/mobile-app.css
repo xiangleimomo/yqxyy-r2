@@ -38,7 +38,10 @@ html.sf-mobile-app.series-fixed-page,body.sf-mobile-app.series-fixed-page{height
 
 /* Tablet-sized previews use the touch UI even with a mouse attached. */
 .sf-mobile-app .sf-desktop-player-controls,.sf-mobile-app .sf-desktop-player-title,.sf-mobile-app .sf-desktop-seek{display:none!important}
-.sf-mobile-app .sf-movie-lesson-player>.sf-lesson-toolbar{display:grid!important}
+.sf-mobile-app .sf-movie-lesson-player:not(.sf-full-movie-player)>.sf-lesson-toolbar{display:grid!important}
+/* Full films/documentaries retain the in-picture controls on touch screens. */
+.sf-mobile-app .sf-full-movie-player>.sf-lesson-toolbar{display:none!important}
+.sf-mobile-app .sf-full-movie-player .sf-desktop-player-controls,.sf-mobile-app .sf-full-movie-player .sf-desktop-seek{display:flex!important}
 .sf-mobile-app #windowLayer .floating-window{position:fixed!important;inset:0!important;left:0!important;top:0!important;width:100vw!important;height:100dvh!important;min-width:0!important;min-height:0!important;max-width:none!important;max-height:none!important;border:0!important;border-radius:0!important;resize:none!important}
 .sf-mobile-app #windowLayer .floating-header{height:50px;min-height:50px;padding:0 16px;cursor:default}
 .sf-mobile-app #windowLayer .floating-content{min-height:0;overflow:auto!important;padding:14px}

@@ -42,6 +42,8 @@ window.MovieClassroom = {
   },
   cleanup() {
     this.generation++;
+    this.disposeControls?.(); this.disposeControls=null;
+    this.disposeSources?.(); this.disposeSources=null;
     this.player?._disposeShelf?.();
     this.disposeSubtitles?.(); this.disposeSubtitles = null;
     if (this.nativeStartTimer) { clearTimeout(this.nativeStartTimer); this.nativeStartTimer = null; }
@@ -66,11 +68,25 @@ window.MovieClassroom = {
       }
       return {...(group.sources||[]).find(item=>item.id===id),id,title,titleZh,year,cover:dynamic?.poster_url||posters[id]||'',description:dynamic?.overview||'',playerMode:'dulo',embedUrl:validTmdb?'https://dulo.mov/watch/movie/'+tmdb:'',sourceLabel:'Dulo 播放器'};
     })).filter(item=>item.embedUrl);
+    for(const movie of playable){
+      const source=allSeries.flatMap(group=>group.sources||[]).find(item=>item.id===movie.id)||movie;
+      const metadata=dynamicInfo.get(movie.id)||source;
+      const tmdb=Number(ids.get(movie.id)||metadata.tmdbId||metadata.tmdb_id);
+      const tv=(metadata.media_type||metadata.mediaType)==='tv';
+      const season=Number(metadata.season_number||metadata.seasonNumber||1),episode=Number(metadata.episode_number||metadata.episodeNumber||1);
+      const apiUrl=Number.isSafeInteger(tmdb)&&tmdb>0&&(!tv||(Number.isSafeInteger(season)&&season>0&&Number.isSafeInteger(episode)&&episode>0))
+        ? `https://api.obj2.top/hls/${tv?`tv/${tmdb}/${season}/${episode}`:`movie/${tmdb}`}/master.m3u8` : '';
+      movie.embeddedSources=apiUrl?providers.filter(provider=>provider.mode==='embed').map(provider=>({label:provider.name,url:(tv?(provider.tvUrl||provider.movieUrl.replace('/movie/','/tv/')):provider.movieUrl).replace('{tmdbId}',String(tmdb)).replace('{seasonNumber}',String(season)).replace('{episodeNumber}',String(episode))})).filter(source=>{try{const url=new URL(source.url);return url.protocol==='https:'&&!url.username&&!url.password&&source.url!==movie.embedUrl;}catch{return false;}}):[];
+      const candidates=[{url:apiUrl,label:'直链播放'},{url:source.fullHlsUrl||source.hlsUrl,label:'原有备用直链'},...(source.backupSources||[]),{url:source.backupHlsUrl,label:'备用直链'}];
+      movie.directSources=candidates.filter((item,index)=>{
+        try{const url=new URL(item.url);return /^https?:$/.test(url.protocol)&&!url.username&&!url.password&&/\.m3u8$/i.test(url.pathname)&&candidates.findIndex(other=>other.url===item.url)===index;}catch{return false;}
+      }).map((item,index)=>({...item,label:item.label||`备用直链 ${index}`}));
+    }
     return { series:allSeries, playable, playableById: new Map(playable.map(item => [item.id, item])) };
   },
   stars(rating) { return '★'.repeat(rating) + '☆'.repeat(5 - rating); },
   backupSources(movie) {
-    if(['dulo','dulo-direct'].includes(movie.playerMode))return [];
+    if(['dulo','dulo-direct','catalog-direct'].includes(movie.playerMode))return [];
     const sources = [...(movie.backupSources || [])];
     if (movie.backupHlsUrl) sources.push({url: movie.backupHlsUrl});
     return sources.filter((item, index) => {
@@ -136,6 +152,14 @@ window.MovieClassroom = {
     let movie = playableById.get(id);
     const group = series.find(item => item.films.some(([filmId]) => filmId === id));
     if (!movie || !group) { app.el().innerHTML = '<div class="empty">这部影片暂未添加授权播放源。<p><a class="btn" href="#/movies">返回光影课堂</a></p></div>'; return; }
+    const directSources=movie.directSources||[];
+    const embeddedAlternatives=movie.embeddedSources||[];
+    const providerIndex=/^provider-\d+$/.test(sourceChoice)?Number(sourceChoice.slice(9)):-1;
+    if(transportChoice==='embed'&&embeddedAlternatives[providerIndex])movie={...movie,embedUrl:embeddedAlternatives[providerIndex].url,sourceLabel:embeddedAlternatives[providerIndex].label,backupSources:[],playerMode:'embed-fallback'};
+    const embedSources=(movie.backupSources||[]).map((source,index)=>({...source,index})).filter(source=>source.embedded);
+    const directIndex=/^direct-\d+$/.test(sourceChoice)?Number(sourceChoice.slice(7)):0;
+    const direct=transportChoice!=='embed'&&transportChoice!=='dulo-direct'&&directSources[directIndex];
+    if(direct)movie={...movie,embedUrl:'',hlsUrl:direct.url,backupHlsUrl:'',backupSources:[],playerMode:'catalog-direct',sourceLabel:direct.label};
     if(transportChoice==='dulo-direct'){
       app.el().innerHTML='<section class="empty"><p role="status">正在获取本片当前可用线路…</p></section>';
       try{
@@ -154,7 +178,7 @@ window.MovieClassroom = {
     const hasBackup = backups.length > 0;
     const index = sourceChoice === 'backup' ? 0 : /^backup-\d+$/.test(sourceChoice) ? Number(sourceChoice.slice(7)) : -1;
     const usingBackup = index >= 0 && index < backups.length;
-    const selectedChoice = usingBackup ? (index === 0 ? 'backup' : `backup-${index}`) : 'primary';
+    const selectedChoice = direct ? `direct-${directIndex}` : usingBackup ? (index === 0 ? 'backup' : `backup-${index}`) : 'primary';
     const {url: sourceUrl, embedded} = this.playbackSource(movie, usingBackup ? backups[index] : false);
     const e = value => this.escape(app, value);
     const sourceControl = '';
@@ -162,6 +186,19 @@ window.MovieClassroom = {
     const subtitleTrack = movie.subtitleUrl ? `<track kind="subtitles" src="${e(movie.subtitleUrl)}" srclang="${e(movie.subtitleLang || 'en')}" label="${e(movie.subtitleLabel || 'English')}" default>` : '';
     app.el().innerHTML = `<div class="movie-watch-frame"><video controls playsinline preload="metadata" aria-label="${e(movie.titleZh)}">${subtitleTrack}</video></div><div class="movie-player-status" id="moviePlayerStatus" role="status" aria-live="polite"></div><div class="movie-section-heading"><h2>同系列影片</h2></div><div class="book-grid media-related-grid">${group.films.filter(([filmId]) => filmId !== id).map(film => this.movieCard(app, group, film, playableById)).join('')}</div>`;
     const player = app.el().querySelector('video');
+    const lines=document.createElement('div');lines.className='movie-source-menu';lines.setAttribute('role','menu');lines.setAttribute('aria-label','播放源');lines.hidden=true;
+    const heading=document.createElement('div');heading.className='movie-source-heading';heading.innerHTML='<strong>播放源</strong><button type="button" aria-label="关闭播放源">×</button>';lines.append(heading);
+    directSources.forEach((source,n)=>{
+      const button=document.createElement('button');button.type='button';button.className='btn secondary';button.textContent=source.label;
+      button.setAttribute('aria-pressed',String(!!direct&&directIndex===n));
+      button.onclick=()=>{this.cleanup();this.renderWatch(app,id,`direct-${n}`);};lines.append(button);
+    });
+    const embedButton=document.createElement('button');embedButton.type='button';embedButton.className='btn secondary';embedButton.textContent='第三方播放器';embedButton.setAttribute('aria-pressed',String(embedded&&!usingBackup&&providerIndex<0));
+    embedButton.onclick=()=>{this.cleanup();this.renderWatch(app,id,'primary','embed');};
+    const primaryDirect=lines.querySelector(':scope > button');
+    (primaryDirect||heading).after(embedButton);
+    embedSources.forEach(source=>{const button=document.createElement('button');button.type='button';button.textContent=source.label||`第三方备用 ${source.index+1}`;button.setAttribute('aria-pressed',String(embedded&&index===source.index));button.onclick=()=>{this.cleanup();this.renderWatch(app,id,source.index===0?'backup':`backup-${source.index}`,'embed');};lines.append(button);});
+    embeddedAlternatives.forEach((source,n)=>{const button=document.createElement('button');button.type='button';button.textContent=source.label||`第三方线路 ${n+1}`;button.setAttribute('aria-pressed',String(embedded&&providerIndex===n));button.onclick=()=>{this.cleanup();this.renderWatch(app,id,`provider-${n}`,'embed');};lines.append(button);});
     window.MediaShelf.bindCards(app);
     const report = (message, failed=false) => { if (generation !== this.generation) return; const status = document.getElementById('moviePlayerStatus'); if (status) { status.textContent = message; status.classList.toggle('failed', failed); } };
     if (embedded) {
@@ -173,13 +210,14 @@ window.MovieClassroom = {
       // Do not sandbox this iframe: the verified 111Movies test player refuses sandboxed embedding.
       const stage=app.el().querySelector('.movie-watch-frame');
       stage.replaceChildren(frame);
+      this.attachSourceMenu(stage,lines,true);
       this.frame=frame;
       const nextEmbeddedSource=()=>{
         if(generation!==this.generation)return;
         if(hasBackup&&index+1<backups.length){
           const next=index+1,choice=next===0?'backup':`backup-${next}`;
           report(`当前嵌入线路未能加载，正在自动尝试 ${backups[next].label||'下一条备用线路'}…`);
-          this.cleanup();this.renderWatch(app,id,choice).catch(()=>{});
+          this.cleanup();this.renderWatch(app,id,choice,'embed').catch(()=>{});
         }else{
           report('当前嵌入线路未能加载。可点击“切换备用线路”重试，或稍后再试。',true);
         }
@@ -200,7 +238,9 @@ window.MovieClassroom = {
     }
     this.player = player;
     window.MediaShelf.bindPlayer(player,'film-'+id,{href:'#/movie/'+id},{resume:!usingBackup});
-    this.disposeSubtitles = window.MovieSubtitles?.mount(app.el(), player, movie, () => this.hls);
+    this.disposeSubtitles = window.MovieSubtitles?.mount(app.el(), player, movie, () => this.hls, app);
+    this.attachMovieControls(app,player,movie,group);
+    this.attachSourceMenu(player.closest('.movie-watch-frame'),lines,false);
     const mediaUrl = movie.playerMode==='dulo-direct'?sourceUrl:this.mediaUrl(sourceUrl);
     const native = player.canPlayType('application/vnd.apple.mpegurl');
     const safari = /Safari/i.test(navigator.userAgent) && !/Chrome|Chromium|CriOS|Edg|Android/i.test(navigator.userAgent);
@@ -245,10 +285,57 @@ window.MovieClassroom = {
         if (native) { useNative(mediaUrl); return; }
         throw new Error('当前浏览器不支持 HLS 播放');
       }
-      const hls = new window.Hls(movie.playerMode==='dulo-direct'?{xhrSetup:(xhr,url)=>{try{const source=new URL(sourceUrl),target=new URL(url,sourceUrl),token=source.searchParams.get('_rb'),prefix=source.pathname.slice(0,source.pathname.lastIndexOf('/')+1);if(token&&target.origin===source.origin&&target.pathname.startsWith(prefix)){target.searchParams.set('_rb',token);if(target.href!==url)xhr.open('GET',target.href,true);}}catch{}}}:{}); this.hls = hls;
+      const hls = new window.Hls(movie.playerMode==='dulo-direct'?{renderTextTracksNatively:false,xhrSetup:(xhr,url)=>{try{const source=new URL(sourceUrl),target=new URL(url,sourceUrl),token=source.searchParams.get('_rb'),prefix=source.pathname.slice(0,source.pathname.lastIndexOf('/')+1);if(token&&target.origin===source.origin&&target.pathname.startsWith(prefix)){target.searchParams.set('_rb',token);if(target.href!==url)xhr.open('GET',target.href,true);}}catch{}}}:{renderTextTracksNatively:false}); this.hls = hls;
       hls.on(window.Hls.Events.ERROR, (_event, data) => { if (data.fatal) { hls.stopLoad(); report(movie.playerMode==='dulo-direct'?'已获取视频地址，但视频线路在当前网络下加载失败。请重新获取线路；如果仍失败，需要可直连线路或视频中转。':hasBackup && !usingBackup ? '主片源加载失败，请选择备用片源或重新加载。' : '影片加载失败：片源可能已过期，或存在网络／跨站访问限制。请重试；仍失败时需要更新片源地址。', true); } });
       this.disposeAdSkip = window.DyttAdSkip?.attach(player, sourceUrl, hls);
       hls.loadSource(mediaUrl); hls.attachMedia(player);
     } catch (error) { report(error.message + '，请点击重新加载。', true); }
+  },
+  attachSourceMenu(stage,menu,embedded){
+    const controller=new AbortController(),buttons=[];
+    const toggle=()=>{menu.hidden=!menu.hidden;buttons.forEach(b=>b.setAttribute('aria-expanded',String(!menu.hidden)));stage.classList.add('subtitle-settings-visible');};
+    const close=()=>{menu.hidden=true;buttons.forEach(b=>b.setAttribute('aria-expanded','false'));};
+    const hosts=embedded?[stage]:[stage.querySelector('.sf-desktop-player-controls'),stage.closest('.sf-full-movie-player')?.querySelector('.sf-lesson-toolbar')].filter(Boolean);
+    for(const host of hosts){const button=document.createElement('button');button.type='button';button.className='movie-source-trigger';button.setAttribute('aria-label','播放源');button.setAttribute('aria-haspopup','menu');button.setAttribute('aria-expanded','false');button.title='播放源';button.innerHTML=host.classList.contains('sf-lesson-toolbar')?'<span>▤</span><small>播放源</small>':'▤';button.onclick=toggle;host.append(button);buttons.push(button);}
+    stage.append(menu);menu.querySelector('[aria-label="关闭播放源"]').onclick=close;
+    document.addEventListener('pointerdown',event=>{if(!menu.contains(event.target)&&!buttons.some(b=>b.contains(event.target)))close();},{signal:controller.signal});
+    document.addEventListener('keydown',event=>{if(event.key==='Escape')close();},{signal:controller.signal});
+    this.disposeSources=()=>controller.abort();
+  },
+  attachMovieControls(app,player,movie,group){
+    const stage=player.closest('.movie-watch-frame');
+    const panel=document.createElement('section');panel.className='direct-video-panel sf-movie-lesson-player sf-full-movie-player';
+    stage.before(panel);panel.append(stage);stage.classList.add('video-wrap');
+    const bar=document.createElement('div');bar.className='sf-lesson-toolbar';bar.setAttribute('role','toolbar');bar.setAttribute('aria-label','电影播放操作');
+    const actions=[['prev','⏮','上一部'],['play','▶','播放'],['next','⏭','下一部'],['speed','⚡','1x'],['quiz','📖','分集学习'],['captions','CC','字幕'],['mute','🔊','声音'],['fullscreen','⛶','全屏']];
+    bar.innerHTML=actions.map(([act,icon,label])=>`<button type="button" data-act="${act}"><span>${icon}</span><small>${label}</small></button>`).join('');panel.append(bar);
+    const button=act=>bar.querySelector(`[data-act="${act}"]`);
+    const films=group.films,index=films.findIndex(([id])=>id===movie.id);
+    for(const [act,delta] of [['prev',-1],['next',1]]){const target=films[index+delta];button(act).disabled=!target;button(act).onclick=()=>{if(target){this.cleanup();location.hash='#/movie/'+target[0];}};}
+    button('play').onclick=()=>player.paused?player.play().catch(()=>{}):player.pause();
+    const update=()=>{button('play').querySelector('span').textContent=player.paused?'▶':'⏸';button('play').querySelector('small').textContent=player.paused?'播放':'暂停';button('speed').querySelector('small').textContent=player.playbackRate+'x';button('mute').querySelector('span').textContent=player.muted?'🔇':'🔊';};
+    for(const event of ['play','pause','ratechange','volumechange'])player.addEventListener(event,update);
+    button('speed').onclick=()=>{const speeds=[1,1.25,1.5,2,.75];player.playbackRate=speeds[(speeds.indexOf(player.playbackRate)+1)%speeds.length];};
+    button('mute').onclick=()=>{player.muted=!player.muted;};
+    button('quiz').disabled=!movie.studyCourse?.seriesId;button('quiz').onclick=()=>{this.cleanup();location.hash='#/series/'+movie.studyCourse.seriesId;};
+    button('captions').onclick=()=>stage.querySelector('.subtitle-settings-trigger,.movie-cc-button')?.click();
+    let timer;
+    const show=()=>{clearTimeout(timer);stage.classList.add('subtitle-settings-visible');};
+    const hideLater=()=>{clearTimeout(timer);timer=setTimeout(()=>{if(!stage.matches(':focus-within')&&!stage.classList.contains('subtitle-settings-open')&&!stage.querySelector('.movie-source-menu:not([hidden])'))stage.classList.remove('subtitle-settings-visible');},2200);};
+    for(const event of ['pointerenter','pointermove','pointerdown','keydown'])stage.addEventListener(event,()=>{show();hideLater();});
+    stage.addEventListener('pointerleave',hideLater);
+    window.SFCaptionFullscreen?.attach({stage:panel,player,trigger:button('fullscreen'),showControls:show});
+    if(!window.SFCaptionFullscreen)button('fullscreen').onclick=()=>panel.requestFullscreen?.().catch(()=>{});
+    window.SFDesktopPlayer?.attach({stage,player,showControls:show,hideControlsLater:hideLater,lesson:{seriesId:'full-movie',ep:{episodeId:1}}});
+    // Full movies use the in-picture controls on touch devices as well.
+    if(stage.querySelector('.sf-desktop-player-controls')){player.controls=false;player.addEventListener('pause',()=>{player.controls=false;});}
+    for(const act of ['captions','settings']){const control=stage.querySelector(`[data-desktop-act="${act}"]`);if(control)control.onclick=()=>{if(act==='captions'&&stage.querySelector('.subtitle-toggle'))stage.querySelector('.subtitle-toggle').click();else button('captions').click();};}
+    const study=stage.querySelector('[data-desktop-act="quiz"]');if(study){study.title='分集学习';study.setAttribute('aria-label','分集学习');study.disabled=button('quiz').disabled;}
+    const fullscreenControl=stage.querySelector('[data-desktop-act="fullscreen"]');
+    if(fullscreenControl)fullscreenControl.onclick=()=>button('fullscreen').click();
+    // Do not leave a lesson toolbar in the full-film DOM: fullscreen styles
+    // can reveal hidden lesson controls on both phone orientations.
+    bar.remove();
+    this.disposeControls=()=>clearTimeout(timer);update();
   }
 };

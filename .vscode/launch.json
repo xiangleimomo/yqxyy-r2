@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "谷歌浏览器本地测试",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:8888",
+      "webRoot": "${workspaceFolder}",
+      "preLaunchTask": "本地预览（含 R2 数据）"
+    }
+  ]
+}

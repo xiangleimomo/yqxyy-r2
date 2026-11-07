@@ -38,6 +38,12 @@
 
 ## 开发与验证
 
+### 在本机 Chrome 中测试
+
+用 VS Code 打开本仓库根目录，终端运行 `npm run dev`，然后在谷歌浏览器打开 `http://localhost:8888`。也可以按 F5 选择“谷歌浏览器本地测试”。修改 HTML、CSS、JS 后会自动重新生成本地预览，刷新浏览器查看；按 Ctrl+C 停止服务。
+
+本地 `.env` 中的 R2 连接仅保留在电脑上。此站需要运行 R2 代理，请使用上述启动方式，不要用 Live Server 或直接双击 HTML。当前改动不会自动上传 GitHub。
+
 ```sh
 npm ci
 npm test

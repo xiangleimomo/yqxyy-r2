@@ -705,7 +705,7 @@ window.BookReader = {
   setupPdfTools(item, { app, reader, root, pageUrls, pageTexts, outlineItems, pageCount, ensureTextIndex, ensureOutline,ensurePageText }) {
     const controls = reader.querySelector('.flipbook-controls');
     let controlsTimer;
-    controls.addEventListener('pointerdown', event => {
+    reader.addEventListener('pointerdown', event => {
       if (event.pointerType !== 'touch') return;
       controls.classList.add('controls-visible');
       clearTimeout(controlsTimer);

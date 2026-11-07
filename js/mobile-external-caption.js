@@ -18,6 +18,7 @@
     const hint=tray?.querySelector('.sf-mobile-caption-hint');
     if(!tray||!line||!hint||tray.dataset.bound==='1')return;
     tray.dataset.bound='1';
+    tray.hidden=false;
     tray.classList.add('is-caption-ready','is-mobile-external');
     player.closest('.subtitle-video-wrap')?.classList.add('sf-external-caption-mode');
     const setHint=value=>{hint.textContent=value||'';hint.hidden=!value;};
@@ -44,6 +45,7 @@
 
     const repaint=()=>{
       if(!tray.isConnected)return;
+      tray.hidden=false;
       const prefs=preferences();
       const visible=prefs.visible!==false;
       const wordEnabled=prefs.wordHighlight!==false;
@@ -85,6 +87,7 @@
       line.style.fontSize=(Number.isFinite(Number(prefs.size))?Math.max(14,Math.min(64,Number(prefs.size))):20)+'px';
       line.dataset.wordHighlight=String(wordEnabled);
       line.style.setProperty('color',(prefs.color||'#ffffff'),'important');
+      line.style.backgroundColor=`rgba(0,0,0,${Math.max(0,Math.min(95,Number(prefs.opacity) || 0))/100})`;
       if(gap)setHint(now<cues[0].startMs?'开场中，下面显示即将开始的台词':'对白间隙 · 下一句预览');
       else setHint('');
       if(!gap&&wordView)sync.paint(wordView,now,true);

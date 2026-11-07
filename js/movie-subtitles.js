@@ -1,19 +1,71 @@
 /* Movie subtitles reuse the source explorer's public lookup and VTT conversion. */
 window.MovieSubtitles = {
-  mount(root, video, movie, getHls) {
+  mount(root, video, movie, getHls, app = typeof App !== 'undefined' ? App : null) {
     const panel = document.createElement('section');
     panel.className = 'movie-subtitles';
     panel.innerHTML = `<h2>英文字幕 · English subtitles</h2><form><label>片名 / Title <input name="query" maxlength="100" required></label><label>年份 / Year <input name="year" type="number" min="1900" max="2100"></label><button class="btn" type="submit">查找英文字幕</button></form><div class="movie-subtitle-controls"><label>字幕 / Track <select name="track"><option value="off">关闭字幕 / Off</option></select></label><label>导入 SRT / VTT <input name="file" type="file" accept=".srt,.vtt"></label><label>延迟 / Delay（秒）<input name="offset" type="number" step="0.1" value="0"></label></div><p role="status" aria-live="polite">按片名和年份查找，选择与当前片源匹配的字幕版本。正数使字幕延后。</p><div class="movie-subtitle-results"></div>`;
     const anchor = root.querySelector('.movie-watch-actions') || root.querySelector('.movie-watch-frame');
     if (anchor) anchor.after(panel); else root.append(panel);
-    const field = name => panel.querySelector(`[name="${name}"]`);
+    const fields=Object.fromEntries(Array.from(panel.querySelectorAll('[name]')).map(el=>[el.name,el]));
+    const field = name => fields[name];
     const status = panel.querySelector('[role="status"]');
     const results = panel.querySelector('.movie-subtitle-results');
     field('query').value = movie.title || movie.titleZh;
     field('year').value = movie.year || '';
     const abort = new AbortController(), blobs = [], tracks = [];
-    let disposed = false, request = 0, download = 0, hlsBound;
+    let disposed = false, request = 0, download = 0, hlsBound, userSelectedTrack=false;
+    const nativeIds=new WeakMap(),nativeTracks=new Map(),cueTracks=new Map(),cueListeners=new Map(),hlsListeners=[];
+    let nextNativeId=0;
+    const normalizeLanguage=value=>({eng:'en',zho:'zh',chi:'zh',spa:'es',fra:'fr',fre:'fr'}[String(value||'').toLowerCase()]||String(value||'').toLowerCase().split('-')[0]);
+    const nativeKey=track=>{if(!nativeIds.has(track)){const key=`text:${nextNativeId++}`;nativeIds.set(track,key);nativeTracks.set(key,track);}return nativeIds.get(track);};
     const frame = root.querySelector('.movie-watch-frame');
+    let settings=null,caption=null,settingsTrack=null;
+    if(frame&&app?.subtitleControls){
+      frame.insertAdjacentHTML('beforeend',app.subtitleControls({series:{seriesTitle:movie.titleZh||movie.title}}));
+      settings=frame.querySelector('.subtitle-controls');
+      const trackRow=document.createElement('label');trackRow.className='subtitle-setting-row';trackRow.innerHTML='<span>字幕轨道</span><select aria-label="选择字幕轨道"></select>';settings.append(trackRow);settingsTrack=trackRow.querySelector('select');
+      settingsTrack.onchange=()=>{field('track').value=settingsTrack.value;choose();};
+      const offsetRow=document.createElement('label');offsetRow.className='subtitle-setting-row';offsetRow.innerHTML='<span>字幕偏移（秒）</span>';offsetRow.append(field('offset'));settings.append(offsetRow);panel.remove();
+      caption=document.createElement('div');caption.className='video-caption';caption.hidden=true;frame.append(caption);
+      frame.classList.add('subtitle-video-wrap','sf-movie-custom-caption');
+      const trigger=frame.querySelector('.subtitle-settings-trigger');
+      trigger.onclick=()=>{const open=frame.classList.toggle('subtitle-settings-open');frame.classList.add('subtitle-settings-visible');trigger.setAttribute('aria-expanded',String(open));};
+      const save=patch=>{localStorage.setItem('storyfox-subtitle-preferences',JSON.stringify({...app.subtitlePreferences(),...patch}));app.applySubtitlePreferences(frame);paintCaption();video.dispatchEvent(new Event('sfcaptionchange'));};
+      const visible=settings.querySelector('.subtitle-toggle');visible.onclick=()=>{const on=app.subtitlePreferences().visible===false;save({visible:on});visible.textContent=on?'已开启':'已关闭';visible.setAttribute('aria-pressed',String(on));};
+      const word=settings.querySelector('.subtitle-word-toggle');word.disabled=true;word.title='整部电影字幕不含逐词时间信息';word.textContent='无逐词时间轴';
+      for(const [selector,key,suffix] of [['.subtitle-size','size','px'],['.subtitle-opacity','opacity','%']]){const input=settings.querySelector(selector);input.oninput=()=>{input.nextElementSibling.textContent=input.value+suffix;save({[key]:Number(input.value)});};}
+      settings.querySelector('.subtitle-color').oninput=e=>save({color:e.target.value});
+      settings.querySelector('.subtitle-reset-position').onclick=()=>{save({visible:true,size:20,color:'#ffffff',captionX:50,captionY:84,opacity:72});for(const [selector,value,suffix] of [['.subtitle-size',20,'px'],['.subtitle-opacity',72,'%']]){const input=settings.querySelector(selector);input.value=value;input.nextElementSibling.textContent=value+suffix;}settings.querySelector('.subtitle-color').value='#ffffff';visible.textContent='已开启';visible.setAttribute('aria-pressed','true');};
+      let dragging=false;
+      caption.addEventListener('pointerdown',e=>{dragging=true;caption.setPointerCapture(e.pointerId);e.preventDefault();});
+      caption.addEventListener('pointermove',e=>{if(!dragging)return;const r=frame.getBoundingClientRect();save({captionX:Math.max(0,Math.min(100,(e.clientX-r.left)/r.width*100)),captionY:Math.max(0,Math.min(100,(e.clientY-r.top)/r.height*100))});});
+      for(const event of ['pointerup','pointercancel','lostpointercapture'])caption.addEventListener(event,()=>{dragging=false;});
+      video.addEventListener('timeupdate',paintCaption);video.addEventListener('seeked',paintCaption);
+      app.applySubtitlePreferences(frame);
+    }
+    function paintCaption(){
+      if(!caption)return;
+      const prefs=app.subtitlePreferences(),selected=field('track').value;
+      let cues=[];
+      if(selected.startsWith('text:'))cues=Array.from(nativeTracks.get(selected)?.cues||[]);
+      else if(selected.startsWith('hls:')){
+        const index=Number(selected.slice(4)),hlsTrack=getHls()?.subtitleTracks?.[index];
+        cues=cueTracks.get(index)||[];
+        if(!cues.length){
+          const available=Array.from(video.textTracks).filter(track=>!tracks.some(el=>el.track===track)&&(track.kind==='subtitles'||track.kind==='captions'));
+          const matching=available.find(track=>hlsTrack?.name&&track.label===hlsTrack.name)||available.find(track=>hlsTrack?.lang&&normalizeLanguage(track.language)===normalizeLanguage(hlsTrack.lang))||(available.length===1?available[0]:null);
+          cues=Array.from(matching?.cues||[]);
+        }
+      }
+      const time=video.currentTime-(Number(field('offset').value)||0);
+      caption.textContent=[...new Set(cues.filter(cue=>cue.startTime<=time&&cue.endTime>time).map(cue=>cue.text.replace(/<[^>]*>/g,'')))].join('\n');
+      caption.hidden=!caption.textContent||!prefs.visible;
+      if(!caption.hidden){
+        frame._captionLayout?.();
+        const half=caption.getBoundingClientRect().height/2+4,height=frame.clientHeight;
+        caption.style.top=`${Math.max(Math.min(half,height/2),Math.min(height-half,height*Number(prefs.captionY)/100))}px`;
+      }
+    }
     let ccButton = null, ccMenu = null;
     const say = text => { if (!disposed) status.textContent = text; };
     const current = token => !disposed && token === request;
@@ -47,6 +99,7 @@ window.MovieSubtitles = {
       const select = field('track');
       ccMenu.replaceChildren();
       const options = Array.from(select.options);
+      if(settingsTrack){settingsTrack.replaceChildren(...options.map(o=>new Option(o.textContent,o.value)));settingsTrack.value=select.value;}
       if (options.length <= 1) {
         const empty = document.createElement('p');
         empty.className = 'movie-cc-empty';
@@ -113,23 +166,35 @@ window.MovieSubtitles = {
       const select = field('track'), old = select.value;
       select.replaceChildren(new Option('关闭字幕 / Off', 'off'));
       Array.from(video.textTracks).forEach((t, i) => {
-        if (t.kind === 'subtitles' || t.kind === 'captions') select.add(new Option(t.label || t.language || `字幕 ${i + 1}`, `text:${i}`));
+        const key=nativeKey(t);
+        if(!cueListeners.has(t)){t.addEventListener('cuechange',paintCaption);cueListeners.set(t,paintCaption);}
+        const managedByHls=!!getHls()?.subtitleTracks?.length&&!tracks.some(el=>el.track===t);
+        if ((t.kind === 'subtitles' || t.kind === 'captions')&&!managedByHls) select.add(new Option(t.label || t.language || `字幕 ${i + 1}`, key));
       });
       (getHls()?.subtitleTracks || []).forEach((t, i) => select.add(new Option(t.name || t.lang || `内嵌字幕 ${i + 1}`, `hls:${i}`)));
       if (Array.from(select.options).some(o => o.value === old)) select.value = old;
       else {
         const showing = Array.from(video.textTracks).findIndex(t => t.mode === 'showing');
-        if (showing >= 0) select.value = `text:${showing}`;
+        if (showing >= 0&&Array.from(select.options).some(o=>o.value===nativeKey(video.textTracks[showing]))) select.value = nativeKey(video.textTracks[showing]);
+      }
+      if(!userSelectedTrack&&select.value==='off'&&select.options.length>1){
+        const preferred=Array.from(select.options).find(o=>o.value.startsWith('hls:'))||select.options[1];
+        select.value=preferred.value;choose(false);
       }
       syncCCMenu();
+      paintCaption();
     }
-    function choose() {
+    function choose(remember=true) {
+      if(remember!==false)userSelectedTrack=true;
       const value = field('track').value, hls = getHls();
-      if (hls) { hls.subtitleTrack = value.startsWith('hls:') ? Number(value.slice(4)) : -1; hls.subtitleDisplay = value.startsWith('hls:'); }
-      Array.from(video.textTracks).forEach((t, i) => { t.mode = value === `text:${i}` ? 'showing' : 'disabled'; });
+      if (hls) { hls.subtitleTrack = value.startsWith('hls:') ? Number(value.slice(4)) : -1; hls.subtitleDisplay = !caption&&value.startsWith('hls:'); }
+      if(!value.startsWith('hls:'))Array.from(video.textTracks).forEach(t => { t.mode = value === nativeKey(t) ? (caption?'hidden':'showing') : 'disabled'; });
+      if(value==='off')caption?.replaceChildren();
       syncCCMenu();
+      paintCaption();
     }
     function offset() {
+      if(caption){paintCaption();return;}
       const seconds = Number(field('offset').value) || 0;
       for (const element of tracks) for (const cue of Array.from(element.track.cues || [])) {
         cue._movieOriginal ||= [cue.startTime, cue.endTime];
@@ -150,7 +215,7 @@ window.MovieSubtitles = {
       blobs.push(track.src); tracks.push(track);
       track.addEventListener('load', () => {
         if (disposed || !track.isConnected) return;
-        refresh(); field('track').value = `text:${Array.from(video.textTracks).indexOf(track.track)}`;
+        refresh(); field('track').value = nativeKey(track.track);
         choose(); offset(); say(`已加载 ${label}；如不同步，可调整延迟或选择其他版本。`);
       }, {once: true});
       track.addEventListener('error', () => say('字幕无法读取，请尝试其他版本或导入 SRT / VTT。'), {once: true});
@@ -198,21 +263,48 @@ window.MovieSubtitles = {
       } catch (e) { say(e.message); }
       finally { event.target.value = ''; }
     };
+    const hideNativeCaptions=()=>{
+      if(!caption||disposed)return;
+      for(const track of Array.from(video.textTracks))if((track.kind==='subtitles'||track.kind==='captions')&&track.mode==='showing')track.mode='hidden';
+      paintCaption();
+    };
+    video.textTracks.addEventListener('change',hideNativeCaptions);
     video.textTracks.addEventListener('addtrack', refresh);
     video.addEventListener('loadedmetadata', refresh);
     // HLS is created after the panel, so bind when its manifest becomes available.
-    const timer = setInterval(() => {
-      const hls = getHls(), event = window.Hls?.Events?.SUBTITLE_TRACKS_UPDATED;
-      if (hls && hls !== hlsBound && event) { hlsBound = hls; hls.on(event, refresh); refresh(); }
-    }, 500);
+    function bindHls(){
+      const hls=getHls();if(hls===hlsBound)return;
+      hlsListeners.splice(0).forEach(([instance,event,handler])=>instance.off(event,handler));cueTracks.clear();hlsBound=hls;
+      if(!hls)return;
+      const listen=(name,handler)=>{const event=window.Hls?.Events?.[name];if(event){hls.on(event,handler);hlsListeners.push([hls,event,handler]);}};
+      listen('SUBTITLE_TRACKS_UPDATED',refresh);listen('MANIFEST_PARSED',refresh);
+      listen('CUES_PARSED',(_,data)=>{
+        if(disposed||data?.type!=='subtitles')return;
+        const id=/subtitles(\d+)/.exec(String(data.track||''));
+        if(!id&&data.track!=='default')return;
+        const sourceId=id?Number(id[1]):-1;
+        let index=id?hls.subtitleTracks.findIndex((track,i)=>Number(track.id??i)===sourceId):hls.subtitleTracks.findIndex(track=>track.default);
+        if(index<0)index=id&&sourceId<hls.subtitleTracks.length?sourceId:!id?hls.subtitleTrack:-1;
+        if(index<0)return;
+        const existing=cueTracks.get(index)||[],keys=new Set(existing.map(c=>`${c.startTime}|${c.endTime}|${c.text}`));
+        for(const cue of data.cues||[]){const key=`${cue.startTime}|${cue.endTime}|${cue.text}`;if(!keys.has(key)){existing.push(cue);keys.add(key);}}
+        cueTracks.set(index,existing);paintCaption();
+      });
+      refresh();
+    }
+    const timer=setInterval(bindHls,250);bindHls();
     refresh();
     return () => {
       disposed = true; ++request; ++download; abort.abort(); clearInterval(timer);
+      video.removeEventListener('timeupdate',paintCaption);video.removeEventListener('seeked',paintCaption);
+      frame?._captionResize?.disconnect();frame?.querySelector('.subtitle-settings-dock')?.remove();caption?.remove();
       document.removeEventListener('pointerdown', onOutsideCC); document.removeEventListener('keydown', onEscapeCC);
       ccButton?.removeEventListener('click', toggleCCMenu);
       video.textTracks.removeEventListener('addtrack', refresh); video.removeEventListener('loadedmetadata', refresh);
-      const event = window.Hls?.Events?.SUBTITLE_TRACKS_UPDATED;
-      if (hlsBound && event) hlsBound.off(event, refresh);
+      video.textTracks.removeEventListener('change',hideNativeCaptions);
+      cueListeners.forEach((handler,track)=>track.removeEventListener('cuechange',handler));
+      hlsListeners.splice(0).forEach(([hls,event,handler])=>hls.off(event,handler));cueTracks.clear();
+      ccButton?.remove();ccMenu?.remove();frame?.classList.remove('sf-movie-custom-caption','subtitle-settings-open');
       tracks.forEach(t => t.remove()); blobs.forEach(url => URL.revokeObjectURL(url)); panel.remove();
     };
   }

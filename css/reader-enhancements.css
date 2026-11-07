@@ -151,7 +151,11 @@ body.flipbook-active .pdf-flipbook-reader .flipbook-stage{
 }
 @media (hover:none), (pointer:coarse){
   body.flipbook-active .pdf-flipbook-reader .flipbook-controls{
-    opacity:.96;transform:none;
+    opacity:0;transform:none;pointer-events:none;
+    transition:opacity .2s ease;
+  }
+  body.flipbook-active .pdf-flipbook-reader .flipbook-controls.controls-visible{
+    opacity:.96;pointer-events:auto;
   }
 }
 

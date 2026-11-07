@@ -1054,7 +1054,7 @@ async renderLesson(seriesId, episodeId){
       const tray=root.querySelector('.sf-mobile-captions-outside'),offset=root.querySelector('.sf-subtitle-offset');
       const match=location.hash.match(/#\/lesson\/([^/]+)\/(\d+)/);
       const series=player.dataset.series||match?.[1],ep=Number(player.dataset.episode||match?.[2]||1);
-      let shown=false;tray.hidden=true;if(offset)offset.hidden=true;
+      let shown=false;tray.hidden=!window.SFMobileCaption?.isApplicable?.();if(offset)offset.hidden=!window.SFMobileCaption?.isApplicable?.();
       const episodes=this.cache['data/'+series+'/episodes.json']||[];
       const available=n=>episodes.some(item=>Number(item.episodeId)===n && item.status==='published') && this.canAccessEpisode(series,n) && !this.isGuestEpisodeLimit(series,n);
       const openModule=(tab,n)=>{player.pause();player.closest('.floating-window')?.querySelector('.floating-close')?.click();this.openLearningModal(tab,series,n);};
