@@ -13,6 +13,8 @@
 
 ## 部署到新的 Netlify 账户
 
+已创建站点：[yqxyy-r2.netlify.app](https://yqxyy-r2.netlify.app)，归属 `hanzhimin888`。GitHub Actions 中已配置新账户的部署授权与站点 ID；推送 main 后检查成功会自动部署，R2 内容更新本身不需要运行部署。自动部署入口在 `.github/workflows/deploy.yml`，无需额外连接 Netlify GitHub App。
+
 1. 确认团队为 **hanzhimin888**，导入本 GitHub 仓库。
 2. 构建命令 `npm run build`，发布目录 `dist`，Node.js 22 或以上。根目录 `netlify.toml` 已配置。
 3. 在 Netlify 环境变量中配置以下四项（范围必须包含 Functions）：

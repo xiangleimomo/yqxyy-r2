@@ -4,6 +4,10 @@
   edge_functions = "netlify/edge-functions"
 
 [[edge_functions]]
+  function = "r2-data"
+  path = "/data/*"
+
+[[edge_functions]]
   function = "book-download"
   path = "/book-download/*"
 
