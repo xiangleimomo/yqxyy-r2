@@ -1,0 +1,287 @@
+window.SFMedals={
+ app:null,state:null,uid:null,generation:0,urls:new Set(),timer:null,
+ e(value){return this.app.escapeHtml(String(value??''));},
+ async rpc(action,payload={}){
+  const cloud=window.SFCloud,uid=cloud?.user?.id;if(!uid||!cloud.client)throw Error('请先登录');
+  const {data,error}=await cloud.client.rpc('sf_medals',{p_action:action,p_payload:payload});
+  if(window.SFCloud?.user?.id!==uid)throw Error('账号已切换');
+  if(error)throw Error(error.code==='PGRST202'?'勋章服务尚未部署完成':error.message);return data;
+ },
+ cleanup(){this.generation++;clearTimeout(this.timer);document.querySelectorAll('.medal-dialog').forEach(node=>{node.close();node.remove();});for(const url of this.urls)URL.revokeObjectURL(url);this.urls.clear();},
+ identitySwitch(){this.cleanup();this.state=null;this.uid=null;this.nextNotice=null;document.querySelectorAll('.medal-resource-panel,.medal-config-link,.medal-reader-trigger,.medal-quiz-entry,.medal-reader-choices').forEach(node=>node.remove());if(location.hash.startsWith('#/honors'))this.app?.el().replaceChildren(document.createTextNode('正在切换账号，读取对应荣誉馆…'));},
+ go(mode,message=''){const route='#/honors/'+mode;this.nextNotice={uid:window.SFCloud?.user?.id,route,message,until:Date.now()+30000};if(location.hash===route)return this.render(this.app,mode);location.hash=route;},
+ init(app){this.app=app;const refresh=()=>{if(location.hash.startsWith('#/honors')&&!document.hidden&&!document.querySelector('.medal-dialog[open],.medal-editor:focus-within'))this.render(app,...app.route().slice(1));};window.addEventListener('focus',refresh);document.addEventListener('visibilitychange',refresh);},
+ async sessionHeaders(){const {data,error}=await window.SFCloud.client.auth.getSession();if(error||!data.session?.access_token)throw Error('登录已失效');return {Authorization:'Bearer '+data.session.access_token,apikey:window.STORYFOX_SUPABASE.publishableKey};},
+ image(id,title='',full=false,pending=false){if(!id&&pending)return `<span class="medal-image-pending"><b aria-hidden="true">🏅</b><small>${this.e(title)}</small><em>待配图</em></span>`;return id?`<img data-medal-asset="${this.e(id)}"${full?' data-full':''} alt="${this.e(title)}" loading="lazy">`:'<span class="medal-image-unavailable">图片已下架</span>';},
+ async hydrate(root){
+  const run=this.generation,uid=window.SFCloud?.user?.id;if(!uid)return;
+  let headers;try{headers=await this.sessionHeaders();}catch{return;}
+  const nodes=[...root.querySelectorAll('[data-medal-asset]')];let index=0;
+  const worker=async()=>{while(index<nodes.length){const node=nodes[index++];if(node.dataset.medalLoading||node.dataset.medalLoaded)continue;node.dataset.medalLoading='1';try{const response=await fetch(window.STORYFOX_SUPABASE.url+'/functions/v1/medals-assets?id='+encodeURIComponent(node.dataset.medalAsset)+(node.hasAttribute('data-full')?'':'&size=thumb'),{headers,cache:'no-store',signal:AbortSignal.timeout(30000)});if(!response.ok)throw Error();const blob=await response.blob();if(run!==this.generation||window.SFCloud?.user?.id!==uid||!node.isConnected)continue;const url=URL.createObjectURL(blob);this.urls.add(url);node.dataset.medalLoaded='1';delete node.dataset.medalLoading;node.src=url;}catch{if(node.isConnected){const fallback=document.createElement('span');fallback.className='medal-image-unavailable';fallback.textContent='图片暂不可用';node.replaceWith(fallback);}}}};
+  await Promise.all(Array.from({length:Math.min(4,nodes.length)},worker));
+ },
+ nav(mode){const parent=this.state?.role==='parent'||this.state?.admin;return `<nav class="book-reading-tabs medal-nav">${[['works','作品徽章馆'],['wall','荣誉纪念章墙'],...(parent?[['workshop','奖章工坊'],['mine','我的设计'],['collections','我的收藏'],['award','给孩子颁章'],['issued','颁发记录']]:[]),...(this.state?.admin?[['admin','管理后台']]:[])].map(([key,label])=>`<a href="#/honors/${key}"${mode===key?' aria-current="page"':''}>${label}</a>`).join('')}</nav><p id="medalNotice" role="status" aria-live="polite"></p>`;},
+ notice(message,error=false){const node=this.app.el().querySelector('#medalNotice');if(node){node.textContent=message;node.classList.toggle('error',error);}},
+ async act(button,fn){if(button.disabled)return;button.disabled=true;try{await fn();}catch(error){this.notice(error.message,true);}finally{if(button.isConnected)button.disabled=false;}},
+ dialog(html){const node=document.createElement('dialog');node.className='medal-dialog';node.innerHTML=`<button type="button" class="medal-close" aria-label="关闭">×</button>${html}`;(document.fullscreenElement||document.body).append(node);node.querySelector('.medal-close').onclick=()=>node.close();node.onclose=()=>node.remove();node.showModal();this.hydrate(node);return node;},
+ childPicker(){if(this.state.role!=='parent')return '';return `<label class="medal-child-picker">孩子 <select id="medalChild">${this.state.children.map(child=>`<option value="${this.e(child.id)}"${child.id===this.state.child_id?' selected':''}>${this.e(child.name)}</option>`).join('')}</select></label>`;},
+ async render(app,mode='works',argument=''){
+  this.app=app;this.cleanup();const run=this.generation,uid=window.SFCloud?.user?.id,route=location.hash;this.uid=uid;
+  if(!uid){app.el().innerHTML='<section class="medal-intro"><h1>我的荣誉馆</h1><h2>作品徽章馆</h2><p>完成阅读或观影，收集作品主题徽章。</p><h2>荣誉纪念章墙</h2><p>由已绑定的家长颁发，纪念每一次努力。</p><button class="btn" id="medalLogin">登录 / 注册</button></section>';app.el().querySelector('#medalLogin').onclick=()=>window.SFCloud.open();return;}
+  app.el().innerHTML='<section class="medal-shell"><p role="status">正在加载荣誉馆…</p></section>';
+  try{
+   let state=await this.rpc('dashboard');
+   if(state.role==='parent'&&state.children.length){const saved=sessionStorage.getItem('sf-medal-child:'+uid),child=state.children.find(c=>c.id===saved)||state.children[0];state=await this.rpc('dashboard',{child_id:child.id});}
+   if(run!==this.generation||uid!==window.SFCloud?.user?.id||route!==location.hash)return;
+   this.state=state;app.el().innerHTML=`<section class="medal-shell">${this.nav(mode)}<div id="medalContent"></div></section>`;
+   if(!state.role&&!state.admin){this.content().innerHTML='<div class="empty"><p>请先在账号管理中设置家长或孩子身份，并通过已有绑定码流程确认亲子关系。</p><button class="btn" id="medalAccount">打开账号管理</button></div>';app.el().querySelector('#medalAccount').onclick=()=>window.SFCloud.open();return;}
+   if(['works','wall'].includes(mode))this.renderGallery(mode);
+   else if(['workshop','mine','collections'].includes(mode))await this.renderTemplates(mode);
+   else if(mode==='award')await this.renderAward(argument);
+   else if(mode==='issued')await this.renderIssued();
+   else if(mode==='admin')await this.renderAdmin(decodeURIComponent(argument||''));
+   else this.renderGallery('works');
+   if(run===this.generation){this.hydrate(app.el());if(this.nextNotice?.uid===uid&&this.nextNotice.route===route&&this.nextNotice.until>Date.now())this.notice(this.nextNotice.message);this.nextNotice=null;}
+  }catch(error){if(run===this.generation){const node=app.el().querySelector('#medalNotice');if(node)this.notice(error.message,true);else app.el().innerHTML=`<div class="empty"><h2>荣誉馆暂不可用</h2><p>${this.e(error.message)}</p></div>`;}}
+ },
+ content(){return this.app.el().querySelector('#medalContent');},
+ sourceLabel(source){return ({self_report:'阅读完成（客户端记录）',existing_self_report:'已有完成记录（用户自报）',quiz_verified:'服务端核对测验通过',series_reported:'全系列完成记录（含用户自报）'})[source]||'尚未解锁';},
+ ruleLabel(rule){return ({self_report:'完成作品领取；阅读至末页自动获取',quiz:'通过服务端核对的测验',series_all:'完成全部已发布分集',series_quiz:'全系列每集答题达标',movie_quiz:'通过本片专属答题'})[rule]||rule;},
+ workProgress(row){
+  const total=row.mainline?Math.max(1,Number(row.required)||0):1,done=row.mainline?Math.min(total,Math.max(0,Number(row.progress)||0)):row.earned?1:0;
+  return `${done} / ${total}${row.rule==='series_quiz'?' 集':row.rule==='movie_quiz'?' 题':''}`;
+ },
+ renderGallery(mode){
+  const state=this.state,e=v=>this.e(v),manual=[...new Map((state.manual_works||[]).map(row=>[row.template_id,row])).values()],manualIds=new Set(manual.map(row=>row.template_id)),works=[...state.works.filter(row=>!manualIds.has(row.template_id)),...manual],earned=works.filter(row=>row.earned).length;
+  this.content().innerHTML=`${this.childPicker()}<label class="medal-kind-picker">作品徽章 <select id="medalWorkKind"><option value="">全部</option><option value="series_quiz">Little Fox 主线</option><option value="movie_quiz">电影主线</option><option value="other">其他作品</option></select></label><p class="medal-counts">作品徽章 ${earned} 枚 · 荣誉纪念章 ${state.awards.length} 枚</p>${state.role==='parent'&&!state.children.length?'<div class="empty">请在账号管理中完成亲子绑定后查看孩子的荣誉。</div>':''}<div class="medal-grid">${mode==='works'?works.map(row=>`<button class="medal-card medal-work-card ${row.earned?'earned':'locked'}" aria-label="查看 ${e(row.title)}" title="${e(row.title)}" data-kind="${e(row.mainline?row.rule:'other')}" data-work="${e(row.id)}"><span class="medal-work-image">${this.image(row.asset_id,row.title,false,row.mainline)}</span><span class="medal-work-progress" aria-label="完成进度">${this.workProgress(row)}</span><div class="medal-card-caption"><strong>${e(row.title)}</strong><span>${e(row.resource_title)}</span><small>${row.earned?'已收集 · '+e(row.manual?'家长授予':this.sourceLabel(row.unlock_source)):'未解锁'}</small></div></button>`).join(''):state.awards.map(row=>`<button class="medal-card honor-card" aria-label="查看 ${e(row.title)}" title="${e(row.title)}" data-award="${e(row.id)}">${this.image(row.asset_id,row.title,false,row.mainline)}<div class="medal-card-caption"><strong>${e(row.title)}</strong><span>${e(row.giver)} 授予</span><small>${e(new Date(row.awarded_at).toLocaleDateString())}</small></div></button>`).join('')}</div>${mode==='works'&&!works.length?'<div class="empty">作品徽章等待作品上传者或管理员添加。阅读和观影功能可正常使用。</div>':mode==='wall'&&!state.awards.length?'<div class="empty">这里将珍藏家长授予的荣誉纪念章。</div>':''}`;
+  const kindPicker=this.content().querySelector('#medalWorkKind');if(mode!=='works')kindPicker.closest('label').hidden=true;kindPicker.onchange=()=>this.content().querySelectorAll('[data-work]').forEach(card=>card.hidden=!!kindPicker.value&&card.dataset.kind!==kindPicker.value);
+  this.content().querySelector('#medalChild')?.addEventListener('change',event=>{sessionStorage.setItem('sf-medal-child:'+this.uid,event.target.value);this.render(this.app,mode);});
+  this.content().querySelectorAll('[data-work]').forEach(button=>button.onclick=()=>{const row=works.find(row=>row.id===button.dataset.work);row.manual?this.awardDetail(row):this.workDetail(row);});
+  this.content().querySelectorAll('[data-award]').forEach(button=>button.onclick=()=>this.awardDetail(state.awards.find(row=>row.id===button.dataset.award)));
+ },
+ workDetail(row){
+  if(row.mainline)return this.mainlineDetail(row.resource_key,row);
+  const e=v=>this.e(v);this.dialog(`${this.image(row.asset_id,row.title,true)}<h2>${e(row.title)}</h2><p>${e(row.description)}</p><p>${e(row.resource_title)}</p><p>${e(row.earned?this.sourceLabel(row.unlock_source):this.ruleLabel(row.rule))}</p>${row.unlocked_at?`<p>${e(new Date(row.unlocked_at).toLocaleString())}</p>`:''}<a class="btn" href="${e(row.href)}" onclick="this.closest('dialog').close()">前往作品</a>`);
+ },
+ awardDetail(row){const e=v=>this.e(v);this.dialog(`${this.image(row.asset_id,row.title,true)}<h2>${e(row.title)}</h2><p>颁发家长：${e(row.giver)}</p><p>设计者：${e(row.creator)}</p><p>授予时间：${e(new Date(row.awarded_at).toLocaleString())}</p>${row.completion_date?`<p>完成日期（家长填写）：${e(row.completion_date)}</p>`:''}<blockquote>${e(row.message||'每一次努力，都值得被看见。')}</blockquote>${row.href?`<a class="btn secondary" href="${e(row.href)}" onclick="this.closest('dialog').close()">${e(row.resource_title||'相关作品')}</a>`:''}${row.removed?'<p>该设计已下架，文字纪念记录保留。</p>':''}`);},
+ resourcePicker(id='resource',required=false){return `<div class="medal-resource-picker" data-picker="${id}"><label>作品类型<select data-type><option value="book">绘本</option><option value="magazine">期刊</option><option value="movie">电影</option><option value="series">系列</option><option value="episode">分集</option></select></label><div class="medal-search"><input data-query placeholder="搜索真实作品名称或 ID"><button type="button" data-search>检索作品</button></div><select name="${id}" ${required?'required':''} aria-label="关联作品"><option value="">${required?'请选择作品':'不关联作品'}</option></select><p data-status role="status"></p></div>`;},
+ async bindPicker(root,id='resource',selected=''){
+  const box=root.querySelector(`[data-picker="${id}"]`),type=box.querySelector('[data-type]'),query=box.querySelector('[data-query]'),select=box.querySelector(`select[name="${id}"]`),status=box.querySelector('[data-status]');
+  if(selected){type.value=selected.split(':')[0];query.value=selected;}
+  const load=async()=>{try{const items=await this.resources(type.value,query.value.trim());if(!box.isConnected)return;select.innerHTML='<option value="">请选择作品（可选关联留空）</option>'+items.map(row=>`<option value="${this.e(row.key)}">${this.e(row.title)}</option>`).join('');if(selected&&items.some(row=>row.key===selected))select.value=selected;status.textContent=items.length?'':'未找到匹配作品，可联系管理员更新 GitHub 资源目录。';}catch(error){status.textContent=error.message;}};
+  box.querySelector('[data-search]').onclick=load;type.onchange=()=>{query.value='';selected='';load();};await load();
+ },
+ async catalog(){
+  if(!this.catalogPromise)this.catalogPromise=this.app.getJSON('data/medal-resources.json').catch(error=>{this.catalogPromise=null;throw error;});
+  return this.catalogPromise;
+ },
+ async resources(type,query=''){
+  const needle=query.toLowerCase(),[catalog,indexed]=await Promise.all([this.catalog(),this.rpc('resources',{type,query})]);
+  const rows=new Map(catalog.filter(row=>row.active!==false&&row.type===type).map(row=>[row.key,row]));for(const row of indexed)rows.set(row.key,row);
+  if(type==='book'||type==='magazine'){const books=await window.BookReader.library(this.app,true),ids=new Set(books.map(book=>book.id));for(const [key] of rows)if(!ids.has(key.split(':')[1]))rows.delete(key);for(const book of books)if((book.kind==='magazine'?'magazine':'book')===type)rows.set(type+':'+book.id,{key:type+':'+book.id,title:book.titleZh||book.title});}
+  return [...rows.values()].filter(row=>!needle||(row.title+' '+row.key).toLowerCase().includes(needle)).slice(0,100);
+ },
+ async prepareResource(key,rule=''){
+  if(!key)return;const response=await fetch(window.STORYFOX_SUPABASE.url+'/functions/v1/medals-catalog',{method:'POST',headers:{...await this.sessionHeaders(),'Content-Type':'application/json'},body:JSON.stringify({key,include_episodes:rule==='series_all'}),signal:AbortSignal.timeout(45000)}),data=await response.json();if(!response.ok)throw Error(data.error||'作品关联失败');
+ },
+ async renderTemplates(mode){
+  const host=this.content(),run=this.generation,rows=await this.rpc('templates',{mode:mode==='workshop'?'public':mode}),e=v=>this.e(v);if(run!==this.generation||!host.isConnected)return;
+  this.content().innerHTML=`<div class="medal-toolbar"><h2>${({workshop:'奖章工坊',mine:'我的设计',collections:'我的收藏'})[mode]}</h2>${mode==='mine'?'<button class="btn" id="medalCreate">＋ 原创设计</button>':''}</div><form class="medal-search" id="medalTemplateSearch"><input name="query" placeholder="搜索奖章、主题或设计者"><button class="btn">搜索</button></form><label class="medal-kind-picker">类别 <select id="medalTemplateType"><option value="">全部</option><option value="work">作品徽章</option><option value="honor">荣誉纪念章</option></select></label><div id="medalTemplateResults"></div>`;
+  const draw=items=>{if(run!==this.generation||!host.isConnected)return;host.querySelector('#medalTemplateResults').innerHTML=`<div class="medal-grid">${items.map(row=>`<article class="medal-template"><button class="medal-preview" aria-label="查看 ${e(row.title)}" title="${e(row.title)}" data-preview="${e(row.id)}">${this.image(row.asset_id,row.title)}<strong>${e(row.title)}</strong></button><p>${e(row.is_system?'平台原创':row.creator_nickname)}</p>${row.own||mode==='mine'?`<small>${({draft:'私有草稿',pending:'待上架',approved:'已上架',rejected:'已驳回',removed:'已下架'})[row.review_status]}</small>${row.review_note?`<p>${e(row.review_note)}</p>`:''}`:''}<div class="medal-card-actions">${row.own||mode==='mine'?`<button data-edit="${e(row.id)}" ${row.review_status==='removed'?'disabled':''}>修改设计</button>${row.review_status==='pending'||row.review_status==='approved'?`<button data-withdraw="${e(row.id)}">下架</button>`:`<button data-share="${e(row.id)}" ${row.review_status==='removed'?'disabled':''}>上架</button>`}`:row.is_system?'':`<button data-collect="${e(row.id)}">${row.collected?'取消收藏':'收藏设计'}</button>`}${row.review_status!=='removed'&&row.review_status!=='rejected'&&(row.own||row.is_system||row.collected)?`<a href="#/honors/award/${e(row.id)}">授予孩子</a>`:''}${this.state.admin&&row.review_status==='approved'?`<button data-admin-remove="${e(row.id)}">下架设计</button>`:''}</div></article>`).join('')}</div>${items.length?'':'<div class="empty">暂无设计。收藏模板不会自动向孩子颁章。</div>'}`;this.bindTemplateActions(items);this.hydrate(host);};
+  let currentRows=rows;const redraw=()=>{if(run!==this.generation||!host.isConnected)return;const type=host.querySelector('#medalTemplateType').value;draw(currentRows.filter(row=>!type||(row.medal_type||'honor')===type));};host.querySelector('#medalTemplateType').onchange=redraw;redraw();const create=host.querySelector('#medalCreate');if(create)create.onclick=()=>this.templateEditor();if(run!==this.generation||!host.isConnected)return;
+  host.querySelector('#medalTemplateSearch').onsubmit=event=>{event.preventDefault();const query=event.currentTarget.elements.query.value.trim();this.rpc('templates',{mode:mode==='workshop'?'public':mode,query}).then(rows=>{currentRows=rows;redraw();}).catch(error=>this.notice(error.message,true));};
+ },
+ bindTemplateActions(rows){
+  const find=id=>rows.find(row=>row.id===id),root=this.content();
+  root.querySelectorAll('[data-preview]').forEach(button=>button.onclick=()=>{const row=find(button.dataset.preview);this.dialog(`${this.image(row.asset_id,row.title,true)}<h2>${this.e(row.title)}</h2><p>类别：${row.medal_type==='work'?'作品徽章':'荣誉纪念章'}</p><p>设计者：${this.e(row.is_system?'平台原创':row.creator_nickname)}</p><p>${this.e(row.description)}</p>`);});
+  root.querySelectorAll('[data-edit]').forEach(button=>button.onclick=()=>this.templateEditor(find(button.dataset.edit)));
+  root.querySelectorAll('[data-admin-remove]').forEach(button=>button.onclick=()=>this.act(button,async()=>{const note=prompt('下架原因（至少 2 个字）');if(!note)return;await this.rpc('review',{id:button.dataset.adminRemove,decision:'removed',note});await this.render(this.app,...this.app.route().slice(1));}));
+  for(const action of ['share','withdraw','collect'])root.querySelectorAll(`[data-${action}]`).forEach(button=>button.onclick=()=>this.act(button,async()=>{
+   const id=button.dataset[action],row=find(id),payload={id};
+   if(action==='share'){if(!confirm('我拥有原创作品或必要授权，允许平台公开展示及其他家长收藏、向自己的孩子授予。确认后立即上架，无需管理员审核。'))return;payload.rights_confirmed=true;}
+   if(action==='withdraw'&&!confirm('撤回后不再公开展示或供其他家长新授予，合法历史记录仍保留。'))return;
+   if(action==='collect')payload.collect=!row.collected;
+   await this.rpc(action,payload);await this.render(this.app,...this.app.route().slice(1));
+  }));
+ },
+ uploadFields(){return '<fieldset class="work-badge-upload"><legend>作品专属徽章（可选）</legend><input name="badge_images" type="file" multiple accept="image/png,image/webp,image/jpeg"><p>可不上传，也可选择最多 8 张图片。图片会安全保存并自动绑定本作品；每张至少 512×512 像素。</p><label class="medal-check"><input name="badge_rights" type="checkbox">我确认这些徽章图片为本人原创或已获必要授权，同意在作品徽章库展示。</label></fieldset>';},
+ async uploadWorkImages(form,status){
+  const files=[...form.elements.badge_images.files];if(!files.length)return [];
+  if(files.length>8)throw Error('每次最多上传 8 张作品徽章图片');
+  if(!form.elements.badge_rights.checked)throw Error('请确认作品徽章图片的授权');
+  // Validate every file before uploading; retain completed IDs when a request is retried.
+  for(const file of files)await window.MedalImageTools.inspect(file);
+  this.uploadedWorkImages??=new WeakMap();const result=[];
+  for(const file of files){let id=this.uploadedWorkImages.get(file);if(!id){id=await this.uploadImage(file,status);this.uploadedWorkImages.set(file,id);}result.push({asset_id:id});}
+  return result;
+ },
+ async renderWorkUploads(){
+  const host=this.content(),run=this.generation,rows=await this.rpc('work_list');if(run!==this.generation||!host.isConnected)return;
+  const section=document.createElement('section');section.className='medal-uploaded-works';section.innerHTML=`<div class="medal-toolbar"><h2>我的作品徽章</h2><button class="btn secondary" id="medalAddWork">＋ 给作品添加徽章</button></div><div class="medal-grid">${rows.map(row=>`<article class="medal-template" title="${this.e(row.title)}"><button class="medal-preview" data-uploaded-preview="${this.e(row.id)}" aria-label="查看 ${this.e(row.title)}">${this.image(row.asset_id,row.title)}</button><div class="medal-card-actions"><span>${this.e(row.resource_title)} · ${row.active?'已上架':'已下架'}</span><button data-work-toggle="${this.e(row.id)}" ${row.removed_by_admin?'disabled':''}>${row.active?'下架':'上架'}</button></div></article>`).join('')}</div>`;host.prepend(section);
+  section.querySelector('#medalAddWork').onclick=()=>this.workUploadDialog();
+  section.querySelectorAll('[data-uploaded-preview]').forEach(button=>button.onclick=()=>{const row=rows.find(r=>r.id===button.dataset.uploadedPreview);this.dialog(`${this.image(row.asset_id,row.title,true)}<h2>${this.e(row.title)}</h2><p>${this.e(row.resource_title)} · ${row.active?'已上架':'已下架'}</p>`);});
+  section.querySelectorAll('[data-work-toggle]').forEach(button=>button.onclick=()=>this.act(button,async()=>{const row=rows.find(r=>r.id===button.dataset.workToggle);await this.rpc('work_toggle',{id:row.id,active:!row.active});this.go('mine','作品徽章已'+(row.active?'下架':'上架'));}));this.hydrate(section);
+ },
+ async workUploadDialog(){
+  const books=await window.BookReader.library(this.app,true),own=books.filter(book=>this.state.admin||book.ownerId===window.SFCloud.user.id);
+  const dialog=this.dialog(`<form class="medal-editor"><h2>给作品添加徽章</h2><label>选择我的作品<select name="work" required><option value="">请选择</option>${own.map(book=>`<option value="${book.kind==='magazine'?'magazine':'book'}:${this.e(book.id)}">${this.e(book.titleZh||book.title)}</option>`).join('')}</select></label>${this.uploadFields()}<p role="status"></p><button class="btn">上传并上架</button></form>`),form=dialog.querySelector('form');
+  form.onsubmit=async event=>{event.preventDefault();const button=form.querySelector('button'),status=form.querySelector('[role=status]');button.disabled=true;try{const assets=await this.uploadWorkImages(form,status);if(!assets.length)throw Error('请至少选择一张徽章图片');await this.rpc('work_upload',{resource_key:form.elements.work.value,assets,rights_confirmed:true});dialog.close();this.go('mine','作品徽章已上传并上架。');}catch(error){status.textContent=error.message;}finally{button.disabled=false;}};
+ },
+ async mainlineDetail(resourceKey,row){
+  if(row.rule==='movie_quiz')return this.movieQuiz(resourceKey,row);
+  const key=resourceKey.startsWith('episode:')?'series:'+resourceKey.split(':')[1]:resourceKey;
+  const dialog=this.dialog(`${this.image(row.asset_id,row.title,true,true)}<h2>${this.e(row.title)}</h2><p>全系列每一集测验均达到 ${row.quiz_min||80}%，自动解锁一枚主线勋章。</p><p>已达标 ${row.progress||0} / ${row.required} 集；题库就绪 ${row.ready} / ${row.required} 集。</p>${row.ready<row.required?'<p>部分分集或题库尚未补齐；已完成的成绩会保留，不会按未完结系列提前发章。</p>':''}<p role="status"></p><button class="btn" id="mainlineCheck">核对答题进度</button> <a class="btn secondary" href="#/series/${this.e(key.split(':')[1])}" onclick="this.closest('dialog').close()">前往系列答题</a>`);
+  dialog.querySelector('#mainlineCheck').onclick=event=>this.act(event.currentTarget,async()=>{await window.SFFamily?.flush();const result=await this.rpc('complete',{resource_key:key});dialog.querySelector('[role=status]').textContent=result.message;});
+ },
+ async movieQuiz(resourceKey,row){
+  const dialog=this.dialog(`<h2>${this.e(row.title)}</h2><p role="status">正在加载本片题目…</p>`),uid=window.SFCloud?.user?.id;
+  try{
+   const data=await this.rpc('movie_questions',{resource_key:resourceKey});if(!dialog.isConnected||uid!==window.SFCloud?.user?.id)return;
+   dialog.insertAdjacentHTML('beforeend',`<p>完成 ${data.questions.length} 道剧情题，达到 ${data.pass_percent}% 可获得本片专属勋章。未达标可以重答。</p><form class="medal-quiz">${data.questions.map((q,i)=>`<fieldset><legend>${i+1}. ${this.e(q.question)}</legend>${q.options.map(option=>`<label><input type="radio" required name="${this.e(q.id)}" value="${this.e(option.key)}">${this.e(option.text)}</label>`).join('')}</fieldset>`).join('')}<button class="btn" type="submit">提交答题</button></form>`);dialog.querySelector('[role=status]').textContent=row.earned?'你已获得本片勋章，也可以再次练习。':'';
+   const form=dialog.querySelector('form');form.onsubmit=async event=>{event.preventDefault();const button=form.querySelector('button'),status=dialog.querySelector('[role=status]');button.disabled=true;try{const result=await this.rpc('movie_submit',{resource_key:resourceKey,version:data.version,answers:Object.fromEntries(new FormData(form))});status.textContent=`本次 ${result.score}/${result.total} · ${result.passed?(result.unlocked?'已达标，专属勋章已收入作品徽章馆！':'已达标，勋章已获得。'):'尚未达标，调整答案后可以再次提交。'}`;status.scrollIntoView({block:'nearest'});}catch(error){status.textContent=error.message;}finally{button.disabled=false;}};
+  }catch(error){if(dialog.isConnected)dialog.querySelector('[role=status]').textContent=error.message;}
+ },
+ async readingFinished(item){
+  const uid=window.SFCloud?.user?.id;if(!uid||!item?.id||item.id.startsWith('local-'))return;
+  const key=(item.kind==='magazine'?'magazine:':'book:')+item.id,stamp=uid+':'+key;this.readCompletions??=new Map();
+  if(Date.now()-(this.readCompletions.get(stamp)||0)<60000)return;this.readCompletions.set(stamp,Date.now());
+  try{const result=await this.rpc('complete',{resource_key:key,self_report:true});if(result.unlocked&&uid===window.SFCloud?.user?.id){const toast=document.createElement('div');toast.className='medal-toast';toast.textContent='🏅 阅读完成，已获得 '+result.unlocked+' 枚作品徽章';document.body.append(toast);setTimeout(()=>toast.remove(),5000);}}catch{this.readCompletions.delete(stamp);}
+ },
+ async imageFiles(file){
+  if(!file||file.size>8*1024*1024||!['image/png','image/webp','image/jpeg'].includes(file.type))throw Error('请选择不超过 8 MiB 的 PNG、WebP 或 JPEG 图片');
+  await window.MedalImageTools.inspect(file);
+  const bitmap=await createImageBitmap(file);try{
+   const {width,height}=bitmap;if(Math.min(width,height)<512||Math.max(width,height)>4096||width/height<.6||width/height>1.67)throw Error('源图需至少 512×512、最大 4096 像素且接近方形');
+   const render=async max=>{const canvas=document.createElement('canvas'),scale=Math.min(1,max/Math.max(width,height));canvas.width=Math.round(width*scale);canvas.height=Math.round(height*scale);canvas.getContext('2d').drawImage(bitmap,0,0,canvas.width,canvas.height);return new Promise((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(blob):reject(Error('图片转换失败')),'image/png'));};
+   return {full:await render(1024),thumbnail:await render(256)};
+  }finally{bitmap.close();}
+ },
+ async uploadImage(file,status){
+  status.textContent='正在转换和校验图片…';const images=await this.imageFiles(file),headers=await this.sessionHeaders(),uid=window.SFCloud.user.id,body=new FormData();body.append('full',images.full,'full.png');body.append('thumbnail',images.thumbnail,'thumbnail.png');
+  status.textContent='正在安全保存徽章…';const response=await fetch(window.STORYFOX_SUPABASE.url+'/functions/v1/medals-assets',{method:'POST',headers,body,signal:AbortSignal.timeout(130000)}),data=await response.json();
+  if(uid!==window.SFCloud?.user?.id)throw Error('账号已切换');if(!response.ok||!data.id)throw Error(data.error||'图片上传失败');status.textContent='图片已就绪';return data.id;
+ },
+ async templateEditor(row={}){
+  const e=v=>this.e(v),dialog=this.dialog(`<form class="medal-editor"><h2>${row.id?'修改设计':'创建原创设计'}</h2><label>设计类别<select name="medal_type"><option value="work">作品徽章</option><option value="honor">荣誉纪念章</option></select></label><p>绑定作品的作品徽章可在孩子阅读完成后自动获取；未绑定作品的徽章和荣誉纪念章由家长授予。</p><p>保存为私有草稿；确认授权后可自行上架，无需审核。修改已公开设计会重新转为私有草稿。</p><label>名称<input name="title" required maxlength="100" value="${e(row.title)}"></label><label>设计说明<textarea name="description" maxlength="1500">${e(row.description)}</textarea></label><label>主题<input name="theme" maxlength="80" value="${e(row.theme)}"></label><label>图片（PNG / WebP / JPEG，至少 512×512）<input type="file" name="image" accept="image/png,image/webp,image/jpeg" ${row.asset_id?'':'required'}></label>${row.asset_id?this.image(row.asset_id,row.title):''}${this.resourcePicker()}<label>素材来源 / 授权说明<textarea name="rights_note" minlength="5" maxlength="2000" required>${e(row.rights_note)}</textarea></label>${this.state.admin&&!row.id?'<label class="medal-check"><input name="platform" type="checkbox" checked>作为平台提供的原创模板</label>':''}<label class="medal-check"><input type="checkbox" name="rights" required>我拥有原创作品或已获得必要授权，允许平台展示及其他家长收藏、授予；图片不包含孩子的姓名、学校等私人信息。</label><p role="status"></p><button class="btn" type="submit">保存私有设计</button></form>`);
+  const pendingForm=dialog.querySelector('form');pendingForm.elements.medal_type.value=row.medal_type||'honor';const syncType=()=>{dialog.querySelector('[data-picker=resource]').hidden=pendingForm.elements.medal_type.value!=='work';};pendingForm.elements.medal_type.onchange=syncType;syncType();const pendingSubmit=pendingForm.querySelector('[type=submit]');pendingForm.onsubmit=event=>event.preventDefault();pendingSubmit.disabled=true;await this.bindPicker(dialog,'resource',row.resource_key||'');if(!dialog.isConnected)return;pendingSubmit.disabled=false;let asset=row.asset_id,lastFile;
+  dialog.querySelector('form').onsubmit=async event=>{event.preventDefault();const form=event.currentTarget,button=form.querySelector('[type=submit]'),status=form.querySelector('[role=status]');button.disabled=true;try{const file=form.elements.image.files[0];if(file&&file!==lastFile){asset=await this.uploadImage(file,status);lastFile=file;}const resourceKey=form.elements.medal_type.value==='work'?form.elements.resource.value:'';await this.prepareResource(resourceKey);await this.rpc('template_save',{id:row.id||'',asset_id:asset,title:form.elements.title.value.trim(),description:form.elements.description.value.trim(),theme:form.elements.theme.value.trim(),medal_type:form.elements.medal_type.value,resource_key:resourceKey,rights_note:form.elements.rights_note.value.trim(),rights_confirmed:form.elements.rights.checked,is_system:form.elements.platform?form.elements.platform.checked:row.is_system||false});dialog.close();this.go('mine','设计已保存为私有草稿。');}catch(error){status.textContent=error.message;}finally{button.disabled=false;}};
+ },
+ async renderAward(selected=''){
+  if(this.state.role!=='parent'||!this.state.children.length){this.content().innerHTML='<div class="empty">请在账号管理中设置家长身份，并完成亲子绑定后颁章。</div>';return;}
+  const host=this.content(),run=this.generation,[publicRows,mine,collections]=await Promise.all(['public','mine','collections'].map(mode=>this.rpc('templates',{mode}))),sources={platform:publicRows.filter(row=>row.is_system),mine:mine.filter(row=>!['removed','rejected'].includes(row.review_status)),collections},e=v=>this.e(v);if(run!==this.generation||!host.isConnected)return;
+  const all=[...sources.platform,...sources.mine,...sources.collections],initial=all.find(row=>row.id===selected);let source=initial?sources.platform.includes(initial)?'platform':sources.mine.includes(initial)?'mine':'collections':'platform';
+  this.content().innerHTML=`<form class="medal-editor" id="medalAwardForm"><h2>给孩子颁章</h2><label>已绑定的孩子<select name="child">${this.state.children.map(child=>`<option value="${e(child.id)}"${child.id===this.state.child_id?' selected':''}>${e(child.name)}</option>`).join('')}</select></label><label>授予类别<select name="medal_type"><option value="work">作品徽章</option><option value="honor">荣誉纪念章</option></select></label><label>模板来源<select name="source"><option value="platform">平台提供</option><option value="mine">我设计的</option><option value="collections">我的收藏</option></select></label><label>选择徽章 / 纪念章<select name="template" required></select></label><div id="medalAwardPreview"></div>${this.resourcePicker()}<label>家长寄语<textarea name="message" maxlength="1000" placeholder="坚持阅读真棒！"></textarea></label><label>完成日期（可选，家长填写）<input type="date" name="completion_date"></label><button class="btn" type="submit">预览并确认颁发</button></form>`;
+  const form=this.content().querySelector('form');form.elements.source.value=source;form.elements.medal_type.value=initial?.medal_type||'honor';const preview=()=>{const row=all.find(row=>row.id===form.elements.template.value);this.content().querySelector('#medalAwardPreview').innerHTML=row?this.image(row.asset_id,row.title):'';this.hydrate(this.content());};
+  const fill=()=>{form.elements.template.innerHTML=sources[form.elements.source.value].filter(row=>(row.medal_type||'honor')===form.elements.medal_type.value).map(row=>`<option value="${e(row.id)}">${e(row.title)}</option>`).join('');if(initial&&(initial.medal_type||'honor')===form.elements.medal_type.value&&sources[form.elements.source.value].includes(initial))form.elements.template.value=initial.id;preview();};fill();form.elements.source.onchange=fill;form.elements.medal_type.onchange=fill;form.elements.template.onchange=preview;const ready=this.bindPicker(form,'resource',initial?.resource_key||'');
+  const intent=crypto.randomUUID();form.onsubmit=async event=>{event.preventDefault();await ready;const row=all.find(row=>row.id===form.elements.template.value);if(!row){this.notice('请先选择可用模板',true);return;}const child=this.state.children.find(c=>c.id===form.elements.child.value),resource=form.elements.resource,resourceKey=row.medal_type==='work'&&row.resource_key?row.resource_key:resource.value,resourceLabel=resourceKey===resource.value&&resource.value?resource.selectedOptions[0].textContent:resourceKey||'不关联作品',message=form.elements.message.value.trim();
+   const dialog=this.dialog(`${this.image(row.asset_id,row.title,true)}<h2>确认颁发 · ${e(row.title)}</h2><p>类别：${row.medal_type==='work'?'作品徽章':'荣誉纪念章'}</p><p>孩子：${e(child.name)}</p><p>颁发家长：${e(this.state.name)}</p><p>设计者：${e(row.is_system?'平台原创':row.creator_nickname)}</p><p>${e(resourceLabel)}</p><blockquote>${e(message)}</blockquote>${form.elements.completion_date.value?`<p>完成日期：${e(form.elements.completion_date.value)}</p>`:''}<p role="status"></p><button class="btn" id="medalAwardConfirm">确认颁发</button>`);
+   dialog.querySelector('#medalAwardConfirm').onclick=async event=>{const button=event.currentTarget;button.disabled=true;try{await this.prepareResource(resourceKey);await this.rpc('award',{child_id:child.id,template_id:row.id,resource_key:resourceKey,message,completion_date:form.elements.completion_date.value,idempotency_key:intent});dialog.close();this.go('issued','颁发成功，孩子的荣誉纪念章墙已更新。');}catch(error){dialog.querySelector('[role=status]').textContent=error.message;button.disabled=false;}};
+  };
+ },
+ async renderIssued(){
+  const host=this.content(),run=this.generation,rows=await this.rpc('issued'),e=v=>this.e(v);if(run!==this.generation||!host.isConnected)return;
+  host.innerHTML=`<h2>颁发记录</h2><div class="medal-grid">${rows.map(row=>`<article class="medal-template"><button class="medal-preview" data-issued-detail="${e(row.id)}" aria-label="查看 ${e(row.title)}" title="${e(row.title)}">${this.image(row.asset_id,row.title)}</button><div class="medal-card-actions"><span>${e(row.child_name)} · ${row.status==='active'?'已颁发':'已撤销'}</span><button data-issued-info="${e(row.id)}">查看详情</button>${row.status==='active'?`<button data-revoke="${e(row.id)}">撤销误发</button>`:''}</div></article>`).join('')}</div>${rows.length?'':'<div class="empty">暂无颁发记录。</div>'}`;
+  const detail=id=>{const row=rows.find(r=>r.id===id);this.dialog(`${this.image(row.asset_id,row.title,true)}<h2>${e(row.title)}</h2><p>类别：${row.medal_type==='work'?'作品徽章':'荣誉纪念章'}</p><p>${e(row.child_name)} · ${e(row.giver)} 授予</p><p>设计者：${e(row.creator)}</p><p>${e(new Date(row.awarded_at).toLocaleString())}</p><blockquote>${e(row.message)}</blockquote><p>${row.status==='active'?'已颁发':'已撤销 · '+e(row.revoke_reason)}</p>`);};
+  host.querySelectorAll('[data-issued-detail],[data-issued-info]').forEach(button=>button.onclick=()=>detail(button.dataset.issuedDetail||button.dataset.issuedInfo));
+  host.querySelectorAll('[data-revoke]').forEach(button=>button.onclick=()=>this.act(button,async()=>{const reason=prompt('撤销原因（至少 2 个字）');if(!reason)return;await this.rpc('revoke',{id:button.dataset.revoke,reason});await this.render(this.app,'issued');}));
+ },
+ async renderAdmin(prefill=''){
+  if(!this.state.admin)throw Error('仅管理员可进入');const host=this.content(),run=this.generation,[data]=await Promise.all([this.rpc('admin')]),e=v=>this.e(v);if(run!==this.generation||!host.isConnected)return;
+  const configured=new Set(data.badges.filter(row=>row.active).map(row=>row.resource_key)),catalog=await this.catalog(),pendingCount=catalog.filter(row=>row.active!==false&&row.type!=='episode'&&!configured.has(row.key)).length;if(run!==this.generation||!host.isConnected)return;
+  this.content().innerHTML=`<div class="medal-toolbar"><h2>作品徽章管理</h2><button class="btn" id="medalNewBadge">＋ 配置作品徽章</button><button class="btn secondary" type="button" id="medalBatchImport">＋ 批量补图</button></div><p>待配置作品：${pendingCount} · 不自动生成作品徽章</p><p>主线勋章：Little Fox ${data.badges.filter(row=>row.unlock_rule==='series_quiz').length} 枚 · 电影 ${data.badges.filter(row=>row.unlock_rule==='movie_quiz').length} 枚。图片可逐个补充，不影响任务和已获得记录。</p><div class="medal-search"><select id="mainlineKind"><option value="">全部作品</option><option value="series_quiz">Little Fox 主线</option><option value="movie_quiz">电影主线</option><option value="other">其他作品</option></select><input id="mainlineSearch" placeholder="搜索系列或电影名称"><label><input type="checkbox" id="mainlineMissing">只看待配图</label></div><div class="medal-grid">${data.badges.map(row=>`<article class="medal-template" data-admin-kind="${e(['series_quiz','movie_quiz'].includes(row.unlock_rule)?row.unlock_rule:'other')}" data-search-title="${e(row.title)}" data-missing="${!row.asset_id}">${this.image(row.asset_id,row.title,false,['series_quiz','movie_quiz'].includes(row.unlock_rule))}<strong>${e(row.title)}</strong><p>${e(row.resource_title)}</p><small>${row.active?'启用':'停用'} · ${e(this.ruleLabel(row.unlock_rule))}</small><button data-badge-edit="${e(row.id)}">编辑配置</button></article>`).join('')}</div><details class="medal-version-tools"><summary>关联同一作品的其他文件版本</summary><div id="medalAlias">${this.resourcePicker('alias',true)}${this.resourcePicker('canonical',true)}<button class="btn secondary" id="medalLinkVersion">关联到主作品</button></div></details><h2>设计下架管理</h2><form class="medal-search" id="medalRemoveForm"><input name="id" required placeholder="需下架的模板 ID"><input name="reason" required minlength="2" placeholder="下架理由"><button>下架模板</button></form><p><a class="btn secondary" href="#/honors/issued">颁发记录管理</a></p><details><summary>最近操作记录</summary>${data.audit.map(row=>`<p>${e(new Date(row.created_at).toLocaleString())} · ${e(row.action)} · ${e(row.entity_id)} ${e(JSON.stringify(row.detail))}</p>`).join('')}</details>`;
+  const filterBadges=()=>{const kind=host.querySelector('#mainlineKind').value,query=host.querySelector('#mainlineSearch').value.toLowerCase(),missing=host.querySelector('#mainlineMissing').checked;host.querySelectorAll('[data-admin-kind]').forEach(card=>card.hidden=!!((kind&&card.dataset.adminKind!==kind)||(query&&!card.dataset.searchTitle.toLowerCase().includes(query))||(missing&&card.dataset.missing!=='true')));};for(const id of ['mainlineKind','mainlineSearch','mainlineMissing'])host.querySelector('#'+id).oninput=filterBadges;
+  this.content().querySelector('#medalNewBadge').onclick=()=>this.badgeEditor({},prefill);this.content().querySelector('#medalBatchImport').onclick=()=>this.batchImportMovieImages(data.badges);this.content().querySelectorAll('[data-badge-edit]').forEach(button=>button.onclick=()=>this.badgeEditor(data.badges.find(row=>row.id===button.dataset.badgeEdit)));
+  this.content().querySelector('#medalRemoveForm').onsubmit=event=>{event.preventDefault();const form=event.currentTarget;this.act(form.querySelector('button'),async()=>{await this.rpc('review',{id:form.elements.id.value.trim(),decision:'removed',note:form.elements.reason.value.trim()});await this.render(this.app,'admin');});};
+  const alias=this.content().querySelector('#medalAlias');await Promise.all([this.bindPicker(alias,'alias'),this.bindPicker(alias,'canonical')]);alias.querySelector('#medalLinkVersion').onclick=event=>this.act(event.currentTarget,async()=>{await this.prepareResource(alias.querySelector('[name=alias]').value);await this.prepareResource(alias.querySelector('[name=canonical]').value);await this.rpc('resource_link',{resource_key:alias.querySelector('[name=alias]').value,canonical_key:alias.querySelector('[name=canonical]').value});this.notice('文件版本已关联到同一主作品。');});if(prefill)this.badgeEditor({},prefill);
+ },
+ async batchImportMovieImages(badges){
+  if(!this.state?.admin)throw Error('仅管理员可以批量补充图片');
+  const movieBadges=badges.filter(row=>row.unlock_rule==='movie_quiz');
+  const dlg=this.dialog(`<form class="medal-editor" id="movieMedalBatchForm">
+    <h2>批量补充电影专属勋章图片</h2>
+    <p>仅补充尚未配图的电影勋章，保留已有图片、勋章 ID、题库与达标规则。图片仍通过现有加密接口保存在 Pone。</p>
+    <p>请选择已解压的 PNG 图片（文件名格式：<code>movie-id.png</code>）。</p>
+    <label>选择电影勋章 PNG 文件<input type="file" name="images" accept="image/png" multiple required></label>
+    <div id="movieMedalBatchReview" role="status">尚未选择文件</div>
+    <label class="medal-check"><input type="checkbox" name="rights" required>确认这些原创勋章已获授权，可以用于网站展示</label>
+    <p id="movieMedalBatchProgress" role="status" aria-live="polite"></p>
+    <button class="btn" type="submit">开始批量上传并绑定</button>
+  </form>`);
+  const form=dlg.querySelector('form'),review=dlg.querySelector('#movieMedalBatchReview'),progress=dlg.querySelector('#movieMedalBatchProgress');
+  const lookup=new Map(movieBadges.map(row=>[row.resource_key.replace(/^movie:/,''),row]));
+  const validate=()=>{
+    const files=[...form.elements.images.files],seen=new Set(),ready=[],skipped=[],invalid=[];
+    for(const file of files){
+      const id=file.name.match(/^([a-z0-9-]+)\.png$/i)?.[1]?.toLowerCase();
+      if(!id||!lookup.has(id)){invalid.push(file.name);continue;}
+      if(seen.has(id)){invalid.push('重复文件：'+file.name);continue;}
+      seen.add(id);
+      const row=lookup.get(id);
+      if(row.asset_id){skipped.push(row.title);continue;}
+      ready.push({file,row});
+    }
+    review.innerHTML=`<p>选择 ${files.length} 张，准备补图 ${ready.length} 张，已有图片跳过 ${skipped.length} 张，未识别 ${invalid.length} 张。</p>`
+      + (ready.length?`<details><summary>查看待导入对应关系</summary><ol>${ready.map(item=>`<li>${this.e(item.file.name)} → ${this.e(item.row.resource_title||item.row.title)}</li>`).join('')}</ol></details>`:'')
+      + (invalid.length?`<p>未识别：${this.e(invalid.join('、'))}</p>`:'');
+    return {ready,invalid};
+  };
+  form.elements.images.onchange=validate;
+  form.onsubmit=async event=>{
+    event.preventDefault();
+    if(!form.elements.rights.checked)return;
+    const {ready,invalid}=validate();
+    if(invalid.length){progress.textContent='存在未识别或重复的文件，请确认文件名后重新选择。';return;}
+    if(!ready.length){progress.textContent='没有需要补图的电影。';return;}
+    const button=form.querySelector('[type=submit]');button.disabled=true;
+    let saved=0,skipped=0;
+    try{
+      const fresh=await this.rpc('admin');
+      const byKey=new Map(fresh.badges.filter(row=>row.unlock_rule==='movie_quiz').map(row=>[row.resource_key,row]));
+      for(let i=0;i<ready.length;i++){
+        const {file,row:original}=ready[i],row=byKey.get(original.resource_key);
+        if(!row||row.id!==original.id)throw Error('电影勋章记录已变化，请刷新重试：'+original.resource_key);
+        if(row.asset_id){skipped++;progress.textContent=`${i+1}/${ready.length} 已跳过有图片的电影：${row.title}`;continue;}
+        progress.textContent=`${i+1}/${ready.length} 正在上传：${row.resource_title||row.title}`;
+        await this.prepareResource(row.resource_key,row.unlock_rule);
+        const assetId=await this.uploadImage(file,progress);
+        await this.rpc('badge_save',{
+          id:row.id,title:row.title,description:row.description||'',
+          asset_id:assetId,resource_key:row.resource_key,
+          source_type:row.source_type||'story_inspired',
+          rights_note:row.rights_note||'作者原创电影主题勋章，已授权平台展示。',
+          unlock_rule:'movie_quiz',quiz_min:Number(row.quiz_min||80),active:row.active!==false
+        });
+        saved++;progress.textContent=`已成功绑定 ${saved} 张 / ${ready.length} 张：${row.resource_title||row.title}`;
+      }
+      dlg.close();
+      this.go('admin',`批量补图完成：新增 ${saved} 张，跳过已有图片 ${skipped} 张。`);
+    }catch(error){
+      progress.textContent=`已绑定 ${saved} 张，后续中断：${error.message}。可重新进入批量补图并选择同一批文件，已绑定的会自动跳过。`;
+    }finally{if(button.isConnected)button.disabled=false;}
+  };
+},
+ async badgeEditor(row={},prefill=''){
+  const mainline=['series_quiz','movie_quiz'].includes(row.unlock_rule),e=v=>this.e(v),dialog=this.dialog(`<form class="medal-editor"><h2>作品主题徽章配置</h2><label>名称<input name="title" required maxlength="100" value="${e(row.title)}"></label><label>说明<textarea name="description" maxlength="1500">${e(row.description)}</textarea></label><label>图片<input name="image" type="file" accept="image/png,image/webp,image/jpeg" ${row.asset_id||mainline?'':'required'}></label>${mainline?`<p>主线任务 · 题库已准备 ${e(row.quiz_ready_count)} / ${e(row.required_count)} ${row.unlock_rule==='series_quiz'?'集':'题'}。可先保存任务，稍后补图。</p>`:''}${this.resourcePicker('resource',true)}<label>素材来源<select name="source_type"><option value="original">平台原创</option><option value="story_inspired">原创作品主题设计</option><option value="licensed_official">已获许可的官方素材</option></select></label><label>素材来源与授权依据<textarea name="rights_note" required minlength="5" maxlength="2000">${e(row.rights_note)}</textarea></label><label>解锁规则<select name="unlock_rule"><option value="self_report">完成作品后用户自报</option><option value="quiz">服务端核对测验</option><option value="series_all">全部已发布分集完成</option><option value="series_quiz">Little Fox 全系列每集答题达标</option><option value="movie_quiz">电影专属答题达标</option></select></label><label>测验最低百分比<input name="quiz_min" type="number" min="1" max="100" value="${e(row.quiz_min||80)}"></label><label class="medal-check"><input name="active" type="checkbox" ${row.active===false?'':'checked'}>启用此徽章</label><p role="status"></p><button class="btn" type="submit">保存徽章配置</button></form>`);
+  const form=dialog.querySelector('form');form.elements.source_type.value=row.source_type||'original';form.elements.unlock_rule.value=row.unlock_rule||'self_report';const pendingSubmit=form.querySelector('[type=submit]');form.onsubmit=event=>event.preventDefault();pendingSubmit.disabled=true;await this.bindPicker(dialog,'resource',row.resource_key||prefill);if(!dialog.isConnected)return;pendingSubmit.disabled=false;if(mainline){form.elements.unlock_rule.disabled=true;dialog.querySelectorAll('[data-picker=resource] input,[data-picker=resource] select,[data-picker=resource] button').forEach(node=>node.disabled=true);}else for(const option of form.elements.unlock_rule.options)if(['series_quiz','movie_quiz'].includes(option.value))option.disabled=true;let asset=row.asset_id,lastFile;
+  form.onsubmit=async event=>{event.preventDefault();const button=form.querySelector('[type=submit]'),status=form.querySelector('[role=status]');button.disabled=true;try{const file=form.elements.image.files[0];if(file&&file!==lastFile){asset=await this.uploadImage(file,status);lastFile=file;}await this.prepareResource(form.elements.resource.value,form.elements.unlock_rule.value);await this.rpc('badge_save',{id:row.id||'',title:form.elements.title.value.trim(),description:form.elements.description.value.trim(),asset_id:asset,resource_key:form.elements.resource.value,source_type:form.elements.source_type.value,rights_note:form.elements.rights_note.value.trim(),unlock_rule:form.elements.unlock_rule.value,quiz_min:Number(form.elements.quiz_min.value),active:form.elements.active.checked});dialog.close();this.go('admin','作品徽章配置已保存。');}catch(error){status.textContent=error.message;}finally{button.disabled=false;}};
+ },
+ async attach(app,resourceKey,host){
+  this.app=app;const uid=window.SFCloud?.user?.id,run=this.generation;if(!uid||!host?.isConnected)return;
+  if(host.id!=='medalReaderEntry')return;
+  try{const badges=await this.rpc('available',{resource_key:resourceKey});if(uid!==window.SFCloud?.user?.id||run!==this.generation||!host.isConnected)return;
+   const choices=host.id==='medalReaderEntry'?badges:badges.filter(row=>row.rule==='movie_quiz');if(!choices.length)return;
+   const panel=document.createElement('div');panel.className=host.id==='medalReaderEntry'?'medal-reader-choices':'medal-quiz-entry';panel.innerHTML=choices.map(row=>`<button type="button" class="btn secondary" data-medal-claim="${this.e(row.id)}">${row.rule==='movie_quiz'?'本片答题':this.e(row.title)+' · 查看 / 领取'}</button>`).join('');host.append(panel);
+   panel.querySelectorAll('[data-medal-claim]').forEach(button=>button.onclick=()=>{const badge=badges.find(row=>row.id===button.dataset.medalClaim);if(badge.mainline)return this.mainlineDetail(resourceKey,badge);const dialog=this.dialog(`${this.image(badge.asset_id,badge.title,true)}<h2>${this.e(badge.title)}</h2><p>${this.e(this.ruleLabel(badge.rule))}</p>${badge.rule==='self_report'?'<label class="medal-check"><input type="checkbox" id="medalSelfReport">我确认已完成该作品；此记录为用户自报，不代表系统核验。</label>':badge.rule==='series_all'?'<p>需要完成该系列的全部已发布分集。点击“我已完成”可记录当前分集。</p>':'<p>仅服务端已核对的测验通过记录可用于领取。</p>'}<p role="status"></p><button class="btn" id="medalClaimConfirm">${badge.rule==='quiz'?'核对测验并领取':'我已完成，记录并领取'}</button>`);
+    dialog.querySelector('#medalClaimConfirm').onclick=async event=>{const submit=event.currentTarget,status=dialog.querySelector('[role=status]');if(badge.rule==='self_report'&&!dialog.querySelector('#medalSelfReport').checked){status.textContent='请确认完成声明';return;}submit.disabled=true;try{await window.SFFamily?.flush();const result=await this.rpc('complete',{resource_key:resourceKey,self_report:badge.rule!=='quiz'});status.textContent=result.message;if(result.unlocked)submit.hidden=true;}catch(error){status.textContent=error.message;}finally{submit.disabled=false;}};
+   });
+  }catch{/* Missing badge services must never block reading or playback. */}
+ },
+ async readerButton(app,key,topbar){
+  this.app=app;const uid=window.SFCloud?.user?.id,run=this.generation;if(!uid||!topbar)return;
+  try{const rows=await this.rpc('available',{resource_key:key});if(run!==this.generation||uid!==window.SFCloud?.user?.id||!topbar.isConnected||!rows.length&&!window.SFCloud.isAdmin())return;
+   const button=document.createElement('button');button.type='button';button.className='medal-reader-trigger';button.textContent='🏅';button.title='作品主题徽章';button.setAttribute('aria-label','作品主题徽章');topbar.append(button);
+   button.onclick=async()=>{const dialog=this.dialog('<h2>作品主题徽章</h2><div id="medalReaderEntry"></div>'),host=dialog.querySelector('#medalReaderEntry');await this.attach(app,key,host);if(!host.children.length)host.textContent='该作品尚未配置主题徽章。';};
+  }catch{/* Reading works without medal configuration. */}
+ },
+ async lessonCompleted(seriesId,episodeId,module){if(!['watch','read','quiz','directVideo','localVideo','hlsVideo'].includes(module)||!window.SFCloud?.user)return;try{const key='episode:'+seriesId+':'+episodeId;if(!(await this.rpc('available',{resource_key:key})).length)return;await window.SFFamily?.flush();const result=await this.rpc('complete',{resource_key:key,self_report:module!=='quiz'});if(result.unlocked){const node=document.createElement('div');node.className='medal-toast';node.textContent='🏅 '+result.message;document.body.append(node);setTimeout(()=>node.remove(),5000);}}catch{/* Honor collection does not change lesson completion. */}}
+};

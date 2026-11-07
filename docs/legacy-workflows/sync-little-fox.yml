@@ -1,0 +1,37 @@
+name: Sync Little Fox catalogue and public Read
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 7 * * 1-5'
+permissions:
+  contents: write
+jobs:
+  sync:
+    concurrency:
+      group: little-fox-sync
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Synchronize video catalogue and Read, without creating old subtitle tracks
+        env:
+          XET_ACCOUNT: ${{ secrets.XET_ACCOUNT }}
+          XET_PASSWORD: ${{ secrets.XET_PASSWORD }}
+        run: node scripts/sync-little-fox.js --apply
+      - name: Validate course bindings
+        run: |
+          node scripts/check-course-bindings.cjs
+          node --check js/app.js
+          git diff --check
+      - name: Commit catalogue changes only
+        run: |
+          git add data
+          if git diff --cached --quiet; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Sync Little Fox catalogue and Read metadata"
+          git pull --rebase origin main
+          git push origin HEAD:main

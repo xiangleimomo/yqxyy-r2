@@ -1,0 +1,11 @@
+{
+  "name": "yqxyy-r2",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build-static.cjs",
+    "test": "node --test tests/r2.test.mjs",
+    "dev": "netlify dev"
+  },
+  "dependencies": { "aws4fetch": "1.0.20" }
+}
