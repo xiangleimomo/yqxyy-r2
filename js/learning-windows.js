@@ -23,6 +23,8 @@ window.LearningWindows = {
       window.dispatchEvent(new Event('resize'));
     };
     maximize.onclick = toggle;
+    // Books open with the whole viewport available for reading.
+    if (win.classList.contains('floating-storyBook')) toggle();
     let drag = null;
     const move = event => {
       if (!drag) return;
