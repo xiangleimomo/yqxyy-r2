@@ -136,7 +136,7 @@ window.SFCloud = {
     const normalized=String(username||'').normalize('NFKC').trim().toLocaleLowerCase();
     const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(normalized));
     const bytes=String.fromCharCode(...new Uint8Array(digest));
-    const token=btoa(bytes).replace(/\\+/g,'-').replace(/\\//g,'_').replace(/=+$/,'');
+    const token=btoa(bytes).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
     return 'u'+token+'@accounts.yqxyy.invalid';
   },
   async saveNickname(){
@@ -342,7 +342,7 @@ window.SFCloud = {
         result=await this.client.auth.updateUser({password});
       }else if(this.authMode==='signup'){
         const username=loginValue.normalize('NFKC').trim();
-        if(!/^[\\p{L}\\p{N}_-]{2,24}$/u.test(username))throw new Error('账号昵称需为 2–24 位汉字、字母或数字，可使用下划线和短横线。');
+        if(!/^[\p{L}\p{N}_-]{2,24}$/u.test(username))throw new Error('账号昵称需为 2–24 位汉字、字母或数字，可使用下划线和短横线。');
         if(password.length<8)throw new Error('密码至少需要 8 位。');
         const confirm=document.getElementById('accountPasswordConfirm').value;
         if(password!==confirm)throw new Error('两次输入的密码不一致。');
