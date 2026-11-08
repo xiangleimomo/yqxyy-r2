@@ -1,6 +1,6 @@
 let cached=null,expires=0;
 export async function handleMedalCatalog(req,{env,fetcher=fetch}={}){
- const origin=req.headers.get('origin')||'',allowed=origin==='https://yqxyy.netlify.app'||/^http:\/\/(localhost|127\.0\.0\.1):\d+$/.test(origin),headers={'Cache-Control':'no-store',Vary:'Origin',...(allowed?{'Access-Control-Allow-Origin':origin,'Access-Control-Allow-Headers':'authorization,apikey,content-type','Access-Control-Allow-Methods':'POST,OPTIONS'}:{})},json=(data,status=200)=>Response.json(data,{status,headers});
+ const origin=req.headers.get('origin')||'',allowed=(origin==='https://yqxyy.netlify.app'||origin==='https://yqxyy-r2.netlify.app')||/^http:\/\/(localhost|127\.0\.0\.1):\d+$/.test(origin),headers={'Cache-Control':'no-store',Vary:'Origin',...(allowed?{'Access-Control-Allow-Origin':origin,'Access-Control-Allow-Headers':'authorization,apikey,content-type','Access-Control-Allow-Methods':'POST,OPTIONS'}:{})},json=(data,status=200)=>Response.json(data,{status,headers});
  if(origin&&!allowed)return json({error:'请求来源无效'},403);if(req.method==='OPTIONS')return new Response(null,{status:204,headers});if(req.method!=='POST')return json({error:'请求方式无效'},405);
  const authorization=req.headers.get('authorization')||'';if(!/^Bearer \S+$/.test(authorization))return json({error:'请先登录'},401);
  const project=env('SUPABASE_URL'),apikey=env('SUPABASE_ANON_KEY'),secret=env('SUPABASE_SERVICE_ROLE_KEY');
