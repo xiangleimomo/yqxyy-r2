@@ -1,6 +1,6 @@
 export async function handlePoneUpload(req, { env, fetcher = fetch } = {}) {
   const origin = req.headers.get('origin') || '';
-  const allowed = origin === 'https://yqxyy.netlify.app' || /^http:\/\/(localhost|127\.0\.0\.1):\d+$/.test(origin);
+  const allowed = (origin === 'https://yqxyy.netlify.app' || origin === 'https://yqxyy-r2.netlify.app') || /^http:\/\/(localhost|127\.0\.0\.1):\d+$/.test(origin);
   const headers = { 'Content-Type':'application/json', 'Cache-Control':'no-store', Vary:'Origin', ...(allowed ? {'Access-Control-Allow-Origin':origin,'Access-Control-Allow-Headers':'authorization, apikey, content-type, x-client-info','Access-Control-Allow-Methods':'POST, OPTIONS'} : {}) };
   const json = (value,status=200)=>Response.json(value,{status,headers});
   if(origin && !allowed)return json({error:'请求来源无效。'},403);
