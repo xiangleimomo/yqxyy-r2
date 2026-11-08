@@ -1,0 +1,7 @@
+plugins { id 'com.android.application' }
+android {
+    namespace 'app.yqxyy.learning'
+    compileSdk 35
+    defaultConfig { applicationId 'app.yqxyy.learning'; minSdk 24; targetSdk 35; versionCode 1; versionName '0.1-test' }
+    buildTypes { release { minifyEnabled false } }
+}
