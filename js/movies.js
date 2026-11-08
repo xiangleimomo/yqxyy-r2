@@ -261,7 +261,7 @@ window.MovieClassroom = {
     }
     this.player = player;
     window.MediaShelf.bindPlayer(player,'film-'+id,{href:'#/movie/'+id},{resume:!usingBackup});
-    this.disposeSubtitles = window.MovieSubtitles?.mount(app.el(), player, movie, () => this.hls, app);
+    this.disposeSubtitles = window.MovieSubtitles?.mount(app.el(), player, movie, () => this.hls, app, sourceUrl);
     this.attachMovieControls(app,player,movie,group);
     this.attachSourceMenu(player.closest('.movie-watch-frame'),lines,false);
     const mediaUrl = movie.playerMode==='dulo-direct'?sourceUrl:this.mediaUrl(sourceUrl);
