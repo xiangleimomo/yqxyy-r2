@@ -343,7 +343,15 @@ window.SFCloud = {
       else if(this.authMode==='reset')this.setMessage('如账号存在，密码重置邮件已发送。');
       else if(this.authMode==='newPassword'){this.setMessage('密码已更新。');this.mode('account');}
       else {this.setMessage('登录成功，正在同步学习记录…');if(result.data?.user)await this.onSession(result.data.user);this.mode('account');}
-    }catch(e){this.setMessage('操作失败：'+e.message,true);}finally{submit.disabled=false;}
+    }catch(e){
+      const authCode=String(e?.code||'');
+      const authMessage=String(e?.message||'');
+      if(authCode==='over_email_send_rate_limit'||/email rate limit exceeded/i.test(authMessage)){
+        this.setMessage('邮件发送额度已用完：当前网站使用的 Supabase 默认邮件服务每小时仅允许发送 2 封邮件。现在暂时无法发送注册验证邮件或密码重置邮件。请稍后再试；网站管理员需要配置正式 SMTP 邮件服务，才能恢复正常注册。',true);
+      }else{
+        this.setMessage('操作失败：'+(authMessage||'请稍后重试。'),true);
+      }
+    }finally{submit.disabled=false;}
   },
   async signOut(){
     if(!this.client)return;

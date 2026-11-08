@@ -1,6 +1,6 @@
 /* Movie subtitles reuse the source explorer's public lookup and VTT conversion. */
 window.MovieSubtitles = {
-  mount(root, video, movie, getHls, app = typeof App !== 'undefined' ? App : null) {
+  mount(root, video, movie, getHls, app = typeof App !== 'undefined' ? App : null, sourceManifestUrl = '') {
     const panel = document.createElement('section');
     panel.className = 'movie-subtitles';
     panel.innerHTML = `<h2>英文字幕 · English subtitles</h2><form><label>片名 / Title <input name="query" maxlength="100" required></label><label>年份 / Year <input name="year" type="number" min="1900" max="2100"></label><button class="btn" type="submit">查找英文字幕</button></form><div class="movie-subtitle-controls"><label>字幕 / Track <select name="track"><option value="off">关闭字幕 / Off</option></select></label><label>导入 SRT / VTT <input name="file" type="file" accept=".srt,.vtt"></label><label>延迟 / Delay（秒）<input name="offset" type="number" step="0.1" value="0"></label></div><p role="status" aria-live="polite">按片名和年份查找，选择与当前片源匹配的字幕版本。正数使字幕延后。</p><div class="movie-subtitle-results"></div>`;
@@ -16,6 +16,37 @@ window.MovieSubtitles = {
     let disposed = false, request = 0, download = 0, hlsBound, userSelectedTrack=false;
     const nativeIds=new WeakMap(),nativeTracks=new Map(),cueTracks=new Map(),cueListeners=new Map(),hlsListeners=[];
     let nextNativeId=0;
+    const standaloneTracks=[];
+    const parseAttr=line=>Object.fromEntries([...line.matchAll(/([A-Z0-9-]+)=("[^"]*"|[^,]*)/g)].map(m=>[m[1],m[2].replace(/^"|"$/g,'')]));
+    const clock=value=>{const parts=value.replace(',','.').split(':').map(Number);return parts.reduce((n,p)=>n*60+p,0);};
+    const parseVtt=text=>{const blocks=text.replace(/\r/g,'').split(/\n\s*\n/),cues=[];for(const block of blocks){const lines=block.trim().split('\n'),i=lines.findIndex(l=>l.includes('-->'));if(i<0)continue;const m=lines[i].match(/(\d{1,2}:)?\d{2}:\d{2}[.,]\d{3}\s*-->\s*((?:\d{1,2}:)?\d{2}:\d{2}[.,]\d{3})/);if(!m)continue;const start=clock(m[0].split('-->')[0].trim()),end=clock(m[2]);if(Number.isFinite(start)&&Number.isFinite(end))cues.push({startTime:start,endTime:end,text:lines.slice(i+1).join('\n')});}return cues;};
+    async function loadStandalone(){
+      if(!sourceManifestUrl||disposed)return;
+      try{
+        const fetchText=async url=>{const res=await fetch(url,{signal:abort.signal});if(!res.ok)throw Error('HTTP '+res.status);return res.text();};
+        const manifest=await fetchText(sourceManifestUrl);
+        if(!manifest.includes('#EXTM3U'))return;
+        const lines=manifest.split(/\r?\n/), entries=lines.filter(l=>l.startsWith('#EXT-X-MEDIA:')&&/TYPE=SUBTITLES(?:,|$)/.test(l));
+        for(const line of entries){
+          const attrs=parseAttr(line.slice(line.indexOf(':')+1));if(!attrs.URI)continue;
+          const url=new URL(attrs.URI,sourceManifestUrl).href,playlist=await fetchText(url);
+          let cues=[];
+          if(/^\s*WEBVTT/.test(playlist))cues=parseVtt(playlist);
+          else if(playlist.includes('#EXTM3U')){
+            const segments=playlist.split(/\r?\n/).filter(l=>l.trim()&&!l.startsWith('#')).slice(0,600);
+            let elapsed=0;const durations=[...playlist.matchAll(/#EXTINF:([\d.]+)/g)].map(m=>Number(m[1]));
+            for(let i=0;i<segments.length;i++){
+              const body=await fetchText(new URL(segments[i],url).href);
+              for(const cue of parseVtt(body)){cues.push({startTime:cue.startTime,endTime:cue.endTime,text:cue.text});}
+              elapsed+=durations[i]||0;
+            }
+          }
+          if(disposed)return;
+          standaloneTracks.push({label:attrs.NAME||attrs.LANGUAGE||'English',cues});
+        }
+        if(standaloneTracks.length)refresh();
+      }catch(error){if(error.name!=='AbortError')console.warn('Standalone HLS subtitle discovery failed:',error);}
+    }
     const normalizeLanguage=value=>({eng:'en',zho:'zh',chi:'zh',spa:'es',fra:'fr',fre:'fr'}[String(value||'').toLowerCase()]||String(value||'').toLowerCase().split('-')[0]);
     const nativeKey=track=>{if(!nativeIds.has(track)){const key=`text:${nextNativeId++}`;nativeIds.set(track,key);nativeTracks.set(key,track);}return nativeIds.get(track);};
     const frame = root.querySelector('.movie-watch-frame');
@@ -48,6 +79,7 @@ window.MovieSubtitles = {
       const prefs=app.subtitlePreferences(),selected=field('track').value;
       let cues=[];
       if(selected.startsWith('text:'))cues=Array.from(nativeTracks.get(selected)?.cues||[]);
+      else if(selected.startsWith('manifest:'))cues=standaloneTracks[Number(selected.slice(9))]?.cues||[];
       else if(selected.startsWith('hls:')){
         const index=Number(selected.slice(4)),hlsTrack=getHls()?.subtitleTracks?.[index];
         cues=cueTracks.get(index)||[];
@@ -173,6 +205,7 @@ window.MovieSubtitles = {
         if ((t.kind === 'subtitles' || t.kind === 'captions')&&!managedByHls) select.add(new Option(t.label || t.language || `字幕 ${i + 1}`, key));
       });
       (getHls()?.subtitleTracks || []).forEach((t, i) => select.add(new Option(t.name || t.lang || `内嵌字幕 ${i + 1}`, `hls:${i}`)));
+      if(!getHls()?.subtitleTracks?.length)standaloneTracks.forEach((t,i)=>select.add(new Option(t.label,`manifest:${i}`)));
       if (Array.from(select.options).some(o => o.value === old)) select.value = old;
       else {
         const showing = Array.from(video.textTracks).findIndex(t => t.mode === 'showing');
@@ -294,6 +327,7 @@ window.MovieSubtitles = {
       refresh();
     }
     const timer=setInterval(bindHls,250);bindHls();
+    if(sourceManifestUrl&&/\.m3u8(?:[?#]|$)/i.test(sourceManifestUrl))loadStandalone();
     refresh();
     return () => {
       disposed = true; ++request; ++download; abort.abort(); clearInterval(timer);
