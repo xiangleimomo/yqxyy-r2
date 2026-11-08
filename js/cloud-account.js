@@ -132,13 +132,6 @@ window.SFCloud = {
     if(state){state.textContent=this.isAdmin()?'管理员账号 · 课程和游戏已开放':this.user?'已登录 · 学习记录可云端同步':'游客模式 · 记录仅在本设备';}
   },
   nickname(){return String(this.user?.user_metadata?.display_name||'').trim();},
-  async usernameEmail(username){
-    const normalized=String(username||'').normalize('NFKC').trim().toLocaleLowerCase();
-    const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(normalized));
-    const bytes=String.fromCharCode(...new Uint8Array(digest));
-    const token=btoa(bytes).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
-    return 'u'+token+'@accounts.yqxyy.invalid';
-  },
   async saveNickname(){
     const button=document.querySelector('#accountNicknameForm button'),uid=this.user?.id;
     if(!uid||!this.client)return;
@@ -304,15 +297,8 @@ window.SFCloud = {
   close(){window.SFMembership?.reset();const modal=document.getElementById('accountDialog');if(modal)modal.hidden=true;if(window.SFFamily)window.SFFamily.settingsVersion++;},
   mode(mode){
     this.authMode=mode;document.querySelector('.account-modes').hidden=mode==='account';
-    document.getElementById('authNicknameRow').hidden=true;
-    document.getElementById('accountNickname').required=false;
-    document.getElementById('authConfirmPasswordRow').hidden=mode!=='signup';
-    document.getElementById('accountPasswordConfirm').required=mode==='signup';
-    const loginField=document.getElementById('accountEmail');
-    loginField.type=mode==='reset'?'email':'text';
-    loginField.autocomplete=mode==='reset'?'email':'username';
-    document.getElementById('authLoginLabel').textContent=mode==='signup'?'账号昵称':mode==='reset'?'注册邮箱':'邮箱或账号昵称';
-    loginField.placeholder=mode==='signup'?'2–24 个字母、汉字或数字':mode==='reset'?'you@example.com':'输入邮箱或账号昵称';
+    document.getElementById('authNicknameRow').hidden=mode!=='signup';
+    document.getElementById('accountNickname').required=mode==='signup';
     if(mode==='account')document.getElementById('accountProfileNickname').value=this.nickname();
     if(mode==='account'){window.SFFamily?.renderSettings();window.SFMembership?.render();}
     else {window.SFMembership?.reset();if(window.SFFamily)window.SFFamily.settingsVersion++;document.getElementById('familyAccountSettings')?.replaceChildren();}
@@ -331,7 +317,7 @@ window.SFCloud = {
   },
   async submit(){
     if(!this.client){this.setMessage('Supabase 尚未配置或连接失败，请联系网站管理员。',true);return;}
-    const loginValue=document.getElementById('accountEmail').value.trim();
+    const email=document.getElementById('accountEmail').value.trim();
     const password=document.getElementById('accountPassword').value;
     const submit=document.getElementById('accountSubmit');
     submit.disabled=true;this.setMessage('正在处理…');
@@ -341,23 +327,19 @@ window.SFCloud = {
         if(password.length<8)throw new Error('新密码至少需要 8 位。');
         result=await this.client.auth.updateUser({password});
       }else if(this.authMode==='signup'){
-        const username=loginValue.normalize('NFKC').trim();
-        if(!/^[\p{L}\p{N}_-]{2,24}$/u.test(username))throw new Error('账号昵称需为 2–24 位汉字、字母或数字，可使用下划线和短横线。');
         if(password.length<8)throw new Error('密码至少需要 8 位。');
-        const confirm=document.getElementById('accountPasswordConfirm').value;
-        if(password!==confirm)throw new Error('两次输入的密码不一致。');
-        const internalEmail=await this.usernameEmail(username);
-        result=await this.client.auth.signUp({email:internalEmail,password,options:{data:{display_name:username,login_name:username,login_type:'username'}}});
-        if(result.error?.code==='user_already_exists'||(!result.error&&Array.isArray(result.data?.user?.identities)&&result.data.user.identities.length===0))throw new Error('这个账号昵称已经被使用，请换一个昵称。');
+        const nickname=document.getElementById('accountNickname').value.trim();
+        if(nickname.length<2||nickname.length>40)throw new Error('昵称需要 2–40 个字。');
+        const lookup=await this.client.rpc('sf_email_registered',{candidate:email});
+        if(lookup.error)throw new Error('暂时无法检查邮箱，请稍后重试。');
+        if(lookup.data===true)throw new Error('该邮箱已注册，请更换其他邮箱注册使用。');
+        result=await this.client.auth.signUp({email,password,options:{data:{display_name:nickname},emailRedirectTo:location.origin+location.pathname}});
+        if(result.error?.code==='user_already_exists'||(!result.error&&Array.isArray(result.data?.user?.identities)&&result.data.user.identities.length===0))throw new Error('该邮箱已注册，请更换其他邮箱注册使用。');
       }else if(this.authMode==='reset'){
-        if(!loginValue.includes('@'))throw new Error('无邮箱账号暂不支持自助找回密码，请联系网站管理员重置。');
-        result=await this.client.auth.resetPasswordForEmail(loginValue,{redirectTo:location.origin+location.pathname});
-      }else {
-        const loginEmail=loginValue.includes('@')?loginValue:await this.usernameEmail(loginValue);
-        result=await this.client.auth.signInWithPassword({email:loginEmail,password});
-      }
+        result=await this.client.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});
+      }else result=await this.client.auth.signInWithPassword({email,password});
       if(result.error)throw result.error;
-      if(this.authMode==='signup'&&!result.data.session) this.setMessage('账号已创建，但项目仍要求邮箱验证。请管理员在 Supabase 关闭邮箱确认后，新账号即可注册即登录；当前不会发送邮件。',true);
+      if(this.authMode==='signup'&&!result.data.session) this.setMessage('请打开注册邮箱，点击确认邮件里的链接，再回来登录。');
       else if(this.authMode==='reset')this.setMessage('如账号存在，密码重置邮件已发送。');
       else if(this.authMode==='newPassword'){this.setMessage('密码已更新。');this.mode('account');}
       else {this.setMessage('登录成功，正在同步学习记录…');if(result.data?.user)await this.onSession(result.data.user);this.mode('account');}
@@ -365,7 +347,7 @@ window.SFCloud = {
       const authCode=String(e?.code||'');
       const authMessage=String(e?.message||'');
       if(authCode==='over_email_send_rate_limit'||/email rate limit exceeded/i.test(authMessage)){
-        this.setMessage(this.authMode==='signup'?'账号注册需要关闭 Supabase 邮箱确认。请管理员完成认证设置后再注册。':'邮件发送额度已用完；请稍后重试或联系管理员。',true);
+        this.setMessage('邮件发送额度已用完：当前网站使用的 Supabase 默认邮件服务每小时仅允许发送 2 封邮件。现在暂时无法发送注册验证邮件或密码重置邮件。请稍后再试；网站管理员需要配置正式 SMTP 邮件服务，才能恢复正常注册。',true);
       }else{
         this.setMessage('操作失败：'+(authMessage||'请稍后重试。'),true);
       }
