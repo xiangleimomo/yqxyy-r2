@@ -1,0 +1,40 @@
+const {chromium}=require('playwright'),fs=require('node:fs'),assert=require('node:assert/strict');
+(async()=>{const browser=await chromium.launch({channel:'chrome',headless:true});try{
+ const page=await browser.newPage();await page.route('https://admin.test/**',r=>r.fulfill({contentType:'text/html',body:'<main id="app"></main>'}));await page.goto('https://admin.test/');
+ await page.addScriptTag({content:fs.readFileSync('js/movie-library.js','utf8')});await page.addScriptTag({content:fs.readFileSync('js/movies.js','utf8')});
+ await page.evaluate(()=>{
+  window.savedRows=[];window.writeCount=0;
+  window.SFCloud={user:{id:'00000000-0000-0000-0000-000000000001'},isAdmin:()=>true,client:{from:()=>({select(){const q={order(){return q;},eq(){return q;},then(resolve){return Promise.resolve({data:structuredClone(savedRows),error:null}).then(resolve);}};return q;},upsert(row){writeCount++;savedRows=[structuredClone(row)];return {select:()=>({single:async()=>({data:structuredClone(row),error:null})})};}})}};
+  window.app={el:()=>document.getElementById('app'),escapeHtml:s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))};
+  MovieLibrary.search=async()=>[{title:'Test film',titleZh:'测试影片',tmdbId:9502,mediaType:'movie',year:2008}];MovieLibrary.verifyPlayback=async()=>{};
+  return MovieLibrary.renderAdmin(app);
+ });
+ await page.locator('#movieMetaSearch').fill('Test');await page.locator('#movieMetaSearchButton').click();await page.locator('.movie-meta-result').click();
+ assert.equal(await page.locator('.movie-auto-source').inputValue(),'https://api.obj2.top/hls/movie/9502/master.m3u8');
+ await page.locator('[name=media_type]').selectOption('tv');await page.locator('[name=season_number]').fill('2');await page.locator('[name=episode_number]').fill('3');
+ assert.equal(await page.locator('.movie-auto-source').inputValue(),'https://api.obj2.top/hls/tv/9502/2/3/master.m3u8');await page.locator('[name=media_type]').selectOption('movie');
+ await page.getByRole('button',{name:'添加播放源',exact:true}).click();
+ const first=page.locator('.movie-source-entry').nth(0);await first.getByLabel('线路名称',{exact:true}).fill('备用直链');await first.getByLabel('播放地址',{exact:true}).fill('https://example.com/master.m3u8');
+ await page.getByRole('button',{name:'添加播放源',exact:true}).click();const second=page.locator('.movie-source-entry').nth(1);await second.getByLabel('线路名称',{exact:true}).fill('第三方备用');await second.getByLabel('播放方式',{exact:true}).selectOption('embed');await second.getByLabel('播放地址',{exact:true}).fill('https://example.com/player');
+ await page.getByRole('button',{name:'发布影片',exact:true}).click();await page.locator('.movie-edit').waitFor();assert.equal(await page.evaluate(()=>savedRows[0].playback_sources.length),3);
+ assert.equal(await page.evaluate(()=>savedRows[0].season_number),1,'movie season must satisfy the database NOT NULL constraint');
+ assert.equal(await page.evaluate(()=>savedRows[0].episode_number),1,'movie episode must satisfy the database NOT NULL constraint');
+ await page.locator('.movie-edit').click();assert.equal(await page.locator('.movie-source-entry').count(),2);assert.equal(await page.locator('.movie-source-entry').nth(1).getByLabel('播放地址',{exact:true}).inputValue(),'https://example.com/player');
+ await first.getByRole('button',{name:'删除此播放源'}).click();await page.getByRole('button',{name:'发布影片',exact:true}).click();await page.locator('.movie-edit').waitFor();assert.equal(await page.evaluate(()=>savedRows[0].playback_sources.length),2);
+ const sources=await page.evaluate(async()=>{const data={'data/movie-series.json':[],'data/movie-playback.json':{},'data/movie-hub-catalog.json':{films:[]},'data/movie-hub-providers.json':[],'data/movie-posters.json':{}};const result=await MovieClassroom.getLibrary({getJSON:async key=>data[key]});const movie=result.playableById.get('tmdb-movie-9502');return {direct:movie.directSources,embedded:movie.embeddedSources};});assert.equal(sources.direct[0].url,'https://api.obj2.top/hls/movie/9502/master.m3u8');assert.equal(sources.embedded[0].url,'https://example.com/player');
+ const rejected=await page.evaluate(()=>{try{MovieLibrary.validateSources({tmdb_id:9502},[{kind:'embed',label:'bad',url:'javascript:alert(1)'}]);return false;}catch{return true;}});assert(rejected);
+ const sync=await page.evaluate(async()=>{
+  savedRows[0]={...savedRows[0],id:'tmdb-tv-1044',tmdb_id:1044,media_type:'tv',season_number:2,episode_number:3};
+  const data={'data/movie-series.json':[],'data/movie-playback.json':{mode:'vidmario'},'data/movie-hub-catalog.json':{films:[]},'data/movie-hub-providers.json':[{id:'primary',name:'Primary',mode:'embed',movieUrl:'https://player.vidmario.net/embed/movie/{tmdbId}?server=Fermat',tvUrl:'https://player.vidmario.net/embed/tv/{tmdbId}/{seasonNumber}/{episodeNumber}?server=Fermat'}],'data/movie-posters.json':{}};
+  const refreshed=[];const app={getJSON:async(key,options)=>{if(options?.refresh)refreshed.push(key);return data[key];}};
+  const first=(await MovieClassroom.getLibrary(app)).playableById.get('tmdb-tv-1044');
+  savedRows[0].episode_number=4;
+  const next=(await MovieClassroom.getLibrary(app)).playableById.get('tmdb-tv-1044');
+  const changedProvider={...data['data/movie-hub-providers.json'][0],tvUrl:'https://new-provider.test/tv/{tmdbId}/{seasonNumber}/{episodeNumber}'};data['data/movie-hub-providers.json']=[changedProvider];
+  const changed=(await MovieClassroom.getLibrary(app)).playableById.get('tmdb-tv-1044');
+  return {first:first.embedUrl,next:next.embedUrl,direct:next.directSources[0].url,manual:next.embeddedSources.some(s=>s.url==='https://example.com/player'),changed:changed.embedUrl,refreshed};
+ });
+ assert.equal(sync.first,'https://player.vidmario.net/embed/tv/1044/2/3');assert.equal(sync.next,'https://player.vidmario.net/embed/tv/1044/2/4');assert.equal(sync.direct,'https://api.obj2.top/hls/tv/1044/2/4/master.m3u8');assert(sync.manual);assert.equal(sync.changed,'https://new-provider.test/tv/1044/2/4');assert.equal(sync.refreshed.filter(k=>k==='data/movie-hub-providers.json').length,3);
+ await page.evaluate(()=>{SFCloud.isAdmin=()=>false;return MovieLibrary.renderAdmin(app);});assert.equal(await page.locator('#movieLibraryForm').count(),0);
+ console.log('PASS: movie/TV automatic source, add/remove multiple sources, save/read-back/edit, playback consumption, URL validation and admin guard.');
+}finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1});

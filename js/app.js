@@ -4,8 +4,8 @@ const App = {
   activeLessonTab: 'watch',
   searchTimer: null,
   searchRequest: 0,
-  async getJSON(path){
-    if(this.cache[path]) return this.cache[path];
+  async getJSON(path,{refresh=false}={}){
+    if(!refresh&&this.cache[path]) return this.cache[path];
     const res = await fetch(path, {cache:'no-store'});
     if(!res.ok) throw new Error('无法加载 ' + path);
     const data = await res.json();

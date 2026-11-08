@@ -44,6 +44,7 @@ window.MovieClassroom = {
     this.generation++;
     this.disposeControls?.(); this.disposeControls=null;
     this.disposeSources?.(); this.disposeSources=null;
+    this.disposeEmbedMessages?.();this.disposeEmbedMessages=null;
     this.player?._disposeShelf?.();
     this.disposeSubtitles?.(); this.disposeSubtitles = null;
     if (this.nativeStartTimer) { clearTimeout(this.nativeStartTimer); this.nativeStartTimer = null; }
@@ -52,8 +53,19 @@ window.MovieClassroom = {
     if (this.frame) { this.frame.src = 'about:blank'; this.frame.remove(); this.frame = null; }
     if (this.player) { this.player.pause(); this.player.removeAttribute('src'); this.player.load(); this.player = null; }
   },
+  providerSource(provider,metadata,automatic=false){
+    const tmdb=Number(metadata.tmdb),tv=metadata.mediaType==='tv';
+    if(!Number.isSafeInteger(tmdb)||tmdb<1)return null;
+    const template=tv?provider.tvUrl:provider.movieUrl;
+    if(provider.mode!=='embed'||typeof template!=='string')return null;
+    const raw=template.replaceAll('{tmdbId}',String(tmdb)).replaceAll('{seasonNumber}',String(metadata.season||1)).replaceAll('{episodeNumber}',String(metadata.episode||1));
+    try{const url=new URL(raw);if(url.protocol!=='https:'||url.username||url.password||/[{}]/.test(raw))return null;
+      if(automatic&&url.hostname==='player.vidmario.net')url.searchParams.delete('server');
+      return {url:url.href,label:automatic?'第三方播放器（自动选线）':provider.name||'第三方线路',embedded:true};
+    }catch{return null;}
+  },
   async getLibrary(app) {
-    const [catalog,settings,hub,providers,posters,dynamicRows]=await Promise.all([app.getJSON('data/movie-series.json'),app.getJSON('data/movie-playback.json'),app.getJSON('data/movie-hub-catalog.json'),app.getJSON('data/movie-hub-providers.json'),app.getJSON('data/movie-posters.json').catch(()=>({})),window.MovieLibrary?.published?.().catch(()=>[])||[]]);
+    const [catalog,settings,hub,providers,posters,dynamicRows]=await Promise.all([app.getJSON('data/movie-series.json'),app.getJSON('data/movie-playback.json',{refresh:true}),app.getJSON('data/movie-hub-catalog.json'),app.getJSON('data/movie-hub-providers.json',{refresh:true}),app.getJSON('data/movie-posters.json').catch(()=>({})),window.MovieLibrary?.published?.().catch(()=>[])||[]]);
     const series = await Promise.all(catalog.map(async item => ({
       ...item,
       ...(await app.getJSON(`data/movies/${item.id}/movies.json`))
@@ -63,8 +75,8 @@ window.MovieClassroom = {
     const playable=legacy?allSeries.flatMap(item=>item.sources||[]).filter(item=>this.playbackSource(item).url):allSeries.flatMap(group=>group.films.map(([id,title,titleZh,year])=>{
       const dynamic=dynamicInfo.get(id),tmdb=ids.get(id),validTmdb=Number.isSafeInteger(tmdb)&&tmdb>0,mediaType=dynamic?.media_type==='tv'?'tv':'movie',seasonNumber=Math.max(1,Number(dynamic?.season_number)||1),episodeNumber=Math.max(1,Number(dynamic?.episode_number)||1);
       if(useVidMario){
-        const embeddedSources=validTmdb?embedProviders.map(provider=>({url:(mediaType==='tv'?(provider.tvUrl||provider.movieUrl.replace('/movie/','/tv/')):provider.movieUrl).replace('{tmdbId}',String(tmdb)).replace('{seasonNumber}',String(seasonNumber)).replace('{episodeNumber}',String(episodeNumber)),embedded:true,label:provider.name})).filter(source=>{try{const url=new URL(source.url);return url.protocol==='https:'&&!url.username&&!url.password;}catch{return false;}}):[];
-        return {...(group.sources||[]).find(item=>item.id===id),id,title,titleZh,year,cover:dynamic?.poster_url||posters[id]||'',description:dynamic?.overview||'',playerMode:'embed-fallback',embedUrl:embeddedSources[0]?.url||'',sourceLabel:embeddedSources[0]?.label||'嵌入播放源',backupSources:embeddedSources.slice(1)};
+        const embeddedSources=validTmdb?embedProviders.map(provider=>this.providerSource(provider,{tmdb,mediaType,season:seasonNumber,episode:episodeNumber},true)).filter(Boolean):[];
+        return {...(group.sources||[]).find(item=>item.id===id),id,title,titleZh,year,cover:dynamic?.poster_url||posters[id]||'',description:dynamic?.overview||'',playerMode:'embed-fallback',embedUrl:embeddedSources[0]?.url||'',sourceLabel:embeddedSources[0]?.label||'嵌入播放源',backupSources:[]};
       }
       return {...(group.sources||[]).find(item=>item.id===id),id,title,titleZh,year,cover:dynamic?.poster_url||posters[id]||'',description:dynamic?.overview||'',playerMode:'dulo',embedUrl:validTmdb?'https://dulo.mov/watch/movie/'+tmdb:'',sourceLabel:'Dulo 播放器'};
     })).filter(item=>item.embedUrl);
@@ -76,10 +88,12 @@ window.MovieClassroom = {
       const season=Number(metadata.season_number||metadata.seasonNumber||1),episode=Number(metadata.episode_number||metadata.episodeNumber||1);
       const apiUrl=Number.isSafeInteger(tmdb)&&tmdb>0&&(!tv||(Number.isSafeInteger(season)&&season>0&&Number.isSafeInteger(episode)&&episode>0))
         ? `https://api.obj2.top/hls/${tv?`tv/${tmdb}/${season}/${episode}`:`movie/${tmdb}`}/master.m3u8` : '';
-      movie.embeddedSources=apiUrl?providers.filter(provider=>provider.mode==='embed').map(provider=>({label:provider.name,url:(tv?(provider.tvUrl||provider.movieUrl.replace('/movie/','/tv/')):provider.movieUrl).replace('{tmdbId}',String(tmdb)).replace('{seasonNumber}',String(season)).replace('{episodeNumber}',String(episode))})).filter(source=>{try{const url=new URL(source.url);return url.protocol==='https:'&&!url.username&&!url.password&&source.url!==movie.embedUrl;}catch{return false;}}):[];
-      const candidates=[{url:apiUrl,label:'直链播放'},{url:source.fullHlsUrl||source.hlsUrl,label:'原有备用直链'},...(source.backupSources||[]),{url:source.backupHlsUrl,label:'备用直链'}];
+      const savedSources=Array.isArray(metadata.playback_sources)?metadata.playback_sources:[];
+      const providerSources=apiUrl?providers.map(provider=>this.providerSource(provider,{tmdb,mediaType:tv?'tv':'movie',season,episode})).filter(Boolean):[];
+      movie.embeddedSources=[...savedSources.filter(source=>source.kind==='embed'),...providerSources].filter((source,index,all)=>{try{const url=new URL(source.url);return url.protocol==='https:'&&!url.username&&!url.password&&source.url!==movie.embedUrl&&all.findIndex(item=>item.url===source.url)===index;}catch{return false;}});
+      const candidates=[{url:apiUrl,label:'直链播放'},...savedSources.filter(source=>source.kind==='direct'),{url:source.fullHlsUrl||source.hlsUrl,label:'原有备用直链'},...(source.backupSources||[]),{url:source.backupHlsUrl,label:'备用直链'}];
       movie.directSources=candidates.filter((item,index)=>{
-        try{const url=new URL(item.url);return /^https?:$/.test(url.protocol)&&!url.username&&!url.password&&/\.m3u8$/i.test(url.pathname)&&candidates.findIndex(other=>other.url===item.url)===index;}catch{return false;}
+        try{const url=new URL(item.url);return /^https?:$/.test(url.protocol)&&!url.username&&!url.password&&/\.(m3u8|mp4)$/i.test(url.pathname)&&candidates.findIndex(other=>other.url===item.url)===index;}catch{return false;}
       }).map((item,index)=>({...item,label:item.label||`备用直链 ${index}`}));
     }
     return { series:allSeries, playable, playableById: new Map(playable.map(item => [item.id, item])) };
@@ -218,16 +232,25 @@ window.MovieClassroom = {
           const next=index+1,choice=next===0?'backup':`backup-${next}`;
           report(`当前嵌入线路未能加载，正在自动尝试 ${backups[next].label||'下一条备用线路'}…`);
           this.cleanup();this.renderWatch(app,id,choice,'embed').catch(()=>{});
+        }else if(providerIndex+1<embeddedAlternatives.length){
+          const next=providerIndex+1;this.cleanup();this.renderWatch(app,id,`provider-${next}`,'embed').catch(()=>{});
         }else{
-          report('当前嵌入线路未能加载。可点击“切换备用线路”重试，或稍后再试。',true);
+          report('第三方线路未能加载，请使用画面内的“播放源”切换其他线路。',true);
         }
       };
+      const onMessage=event=>{
+        if(generation!==this.generation||event.source!==frame.contentWindow||event.origin!==new URL(sourceUrl).origin||event.data?.type!=='PLAYER_EVENT')return;
+        const state=event.data.data?.event;
+        if(state==='unavailable'||state==='error')report('第三方报告本片暂不可用，请切换播放源或切回直链。',true);
+        if(['play','playing','timeupdate'].includes(state))report('第三方播放器正在播放。');
+      };
+      window.addEventListener('message',onMessage);this.disposeEmbedMessages=()=>window.removeEventListener('message',onMessage);
       let frameLoaded=false;
       frame.addEventListener('load',()=>{
         if(generation!==this.generation)return;
         frameLoaded=true;
         if(this.nativeStartTimer){clearTimeout(this.nativeStartTimer);this.nativeStartTimer=null;}
-        report(`${usingBackup?(backups[index].label||'备用线路'):movie.sourceLabel}播放器页面已加载，请在画面内点击播放。`);
+        report(`${usingBackup?(backups[index].label||'备用线路'):movie.sourceLabel}页面已打开，请在画面内播放。若持续停在获取视频，请使用“播放源”切换线路。`);
         if(generation===this.generation)window.MediaShelf.record('film-'+id,{href:'#/movie/'+id});
       });
       frame.addEventListener('error',nextEmbeddedSource);
@@ -267,6 +290,7 @@ window.MovieClassroom = {
       report(movie.playerMode==='dulo-direct'?'已获取视频地址，但当前网络未能加载视频；可重新获取线路或切换 Dulo 播放器。':hasBackup && !usingBackup ? '主片源加载失败，请选择备用片源或重新加载。' : directLink ? '影片加载失败，请重试或点击“直接打开播放”。' : '影片加载失败，请重新加载或切换片源。', true);
     });
     const useNative = url => { player.src = url; this.disposeAdSkip = window.DyttAdSkip?.attach(player, sourceUrl); };
+    if(/\.mp4(?:$|[?#])/i.test(sourceUrl)){useNative(sourceUrl);return;}
     if (directNative) {
       report('正在直连加载影片，请稍候…');
       this.nativeStartTimer = setTimeout(fallback, 15000);
@@ -293,7 +317,7 @@ window.MovieClassroom = {
   },
   attachSourceMenu(stage,menu,embedded){
     const controller=new AbortController(),buttons=[];
-    const toggle=()=>{menu.hidden=!menu.hidden;buttons.forEach(b=>b.setAttribute('aria-expanded',String(!menu.hidden)));stage.classList.add('subtitle-settings-visible');};
+    const toggle=()=>{menu.hidden=!menu.hidden;buttons.forEach(b=>b.setAttribute('aria-expanded',String(!menu.hidden)));stage.classList.add('subtitle-settings-visible');if(!menu.hidden){stage.classList.remove('subtitle-settings-open');stage.querySelector('.subtitle-settings-trigger')?.setAttribute('aria-expanded','false');}};
     const close=()=>{menu.hidden=true;buttons.forEach(b=>b.setAttribute('aria-expanded','false'));};
     const hosts=embedded?[stage]:[stage.querySelector('.sf-desktop-player-controls'),stage.closest('.sf-full-movie-player')?.querySelector('.sf-lesson-toolbar')].filter(Boolean);
     for(const host of hosts){const button=document.createElement('button');button.type='button';button.className='movie-source-trigger';button.setAttribute('aria-label','播放源');button.setAttribute('aria-haspopup','menu');button.setAttribute('aria-expanded','false');button.title='播放源';button.innerHTML=host.classList.contains('sf-lesson-toolbar')?'<span>▤</span><small>播放源</small>':'▤';button.onclick=toggle;host.append(button);buttons.push(button);}

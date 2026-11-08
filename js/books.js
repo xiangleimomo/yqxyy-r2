@@ -11,6 +11,10 @@ window.BookReader = {
   async shelfLibrary(app,strict=false) { const kind=this.shelfBase()==='#/magazines'?'magazine':'book'; return (await this.library(app,strict)).filter(book=>(book.kind||'book')===kind); },
 
   cleanup() {
+    this.readerAudio?.pause();
+    this.readerAudio?._disposeHls?.();
+    if (this.readerAudio) { this.readerAudio.removeAttribute('src'); this.readerAudio.load(); }
+    this.readerAudio = null;
     window.BookCommunity?.flushProgress();
     if (this.pdfOrientationLocked) { try { screen.orientation?.unlock?.(); } catch (_) {} }
     this.pdfOrientationLocked = false;
@@ -120,7 +124,17 @@ window.BookReader = {
       const cover = item.coverUrl ? '<img src="' + e(item.coverUrl) + '" alt="" loading="lazy" decoding="async">' : '<b>' + e(item.titleZh || item.title) + '</b>';
       const label = e(item.titleZh || item.title);
       const primary = '<a href="' + e(href) + '">' + (options.resume ? '继续阅读' : '本站阅读') + '</a>';
-      const readerLink = '';
+      let directUrl = '';
+      for (const candidate of [item.sourceUrl, item.downloadUrl]) {
+        if (!candidate) continue;
+        try {
+          const url = new URL(candidate, location.origin);
+          if (!['https:', 'http:'].includes(url.protocol) || url.username || url.password) continue;
+          directUrl = url.href;
+          break;
+        } catch (_) {}
+      }
+      const readerLink = directUrl ? '<a href="' + e(directUrl) + '" target="_blank" rel="noopener noreferrer">直接打开</a>' : '';
       const author = !options.compact && item.uploaderNickname ? '<a class="book-uploader" href="'+(item.kind==='magazine'?'#/magazines':'#/reading')+'/search/' + encodeURIComponent(item.uploaderNickname) + '">上传者：' + e(item.uploaderNickname) + '</a>' : '';
       const media = options.compact ? '' : (item.audioUrl ? '<a href="' + e(item.audioUrl) + '" target="_blank" rel="noopener noreferrer">配套音频</a>' : '') + (item.videoUrl ? '<a href="' + e(item.videoUrl) + '" target="_blank" rel="noopener noreferrer">配套视频</a>' : '');
       return '<article class="book-card" data-book-id="' + e(item.id) + '"><div class="book-cover"><button type="button" class="book-cover-trigger" aria-label="选择' + label + '的阅读方式">' + cover + '</button><div class="book-actions" aria-label="' + label + '阅读方式">' + primary + readerLink + '<button class="book-personal-button" type="button">收藏 / 分类</button></div></div><div class="book-card-body"><h2>' + label + '</h2>' + author + '<div class="book-resource-links">' + media + '</div></div></article>';
@@ -702,7 +716,23 @@ window.BookReader = {
     }
   },
 
+  bindPdfKeyboard(reader) {
+    if (this.keyHandler) document.removeEventListener('keydown', this.keyHandler);
+    this.keyHandler = event => {
+      if (!reader.isConnected || event.defaultPrevented || event.isComposing || event.altKey || event.ctrlKey || event.metaKey) return;
+      if (event.target.closest?.('input, textarea, select, audio, video, [contenteditable]:not([contenteditable="false"]), [role="textbox"], [role="dialog"]')) return;
+      const buttonId = event.key === 'ArrowLeft' ? '#bookStagePrev' : event.key === 'ArrowRight' ? '#bookStageNext' : '';
+      if (!buttonId) return;
+      const button = reader.querySelector(buttonId);
+      if (!button || button.disabled) return;
+      event.preventDefault();
+      button.click();
+    };
+    document.addEventListener('keydown', this.keyHandler);
+  },
+
   setupPdfTools(item, { app, reader, root, pageUrls, pageTexts, outlineItems, pageCount, ensureTextIndex, ensureOutline,ensurePageText }) {
+    this.bindPdfKeyboard(reader);
     const controls = reader.querySelector('.flipbook-controls');
     let controlsTimer;
     reader.addEventListener('pointerdown', event => {
@@ -758,6 +788,8 @@ window.BookReader = {
         notify(closed ? '已合上书，点击「打开书」继续阅读' : '已打开书'); return;
       }
       if (!panel.hidden && panel.dataset.tool === name) { panel.hidden = true; tools.querySelectorAll('button').forEach(button => button.setAttribute('aria-expanded', 'false')); return; }
+      // Keep the audio element alive while switching reader tools.
+      if (this.readerAudio?.parentElement === panel) { this.readerAudio.hidden = true; reader.appendChild(this.readerAudio); }
       panel.replaceChildren(); panel.hidden = false; panel.dataset.tool = name;
       tools.querySelectorAll('button').forEach(button => button.setAttribute('aria-expanded', String(button.dataset.tool === name)));
       const close = document.createElement('button'); close.textContent = '关闭 ×'; close.onclick = () => { panel.hidden = true; }; panel.appendChild(close);
@@ -806,7 +838,29 @@ window.BookReader = {
         add.onclick = () => { const page = this.pageFlip.getCurrentPageIndex(); bookmarks = bookmarks.includes(page) ? bookmarks.filter(value => value !== page) : [...bookmarks, page]; localStorage.setItem(key, JSON.stringify(bookmarks)); panel.hidden = true; show(name); };
         bookmarks.sort((a,b) => a-b).forEach(page => row(`★ 第 ${page + 1} 页`, page, true));
       } else if (name === 'audio') {
-        const audio = document.createElement('audio'); audio.controls = true; audio.preload = 'none';
+        const audio = this.readerAudio || document.createElement('audio'); audio.controls = true; audio.preload = 'none';
+        this.readerAudio = audio; audio.hidden = false;
+        if (item.sourceContentId && item.seriesIds?.length) {
+          const note = document.createElement('p'); note.textContent = '本集原声 · 只播放声音'; panel.append(note, audio);
+          if (!audio.dataset.hlsSrc) {
+            note.textContent = '正在匹配本集音频…';
+            try {
+              const episodes = await app.getJSON('data/' + item.seriesIds[0] + '/episodes.json');
+              if (this.readerAudio !== audio) return;
+              const episode = episodes.find(ep => ep.storyBook?.bookId === item.id) || episodes.find(ep => String(ep.episodeId) === String(item.episodeId));
+              const video = episode?.video;
+              if (!video?.hlsUrl) throw new Error('本集暂未提供音频');
+              audio.className = 'hls-audio-player';
+              audio.dataset.hlsSrc = video.hlsUrl;
+              audio.dataset.hlsFallbackSrcs = JSON.stringify([video.hls720Url, video.backupHlsUrl].filter(Boolean));
+              audio.dataset.fallbackSrc = video.mp4Url || video.directUrl || '';
+              await app.initializeHlsAudio(audio);
+              if (this.readerAudio !== audio) { audio._disposeHls?.(); return; }
+              note.textContent = '本集原声 · 只播放声音';
+            } catch (_) { note.textContent = '本集音频暂时不可用，请关闭声音面板后重试。'; }
+          }
+          return;
+        }
         const input = document.createElement('input'); input.type = 'url'; input.placeholder = '粘贴本书配套音频直链'; input.value = item.audioUrl || localStorage.getItem(`storyfox-pdf-audio:${item.id}`) || '';
         const load = document.createElement('button'); load.textContent = '加载音频';
         load.onclick = () => { try { const url = new URL(input.value); if (!['https:', 'http:'].includes(url.protocol)) return; audio.src = url.href; localStorage.setItem(`storyfox-pdf-audio:${item.id}`, url.href); } catch (_) { notify('请输入有效的音频链接'); } };

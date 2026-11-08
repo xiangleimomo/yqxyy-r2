@@ -6,7 +6,8 @@
     "build": "node scripts/build-static.cjs",
     "test": "node --test tests/r2.test.mjs",
     "dev": "node scripts/local-dev.cjs",
-    "test:subtitles": "node tests/movie-subtitle-settings.browser.cjs && node tests/movie-subtitles.browser.cjs"
+    "test:subtitles": "node tests/movie-subtitle-settings.browser.cjs && node tests/movie-subtitles.browser.cjs",
+    "test:movies": "node tests/movie-player-layout.browser.cjs && node tests/movie-source-editor.browser.cjs"
   },
   "dependencies": {
     "aws4fetch": "1.0.20"

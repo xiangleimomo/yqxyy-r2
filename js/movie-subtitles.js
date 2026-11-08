@@ -29,7 +29,7 @@ window.MovieSubtitles = {
       caption=document.createElement('div');caption.className='video-caption';caption.hidden=true;frame.append(caption);
       frame.classList.add('subtitle-video-wrap','sf-movie-custom-caption');
       const trigger=frame.querySelector('.subtitle-settings-trigger');
-      trigger.onclick=()=>{const open=frame.classList.toggle('subtitle-settings-open');frame.classList.add('subtitle-settings-visible');trigger.setAttribute('aria-expanded',String(open));};
+      trigger.onclick=()=>{const open=frame.classList.toggle('subtitle-settings-open');frame.classList.add('subtitle-settings-visible');trigger.setAttribute('aria-expanded',String(open));if(open){const menu=frame.querySelector('.movie-source-menu');if(menu)menu.hidden=true;frame.closest('.sf-full-movie-player')?.querySelectorAll('.movie-source-trigger').forEach(button=>button.setAttribute('aria-expanded','false'));}};
       const save=patch=>{localStorage.setItem('storyfox-subtitle-preferences',JSON.stringify({...app.subtitlePreferences(),...patch}));app.applySubtitlePreferences(frame);paintCaption();video.dispatchEvent(new Event('sfcaptionchange'));};
       const visible=settings.querySelector('.subtitle-toggle');visible.onclick=()=>{const on=app.subtitlePreferences().visible===false;save({visible:on});visible.textContent=on?'已开启':'已关闭';visible.setAttribute('aria-pressed',String(on));};
       const word=settings.querySelector('.subtitle-word-toggle');word.disabled=true;word.title='整部电影字幕不含逐词时间信息';word.textContent='无逐词时间轴';
@@ -37,7 +37,7 @@ window.MovieSubtitles = {
       settings.querySelector('.subtitle-color').oninput=e=>save({color:e.target.value});
       settings.querySelector('.subtitle-reset-position').onclick=()=>{save({visible:true,size:20,color:'#ffffff',captionX:50,captionY:84,opacity:72});for(const [selector,value,suffix] of [['.subtitle-size',20,'px'],['.subtitle-opacity',72,'%']]){const input=settings.querySelector(selector);input.value=value;input.nextElementSibling.textContent=value+suffix;}settings.querySelector('.subtitle-color').value='#ffffff';visible.textContent='已开启';visible.setAttribute('aria-pressed','true');};
       let dragging=false;
-      caption.addEventListener('pointerdown',e=>{dragging=true;caption.setPointerCapture(e.pointerId);e.preventDefault();});
+      caption.addEventListener('pointerdown',e=>{if(matchMedia('(max-width:1100px), (pointer:coarse)').matches)return;dragging=true;caption.setPointerCapture(e.pointerId);e.preventDefault();});
       caption.addEventListener('pointermove',e=>{if(!dragging)return;const r=frame.getBoundingClientRect();save({captionX:Math.max(0,Math.min(100,(e.clientX-r.left)/r.width*100)),captionY:Math.max(0,Math.min(100,(e.clientY-r.top)/r.height*100))});});
       for(const event of ['pointerup','pointercancel','lostpointercapture'])caption.addEventListener(event,()=>{dragging=false;});
       video.addEventListener('timeupdate',paintCaption);video.addEventListener('seeked',paintCaption);
@@ -61,6 +61,7 @@ window.MovieSubtitles = {
       caption.textContent=[...new Set(cues.filter(cue=>cue.startTime<=time&&cue.endTime>time).map(cue=>cue.text.replace(/<[^>]*>/g,'')))].join('\n');
       caption.hidden=!caption.textContent||!prefs.visible;
       if(!caption.hidden){
+        if(matchMedia('(max-width:1100px), (pointer:coarse)').matches&&frame.closest('.sf-full-movie-player'))return;
         frame._captionLayout?.();
         const half=caption.getBoundingClientRect().height/2+4,height=frame.clientHeight;
         caption.style.top=`${Math.max(Math.min(half,height/2),Math.min(height-half,height*Number(prefs.captionY)/100))}px`;
