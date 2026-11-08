@@ -98,3 +98,17 @@ html.sf-mobile-app.series-fixed-page,body.sf-mobile-app.series-fixed-page{height
   .sf-mobile-app .app-shell.series-page-shell .episode-workspace>.episode-preview{display:none}
   .sf-mobile-app .app-shell.series-page-shell .episode-workspace>.module-grid{margin-top:0}
 }
+
+/* Unified cinema UI: touch devices use the same in-video controls as desktop. */
+.sf-mobile-app :is(.sf-movie-lesson-player,.sf-desktop-story-player)>.sf-lesson-toolbar,
+.sf-mobile-app :is(.sf-movie-lesson-player,.sf-desktop-story-player)>.sf-subtitle-offset,
+.sf-mobile-app :is(.sf-movie-lesson-player,.sf-desktop-story-player)>.sf-mobile-captions-outside{display:none!important}
+.sf-mobile-app :is(.sf-movie-lesson-player,.sf-desktop-story-player) .sf-desktop-player-controls{display:flex!important;position:absolute!important;inset:auto 0 0!important;z-index:30;width:100%;height:48px;gap:3px;padding:0 7px;align-items:center;box-sizing:border-box;background:linear-gradient(transparent,#000e)!important;color:#fff;opacity:0!important;visibility:hidden!important;pointer-events:none!important}
+.sf-mobile-app :is(.sf-movie-lesson-player,.sf-desktop-story-player) .sf-desktop-seek{display:flex!important;position:absolute!important;inset:auto 10px 48px!important;z-index:31;opacity:0!important;visibility:hidden!important;pointer-events:none!important}
+.sf-mobile-app :is(.sf-movie-lesson-player,.sf-desktop-story-player) :is(.video-wrap:hover,.video-wrap:focus-within,.subtitle-settings-visible) .sf-desktop-player-controls,
+.sf-mobile-app :is(.sf-movie-lesson-player,.sf-desktop-story-player) .sf-desktop-player-controls:focus-within{opacity:1!important;visibility:visible!important;pointer-events:auto!important}
+.sf-mobile-app :is(.sf-movie-lesson-player,.sf-desktop-story-player) :is(.video-wrap:hover,.video-wrap:focus-within,.subtitle-settings-visible) .sf-desktop-seek{opacity:1!important;visibility:visible!important;pointer-events:auto!important}
+.sf-mobile-app :is(.sf-movie-lesson-player,.sf-desktop-story-player) .sf-desktop-player-controls button{flex:0 0 auto;width:27px;min-width:0;height:38px;padding:3px;background:transparent;color:#fff;border:0}
+.sf-mobile-app :is(.sf-movie-lesson-player,.sf-desktop-story-player) .sf-desktop-player-controls svg{width:19px;height:19px}
+.sf-mobile-app :is(.sf-movie-lesson-player,.sf-desktop-story-player) .sf-desktop-clock{font-size:10px;white-space:nowrap}
+@media(max-width:430px){.sf-mobile-app :is(.sf-movie-lesson-player,.sf-desktop-story-player) .sf-desktop-player-controls{gap:1px;padding:0 3px}.sf-mobile-app :is(.sf-movie-lesson-player,.sf-desktop-story-player) .sf-desktop-player-controls button{width:24px}}
