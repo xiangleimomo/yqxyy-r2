@@ -1,0 +1,26 @@
+name: Movie V2 → R2 (test)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: r2-course-movie-v2
+  cancel-in-progress: false
+jobs:
+  r2-connection-test:
+    runs-on: ubuntu-latest
+    env:
+      R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+      R2_BUCKET: ${{ secrets.R2_BUCKET }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      COURSE_ENGINE: movie-v2
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Test R2 write and read without modifying course indexes
+        run: node scripts/r2-course-publish.mjs smoke
