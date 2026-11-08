@@ -72,7 +72,7 @@ window.SFMedals={
   box.querySelector('[data-search]').onclick=load;type.onchange=()=>{query.value='';selected='';load();};await load();
  },
  async catalog(){
-  if(!this.catalogPromise)this.catalogPromise=this.app.getJSON('data/medal-resources.json').catch(error=>{this.catalogPromise=null;throw error;});
+  if(!this.catalogPromise)this.catalogPromise=this.app.getJSON('data/medal-resources.json').then(rows=>Array.isArray(rows)?rows:[]).catch(error=>{console.warn('勋章本地资源目录不可用，改用云端作品索引',error);return [];});
   return this.catalogPromise;
  },
  async resources(type,query=''){
