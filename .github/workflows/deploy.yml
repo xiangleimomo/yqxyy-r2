@@ -1,10 +1,8 @@
 name: Deploy to new Netlify account
+# Deployment paused until manually re-enabled next month.
+# Keep the workflow definition for easy restoration.
 on:
   workflow_dispatch:
-  workflow_run:
-    workflows: [Check R2 website]
-    types: [completed]
-    branches: [main]
 permissions:
   contents: read
 concurrency:
@@ -12,7 +10,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   deploy:
-    if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && github.event.workflow_run.head_repository.full_name == github.repository)
+    if: ${{ false }} # Deployment temporarily disabled, including manual dispatch
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
