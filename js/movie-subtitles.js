@@ -61,7 +61,7 @@ window.MovieSubtitles = {
       caption.textContent=[...new Set(cues.filter(cue=>cue.startTime<=time&&cue.endTime>time).map(cue=>cue.text.replace(/<[^>]*>/g,'')))].join('\n');
       caption.hidden=!caption.textContent||!prefs.visible;
       if(!caption.hidden){
-        if(matchMedia('(max-width:1100px), (pointer:coarse)').matches&&frame.closest('.sf-full-movie-player'))return;
+
         frame._captionLayout?.();
         const half=caption.getBoundingClientRect().height/2+4,height=frame.clientHeight;
         caption.style.top=`${Math.max(Math.min(half,height/2),Math.min(height-half,height*Number(prefs.captionY)/100))}px`;

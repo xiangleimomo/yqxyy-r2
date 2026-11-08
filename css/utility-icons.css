@@ -14,6 +14,12 @@
   pointer-events:none;
 }
 .utility-nav #navCheckin{background:#fff5f1;border-color:#f5e0d6}
+.utility-nav #navAnnouncements{background:#f2f6ff;border-color:#dbe7fd}
+.utility-nav a{position:relative;overflow:visible}
+.utility-count-badge{position:absolute;z-index:2;right:-3px;top:-4px;display:flex;align-items:center;justify-content:center;min-width:17px;height:17px;box-sizing:border-box;padding:0 4px;border:2px solid #fff;border-radius:999px;background:#ef6982;color:#fff;font:800 10px/1 system-ui}
+.utility-count-badge[hidden]{display:none!important}
+#navCheckin .utility-count-badge{background:#38a88b}
+#navHonors .utility-count-badge{background:#e9ac36}
 .utility-nav #navHomework{background:#f3f0ff;border-color:#e5defb}
 .utility-nav #navRewards{background:#fff8e9;border-color:#f6e6c4}
 .utility-nav #navHonors{background:#eaf9f7;border-color:#d6efeb}

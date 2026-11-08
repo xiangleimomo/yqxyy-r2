@@ -6,10 +6,7 @@
 (function(){
   'use strict';
   function isApplicable(){
-    const matches=window.matchMedia &&
-      window.matchMedia('(max-width: 900px), (pointer: coarse)').matches;
-    const ua=String(navigator.userAgent||'');
-    return !!matches || /Android|iPhone|iPad|iPod|HarmonyOS|Mobile|Quark|UCBrowser|QQBrowser|HuaweiBrowser|VivoBrowser|MicroMessenger/i.test(ua);
+    return false; // All viewports use the shared in-player caption layer.
   }
   function attach({player,d,vttUrl,parseVtt,preferences}){
     const panel=player.closest('.direct-video-panel');

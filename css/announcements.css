@@ -1,0 +1,19 @@
+#siteAnnouncements{max-width:1200px;margin:12px auto;padding:0 16px;box-sizing:border-box}
+#siteAnnouncements[hidden]{display:none}
+.site-announcement,.announcement-card{padding:14px 16px;border:1px solid #cfe0f4;border-radius:12px;background:#fff;margin-bottom:10px;color:#173252}
+.site-announcement summary{cursor:pointer;font-weight:700;overflow-wrap:anywhere}
+.site-announcement summary span{font-size:12px;color:#2273b9;margin-right:8px}
+.site-announcement p,.announcement-card p{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7}
+.announcement-links{text-align:right;font-size:13px}
+.announcements-page{max-width:850px;margin:auto;padding:16px}
+.announcements-page form{padding:18px;border-radius:14px;border:1px solid #cfe0f4;background:#fff;margin-bottom:24px}
+.announcements-page label{display:block;margin-bottom:12px}
+.announcements-page :is(input:not([type=checkbox]):not([type=hidden]),select,textarea){display:block;width:100%;box-sizing:border-box;padding:10px;border:1px solid #bccdde;border-radius:8px;margin-top:5px;font:inherit}
+.announcement-preview,.announcement-reward{padding:10px;background:#fff4d9;border-radius:8px}
+.flipbook-active #siteAnnouncements{display:none}
+.announcement-dialog{width:min(560px,calc(100vw - 32px));max-height:80dvh;box-sizing:border-box;border:0;border-radius:16px;padding:20px;background:#f7faff;color:#173252;box-shadow:0 18px 65px #0005;overflow:auto}
+.announcement-dialog::backdrop{background:#10203588}
+.announcement-dialog>header{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.announcement-dialog h2{margin:0 0 16px;font-size:20px}
+.announcement-dialog>header button{align-self:flex-start;border:0;background:transparent;font-size:28px;cursor:pointer;color:inherit;min-width:40px;min-height:40px}
+.announcement-dialog .announcement-card{margin:0 0 12px}

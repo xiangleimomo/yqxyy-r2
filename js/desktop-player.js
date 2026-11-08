@@ -4,9 +4,14 @@ window.SFDesktopPlayer = {
     if (stage.querySelector('.sf-desktop-player-controls')) return;
     const panel = stage.closest('.direct-video-panel');
     if (!panel) return;
+    const legacyToolbar = panel.querySelector(':scope > .sf-lesson-toolbar');
+    if (legacyToolbar) {
+      legacyToolbar.hidden = true;
+      legacyToolbar.style.setProperty('display', 'none', 'important');
+      legacyToolbar.setAttribute('aria-hidden', 'true');
+    }
     const isMovie=panel.classList.contains('sf-movie-lesson-player');
     const desktop=window.matchMedia('(min-width:901px) and (pointer:fine)');
-    if(!isMovie&&(!desktop.matches||window.MobileApp?.active))return;
     if(!isMovie){panel.classList.add('sf-desktop-story-player');stage.classList.add('sf-desktop-story-player');}
     const svg = body => `<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${body}</svg>`;
     const icons = {
@@ -40,7 +45,7 @@ window.SFDesktopPlayer = {
     const episodes=app?.cache?.[`data/${lesson?.seriesId}/episodes.json`]||[];
     const index=episodes.findIndex(episode=>Number(episode.episodeId)===Number(lesson?.ep?.episodeId));
     const neighbor=action=>index>=0?episodes[index+(action==='prev'?-1:1)]:null;
-    const ownNativeControls=()=>{if(desktop.matches&&!window.MobileApp?.active){player.controls=false;player.removeAttribute('controls');}};
+    const ownNativeControls=()=>{player.controls=false;player.removeAttribute('controls');};
     ownNativeControls();
     player.addEventListener('pause',ownNativeControls);
     const time = value => {

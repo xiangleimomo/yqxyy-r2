@@ -40,8 +40,9 @@ const App = {
     await this.render();
     if(window.SFCloud&&!window.MobileApp?.active){
       await window.SFCloud.init(this);
-      if(this.route()[0]==='movies' || this.route()[0]==='movie-hub') await this.render();
+      if(['movies','movie-hub','announcements','announcement-admin'].includes(this.route()[0])) await this.render();
     }
+    window.SiteAnnouncements?.mount();
   },
   async globalSearch(){
     const q = document.getElementById('globalSearch').value.trim();
@@ -127,6 +128,8 @@ const App = {
     document.documentElement.classList.remove('movie-study-page');
     window.MobileApp?.sync(this,page,a);
     try{
+      window.SiteAnnouncements?.mount();
+      if(page==='announcements'||page==='announcement-admin')return await window.SiteAnnouncements.render(this,page==='announcement-admin');
       if(window.MobileApp?.active){
         if(page==='home'&&!a)return await window.MobileApp.home(this);
         if(page==='mobile-reading')return window.MobileApp.reading(this);
@@ -1862,6 +1865,7 @@ nextWordPractice(){
   }
 },
 updateUtilityNav(){
+    window.UtilityCounts?.refresh(this);
     EpisodeGames.refreshAll();
     const nav=document.getElementById('navRewards');
     if(!nav) return;
@@ -2001,6 +2005,7 @@ addPoints(n=1){
     window.SFMedals?.lessonCompleted(seriesId,episodeId,module);
     const today=new Date();const ds=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');
     const dates=new Set(this.storage('checkins')||[]);dates.add(ds);this.storage('checkins',[...dates].sort());
+    window.UtilityCounts?.refresh(this);
   },
   saveQuizScore(seriesId, episodeId, score, total, answers){
     if(answers)window.SFFamily?.record(seriesId,episodeId,'quiz',answers);

@@ -53,7 +53,7 @@
       if (!pseudo) return;
       pseudo = false;
       stage.classList.remove('subtitle-page-fullscreen');
-      if (isMobile) stage.classList.add('sf-caption-below');
+      // Captions stay in the shared video overlay on touch devices.
       document.documentElement.classList.remove('sf-caption-screen-locked');
       document.body.classList.remove('sf-caption-screen-locked');
       if (placeholder && placeholder.isConnected) placeholder.replaceWith(stage);
@@ -125,70 +125,7 @@
       if (movieToolbar) player.removeAttribute('controls');
       else player.setAttribute('controls', '');
     }
-    // Movie lessons have their own 8-button toolbar; do not inject the legacy
-    // mobile seek/play/mute/fullscreen bar a second time.
-    if (isMobile && !movieToolbar) {
-      stage.classList.add('sf-touch-stage', 'sf-caption-below');
-      player.removeAttribute('controls');
-      player.controls = false;
-      // HTML hit surface prevents a tap on <video> from being claimed by
-      // mobile browsers as a request for their native fullscreen player.
-      const hitArea = document.createElement('button');
-      hitArea.type = 'button';
-      hitArea.className = 'sf-touch-video-hitarea';
-      hitArea.setAttribute('aria-label', '播放或暂停视频（保留逐词字幕）');
-      hitArea.addEventListener('click', () => {
-        if (player.paused) {
-          const attempt = player.play();
-          if (attempt && attempt.catch) attempt.catch(() => {});
-        } else player.pause();
-      });
-      stage.appendChild(hitArea);
-      const bar = document.createElement('div');
-      bar.className = 'sf-touch-video-controls';
-      bar.setAttribute('role', 'group');
-      bar.setAttribute('aria-label', '网页视频播放控制（保留逐词字幕）');
-      const play = button('sf-touch-play', '播放或暂停', '▶');
-      const seek = document.createElement('input');
-      seek.type = 'range';
-      seek.min = '0'; seek.max = '1000'; seek.step = '1'; seek.value = '0';
-      seek.className = 'sf-touch-seek';
-      seek.setAttribute('aria-label', '视频播放进度');
-      const time = document.createElement('span');
-      time.className = 'sf-touch-time';
-      time.textContent = '0:00 / 0:00';
-      const mute = button('sf-touch-mute', '静音或恢复音量', '🔊');
-      mobileFullscreenButton = button('sf-touch-fullscreen', '网页全屏（保留高亮字幕）', '⛶');
-      bar.append(play, seek, time, mute, mobileFullscreenButton);
-      stage.appendChild(bar);
-      play.addEventListener('click', () => {
-        if (player.paused) {
-          const attempt = player.play();
-          if (attempt && attempt.catch) attempt.catch(() => {});
-        } else player.pause();
-      });
-      mute.addEventListener('click', () => { player.muted = !player.muted; });
-      mobileFullscreenButton.addEventListener('click', () => { void toggle(); });
-      seek.addEventListener('input', () => {
-        if (Number.isFinite(player.duration) && player.duration > 0) {
-          player.currentTime = player.duration * Number(seek.value) / 1000;
-        }
-      });
-      const refresh = () => {
-        play.textContent = player.paused ? '▶' : '❚❚';
-        play.setAttribute('aria-label', player.paused ? '播放' : '暂停');
-        mute.textContent = player.muted ? '🔇' : '🔊';
-        mute.setAttribute('aria-label', player.muted ? '恢复音量' : '静音');
-        const duration = Number.isFinite(player.duration) ? player.duration : 0;
-        time.textContent = formatTime(player.currentTime) + ' / ' + formatTime(duration);
-        if (duration > 0 && !seek.matches(':active')) {
-          seek.value = String(Math.min(1000, Math.round(1000 * (player.currentTime || 0) / duration)));
-        }
-      };
-      ['timeupdate','loadedmetadata','durationchange','play','pause','ended','volumechange','seeked'].forEach(name =>
-        player.addEventListener(name, refresh));
-      refresh();
-    }
+    // Playback controls are provided by SFDesktopPlayer on every viewport.
     updateButton();
     return {toggle, exit, isFull};
   }

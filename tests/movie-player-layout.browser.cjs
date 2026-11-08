@@ -58,9 +58,9 @@ const fs=require('fs'),assert=require('assert');
  }
  const bounds=await page.locator('video').boundingBox();assert(Math.abs(bounds.width/bounds.height-16/9)<.02);
  const controls=await page.locator('.sf-desktop-player-controls').boundingBox(),caption=await page.locator('.video-caption').boundingBox();
- assert(controls.y>=bounds.y+bounds.height-1,'mobile toolbar belongs below video');
- assert(caption.y>=controls.y+controls.height-1,'mobile captions belong below toolbar');
+ assert(controls.y>=bounds.y && controls.y+controls.height<=bounds.y+bounds.height+1,'mobile toolbar overlays video');
+ assert(caption.y>=bounds.y && caption.y<bounds.y+bounds.height,'mobile captions overlay video');
  await page.locator('[data-desktop-act="settings"]').click();
- const settings=await page.locator('.subtitle-controls').boundingBox(),controlsAfter=await page.locator('.sf-desktop-player-controls').boundingBox();assert(settings.y>=controlsAfter.y+controlsAfter.height-1,'mobile settings belong outside the video');
+ const settings=await page.locator('.subtitle-controls').boundingBox(),controlsAfter=await page.locator('.sf-desktop-player-controls').boundingBox();const currentVideo=await page.locator('video').boundingBox();assert(settings.y>=currentVideo.y && settings.y<currentVideo.y+currentVideo.height,'mobile settings overlay video');
  console.log('PASS: default full-movie HLS, third-party iframe, backup HLS switching and cleanup.');
 }finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1});

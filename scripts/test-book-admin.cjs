@@ -24,6 +24,10 @@ const path = require('node:path');
     const origin='https://yqxyy.netlify.app';
     const preflight=await upload(new Request('https://relay.test',{method:'OPTIONS',headers:{Origin:origin}}));
     assert.equal(preflight.status,204);assert.equal(preflight.headers.get('access-control-allow-origin'),origin);
+    for (const origin of ['https://yqxyy-r2.netlify.app', 'http://localhost:8888', 'http://127.0.0.1:8888']) {
+      const response = await upload(new Request('https://relay.test?kind=pdf', {method:'OPTIONS', headers:{Origin:origin}}));
+      assert.equal(response.status,204); assert.equal(response.headers.get('access-control-allow-origin'),origin);
+    }
     assert.equal((await upload(new Request('https://relay.test',{method:'OPTIONS',headers:{Origin:'https://untrusted.example'}}))).status,403);
     global.fetch = async () => { throw new Error('Unauthorized request must not reach upstream'); };
     assert.equal((await upload(request())).status, 401);

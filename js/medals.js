@@ -5,7 +5,7 @@ window.SFMedals={
   const cloud=window.SFCloud,uid=cloud?.user?.id;if(!uid||!cloud.client)throw Error('请先登录');
   const {data,error}=await cloud.client.rpc('sf_medals',{p_action:action,p_payload:payload});
   if(window.SFCloud?.user?.id!==uid)throw Error('账号已切换');
-  if(error)throw Error(error.code==='PGRST202'?'勋章服务尚未部署完成':error.message);return data;
+  if(error)throw Error(error.code==='PGRST202'?'勋章服务尚未部署完成':error.message);if(action!=='dashboard')window.UtilityCounts?.refreshHonors(true);return data;
  },
  cleanup(){this.generation++;clearTimeout(this.timer);document.querySelectorAll('.medal-dialog').forEach(node=>{node.close();node.remove();});for(const url of this.urls)URL.revokeObjectURL(url);this.urls.clear();},
  identitySwitch(){this.cleanup();this.state=null;this.uid=null;this.nextNotice=null;document.querySelectorAll('.medal-resource-panel,.medal-config-link,.medal-reader-trigger,.medal-quiz-entry,.medal-reader-choices').forEach(node=>node.remove());if(location.hash.startsWith('#/honors'))this.app?.el().replaceChildren(document.createTextNode('正在切换账号，读取对应荣誉馆…'));},
@@ -33,7 +33,7 @@ window.SFMedals={
    let state=await this.rpc('dashboard');
    if(state.role==='parent'&&state.children.length){const saved=sessionStorage.getItem('sf-medal-child:'+uid),child=state.children.find(c=>c.id===saved)||state.children[0];state=await this.rpc('dashboard',{child_id:child.id});}
    if(run!==this.generation||uid!==window.SFCloud?.user?.id||route!==location.hash)return;
-   this.state=state;app.el().innerHTML=`<section class="medal-shell">${this.nav(mode)}<div id="medalContent"></div></section>`;
+   this.state=state;window.UtilityCounts?.refreshHonors(true);app.el().innerHTML=`<section class="medal-shell">${this.nav(mode)}<div id="medalContent"></div></section>`;
    if(!state.role&&!state.admin){this.content().innerHTML='<div class="empty"><p>请先在账号管理中设置家长或孩子身份，并通过已有绑定码流程确认亲子关系。</p><button class="btn" id="medalAccount">打开账号管理</button></div>';app.el().querySelector('#medalAccount').onclick=()=>window.SFCloud.open();return;}
    if(['works','wall'].includes(mode))this.renderGallery(mode);
    else if(['workshop','mine','collections'].includes(mode))await this.renderTemplates(mode);
