@@ -1,0 +1,19 @@
+{
+  "id": "/",
+  "name": "yqxyy 英语学习",
+  "short_name": "yqxyy",
+  "description": "动画、听力、绘本、词汇、测验与成长勋章",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#248b66",
+  "icons": [
+    {
+      "src": "/assets/yqxyy-app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
