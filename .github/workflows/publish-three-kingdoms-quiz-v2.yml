@@ -1,12 +1,11 @@
 name: Publish Three Kingdoms 14-Episode Quiz V2
 on:
-  push:
-    paths:
-      - course-patches/three-kingdoms-quiz-v2-20261109.publish
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
   publish:
+    if: ${{ false }}
     runs-on: ubuntu-latest
     env:
       R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
