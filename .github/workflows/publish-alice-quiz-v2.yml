@@ -1,0 +1,24 @@
+name: Publish Alice 24 x 5 V2 Quiz Corrections to R2
+on:
+  push:
+    paths:
+      - course-patches/alice-quiz-v2-20261109.publish
+permissions:
+  contents: read
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+      R2_BUCKET: ${{ secrets.R2_BUCKET }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Validate original lesson sources and publish exact 120 Alice questions
+        run: node scripts/publish-alice-quiz-v2.mjs
