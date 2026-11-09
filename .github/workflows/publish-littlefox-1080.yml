@@ -1,5 +1,6 @@
 name: Publish Little Fox 1080P Upgrades to R2
 on:
+  workflow_dispatch:
   push:
     paths:
       - data-patches/littlefox-1080-publish.request
@@ -7,6 +8,7 @@ permissions:
   contents: read
 jobs:
   publish:
+    if: ${{ false }}
     runs-on: ubuntu-latest
     env:
       R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
