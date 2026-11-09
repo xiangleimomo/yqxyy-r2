@@ -305,6 +305,8 @@ window.SFCloud = {
     document.getElementById('accountForm').hidden=mode==='account';
     document.getElementById('accountActions').hidden=mode!=='account';
     document.getElementById('authPasswordRow').hidden=mode==='reset';
+    const confirmRow=document.getElementById('authPasswordConfirmRow');if(confirmRow)confirmRow.hidden=mode!=='signup';
+    const confirmInput=document.getElementById('accountPasswordConfirm');if(confirmInput)confirmInput.required=mode==='signup';
     document.getElementById('authEmailRow').hidden=mode==='newPassword';
     document.getElementById('accountPassword').required=mode==='login'||mode==='signup'||mode==='newPassword';
     document.getElementById('accountEmail').required=mode!=='newPassword';
@@ -328,6 +330,8 @@ window.SFCloud = {
         result=await this.client.auth.updateUser({password});
       }else if(this.authMode==='signup'){
         if(password.length<8)throw new Error('密码至少需要 8 位。');
+        const confirmation=document.getElementById('accountPasswordConfirm')?.value;
+        if(confirmation!==password)throw new Error('两次输入的密码不一致，请重新确认。');
         const nickname=document.getElementById('accountNickname').value.trim();
         if(nickname.length<2||nickname.length>40)throw new Error('昵称需要 2–40 个字。');
         const lookup=await this.client.rpc('sf_email_registered',{candidate:email});
@@ -349,7 +353,9 @@ window.SFCloud = {
       if(authCode==='over_email_send_rate_limit'||/email rate limit exceeded/i.test(authMessage)){
         this.setMessage('邮件发送额度已用完：当前网站使用的 Supabase 默认邮件服务每小时仅允许发送 2 封邮件。现在暂时无法发送注册验证邮件或密码重置邮件。请稍后再试；网站管理员需要配置正式 SMTP 邮件服务，才能恢复正常注册。',true);
       }else{
-        this.setMessage('操作失败：'+(authMessage||'请稍后重试。'),true);
+        if(authCode==='invalid_credentials'||/invalid login credentials/i.test(authMessage)){
+          this.setMessage('邮箱或密码不正确。请检查注册时使用的密码；如果忘记密码，请点击上方「忘记密码」重设。账号和学习记录不会丢失。',true);
+        }else this.setMessage('操作失败：'+(authMessage||'请稍后重试。'),true);
       }
     }finally{submit.disabled=false;}
   },
