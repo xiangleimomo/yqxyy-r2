@@ -1,0 +1,24 @@
+name: Audit Little Fox 1080P URLs Against R2
+on:
+  push:
+    paths:
+      - data-patches/littlefox-1080-audit.request
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    env:
+      R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+      R2_BUCKET: ${{ secrets.R2_BUCKET }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Validate 871 1080P URLs and live episode IDs without modifying R2
+        run: node scripts/audit-littlefox-1080-r2.mjs
