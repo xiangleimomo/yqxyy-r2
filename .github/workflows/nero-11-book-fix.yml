@@ -1,0 +1,24 @@
+name: Fix Nero Episode 11 Storybook in R2
+on:
+  push:
+    paths:
+      - course-patches/nero-fs0183-episode-011-book.publish
+permissions:
+  contents: read
+jobs:
+  publish-book:
+    runs-on: ubuntu-latest
+    env:
+      R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+      R2_BUCKET: ${{ secrets.R2_BUCKET }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Repair only Nero 11 PDF catalogue entry and verify the public reader
+        run: node scripts/fix-nero-11-book.mjs
