@@ -102,7 +102,7 @@
         <div id="authNicknameRow" hidden><label for="accountNickname">账号昵称</label><input id="accountNickname" minlength="2" maxlength="40" autocomplete="nickname" placeholder="2–40 个字，公开显示"></div>
         <div id="authEmailRow"><label for="accountEmail">邮箱</label><input id="accountEmail" type="email" autocomplete="email" required placeholder="you@example.com"></div>
         <div id="authPasswordRow"><label for="accountPassword">密码</label><input id="accountPassword" type="password" minlength="8" autocomplete="current-password" placeholder="至少 8 位"></div>
-        <button class="account-primary" id="accountSubmit" type="submit">登录</button>
+        <div id="authPasswordConfirmRow" hidden><label for="accountPasswordConfirm">确认密码</label><input id="accountPasswordConfirm" type="password" minlength="8" autocomplete="new-password" placeholder="再次输入密码"></div><button class="account-primary" id="accountSubmit" type="submit">登录</button>
       </form>
       <div id="accountActions" hidden><p id="accountEmailLabel"></p><form id="accountNicknameForm"><label for="accountProfileNickname">账号昵称</label><input id="accountProfileNickname" required minlength="2" maxlength="40" autocomplete="nickname" placeholder="设置公开昵称"><button type="submit">保存昵称</button></form><p class="account-library-links"><a href="#/reading/mine/uploads" id="accountMyBooks">管理我的绘本</a><a href="#/magazines/mine/uploads" id="accountMyMagazines">管理我的期刊</a></p><div id="membershipAccountSettings"></div><div id="familyAccountSettings"></div><div class="account-data-actions"><button type="button" id="accountSync">立即同步</button><button type="button" id="accountImport">导入本设备游客记录</button><button type="button" id="accountLogout">退出账户</button></div></div>
       <small class="account-footnote">登录后同步学习进度、测验、收藏和积分；未登录仍可作为游客学习。</small>
@@ -111,7 +111,7 @@
   <script src="js/supabase-config.js"></script>
   <script src="js/source-access.js?v=20261107-allowlist-2"></script>
   <script src="js/membership.js?v=20261107-1"></script>
-  <script src="js/cloud-account.js?v=20261108-email-limit-message-1"></script>
+  <script src="js/cloud-account.js?v=20261109-auth-recovery-1"></script>
   <script src="js/read-dictionary.js?v=20261104-study-collections-1"></script>
   <script src="js/client-protection.js?v=20261101-1"></script>
   <script src="js/dytt-ad-skip.js?v=20261017-1"></script>
