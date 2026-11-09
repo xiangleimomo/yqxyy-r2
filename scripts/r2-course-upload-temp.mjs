@@ -398,3 +398,47 @@ console.log('PASS: official Read fetched: ' + officialRead.paragraphs.length + '
 console.log('PASS: uploaded and read-after-write verified ' + uploads.length + ' R2 objects for ' + seriesId + ' episode 11.');
 console.log('PASS: 43 VTT cues, 295 visible tokens, 292 official XML timing units, ' + vocabularyPatch['11'].length + ' vocabulary items, and 5 four-option quiz questions.');
 console.log('PASS: original course JSON backups saved under ' + backupPrefix + '/.');
+
+
+const publicBase = 'https://yqxyy-r2.netlify.app';
+async function getPublicData(key) {
+  const response = await fetch(publicBase + '/' + key, {
+    headers: { 'cache-control': 'no-cache' },
+    signal: AbortSignal.timeout(20000)
+  });
+  if (!response.ok) throw new Error('Public Netlify /data route failed for ' + key + ': HTTP ' + response.status);
+  return Buffer.from(await response.arrayBuffer());
+}
+const publicKeys = [
+  prefix + 'episodes.json',
+  prefix + 'series.json',
+  prefix + 'reading-lessons.json',
+  prefix + 'vocabulary.json',
+  prefix + 'quiz.json',
+  prefix + 'subtitles/011.vtt',
+  prefix + 'subtitles/011.words.json',
+  prefix + 'subtitles/011.timing.json',
+  'data/series-list.json'
+];
+const publicObjects = new Map();
+for (const key of publicKeys) publicObjects.set(key, await getPublicData(key));
+const publicJson = key => JSON.parse(publicObjects.get(key).toString('utf8'));
+const publicEpisodes = publicJson(prefix + 'episodes.json');
+const publicSeries = publicJson(prefix + 'series.json');
+const publicReading = publicJson(prefix + 'reading-lessons.json');
+const publicVocabulary = publicJson(prefix + 'vocabulary.json');
+const publicQuiz = publicJson(prefix + 'quiz.json');
+const publicWords = publicJson(prefix + 'subtitles/011.words.json');
+const publicTiming = publicJson(prefix + 'subtitles/011.timing.json');
+const publicSeriesList = publicJson('data/series-list.json');
+const publicVtt = publicObjects.get(prefix + 'subtitles/011.vtt').toString('utf8');
+const publicEpisode11 = publicEpisodes.find(item => Number(item.episodeId) === 11);
+const publicListEntry = publicSeriesList.find(item => item.seriesId === seriesId);
+if (!publicEpisode11 || publicEpisode11.sourceContentId !== sourceId) throw new Error('Public /data route did not return episode 11');
+if (publicEpisodes.length !== 11 || publicSeries.totalEpisodes !== 11) throw new Error('Public /data route episode indexes are not updated to 11');
+if (!publicListEntry || publicListEntry.episodeCount !== 11 || publicListEntry.readyEpisodes !== 11) throw new Error('Public /data route series catalog is not updated to 11');
+if (publicReading['11']?.source !== 'official-text' || publicReading['11']?.paragraphs?.length !== officialRead.paragraphs.length) throw new Error('Public /data route reading lesson is missing or stale');
+if (publicVocabulary['11']?.length !== 23 || publicQuiz['11']?.questions?.length !== 5) throw new Error('Public /data route vocabulary or quiz is missing');
+if (publicWords.cueCount !== 43 || publicWords.totalWords !== 295 || publicTiming.afterLastMs !== 211273) throw new Error('Public /data route word timing or timing report is stale');
+if (!publicVtt.startsWith('WEBVTT\n') || (publicVtt.match(/ --> /g) || []).length !== 43) throw new Error('Public /data route VTT is invalid');
+console.log('PASS: Netlify public /data route returned and validated all ' + publicKeys.length + ' episode 11 resources/indexes.');
