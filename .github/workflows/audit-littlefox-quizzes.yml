@@ -1,12 +1,11 @@
 name: Audit Little Fox R2 Quiz Quality
 on:
-  push:
-    paths:
-      - audits/quiz-review-2026-11-09.request
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
   audit:
+    if: ${{ false }}
     runs-on: ubuntu-latest
     env:
       R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
