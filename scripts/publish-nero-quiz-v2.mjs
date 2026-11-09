@@ -35,7 +35,7 @@ let changedEpisodes=false;
 let counter=0;
 for(const lesson of lessons){
   const ep=episodes.find(e=>Number(e.episodeId)===lesson.episodeId),read=reads[String(lesson.episodeId)];
-  check(ep&&read&&read.source==='official-text'&&ep.sourceContentId===read.sourceId,'Nero official Read identity mismatch for episode '+lesson.episodeId);
+  check(ep&&read&&['official-text','official-public-read'].includes(read.source)&&ep.sourceContentId===read.sourceId,'Nero official Read identity mismatch for episode '+lesson.episodeId);
   check(lesson.questions?.length===5,'Expected 5 questions episode '+lesson.episodeId);
   const questions=lesson.questions.map((q,i)=>{
     check(q.question?.endsWith('?')&&!/which word appears|fill in the blank|complete the sentence|____/i.test(q.question),'Generic or invalid prompt');
