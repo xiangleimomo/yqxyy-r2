@@ -1,12 +1,11 @@
 name: Publish Nero 1-10 V2 Quiz Corrections
 on:
-  push:
-    paths:
-      - course-patches/nero-quiz-v2-20261109.publish
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
   publish:
+    if: ${{ false }}
     runs-on: ubuntu-latest
     env:
       R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
