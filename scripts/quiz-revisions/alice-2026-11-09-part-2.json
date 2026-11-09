@@ -1,0 +1,398 @@
+{
+  "seriesId": "little-fox-alice-s-adventures-in-wonderland-fs0106",
+  "level": 5,
+  "revision": "2026-11-09",
+  "reference": "official-read",
+  "lessons": [
+    {
+      "episodeId": 7,
+      "questions": [
+        {
+          "question": "Why did the White Rabbit call Alice 'Mary Ann'?",
+          "options": [
+            "He wanted her to become a gardener",
+            "She had told him that name",
+            "He mistook her for his servant",
+            "He knew her sister"
+          ],
+          "answer": 2,
+          "explanation": "白兔把爱丽丝误认成自己的仆人玛丽安。",
+          "evidenceParagraphId": "p2"
+        },
+        {
+          "question": "What did Alice find inside the White Rabbit's house?",
+          "options": [
+            "The fan and white gloves he wanted",
+            "A key to the Queen's garden",
+            "A room full of birds",
+            "Her lost cat"
+          ],
+          "answer": 0,
+          "explanation": "爱丽丝在桌上找到了白兔要的扇子和白手套。",
+          "evidenceParagraphId": "p6"
+        },
+        {
+          "question": "Why did Alice drink from the unmarked bottle?",
+          "options": [
+            "She thought it would make her invisible",
+            "She wanted to grow bigger",
+            "The Frog Footman ordered her to",
+            "She wanted to fall asleep"
+          ],
+          "answer": 1,
+          "explanation": "她希望喝下瓶中液体后重新长大。",
+          "evidenceParagraphId": "p8"
+        },
+        {
+          "question": "What happened after Alice began growing in the house?",
+          "options": [
+            "She escaped through the window",
+            "She became smaller than a mouse",
+            "She flew up the chimney",
+            "She became trapped against the walls and ceiling"
+          ],
+          "answer": 3,
+          "explanation": "她越长越大，最后挤在房里动弹不得。",
+          "evidenceParagraphId": "p11"
+        },
+        {
+          "question": "Why couldn't the White Rabbit open his front door?",
+          "options": [
+            "Alice's elbow was pressing against it",
+            "The gardener had locked it",
+            "A cat stood in front of it",
+            "The key was in the garden"
+          ],
+          "answer": 0,
+          "explanation": "爱丽丝巨大的手肘顶住了房门。",
+          "evidenceParagraphId": "p16"
+        }
+      ]
+    },
+    {
+      "episodeId": 8,
+      "questions": [
+        {
+          "question": "What did the White Rabbit's friends throw through the window?",
+          "options": [
+            "Flowers",
+            "Pebbles",
+            "Books",
+            "Gloves"
+          ],
+          "answer": 1,
+          "explanation": "白兔的朋友们向屋内投掷小石子。",
+          "evidenceParagraphId": "p7"
+        },
+        {
+          "question": "What happened to the pebbles inside the house?",
+          "options": [
+            "They grew into trees",
+            "They floated away",
+            "They turned into small cakes",
+            "They became keys"
+          ],
+          "answer": 2,
+          "explanation": "落进屋里的石子变成了小蛋糕。",
+          "evidenceParagraphId": "p9"
+        },
+        {
+          "question": "How did Alice finally get out of the Rabbit's house?",
+          "options": [
+            "She ate a cake and shrank",
+            "The Rabbit opened the roof",
+            "She climbed up the chimney",
+            "She broke a window"
+          ],
+          "answer": 0,
+          "explanation": "吃下蛋糕后爱丽丝缩小，得以跑出门外。",
+          "evidenceParagraphId": "p10"
+        },
+        {
+          "question": "What made playing with the puppy dangerous for Alice?",
+          "options": [
+            "The puppy could talk",
+            "The puppy was sick",
+            "Alice had lost her shoes",
+            "She was tiny compared with the enormous puppy"
+          ],
+          "answer": 3,
+          "explanation": "她只有几英寸高，在巨大的小狗面前很容易被压伤。",
+          "evidenceParagraphId": "p15"
+        },
+        {
+          "question": "Whom did Alice see sitting on top of a mushroom?",
+          "options": [
+            "The Queen",
+            "A blue Caterpillar",
+            "The White Rabbit",
+            "A sleeping Dormouse"
+          ],
+          "answer": 1,
+          "explanation": "结尾她看见一只蓝色毛毛虫坐在蘑菇上。",
+          "evidenceParagraphId": "p19"
+        }
+      ]
+    },
+    {
+      "episodeId": 9,
+      "questions": [
+        {
+          "question": "Why did Alice have trouble explaining who she was?",
+          "options": [
+            "She could not remember her sister's name",
+            "She was pretending to be a bird",
+            "She had changed sizes many times that day",
+            "She had never met anyone"
+          ],
+          "answer": 2,
+          "explanation": "她一天之内不断变化体型，觉得自己都变得陌生。",
+          "evidenceParagraphId": "p3"
+        },
+        {
+          "question": "How did the Caterpillar react when Alice mentioned becoming a butterfly?",
+          "options": [
+            "He said the change would not feel strange to him",
+            "He asked Alice to teach him to fly",
+            "He said he had already become one",
+            "He hurried away in fear"
+          ],
+          "answer": 0,
+          "explanation": "毛毛虫坚持认为自己变成蝴蝶也不会觉得奇怪。",
+          "evidenceParagraphId": "p8"
+        },
+        {
+          "question": "What advice did the Caterpillar first offer Alice?",
+          "options": [
+            "Ask the White Rabbit for help",
+            "Return to the river",
+            "Find a golden key",
+            "Do not lose your temper"
+          ],
+          "answer": 3,
+          "explanation": "他先告诉爱丽丝不要发脾气。",
+          "evidenceParagraphId": "p16"
+        },
+        {
+          "question": "Why did Alice want to be larger than three inches?",
+          "options": [
+            "She wanted to become a giant",
+            "She found that tiny size unpleasant and unfamiliar",
+            "She planned to enter the Queen's castle",
+            "She needed to reach a watch"
+          ],
+          "answer": 1,
+          "explanation": "她不喜欢只有三英寸高的感觉，也不适应。",
+          "evidenceParagraphId": "p27"
+        },
+        {
+          "question": "What did the Caterpillar finally tell Alice about the mushroom?",
+          "options": [
+            "It could turn her into a bird",
+            "It could make her fall asleep",
+            "One side makes her taller and the other smaller",
+            "It would take her home"
+          ],
+          "answer": 2,
+          "explanation": "他说明蘑菇两边分别能使她长高与缩小。",
+          "evidenceParagraphId": "p32"
+        }
+      ]
+    },
+    {
+      "episodeId": 10,
+      "questions": [
+        {
+          "question": "How did Alice test the two sides of the mushroom?",
+          "options": [
+            "She asked a bird to try them",
+            "She broke off a piece with each hand",
+            "She dropped it into the river",
+            "She asked the Rabbit to taste it"
+          ],
+          "answer": 1,
+          "explanation": "她双手各掰下一块蘑菇来尝试。",
+          "evidenceParagraphId": "p3"
+        },
+        {
+          "question": "What happened when Alice tried the piece in her right hand?",
+          "options": [
+            "She became so short that her chin touched her foot",
+            "She immediately returned to normal height",
+            "Her arms turned into wings",
+            "She began floating through the trees"
+          ],
+          "answer": 0,
+          "explanation": "右手的蘑菇使她缩得极小，下巴碰到脚。",
+          "evidenceParagraphId": "p4"
+        },
+        {
+          "question": "Why did the Pigeon think Alice was a serpent?",
+          "options": [
+            "Alice was carrying eggs",
+            "Alice wore a green coat",
+            "Alice had a snake as a pet",
+            "Alice's neck had grown extremely long"
+          ],
+          "answer": 3,
+          "explanation": "爱丽丝的脖子被蘑菇拉得很长，鸽子误以为是蛇。",
+          "evidenceParagraphId": "p17"
+        },
+        {
+          "question": "What was the Pigeon trying to protect?",
+          "options": [
+            "A golden key",
+            "The Queen's roses",
+            "Her eggs in the nest",
+            "The Rabbit's gloves"
+          ],
+          "answer": 2,
+          "explanation": "鸽子担心蛇来偷自己的鸟蛋。",
+          "evidenceParagraphId": "p19"
+        },
+        {
+          "question": "Why did Alice shrink to nine inches before approaching a house?",
+          "options": [
+            "She wanted to fit inside the mushroom",
+            "She did not want to frighten its smaller inhabitants",
+            "She wanted to hide from the Mouse",
+            "She hoped to escape a flood"
+          ],
+          "answer": 1,
+          "explanation": "她认为住户比自己小，于是先缩小以免吓到他们。",
+          "evidenceParagraphId": "p25"
+        }
+      ]
+    },
+    {
+      "episodeId": 11,
+      "questions": [
+        {
+          "question": "What message did the Fish Footman bring?",
+          "options": [
+            "An invitation from the Queen for the Duchess to play croquet",
+            "A warning about a lost cat",
+            "A request for Alice to visit the river",
+            "A letter about the White Rabbit's watch"
+          ],
+          "answer": 0,
+          "explanation": "鱼脸仆人送来了王后邀请公爵夫人打槌球的信。",
+          "evidenceParagraphId": "p3"
+        },
+        {
+          "question": "Why did the Frog Footman say knocking would not help?",
+          "options": [
+            "He had lost the house key",
+            "The Duchess had gone home",
+            "The people inside were making too much noise to hear",
+            "The door was already open"
+          ],
+          "answer": 2,
+          "explanation": "屋里太吵，没人听得到敲门。",
+          "evidenceParagraphId": "p7"
+        },
+        {
+          "question": "What filled the Duchess's kitchen and made Alice sneeze?",
+          "options": [
+            "Cold air from the woods",
+            "Steam from a bath",
+            "Perfume from the garden",
+            "Smoke and too much pepper"
+          ],
+          "answer": 3,
+          "explanation": "厨房烟雾弥漫，汤里的胡椒又多，让爱丽丝打喷嚏。",
+          "evidenceParagraphId": "p13"
+        },
+        {
+          "question": "What was unusual about the Cheshire Cat?",
+          "options": [
+            "It could sing like a bird",
+            "It wore a watch",
+            "It grinned widely and did not sneeze",
+            "It painted roses red"
+          ],
+          "answer": 2,
+          "explanation": "柴郡猫总是咧嘴笑，在满屋胡椒中也没有打喷嚏。",
+          "evidenceParagraphId": "p15"
+        },
+        {
+          "question": "What did the Duchess give Alice before leaving?",
+          "options": [
+            "A baby to hold and feed",
+            "A pair of white gloves",
+            "A cake with a label",
+            "A box of paints"
+          ],
+          "answer": 0,
+          "explanation": "公爵夫人把婴儿交给爱丽丝，自己去和王后打球。",
+          "evidenceParagraphId": "p21"
+        }
+      ]
+    },
+    {
+      "episodeId": 12,
+      "questions": [
+        {
+          "question": "What did the Duchess's baby turn into?",
+          "options": [
+            "A kitten",
+            "A pig",
+            "A mouse",
+            "A duck"
+          ],
+          "answer": 1,
+          "explanation": "爱丽丝发现怀里的婴儿逐渐变成了猪。",
+          "evidenceParagraphId": "p4"
+        },
+        {
+          "question": "What did Alice ask the Cheshire Cat?",
+          "options": [
+            "Where to find a new dress",
+            "Who had taken her key",
+            "How to return the baby",
+            "Which way she should go"
+          ],
+          "answer": 3,
+          "explanation": "她向柴郡猫询问接下来该走哪条路。",
+          "evidenceParagraphId": "p6"
+        },
+        {
+          "question": "Who did the Cheshire Cat say lived in the area?",
+          "options": [
+            "The Hatter and the March Hare",
+            "Alice's sister and the Mouse",
+            "The King and Queen of Spades",
+            "The Dodo and the Parrot"
+          ],
+          "answer": 0,
+          "explanation": "柴郡猫告诉她附近住着帽匠和三月兔。",
+          "evidenceParagraphId": "p11"
+        },
+        {
+          "question": "Why did Alice choose to visit the March Hare?",
+          "options": [
+            "She had been invited to his birthday",
+            "The Queen had sent her there",
+            "She had never met a March Hare before",
+            "He had promised to lend her a key"
+          ],
+          "answer": 2,
+          "explanation": "她见过帽匠，却从未见过三月兔，因此好奇想去看看。",
+          "evidenceParagraphId": "p23"
+        },
+        {
+          "question": "What remained visible after the Cheshire Cat vanished?",
+          "options": [
+            "Its tail",
+            "Its grin",
+            "Its paws",
+            "Its whiskers"
+          ],
+          "answer": 1,
+          "explanation": "柴郡猫的身体消失后，笑容仍留在空中。",
+          "evidenceParagraphId": "p27"
+        }
+      ]
+    }
+  ]
+}
