@@ -370,8 +370,37 @@ listEntry.tagline = '11 video lessons · Content in progress';
 listEntry.description = series.description;
 
 const backupPrefix = '__course-backups/nero-fs0183-before-episode-011-20261109';
+report.backupPrefix = backupPrefix;
+report.backupSourceRepo = 'xiangleimomo/yqxyy@main';
+const baselineBase = 'https://raw.githubusercontent.com/xiangleimomo/yqxyy/main/';
+const baseline = new Map();
+for (const key of keys) {
+  const response = await fetch(baselineBase + key, {
+    headers: { 'user-agent': 'Mozilla/5.0 yqxyy-course-publisher/1.0' },
+    signal: AbortSignal.timeout(20000)
+  });
+  if (!response.ok) throw new Error('Could not retrieve pre-publication baseline from old repository: ' + key + ' HTTP ' + response.status);
+  baseline.set(key, Buffer.from(await response.arrayBuffer()));
+}
+const baselineEpisodes = JSON.parse(baseline.get(prefix + 'episodes.json').toString('utf8'));
+const baselineSeries = JSON.parse(baseline.get(prefix + 'series.json').toString('utf8'));
+const baselineCatalog = JSON.parse(baseline.get('data/series-list.json').toString('utf8'));
+const baselineIds = Array.isArray(baselineEpisodes) ? baselineEpisodes.map(item => Number(item.episodeId)) : [];
+if (baselineIds.length !== 10 || new Set(baselineIds).size !== 10 ||
+    !Array.from({ length: 10 }, (_, index) => index + 1).every(id => baselineIds.includes(id)) ||
+    baselineEpisodes.find(item => Number(item.episodeId) === 10)?.sourceContentId !== 'C0013594' ||
+    baselineSeries.seriesId !== seriesId ||
+    !baselineCatalog.some(item => item.seriesId === seriesId)) {
+  throw new Error('Old GitHub repository is not a verified 10-episode pre-publication baseline');
+}
+for (const key of [prefix + 'reading-lessons.json', prefix + 'vocabulary.json', prefix + 'quiz.json']) {
+  const value = JSON.parse(baseline.get(key).toString('utf8'));
+  if (!value || typeof value !== 'object' || !Object.prototype.hasOwnProperty.call(value, '10')) {
+    throw new Error('Pre-publication baseline learning data is incomplete: ' + key);
+  }
+}
 const uploads = [];
-for (const [key, body] of originals.entries()) {
+for (const [key, body] of baseline.entries()) {
   const name = key.split('/').pop();
   uploads.push([backupPrefix + '/' + name, body, 'application/json; charset=utf-8']);
 }
