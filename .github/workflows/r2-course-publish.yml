@@ -26,6 +26,9 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
+      - name: Assemble course patch archive
+        if: ${{ inputs.patch == 'nero-fs0183-episode-011' }}
+        run: cat course-patches/parts/01.txt course-patches/parts/02.txt course-patches/parts/03.txt course-patches/parts/04.txt course-patches/parts/05.txt course-patches/parts/06.txt course-patches/parts/07.txt course-patches/parts/08.txt course-patches/parts/09.txt course-patches/parts/10.txt > course-patches/nero-fs0183-episode-011.zip.b64
       - name: Validate official Little Fox sources, merge indexes, and publish to R2
         if: ${{ inputs.patch == 'nero-fs0183-episode-011' }}
         run: node scripts/r2-course-upload-temp.mjs
