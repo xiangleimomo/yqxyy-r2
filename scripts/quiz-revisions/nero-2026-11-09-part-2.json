@@ -1,0 +1,332 @@
+{
+  "seriesId": "little-fox-nero-the-talking-dog-fs0183",
+  "revision": "2026-11-09",
+  "reference": "official-read",
+  "lessons": [
+    {
+      "episodeId": 6,
+      "questions": [
+        {
+          "question": "What did Pam say creates a good bond between a dog and its owner?",
+          "options": [
+            "Good communication",
+            "Expensive toys",
+            "Winning competitions",
+            "Eating the same food"
+          ],
+          "answer": 0,
+          "explanation": "帕姆强调好关系来自良好的沟通。",
+          "evidenceParagraphId": "p8"
+        },
+        {
+          "question": "Why did Nero try to use the tunnel and other equipment?",
+          "options": [
+            "Pam ordered him to compete",
+            "He wanted to look impressive to Dev",
+            "He needed to escape a storm",
+            "He was looking for Duke's collar"
+          ],
+          "answer": 1,
+          "explanation": "尼禄想让德夫发现自己也很厉害，擅自尝试训练器材。",
+          "evidenceParagraphId": "p24"
+        },
+        {
+          "question": "What happened when Nero tried jumping through the hoop?",
+          "options": [
+            "He won a prize",
+            "He met Dr. Shady",
+            "He fell asleep",
+            "The hoop fell over and frightened him"
+          ],
+          "answer": 3,
+          "explanation": "尼禄尝试钻圈时圆环倒下，响声吓到了他。",
+          "evidenceParagraphId": "p28"
+        },
+        {
+          "question": "How did Duke help Nero off the seesaw?",
+          "options": [
+            "He called Pam for help",
+            "He pulled Nero by his collar",
+            "He pushed the seesaw so Nero slid down",
+            "He fetched a ladder"
+          ],
+          "answer": 2,
+          "explanation": "杜克推动跷跷板，尼禄才滑了下来。",
+          "evidenceParagraphId": "p39"
+        },
+        {
+          "question": "Why did Nero run away after the lesson?",
+          "options": [
+            "He felt upset when Pam said he and Dev communicated poorly",
+            "He wanted to find carrots",
+            "He smelled cereal nearby",
+            "He was chasing a bird"
+          ],
+          "answer": 0,
+          "explanation": "帕姆评价他们沟通差、关系不够好，让尼禄伤心逃跑。",
+          "evidenceParagraphId": "p46"
+        }
+      ]
+    },
+    {
+      "episodeId": 7,
+      "questions": [
+        {
+          "question": "Who did Pam send to find Nero in the woods?",
+          "options": [
+            "Dev's father",
+            "Dr. Shady",
+            "The mayor",
+            "Duke"
+          ],
+          "answer": 3,
+          "explanation": "帕姆叫杜克进树林寻找尼禄。",
+          "evidenceParagraphId": "p3"
+        },
+        {
+          "question": "What did Nero discover about Duke after Duke followed him into the mud?",
+          "options": [
+            "Duke wanted to fight him",
+            "Duke wanted to be friends",
+            "Duke was afraid of dogs",
+            "Duke had stolen his treats"
+          ],
+          "answer": 1,
+          "explanation": "尼禄终于明白杜克只是想和他做朋友。",
+          "evidenceParagraphId": "p19"
+        },
+        {
+          "question": "How did Duke get hurt?",
+          "options": [
+            "He slipped into a muddy ditch and became trapped under a log",
+            "He was hit by a bicycle",
+            "He fell from a tree",
+            "He was scratched by a cat"
+          ],
+          "answer": 0,
+          "explanation": "杜克滑进泥沟并钻到木头下面，伤到了腿。",
+          "evidenceParagraphId": "p29"
+        },
+        {
+          "question": "Why didn't Nero explain Duke's injury aloud to Dev?",
+          "options": [
+            "He had forgotten how to talk",
+            "Dev was too far away",
+            "Pam was there, so he could not reveal that he talks",
+            "He wanted to keep Duke hidden"
+          ],
+          "answer": 2,
+          "explanation": "帕姆就在德夫旁边，尼禄不能暴露自己会说话。",
+          "evidenceParagraphId": "p47"
+        },
+        {
+          "question": "What did Nero try to make Dev do?",
+          "options": [
+            "Go home and eat",
+            "Fetch a new leash",
+            "Ask the mayor to visit",
+            "Follow him back to injured Duke"
+          ],
+          "answer": 3,
+          "explanation": "他拉着德夫想带他去受伤的杜克那里。",
+          "evidenceParagraphId": "p44"
+        }
+      ]
+    },
+    {
+      "episodeId": 8,
+      "questions": [
+        {
+          "question": "How did Nero communicate Duke's injury without speaking?",
+          "options": [
+            "He wrote a note",
+            "He acted it out with charades",
+            "He drew a picture",
+            "He rang a bell"
+          ],
+          "answer": 1,
+          "explanation": "尼禄模仿杜克摔倒并跛行，让德夫猜出情况。",
+          "evidenceParagraphId": "p14"
+        },
+        {
+          "question": "What did Pam and Dev have to lift in the muddy ditch?",
+          "options": [
+            "A heavy log",
+            "A fallen treehouse",
+            "A metal fence",
+            "A broken bicycle"
+          ],
+          "answer": 0,
+          "explanation": "两人合力抬起压住杜克的大木头。",
+          "evidenceParagraphId": "p24"
+        },
+        {
+          "question": "Why couldn't Pam simply carry Duke out immediately?",
+          "options": [
+            "He refused to wear a leash",
+            "Dev had left the ditch",
+            "She was afraid of muddy water",
+            "She had to hold up the heavy log"
+          ],
+          "answer": 3,
+          "explanation": "帕姆要扶住木头，没法同时把受伤的杜克抱走。",
+          "evidenceParagraphId": "p28"
+        },
+        {
+          "question": "How did Nero pull Duke to safety?",
+          "options": [
+            "He pushed him with a skateboard",
+            "He called the mayor",
+            "He grabbed Duke's collar with his teeth",
+            "He dug another tunnel"
+          ],
+          "answer": 2,
+          "explanation": "尼禄听从德夫指令，用牙咬住项圈拉出杜克。",
+          "evidenceParagraphId": "p32"
+        },
+        {
+          "question": "What did Pam write in Nero's graduation note?",
+          "options": [
+            "Nero and Dev have great communication",
+            "Nero still needs to learn to sit",
+            "Duke should join a new school",
+            "Dev must buy Nero new toys"
+          ],
+          "answer": 0,
+          "explanation": "帕姆认可两人沟通默契，尼禄顺利毕业。",
+          "evidenceParagraphId": "p43"
+        }
+      ]
+    },
+    {
+      "episodeId": 9,
+      "questions": [
+        {
+          "question": "Where was Dev planning to go for Take Your Kid to Work Day?",
+          "options": [
+            "To the park",
+            "To the mayor's office",
+            "To a cereal factory",
+            "To Pam's K9 Academy"
+          ],
+          "answer": 2,
+          "explanation": "德夫要和爸爸一起参观他工作的麦片工厂。",
+          "evidenceParagraphId": "p8"
+        },
+        {
+          "question": "Why did Dad say Nero could not come along?",
+          "options": [
+            "Nero was too tired",
+            "Dogs were not allowed near the food",
+            "The factory was closed",
+            "Dev was going alone"
+          ],
+          "answer": 1,
+          "explanation": "爸爸说狗不能出现在食品附近，因此不准尼禄同行。",
+          "evidenceParagraphId": "p14"
+        },
+        {
+          "question": "How did Nero secretly join the factory visit?",
+          "options": [
+            "He hid in Dev's backpack",
+            "He followed behind a bus",
+            "He wore a worker's uniform",
+            "He climbed through a factory window"
+          ],
+          "answer": 0,
+          "explanation": "尼禄偷偷钻进德夫的背包，藏在午餐下面。",
+          "evidenceParagraphId": "p21"
+        },
+        {
+          "question": "What did Dev think made his backpack unusually heavy?",
+          "options": [
+            "A box of toys",
+            "A new science book",
+            "A large water bottle",
+            "An extra-large lunch packed by Dad"
+          ],
+          "answer": 3,
+          "explanation": "德夫不知道背包里藏着尼禄，以为爸爸装了很大的午餐。",
+          "evidenceParagraphId": "p26"
+        },
+        {
+          "question": "What alarmed Nero as they reached the factory?",
+          "options": [
+            "He could not find Dev",
+            "He saw Pam with Duke",
+            "Familiar sounds and smells reminded him of Dr. Shady's lab",
+            "The cereal had disappeared"
+          ],
+          "answer": 2,
+          "explanation": "熟悉的声音和气味让尼禄怀疑又回到莎迪博士的实验室。",
+          "evidenceParagraphId": "p42"
+        }
+      ]
+    },
+    {
+      "episodeId": 10,
+      "questions": [
+        {
+          "question": "Why did Nero believe a secret lab was near the cereal factory?",
+          "options": [
+            "He recognized the place from his time with Dr. Shady",
+            "He had found a written invitation",
+            "The mayor told him about it",
+            "Dev found a map in the cereal"
+          ],
+          "answer": 0,
+          "explanation": "尼禄认出这里，坚信莎迪博士的实验室就在附近。",
+          "evidenceParagraphId": "p9"
+        },
+        {
+          "question": "Where did Dev put Nero so they could move around the factory?",
+          "options": [
+            "Inside a cupboard",
+            "Under a desk",
+            "In a delivery van",
+            "In a cart"
+          ],
+          "answer": 3,
+          "explanation": "德夫把尼禄塞进推车，推着他在工厂里走动。",
+          "evidenceParagraphId": "p14"
+        },
+        {
+          "question": "What did Nero's nose lead them to first?",
+          "options": [
+            "The laboratory door",
+            "A giant vat of cereal",
+            "A hidden staircase",
+            "The factory office"
+          ],
+          "answer": 1,
+          "explanation": "尼禄循着香味来到一大缸麦片前，并没有找到实验室。",
+          "evidenceParagraphId": "p22"
+        },
+        {
+          "question": "What happened when Dev pressed the button near the big fan?",
+          "options": [
+            "The secret door opened",
+            "The lights went out",
+            "The fan blew them across the floor",
+            "All the machines stopped"
+          ],
+          "answer": 2,
+          "explanation": "德夫按按钮后风扇改变方向，把两人吹得滑过地面。",
+          "evidenceParagraphId": "p32"
+        },
+        {
+          "question": "Who caught Nero after he made cereal fly everywhere?",
+          "options": [
+            "Dev's dad",
+            "Dr. Shady",
+            "Pam",
+            "The mayor"
+          ],
+          "answer": 0,
+          "explanation": "尼禄从传送带滑下弄得到处是麦片，最后爸爸出现。",
+          "evidenceParagraphId": "p44"
+        }
+      ]
+    }
+  ]
+}
