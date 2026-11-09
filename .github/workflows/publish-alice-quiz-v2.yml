@@ -1,12 +1,11 @@
 name: Publish Alice 24 x 5 V2 Quiz Corrections to R2
 on:
-  push:
-    paths:
-      - course-patches/alice-quiz-v2-20261109.publish
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
   publish:
+    if: ${{ false }}
     runs-on: ubuntu-latest
     env:
       R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
