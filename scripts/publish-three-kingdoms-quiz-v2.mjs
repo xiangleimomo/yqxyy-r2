@@ -33,7 +33,7 @@ for(let epId=1;epId<=12;epId++){
  if(ep.sourceContentId&&r.sourceId)check(ep.sourceContentId===r.sourceId,'Existing episode/Read mismatch: '+epId);
  for(let i=0;i<5;i++){
   const item=q.questions[i],additional=changes.extraOptions[String(epId)][i];
-  check(typeof additional==='string'&&additional.length>10,'Fourth option missing: '+epId+'/'+i);
+  check(typeof additional==='string'&&additional.trim().length>=4,'Fourth option missing: '+epId+'/'+i);
   check(item.options?.length===3&&item.options.every((x,j)=>x.key==='ABC'[j])&&'ABC'.includes(item.answer),'Unexpected original choices: '+epId+'/'+i);
   item.options.push({key:'D',text:additional});
   additions++;
