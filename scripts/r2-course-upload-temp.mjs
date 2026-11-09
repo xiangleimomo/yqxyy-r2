@@ -393,12 +393,14 @@ if (baselineIds.length !== 10 || new Set(baselineIds).size !== 10 ||
     !baselineCatalog.some(item => item.seriesId === seriesId)) {
   throw new Error('Old GitHub repository is not a verified 10-episode pre-publication baseline');
 }
-for (const key of [prefix + 'reading-lessons.json', prefix + 'vocabulary.json', prefix + 'quiz.json']) {
+for (const key of [prefix + 'reading-lessons.json', prefix + 'vocabulary.json']) {
   const value = JSON.parse(baseline.get(key).toString('utf8'));
   if (!value || typeof value !== 'object' || !Object.prototype.hasOwnProperty.call(value, '10')) {
     throw new Error('Pre-publication baseline learning data is incomplete: ' + key);
   }
 }
+const baselineQuizzes = JSON.parse(baseline.get(prefix + 'quiz.json').toString('utf8'));
+if (!baselineQuizzes || typeof baselineQuizzes !== 'object') throw new Error('Pre-publication quiz baseline is invalid');
 const uploads = [];
 for (const [key, body] of baseline.entries()) {
   const name = key.split('/').pop();
