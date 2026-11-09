@@ -61,7 +61,7 @@ await parallel([...grouped.entries()],8,async([key,items])=>{
   }
   ep.video.hls720Url=current;
   ep.video.hlsUrl=item.url1080;
-  updates.push({episodeId:item.episodeId,status:'updated'});
+  updates.push({episodeId:item.episodeId,status:'updated',url1080:item.url1080,hls720Url:current});
  }
  const body=Buffer.from(JSON.stringify(episodes,null,2)+'\n','utf8');
  plans.push({key,backupKey:'__course-backups/littlefox-1080p-20261110/'+key.replace(/^data\//,''),original,body,updates});
@@ -86,9 +86,8 @@ await parallel(plans,6,async p=>{
   const ep=episodes.find(x=>Number(x.episodeId)===Number(u.episodeId));
   check(ep,'Public route missing episode '+p.key+' #'+u.episodeId);
   if(u.status==='updated'){
-    const original=p.updates.find(x=>x.episodeId===u.episodeId);
-    check(/\/hls\/1080\//.test(ep.video?.hlsUrl||''),'Public route does not show 1080P '+p.key+' #'+u.episodeId);
-    check(/\/hls\/720\//.test(ep.video?.hls720Url||''),'Public route lost 720P choice '+p.key+' #'+u.episodeId);
+    check(ep.video?.hlsUrl===u.url1080,'Public route does not show exact 1080P URL '+p.key+' #'+u.episodeId);
+    check(ep.video?.hls720Url===u.hls720Url,'Public route did not preserve exact original 720P URL '+p.key+' #'+u.episodeId);
   }
  }
 });
