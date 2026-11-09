@@ -1,12 +1,13 @@
 name: Fix Nero Episode 11 Storybook in R2
+# One-time repair completed successfully on 2026-11-09.
+# Disabled after publication; leave for audit but do not run automatically.
 on:
-  push:
-    paths:
-      - course-patches/nero-fs0183-episode-011-book.publish
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
   publish-book:
+    if: ${{ false }}
     runs-on: ubuntu-latest
     env:
       R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
