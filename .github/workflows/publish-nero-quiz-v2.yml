@@ -1,0 +1,24 @@
+name: Publish Nero 1-10 V2 Quiz Corrections
+on:
+  push:
+    paths:
+      - course-patches/nero-quiz-v2-20261109.publish
+permissions:
+  contents: read
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+      R2_BUCKET: ${{ secrets.R2_BUCKET }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Publish reviewed Nero narrative quizzes and verify R2 and Netlify
+        run: node scripts/publish-nero-quiz-v2.mjs
