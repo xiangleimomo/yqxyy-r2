@@ -16,10 +16,11 @@ test('player C ID is parsed only when the official ID matches',()=>{
  assert.equal(isEpisodeMatch('The Happy Prince 16: A Happy Ending','A Happy Ending'),true);
  assert.equal(isEpisodeMatch('A Stranger Arrives','A Happy Ending'),false);
 });
-test('next ID candidate requires three consecutive existing IDs',()=>{
+test('R2 fallback uses last confirmed C ID without requiring three consecutive IDs',()=>{
  const a=[3585,3586,3587].map((n,i)=>({episodeId:i+1,sourceContentId:'C'+String(n).padStart(7,'0')}));
  assert.equal(nextIdFromEpisodes(a),'C0003588');
- assert.equal(nextIdFromEpisodes([{...a[0]},a[1],{...a[2],sourceContentId:'C0003799'}]),null);
+ assert.equal(nextIdFromEpisodes([{...a[0]},a[1],{...a[2],sourceContentId:'C0003799'}]),'C0003800');
+  assert.equal(nextIdFromEpisodes([{episodeId:13,sourceContentId:'C0013533'}],16),'C0013536');
 });
 test('M3U8 verification follows only valid official variants',async()=>{
  const http=async url=>({ok:true,text:async()=>url.endsWith('/master.m3u8')?'#EXTM3U\n#EXT-X-STREAM-INF:RESOLUTION=1920x1080\n1080/stream.m3u8':'#EXTM3U\n#EXTINF:7,\nseg1.ts\n'});
@@ -101,7 +102,7 @@ test('official catalog C IDs are discovered without scanning historic video reso
  assert.equal(parsed.length,2);
  assert.equal(parsed[1].id,'C0013597');
  assert.equal(catalogSeriesId('three-kingdoms'),'FS0182');
- const http=async url=>({ok:url.includes('FS0183'),text:async()=>'<div data-contname="A Big Day" data-fcid="C0013597"></div>'});
+ const http=async url=>({ok:true,text:async()=>url.includes('contents_list_v2')?'<div data-contname="A Big Day" data-fcid="C0013597"></div>':'var contents_info = [{"fc_id":"C0013597","cont_title":"A Big Day","video_url":"https://cdn.littlefox.com/stream.m3u8"}];'});
  const id=await identifyCId({seriesId:'little-fox-example-fs0183',title:'A Big Day'},[],http);
  assert.equal(id,'C0013597');
 });
@@ -193,4 +194,32 @@ test('bilingual Text accepts separate ordered Chinese talk blocks only with exac
  const trans=`<section class='translation'>${mk(zh)}</section>`;
  assert.deepEqual(bilingualTextParagraphs(org,trans).map(p=>p.translation),zh);
  assert.throws(()=>bilingualTextParagraphs(org,`<section>${mk(zh.slice(0,3))}</section>`),/incomplete|align/);
+});
+test('first Text anchor computes the Happy Prince episode 16 C ID and verifies player',async()=>{
+  const {identifyCId}=await import('./core.mjs');
+  const seen=[];
+  const http=async url=>{
+    seen.push(url);
+    if(url.includes('contents_list_v2'))return {ok:false,status:404,text:async()=>''};
+    assert.ok(url.includes('/player_h5/view'));
+    return {ok:true,text:async()=>'<script>var contents_info = [{"fc_id":"C0013536","cont_title":"The Happy Prince 16: A Happy Ending","video_url":"https://cdn.littlefox.com/a.m3u8"}];</script>'};
+  };
+  const id=await identifyCId({seriesId:'little-fox-the-happy-prince-fs0181',seriesEpisodeNumber:16,title:'A Happy Ending'},[],http);
+  assert.equal(id,'C0013536');assert.ok(seen.some(url=>url.includes('player_h5/view')));
+});
+test('a nonmatching first Text candidate falls back to R2 previous episode',async()=>{
+  const {identifyCId}=await import('./core.mjs');
+  let calls=0;
+  const http=async url=>{
+    if(url.includes('contents_list_v2'))return {ok:false,status:404,text:async()=>''};
+    calls++;
+    const id=calls===1?'C0013536':'C0013546';
+    return {ok:true,text:async()=>`var contents_info = [{"fc_id":"${id}","cont_title":"${calls===1?'Wrong Story':'A Happy Ending'}","video_url":"https://cdn.littlefox.com/a.m3u8"}];`};
+  };
+  assert.equal(await identifyCId({seriesId:'little-fox-the-happy-prince-fs0181',seriesEpisodeNumber:16,title:'A Happy Ending'},[{episodeId:15,sourceContentId:'C0013545'}],http),'C0013546');
+});
+test('both incorrect candidate IDs fail closed and request manual assistance',async()=>{
+  const {identifyCId}=await import('./core.mjs');
+  const http=async url=>({ok:!url.includes('contents_list_v2'),status:404,text:async()=>''});
+  await assert.rejects(identifyCId({seriesId:'little-fox-the-happy-prince-fs0181',seriesEpisodeNumber:16,title:'A Happy Ending'},[{episodeId:15,sourceContentId:'C0013545'}],http),/manual assistance required/);
 });
