@@ -25,6 +25,8 @@ jobs:
       LF_ALLOW_PUBLISH: '1'
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2  # Needed to distinguish newly added outbox JSON from edits
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
