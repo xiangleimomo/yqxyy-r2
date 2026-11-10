@@ -1,0 +1,450 @@
+{
+  "schemaVersion": 1,
+  "status": "ready_for_publish",
+  "reviewStatus": "approved",
+  "seriesId": "little-fox-the-happy-prince-fs0181",
+  "episodeNumber": 16,
+  "contentId": "C0013536",
+  "title": "A Happy Ending",
+  "level": 4,
+  "releaseDate": "2026-11-10",
+  "officialSourceUrls": {
+    "textOriginal": "https://cn.littlefox.com/cn/supplement/org/C0013536",
+    "textTranslated": "https://cn.littlefox.com/cn/supplement/trans/C0013536",
+    "caption": "https://cdn.littlefox.com/contents/caption/C0013536.xml",
+    "storybook": "https://res.littlefox.com/en/supplement/load_pdf/C0013536"
+  },
+  "sourceVerification": {
+    "englishText": true,
+    "chineseText": true,
+    "storybook": true,
+    "storybookMethod": "HEAD HTTP 200 (PDF content not extracted)",
+    "subtitleXml": true,
+    "episodeTitleMatched": true,
+    "workflowRunId": "42811206721",
+    "sourceArtifactName": "littlefox-source-42811206721"
+  },
+  "captionMetadata": {
+    "cueCount": 45,
+    "firstCueStart": 0.07,
+    "lastCueEnd": 252.625
+  },
+  "lesson": {
+    "themeZh": "善良、宽恕与帮助他人",
+    "learningObjectivesZh": [
+      "理解娜娜施咒及解除咒语的因果关系",
+      "体会王子和燕子对彼此的关心",
+      "说明结尾三位伙伴选择怎样帮助他人"
+    ],
+    "sections": [
+      {
+        "id": "s1",
+        "title": "A Joyful Reunion",
+        "titleZh": "王子与燕子的重逢",
+        "paragraphIds": [
+          "p1",
+          "p2",
+          "p3",
+          "p4"
+        ],
+        "startSeconds": 0.07,
+        "endSeconds": 49.89,
+        "summaryZh": "王子恢复人形，燕子也平安无事。他们惊喜地相认，并向老鹰询问原因。",
+        "focus": [
+          "reunion",
+          "characters' feelings"
+        ]
+      },
+      {
+        "id": "s2",
+        "title": "The Truth About the Spell",
+        "titleZh": "咒语背后的真相",
+        "paragraphIds": [
+          "p5",
+          "p6",
+          "p7",
+          "p8",
+          "p9",
+          "p10",
+          "p11"
+        ],
+        "startSeconds": 49.89,
+        "endSeconds": 152,
+        "summaryZh": "老鹰原来是保姆娜娜。她因王子曾经缺乏善意而施咒，希望教会他仁慈；真正解除咒语的是王子与燕子帮助他人的行动。王子选择原谅娜娜。",
+        "focus": [
+          "cause and effect",
+          "kindness",
+          "forgiveness"
+        ]
+      },
+      {
+        "id": "s3",
+        "title": "A Difficult Goodbye",
+        "titleZh": "不愿分别的朋友",
+        "paragraphIds": [
+          "p12",
+          "p13",
+          "p14",
+          "p15",
+          "p16",
+          "p17",
+          "p18"
+        ],
+        "startSeconds": 152,
+        "endSeconds": 199.46,
+        "summaryZh": "天气变冷，王子担心燕子再度冻僵。虽然两人各有去处，却都不愿分开，娜娜提出一个新办法。",
+        "focus": [
+          "concern for others",
+          "a new plan"
+        ]
+      },
+      {
+        "id": "s4",
+        "title": "A New Way to Help",
+        "titleZh": "幸福的新生活",
+        "paragraphIds": [
+          "p19",
+          "p20"
+        ],
+        "startSeconds": 199.46,
+        "endSeconds": 252.625,
+        "summaryZh": "三位伙伴一起离开小镇，没有躲回城堡，而是亲自游历王国并帮助需要帮助的人。故事末尾揭晓了叙述者的身份。",
+        "focus": [
+          "actions instead of riches",
+          "ending and narrator"
+        ]
+      }
+    ]
+  },
+  "sections": [
+    {
+      "id": "s1",
+      "title": "A Joyful Reunion",
+      "titleZh": "王子与燕子的重逢",
+      "paragraphIds": [
+        "p1",
+        "p2",
+        "p3",
+        "p4"
+      ],
+      "startSeconds": 0.07,
+      "endSeconds": 49.89,
+      "summaryZh": "王子恢复人形，燕子也平安无事。他们惊喜地相认，并向老鹰询问原因。",
+      "focus": [
+        "reunion",
+        "characters' feelings"
+      ]
+    },
+    {
+      "id": "s2",
+      "title": "The Truth About the Spell",
+      "titleZh": "咒语背后的真相",
+      "paragraphIds": [
+        "p5",
+        "p6",
+        "p7",
+        "p8",
+        "p9",
+        "p10",
+        "p11"
+      ],
+      "startSeconds": 49.89,
+      "endSeconds": 152,
+      "summaryZh": "老鹰原来是保姆娜娜。她因王子曾经缺乏善意而施咒，希望教会他仁慈；真正解除咒语的是王子与燕子帮助他人的行动。王子选择原谅娜娜。",
+      "focus": [
+        "cause and effect",
+        "kindness",
+        "forgiveness"
+      ]
+    },
+    {
+      "id": "s3",
+      "title": "A Difficult Goodbye",
+      "titleZh": "不愿分别的朋友",
+      "paragraphIds": [
+        "p12",
+        "p13",
+        "p14",
+        "p15",
+        "p16",
+        "p17",
+        "p18"
+      ],
+      "startSeconds": 152,
+      "endSeconds": 199.46,
+      "summaryZh": "天气变冷，王子担心燕子再度冻僵。虽然两人各有去处，却都不愿分开，娜娜提出一个新办法。",
+      "focus": [
+        "concern for others",
+        "a new plan"
+      ]
+    },
+    {
+      "id": "s4",
+      "title": "A New Way to Help",
+      "titleZh": "幸福的新生活",
+      "paragraphIds": [
+        "p19",
+        "p20"
+      ],
+      "startSeconds": 199.46,
+      "endSeconds": 252.625,
+      "summaryZh": "三位伙伴一起离开小镇，没有躲回城堡，而是亲自游历王国并帮助需要帮助的人。故事末尾揭晓了叙述者的身份。",
+      "focus": [
+        "actions instead of riches",
+        "ending and narrator"
+      ]
+    }
+  ],
+  "vocabulary": [
+    {
+      "word": "glee",
+      "meaningZh": "欢欣；喜悦",
+      "example": "The children jumped with glee when the surprise arrived.",
+      "exampleZh": "惊喜到来时，孩子们欢呼雀跃。",
+      "paragraphIds": [
+        "p1"
+      ],
+      "sourceContentId": "C0013536"
+    },
+    {
+      "word": "statue",
+      "meaningZh": "雕像",
+      "example": "A statue stood in the middle of the square.",
+      "exampleZh": "广场中央立着一座雕像。",
+      "paragraphIds": [
+        "p5"
+      ],
+      "sourceContentId": "C0013536"
+    },
+    {
+      "word": "nursemaid",
+      "meaningZh": "保姆；照顾孩子的人",
+      "example": "The nursemaid cared for the young prince.",
+      "exampleZh": "保姆照顾年幼的王子。",
+      "paragraphIds": [
+        "p7"
+      ],
+      "sourceContentId": "C0013536"
+    },
+    {
+      "word": "dungeon",
+      "meaningZh": "地牢",
+      "example": "The old castle had a dark dungeon.",
+      "exampleZh": "古老的城堡里有一间阴暗的地牢。",
+      "paragraphIds": [
+        "p8"
+      ],
+      "sourceContentId": "C0013536"
+    },
+    {
+      "word": "kindness",
+      "meaningZh": "善意；仁慈",
+      "example": "A little kindness can change someone's day.",
+      "exampleZh": "一点善意就能改变别人一天的心情。",
+      "paragraphIds": [
+        "p10"
+      ],
+      "sourceContentId": "C0013536"
+    },
+    {
+      "word": "forgive",
+      "meaningZh": "原谅",
+      "example": "The prince decided to forgive his old friend.",
+      "exampleZh": "王子决定原谅他的老朋友。",
+      "paragraphIds": [
+        "p10"
+      ],
+      "sourceContentId": "C0013536"
+    },
+    {
+      "word": "feathers",
+      "meaningZh": "羽毛",
+      "example": "The cold wind moved the bird's feathers.",
+      "exampleZh": "寒风吹动了鸟儿的羽毛。",
+      "paragraphIds": [
+        "p12"
+      ],
+      "sourceContentId": "C0013536"
+    },
+    {
+      "word": "freeze",
+      "meaningZh": "冻僵；结冰",
+      "example": "The little bird might freeze in the snow.",
+      "exampleZh": "小鸟可能在雪中冻僵。",
+      "paragraphIds": [
+        "p13"
+      ],
+      "sourceContentId": "C0013536"
+    },
+    {
+      "word": "whispered",
+      "meaningZh": "低声说",
+      "example": "She whispered a secret plan to her friends.",
+      "exampleZh": "她向朋友们低声说出一个秘密计划。",
+      "paragraphIds": [
+        "p17"
+      ],
+      "sourceContentId": "C0013536"
+    },
+    {
+      "word": "jewels",
+      "meaningZh": "宝石；珠宝",
+      "example": "They learned that kindness mattered more than jewels.",
+      "exampleZh": "他们明白善意比珠宝更重要。",
+      "paragraphIds": [
+        "p19"
+      ],
+      "sourceContentId": "C0013536"
+    }
+  ],
+  "quiz": {
+    "questions": [
+      {
+        "question": "What surprises the prince at the beginning of this episode?",
+        "options": [
+          {
+            "key": "A",
+            "text": "He has become a statue again."
+          },
+          {
+            "key": "B",
+            "text": "He is a boy again, and Swallow is safe."
+          },
+          {
+            "key": "C",
+            "text": "He has suddenly become a king."
+          },
+          {
+            "key": "D",
+            "text": "Nana has left the town forever."
+          }
+        ],
+        "answer": "B",
+        "explanation": "开头王子发现自己恢复了男孩的身体，而且燕子也平安无事，这是两人重逢时最大的惊喜。",
+        "evidence": {
+          "paragraphIds": [
+            "p2"
+          ],
+          "sourceContentId": "C0013536"
+        }
+      },
+      {
+        "question": "Why did Nana turn the prince into a statue?",
+        "options": [
+          {
+            "key": "A",
+            "text": "She wanted to take his place as ruler."
+          },
+          {
+            "key": "B",
+            "text": "She wanted to keep him from meeting Swallow."
+          },
+          {
+            "key": "C",
+            "text": "She wanted to hide him from his parents."
+          },
+          {
+            "key": "D",
+            "text": "She wanted to teach him to become kinder."
+          }
+        ],
+        "answer": "D",
+        "explanation": "娜娜解释说，王子过去不够善良，她将他变成雕像是为了让他体会冷漠并学习善待他人。",
+        "evidence": {
+          "paragraphIds": [
+            "p8"
+          ],
+          "sourceContentId": "C0013536"
+        }
+      },
+      {
+        "question": "What actually broke the spell on the prince?",
+        "options": [
+          {
+            "key": "A",
+            "text": "The kindness the prince and Swallow showed to others."
+          },
+          {
+            "key": "B",
+            "text": "A new spell that Nana secretly cast."
+          },
+          {
+            "key": "C",
+            "text": "The king's order to free the prince."
+          },
+          {
+            "key": "D",
+            "text": "A special jewel hidden in the statue."
+          }
+        ],
+        "answer": "A",
+        "explanation": "老鹰明确指出，解除咒语的不是她自己，而是王子和燕子帮助他人的善行。",
+        "evidence": {
+          "paragraphIds": [
+            "p10"
+          ],
+          "sourceContentId": "C0013536"
+        }
+      },
+      {
+        "question": "Why does the prince tell Swallow to fly to Egypt?",
+        "options": [
+          {
+            "key": "A",
+            "text": "He wants to travel alone."
+          },
+          {
+            "key": "B",
+            "text": "He thinks Egypt has a better castle."
+          },
+          {
+            "key": "C",
+            "text": "He worries that the cold could freeze Swallow again."
+          },
+          {
+            "key": "D",
+            "text": "He wants Swallow to bring back a jewel."
+          }
+        ],
+        "answer": "C",
+        "explanation": "王子看到天气变冷，担心燕子再次被冻僵，因此催促它前往温暖的埃及。",
+        "evidence": {
+          "paragraphIds": [
+            "p13"
+          ],
+          "sourceContentId": "C0013536"
+        }
+      },
+      {
+        "question": "What do the prince, Swallow, and Hawk choose to do at the end?",
+        "options": [
+          {
+            "key": "A",
+            "text": "Stay safely inside the castle."
+          },
+          {
+            "key": "B",
+            "text": "Travel together and help people who need them."
+          },
+          {
+            "key": "C",
+            "text": "Return to the statue in the town square."
+          },
+          {
+            "key": "D",
+            "text": "Give away all the jewels in the castle."
+          }
+        ],
+        "answer": "B",
+        "explanation": "结尾三位伙伴没有躲进城堡，而是一起游历王国，靠双手和善心帮助有需要的人。",
+        "evidence": {
+          "paragraphIds": [
+            "p19"
+          ],
+          "sourceContentId": "C0013536"
+        }
+      }
+    ]
+  },
+  "reviewNotes": "依据 GitHub Actions 第42811206721次真实采集的20段中英对照Text和45条官方字幕；5题分别锚定p2/p8/p10/p13/p19，独立核对唯一答案、剧情准确性和前中后覆盖。官方原文和字幕未提交到仓库。"
+}
