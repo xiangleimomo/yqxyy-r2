@@ -1,0 +1,269 @@
+{
+  "seriesId": "little-fox-qt-s-science-adventures-fs0047",
+  "level": 7,
+  "type": "editorial-complete-rewrite",
+  "scope": "existing quizzes only",
+  "reference": "official-text",
+  "lessons": [
+    {
+      "episodeId": 1,
+      "questions": [
+        {
+          "question": "Why was Will having trouble finishing his homework?",
+          "options": [
+            "He could not understand earthquakes",
+            "He had lost his science book",
+            "He was waiting for the school bus",
+            "He did not know how to use a phone"
+          ],
+          "answerIndex": 0,
+          "explanation": "威尔做科学作业时不理解地震是怎样发生的。",
+          "evidenceParagraphId": "p3"
+        },
+        {
+          "question": "What was unusual about Will's phone in his dream?",
+          "options": [
+            "It had turned into a watch",
+            "It could talk and called itself QT-9000",
+            "It could only show pictures",
+            "It had no screen"
+          ],
+          "answerIndex": 1,
+          "explanation": "梦中的手机自称QT-9000，不但能讲话，还能解释科学知识。",
+          "evidenceParagraphId": "p12"
+        },
+        {
+          "question": "What did QT say caused large earthquakes when plates were stuck?",
+          "options": [
+            "Strong winds moving across the surface",
+            "The oceans becoming too warm",
+            "A layer of ice melting",
+            "Stored energy released when plates break free"
+          ],
+          "answerIndex": 3,
+          "explanation": "板块边缘被摩擦阻住后突然移动，会释放积累的能量。",
+          "evidenceParagraphId": "p20"
+        },
+        {
+          "question": "Why did Will stay in the park instead of approaching damaged buildings?",
+          "options": [
+            "He wanted to watch a game",
+            "He was searching for his bike",
+            "He feared aftershocks might make more parts fall",
+            "He needed a better phone signal"
+          ],
+          "answerIndex": 2,
+          "explanation": "威尔知道强震后可能有余震，建筑物还会倒塌。",
+          "evidenceParagraphId": "p28"
+        },
+        {
+          "question": "What did Will discover when he opened his eyes after the final shaking?",
+          "options": [
+            "He was back in his room with his alarm going off",
+            "He was still in the city park",
+            "His teacher was standing beside him",
+            "The cave had disappeared into the sea"
+          ],
+          "answerIndex": 0,
+          "explanation": "余震后威尔醒来，发现自己回到卧室，手机闹钟正在震动。",
+          "evidenceParagraphId": "p34"
+        }
+      ]
+    },
+    {
+      "episodeId": 2,
+      "questions": [
+        {
+          "question": "Where did Will find himself after falling asleep while studying the ocean?",
+          "options": [
+            "On a tropical beach",
+            "In a canoe",
+            "Inside a submarine",
+            "At the top of a lighthouse"
+          ],
+          "answerIndex": 2,
+          "explanation": "威尔在梦中醒来，发现自己身处潜水艇。",
+          "evidenceParagraphId": "p3"
+        },
+        {
+          "question": "What kind of creatures did QT say often have large eyes in the Twilight Zone?",
+          "options": [
+            "Creatures living in dim water",
+            "Animals living on the beach",
+            "Birds above the sea",
+            "Fish living only in rivers"
+          ],
+          "answerIndex": 0,
+          "explanation": "暮光层光线微弱，那里的生物常有大眼睛以便看清周围。",
+          "evidenceParagraphId": "p16"
+        },
+        {
+          "question": "What threatened the submarine in the Twilight Zone?",
+          "options": [
+            "A school of dolphins",
+            "A giant squid",
+            "A flock of birds",
+            "A coral reef"
+          ],
+          "answerIndex": 1,
+          "explanation": "巨型鱿鱼几乎用触手缠住潜艇，QT紧急转向逃脱。",
+          "evidenceParagraphId": "p19"
+        },
+        {
+          "question": "How did QT explain the glowing light on an anglerfish?",
+          "options": [
+            "It came from the submarine",
+            "It was sunlight reflected from the waves",
+            "It was a light attached by fishermen",
+            "It attracted food in the dark"
+          ],
+          "answerIndex": 3,
+          "explanation": "QT解释鮟鱇鱼用头部发光器在黑暗中引诱猎物。",
+          "evidenceParagraphId": "p25"
+        },
+        {
+          "question": "Why did the submarine become unsafe near the Mariana Trench?",
+          "options": [
+            "It ran out of food",
+            "Its lights stopped working",
+            "Extreme water pressure was pressing on it",
+            "A storm broke its windows"
+          ],
+          "answerIndex": 2,
+          "explanation": "潜艇下降到极深处，水压巨大，QT提示不能继续深入。",
+          "evidenceParagraphId": "p32"
+        }
+      ]
+    },
+    {
+      "episodeId": 3,
+      "questions": [
+        {
+          "question": "What question did Will want to answer after visiting the museum?",
+          "options": [
+            "How old his school bus was",
+            "Why dinosaurs had disappeared",
+            "Where his homework book was",
+            "Who built the museum"
+          ],
+          "answerIndex": 1,
+          "explanation": "参观完恐龙博物馆后，他想知道恐龙为什么灭绝。",
+          "evidenceParagraphId": "p2"
+        },
+        {
+          "question": "How did QT take Will through the different dinosaur periods?",
+          "options": [
+            "In a time-traveling aircraft",
+            "By reading a library book",
+            "On a sailing ship",
+            "In an underground train"
+          ],
+          "answerIndex": 0,
+          "explanation": "QT让威尔乘一架会穿越时间的飞行器，参观不同时期。",
+          "evidenceParagraphId": "p5"
+        },
+        {
+          "question": "What did QT say volcanoes might have done during the extinction?",
+          "options": [
+            "Made all dinosaurs grow larger",
+            "Turned the oceans into fresh water",
+            "Created new caves for every species",
+            "Filled the atmosphere with ash and gases, changing the climate"
+          ],
+          "answerIndex": 3,
+          "explanation": "QT讲到一种观点：大量火山灰和气体可能改变气候，影响恐龙生存。",
+          "evidenceParagraphId": "p11"
+        },
+        {
+          "question": "What was another possible cause of dinosaur extinction discussed in the dream?",
+          "options": [
+            "A worldwide drought caused by schools",
+            "A fight between two dinosaurs",
+            "A large asteroid striking Earth",
+            "A change in the length of each day"
+          ],
+          "answerIndex": 2,
+          "explanation": "梦中还讨论了小行星撞击地球可能造成的破坏。",
+          "evidenceParagraphId": "p15"
+        },
+        {
+          "question": "What did Will notice when the dangerous crocodile seemed to grab the aircraft?",
+          "options": [
+            "He woke on the bus as it stopped at school",
+            "He was standing in the museum again",
+            "The aircraft had become a canoe",
+            "QT had vanished from his pocket"
+          ],
+          "answerIndex": 0,
+          "explanation": "飞行器受到攻击时，他醒来发现校车刚好停在学校。",
+          "evidenceParagraphId": "p26"
+        }
+      ]
+    },
+    {
+      "episodeId": 4,
+      "questions": [
+        {
+          "question": "Where did QT say Will was when he woke in total darkness?",
+          "options": [
+            "In the school basement",
+            "At a coal mine",
+            "In a mountain tunnel",
+            "In Mammoth Cave in Kentucky"
+          ],
+          "answerIndex": 3,
+          "explanation": "QT告诉威尔，他来到肯塔基州猛犸洞穴。",
+          "evidenceParagraphId": "p3"
+        },
+        {
+          "question": "How did QT explain the formation of solution caves?",
+          "options": [
+            "Animals dug underground tunnels",
+            "Slightly acidic water slowly dissolved limestone",
+            "Volcanoes blew away entire mountains",
+            "Wind piled up sand into holes"
+          ],
+          "answerIndex": 1,
+          "explanation": "微酸性的水穿过石灰岩裂缝，长期溶蚀形成洞穴。",
+          "evidenceParagraphId": "p9"
+        },
+        {
+          "question": "Why did QT stop Will from touching the cave formations?",
+          "options": [
+            "They were extremely fragile",
+            "They were made of hot lava",
+            "They were painted by workers",
+            "They belonged to a museum"
+          ],
+          "answerIndex": 0,
+          "explanation": "QT提醒威尔洞穴沉积物很脆弱，触碰可能破坏。",
+          "evidenceParagraphId": "p15"
+        },
+        {
+          "question": "What adaptation did QT describe in many animals that live deep in caves?",
+          "options": [
+            "They have bright red fur",
+            "They need sunlight to hunt",
+            "They are pale because color is not useful in darkness",
+            "They always have large wings"
+          ],
+          "answerIndex": 2,
+          "explanation": "洞穴终年黑暗，许多动物体色很浅，无需为显眼颜色耗费能量。",
+          "evidenceParagraphId": "p21"
+        },
+        {
+          "question": "How did QT explain that bats find insects in darkness?",
+          "options": [
+            "They carry tiny lamps",
+            "They follow the sun",
+            "They read marks on the cave wall",
+            "They rely on sound rather than sight"
+          ],
+          "answerIndex": 3,
+          "explanation": "QT说明蝙蝠在暗处捕猎主要依靠声音，而不是视觉。",
+          "evidenceParagraphId": "p28"
+        }
+      ]
+    }
+  ]
+}
