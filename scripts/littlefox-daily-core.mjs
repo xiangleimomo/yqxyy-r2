@@ -10,6 +10,8 @@ const MONTH_SCHEDULE = 'https://res.littlefox.com/en/forum/publishing_schedule/'
 const PLAYER = 'https://www.littlefox.com/en/player_h5/view';
 const CAPTION = id => `https://cdn.littlefox.com/contents/caption/${id}.xml`;
 const BOOK = id => `https://res.littlefox.com/en/supplement/load_pdf/${id}`;
+export const ORIGINAL_TEXT = id => `https://cn.littlefox.com/cn/supplement/org/${id}`;
+export const TRANSLATED_TEXT = id => `https://cn.littlefox.com/cn/supplement/trans/${id}`;
 
 export function chinaDate(now = new Date()) {
   const parts = Object.fromEntries(new Intl.DateTimeFormat('en-US', {timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit',weekday:'short'}).formatToParts(now).map(x=>[x.type,x.value]));
@@ -105,6 +107,49 @@ export function textParagraphs(html){
   const meaningful=blocks.filter(s=>s.length>=8&&/[a-z]{4}/i.test(s)&&!/^(print|download|read|next|previous|login|little fox)/i.test(s));
   return meaningful.length>=4?meaningful.map((text,i)=>({id:`p${i+1}`,text,translation:''})):[];
 }
+/**
+ * Align the two official Little Fox pages by their English paragraphs, never by
+ * guessed index alone. /org/Cxxxxxxx has the original and /trans/Cxxxxxxx
+ * shows the corresponding translated text. Abort publishing on ambiguity.
+ * The live HTML may change; this deliberately fails closed rather than
+ * producing fabricated Chinese text or mismatched quotations.
+ */
+export function bilingualTextParagraphs(originalHtml, translatedHtml){
+  const originals=textParagraphs(originalHtml);
+  if(originals.length<4)throw Error('Official /org Text paragraphs could not be identified');
+  const cleaned=String(translatedHtml).replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'')
+    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi,'')
+    .replace(/<!--([\s\S]*?)-->/g,'');
+  // Prefer full paragraph elements; fallback only for sites that render with spans.
+  function blocksFor(tag){
+    const rx=new RegExp(`<${tag}\\b[^>]*>([\\s\\S]*?)<\\/${tag}>`,'gi');
+    return [...cleaned.matchAll(rx)].map(m=>cleanHtml(m[1])).filter(t=>t.length>=2);
+  }
+  let blocks=[...blocksFor('p'),...blocksFor('li')];
+  if(blocks.length<originals.length*2) {
+    const spans=blocksFor('span');
+    if(spans.length>blocks.length)blocks=spans;
+  }
+  if(blocks.length<originals.length)throw Error('Official /trans bilingual paragraphs are incomplete');
+  const matchOriginal=(block,english)=>block===english || (block.startsWith(english)&&block.length>english.length&&/[\u3400-\u9fff]/u.test(block.slice(english.length)));
+  let cursor=0;
+  const translated=[];
+  for(const [index,para] of originals.entries()){
+    const at=blocks.findIndex((block,i)=>i>=cursor&&matchOriginal(block,para.text));
+    if(at<cursor)throw Error(`Cannot align bilingual /trans English anchor p${index+1}`);
+    const embedded=blocks[at].slice(para.text.length).trim();
+    const boundary=index+1<originals.length
+      ?blocks.findIndex((block,i)=>i>at&&matchOriginal(block,originals[index+1].text))
+      :blocks.length;
+    if(boundary<0)throw Error(`Missing next English anchor in /trans after p${index+1}`);
+    const hanBlocks=[embedded,...blocks.slice(at+1,boundary)]
+      .map(x=>x.trim()).filter(x=>/[\u3400-\u9fff]/u.test(x));
+    if(hanBlocks.length!==1||hanBlocks[0].length<2)throw Error(`Cannot safely identify unique Chinese translation p${index+1}`);
+    translated.push({...para,translation:hanBlocks[0]});
+    cursor=at+1;
+  }
+  return translated;
+}
 export function parseCaptions(xml){
   const rows=[];
   // Supports timed <caption>, <p> and <text> elements; unknown XML is rejected.
@@ -142,7 +187,7 @@ export function checkQuiz(quiz,paragraphs,id){
 export async function aiCourse({id,title,paragraphs,level,http,env}){
   if(!env.LF_OPENAI_API_KEY||!env.LF_COURSE_MODEL)throw Error('Missing LF_OPENAI_API_KEY or LF_COURSE_MODEL; stop before publication');
   const input={contentId:id,title,level,paragraphs};
-  const instruction='你是yqxyy的严谨少儿英语教研编辑。只依据给定本集官方Text原文编写，禁止借用其他集剧情。返回严格JSON，含 vocabulary (6-14个{word,meaningZh,example,exampleZh}) 和 quiz ({questions:[5题]}). 每题英文剧情理解四选一，options 为 A-D 键与唯一答案；中文 explanation 必须具体；evidence:{paragraphIds:[...],quote:某个段落原文完整精确文本,sourceContentId:当前CID}。问题覆盖开端、发展、结尾，不做词汇识别题。未知就报告不足，不编造。';
+  const instruction='你是yqxyy的严谨少儿英语教研编辑。使用每段官方英文 Text 原文和已核验的官方中文译文作为参考，只依据给定本集官方Text原文编写，禁止借用其他集剧情。返回严格JSON，含 vocabulary (6-14个{word,meaningZh,example,exampleZh}) 和 quiz ({questions:[5题]}). 每题英文剧情理解四选一，options 为 A-D 键与唯一答案；中文 explanation 必须具体；evidence:{paragraphIds:[...],quote:某个段落原文完整精确文本,sourceContentId:当前CID}。问题覆盖开端、发展、结尾，不做词汇识别题。未知就报告不足，不编造。';
   const r=await http('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{authorization:'Bearer '+env.LF_OPENAI_API_KEY,'content-type':'application/json'},body:JSON.stringify({model:env.LF_COURSE_MODEL,temperature:0.3,response_format:{type:'json_object'},messages:[{role:'system',content:instruction},{role:'user',content:JSON.stringify(input)}]})});
   if(!r.ok)throw Error('AI course HTTP '+r.status);
   const data=await r.json(), content=data.choices?.[0]?.message?.content;if(!content)throw Error('Empty AI response');
@@ -155,7 +200,7 @@ export function prepareUpdate({seriesId,release,id,video,cues,paragraphs,course,
   const episodeId=Math.max(0,...episodes.map(e=>Number(e.episodeId)||0))+1;
   if(release.seriesEpisodeNumber!==episodeId)throw Error(`Episode sequence mismatch: official ${release.seriesEpisodeNumber}, site expects ${episodeId}`);
   const suffix=String(episodeId).padStart(3,'0');const hasQuiz=Boolean(course?.quiz);
-  const ep={episodeId,title:release.title,titleZh:'',releaseDate:release.date,status:'published',sourceType:'hls',video:{source:'hls',hlsUrl:video},modules:{watch:true,read:true,words:true,vocabulary:true,phrases:false,grammar:false,quiz:hasQuiz,review:false},unlockRequiresQuiz:false,sourceContentId:id,sourceUrls:{video,storybook:BOOK(id),text:sourceUrls.text||null,caption:CAPTION(id)},storyBook:{contentId:id,bookId:`littlefox-${id.toLowerCase()}`,pdfUrl:BOOK(id),availability:'pdf'}};
+  const ep={episodeId,title:release.title,titleZh:'',releaseDate:release.date,status:'published',sourceType:'hls',video:{source:'hls',hlsUrl:video},modules:{watch:true,read:true,words:true,vocabulary:true,phrases:false,grammar:false,quiz:hasQuiz,review:false},unlockRequiresQuiz:false,sourceContentId:id,sourceUrls:{video,storybook:BOOK(id),text:sourceUrls.text||null,textTranslation:sourceUrls.textTranslation||null,caption:CAPTION(id)},storyBook:{contentId:id,bookId:`littlefox-${id.toLowerCase()}`,pdfUrl:BOOK(id),availability:'pdf'}};
   const files={};const base=`data/${seriesId}/`;
   files[base+`subtitles/${suffix}.vtt`]=asVtt(cues);
   if(captionXml)files[base+`subtitles/${suffix}.xml`]=captionXml;
@@ -206,16 +251,16 @@ export async function daily({env=process.env,http=fetch,store,now=new Date(),log
         if(!bookResponse.ok && bookResponse.status!==405)throw Error('Storybook PDF HTTP '+bookResponse.status);
         const cap=await http(CAPTION(id));if(!cap.ok)throw Error('Caption XML HTTP '+cap.status);
         const xml=await cap.text();const cues=parseCaptions(xml);if(cues.length<3)throw Error('Unrecognized or incomplete caption XML; keep pending');
-        // Use an actual verified official Text URL; never silently substitute the subtitles.
-        const configured=env.LF_TEXT_URL_TEMPLATE?.replaceAll('{C}',id)||'';
-        const candidates=[...new Set([...player.links,...(configured?[configured]:[])])].filter(x=>/read|text/i.test(x));
-        let paragraphs=[],textUrl='';
-        for(const candidate of candidates){try{safeUrl(candidate);const r=await http(candidate);if(r.ok){const p=textParagraphs(await r.text());if(p.length>=4){paragraphs=p;textUrl=candidate;break;}}}catch{}}
-        item.resources={video,storybook:BOOK(id),caption:CAPTION(id),text:textUrl||null};
-        if(!paragraphs.length)throw Error('Official Text unavailable or unverified; cannot produce evidence-based course');
+        // Official Chinese-site source pages share the same verified C ID.
+        // Fetch both: /org gives the exact English, /trans includes Chinese.
+        const textUrl=ORIGINAL_TEXT(id), translationUrl=TRANSLATED_TEXT(id);
+        const [originalResponse,translationResponse]=await Promise.all([http(textUrl),http(translationUrl)]);
+        if(!originalResponse.ok||!translationResponse.ok)throw Error(`Official Text HTML unavailable: original ${originalResponse.status}; translation ${translationResponse.status}`);
+        const paragraphs=bilingualTextParagraphs(await originalResponse.text(),await translationResponse.text());
+        item.resources={video,storybook:BOOK(id),caption:CAPTION(id),text:textUrl,textTranslation:translationUrl};
         const course=await aiCourse({id,title:release.title,paragraphs,level:release.level,http,env});
         const freshSeriesList=await readJson('data/series-list.json');
-        const update=prepareUpdate({seriesId:release.seriesId,release,id,video,cues,paragraphs,course,episodes,readings,vocabularies,quizzes,series,seriesList:freshSeriesList,sourceUrls:{text:textUrl},captionXml:xml});
+        const update=prepareUpdate({seriesId:release.seriesId,release,id,video,cues,paragraphs,course,episodes,readings,vocabularies,quizzes,series,seriesList:freshSeriesList,sourceUrls:{text:textUrl,textTranslation:translationUrl},captionXml:xml});
         if(!update){item.status='already_published';continue;}
         item.episodeId=update.episodeId;
         if(env.LF_DRY_RUN!=='0'){item.status='ready_dry_run';item.fileCount=Object.keys(update.files).length;continue;}
