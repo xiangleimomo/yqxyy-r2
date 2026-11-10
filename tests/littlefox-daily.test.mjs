@@ -61,3 +61,35 @@ test('daily service must not write course when no verified official Text exists'
  assert.equal(r.items[0].status,'pending_failed');assert.ok(!writes.some(k=>k.endsWith('episodes.json')));
  assert.ok(writes.some(k=>k.includes('__littlefox-sync/reports/')));
 });
+
+test('C ID maps to fixed /org English and /trans bilingual official Text pages',async()=>{
+ const {ORIGINAL_TEXT,TRANSLATED_TEXT,bilingualTextParagraphs}=await import('../scripts/littlefox-daily-core.mjs');
+ assert.equal(ORIGINAL_TEXT('C0012330'),'https://cn.littlefox.com/cn/supplement/org/C0012330');
+ assert.equal(TRANSLATED_TEXT('C0012330'),'https://cn.littlefox.com/cn/supplement/trans/C0012330');
+ const english=['Nero walked into the room.','The scientist opened the door.','A strange light filled the lab.','Everyone ran out of the lab.'];
+ const chinese=['尼罗走进了房间。','科学家打开了门。','奇怪的光照亮了实验室。','大家都跑出了实验室。'];
+ const original=english.map(s=>`<p>${s}</p>`).join('');
+ const bilingual=english.map((s,i)=>`<p>${s}</p><p>${chinese[i]}</p>`).join('');
+ const paragraphs=bilingualTextParagraphs(original,bilingual);
+ assert.deepEqual(paragraphs.map(p=>p.translation),chinese);
+ assert.deepEqual(paragraphs.map(p=>p.text),english);
+ assert.deepEqual(paragraphs.map(p=>p.id),['p1','p2','p3','p4']);
+});
+
+test('bilingual text parser fails safely on missing or unaligned translation',async()=>{
+ const {bilingualTextParagraphs}=await import('../scripts/littlefox-daily-core.mjs');
+ const en=['First sentence is long.','Second sentence is long.','Third sentence is long.','Fourth sentence is long.'];
+ const original=en.map(x=>`<p>${x}</p>`).join('');
+ const incomplete=en.map((x,i)=>`<p>${x}</p>${i!==1?'<p>一段中文译文。</p>':''}`).join('');
+ assert.throws(()=>bilingualTextParagraphs(original,incomplete),/Chinese translation/);
+ assert.throws(()=>bilingualTextParagraphs(original,'<div>log in</div>'),/incomplete/);
+});
+
+test('bilingual text parser accepts verified English and Chinese in the same paragraph element',async()=>{
+ const {bilingualTextParagraphs}=await import('../scripts/littlefox-daily-core.mjs');
+ const en=['The dog looked outside.','A boy knocked at the door.','They walked toward the hill.','Soon the sun came out.'];
+ const zh=['那只狗向外看。','一个男孩敲门。','他们朝着山坡走去。','很快太阳出来了。'];
+ const original=en.map(t=>`<p>${t}</p>`).join('');
+ const trans=en.map((t,i)=>`<p>${t} ${zh[i]}</p>`).join('');
+ assert.deepEqual(bilingualTextParagraphs(original,trans).map(x=>x.translation),zh);
+});
