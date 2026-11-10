@@ -1,5 +1,0 @@
-{
-  "imports": {
-    "aws4fetch": "npm:aws4fetch@1.0.20"
-  }
-}

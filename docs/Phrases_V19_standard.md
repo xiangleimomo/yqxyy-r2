@@ -1,1 +1,0 @@
-Phrases V19: examples must be from Read original text. Invalid unmatched phrases removed. Highlight marks the exact original words.

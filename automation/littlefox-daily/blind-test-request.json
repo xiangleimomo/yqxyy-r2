@@ -1,6 +1,0 @@
-{
-  "mode": "blind_source_discovery",
-  "date": "2026-11-10",
-  "rules": "No target title, no target C ID and no prefilled episode number. Discover from official release calendar. Only official read requests and R2 GET; do not publish.",
-  "r2Publishing": false
-}
