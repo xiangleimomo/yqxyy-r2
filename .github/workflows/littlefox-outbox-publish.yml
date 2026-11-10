@@ -1,0 +1,62 @@
+name: Little Fox V2 Reviewed Outbox to R2
+# No AI provider calls, no site build, no Netlify or Supabase interactions.
+on:
+  push:
+    paths:
+      - 'automation/littlefox-daily/publish-request.json'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: littlefox-reviewed-outbox-r2
+  cancel-in-progress: false
+jobs:
+  reviewed_publish:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      TZ: Asia/Shanghai
+      R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+      R2_BUCKET: ${{ secrets.R2_BUCKET }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      LF_ALLOW_PUBLISH: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --omit=dev
+      - name: Check safe no-AI outbox publisher syntax
+        run: node --check automation/littlefox-daily/publish-outbox.mjs
+      - name: Verify official sources and publish only on explicit request
+        id: publish
+        continue-on-error: true
+        run: node automation/littlefox-daily/publish-outbox.mjs
+      - name: Archive exact report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: littlefox-reviewed-publish-${{ github.run_id }}
+          path: /tmp/littlefox-v2-publish-report.json
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Commit metadata-only report for ChatGPT readback
+        if: always()
+        run: |
+          if [ -f /tmp/littlefox-v2-publish-report.json ]; then
+            mkdir -p automation/littlefox-daily/publish-reports
+            cp /tmp/littlefox-v2-publish-report.json "automation/littlefox-daily/publish-reports/${{ github.run_id }}.json"
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add automation/littlefox-daily/publish-reports/
+            if ! git diff --cached --quiet; then
+              git commit -m 'data(littlefox): reviewed-outbox R2 report'
+              git push origin HEAD:main
+            fi
+          fi
+      - name: Fail visibly if review/publish failed
+        if: steps.publish.outcome == 'failure'
+        run: exit 1
