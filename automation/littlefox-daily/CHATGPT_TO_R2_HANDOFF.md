@@ -1,12 +1,12 @@
 # Little Fox V2: ChatGPT → GitHub Actions → R2
 
-## Ownership (2026-11-10)
+## Ownership (2026-11-10, updated)
 
-**ChatGPT daily scheduled task** owns release discovery and teaching material. It checks the official Little Fox calendar; determines title, series and episode; finds a C ID by verified first-episode Text anchor + offset, then R2 prior episode + gap, otherwise asks for manual help. It retrieves and checks the actual official English Text, Chinese Text, Storybook and subtitle XML, builds V2 reading/plot segmentation/vocabulary/Quiz, performs a separate content review and writes a **reviewed JSON** to `automation/littlefox-daily/outbox/Cxxxxxxx.json`.
+**GitHub Actions source collector** (`.github/workflows/littlefox-collect-handoff.yml`, weekdays 13:30 Asia/Shanghai) checks official Little Fox releases and R2 episode indexes, identifies and verifies the C ID, accesses the official player, Text, Storybook HEAD and XML. It writes **only small metadata** to `automation/littlefox-daily/inbox/YYYY-MM-DD.json` and stores the source English/Chinese aligned paragraphs and caption cues **only** in a one-day GitHub Actions artifact named `littlefox-source-<runId>`. The metadata contains `workflowRunId` and `privateArtifactName` for discovery. Workflow artifacts can be accessed by users with repository read permission and should NOT be treated as confidential storage on a public repository; short retention limits exposure but is not an access-control guarantee.
 
-**GitHub Actions** owns video resolution and publishing only. For an approved outbox, it re-fetches the official source by C ID using `readPlayer()`, validates playlist, checks the official Text and XML, checks Quiz evidence and R2 duplication, backs up changed R2 indexes, publishes and reads back results. It must not create AI lessons or call an AI model API. It may read metadata from the existing legacy `inbox/`, but must not require it for ChatGPT's daily task.
+**ChatGPT scheduled task** (weekdays 14:00 Asia/Shanghai) fetches the metadata and GitHub Actions artifact through the connected GitHub app, verifies and uses the actual text and caption data to write and independently review V2 teaching materials. It writes approved, original educational materials to `automation/littlefox-daily/outbox/Cxxxxxxx.json`, never copying the full official source text or XML into Git. If the GitHub artifact cannot be fetched or parsed, it reports the blocker rather than guessing.
 
-The previous `littlefox-collect-handoff.yml` is kept **manual only** to avoid duplicate scheduled discovery. The legacy `littlefox-daily-r2.yml` is also manual-only and must never be used as the new publisher without refactoring.
+**GitHub Actions publisher** (separate component; development and end-to-end test still required) accepts an approved outbox, re-fetches official resources by C ID, resolves and verifies M3U8 using `readPlayer()` and `verifyPlaylist()`, validates teaching evidence, backs up existing R2 indexes, publishes and reads back. It makes **no AI API requests** and does not develop lessons. The historical `littlefox-daily-r2.yml` remains a manual-only legacy workflow and is not the new publisher.
 
 ## Outbox protocol
 
