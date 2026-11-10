@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 2,
+  "date": "2026-11-10",
+  "status": "checked",
+  "workflowRunId": "42811206721",
+  "privateArtifactName": "littlefox-source-42811206721",
+  "items": [
+    {
+      "seriesId": "little-fox-the-happy-prince-fs0181",
+      "episodeNumber": 16,
+      "title": "A Happy Ending",
+      "level": 4,
+      "status": "ready_for_chatgpt",
+      "contentId": "C0013536",
+      "video": "https://cdn.littlefox.com/contents_5/hls/1080/6ec1b9831b/1794186911a767b1393860de7db35a9954b1aa2f9d/stream.m3u8?_=1794186918",
+      "storybook": "https://res.littlefox.com/en/supplement/load_pdf/C0013536",
+      "caption": "https://cdn.littlefox.com/contents/caption/C0013536.xml",
+      "captionCueCount": 45,
+      "textOriginal": "https://cn.littlefox.com/cn/supplement/org/C0013536",
+      "textTranslated": "https://cn.littlefox.com/cn/supplement/trans/C0013536",
+      "paragraphCount": 20,
+      "sourceArtifact": true
+    }
+  ],
+  "errors": []
+}
