@@ -144,3 +144,11 @@ test('episode schema can reference Pone stored PDF while all indexes stay on R2'
  assert.equal(ep.storyBook.pdfUrl,'https://u.pone.rs/abcdef123.pdf');
  assert.ok(Object.keys(out.files).every(key=>key.startsWith('data/')));
 });
+
+test('player resolver accepts official protocol-relative CDN host without invalid URL',async()=>{
+ const {readPlayer}=await import('./core.mjs');
+ const html='var PLAYER_CDN_HOST = "//cdn.littlefox.com"; var contents_info = [{"fc_id":"C0013536","cont_title":"A Happy Ending","video_url":"/contents_5/hls/720/a/stream.m3u8"}];';
+ const http=async()=>({ok:true,text:async()=>html});
+ const res=await readPlayer('C0013536',http);
+ assert.equal(res.video,'https://cdn.littlefox.com/contents_5/hls/720/a/stream.m3u8');
+});
