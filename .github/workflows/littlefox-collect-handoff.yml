@@ -1,7 +1,9 @@
 name: Little Fox Collect Handoff for ChatGPT
-# ChatGPT now owns the daily official-source check and course production.
-# Optional legacy collector is manual-only; do not duplicate scheduled discovery.
+# GitHub gathers official sources; ChatGPT writes and reviews educational materials.
+# 13:30 Beijing, before ChatGPT's 14:00 scheduled lesson task.
 on:
+  schedule:
+    - cron: '30 5 * * 1-5'
   workflow_dispatch:
 permissions:
   contents: write
@@ -28,6 +30,14 @@ jobs:
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
         run: node automation/littlefox-daily/collect-handoff.mjs
+      - name: Upload short-lived verified source package for ChatGPT
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: littlefox-source-${{ github.run_id }}
+          path: /tmp/littlefox-source-*.json
+          if-no-files-found: warn
+          retention-days: 1
       - name: Commit small metadata inbox (no full texts)
         run: |
           git config user.name "github-actions[bot]"
