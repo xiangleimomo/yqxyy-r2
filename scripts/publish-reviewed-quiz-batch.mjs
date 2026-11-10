@@ -20,10 +20,16 @@ const jobs={
   level:9,
   episodeCount:6,
   files:['scripts/quiz-revisions/dracula-2026-11-10-part-1.json','scripts/quiz-revisions/dracula-2026-11-10-part-2.json']
+ },
+ qt:{
+  id:'little-fox-qt-s-science-adventures-fs0047',
+  level:7,
+  episodeCount:7,
+  files:['scripts/quiz-revisions/qt-science-2026-11-10-part-1.json','scripts/quiz-revisions/qt-science-2026-11-10-part-2.json']
  }
 };
 const name=process.argv[2];
-if(!Object.prototype.hasOwnProperty.call(jobs,name))throw Error('Expected approved job: cinderella, snowwhite or dracula');
+if(!Object.prototype.hasOwnProperty.call(jobs,name))throw Error('Expected approved job: cinderella, snowwhite, dracula or qt');
 const job=jobs[name];
 for(const key of ['R2_ENDPOINT','R2_BUCKET','R2_ACCESS_KEY_ID','R2_SECRET_ACCESS_KEY'])
  if(!process.env[key])throw Error('Missing '+key);
