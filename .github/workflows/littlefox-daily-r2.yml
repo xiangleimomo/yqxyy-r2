@@ -1,0 +1,67 @@
+name: Little Fox Daily Incremental Course to R2
+
+# Independent content pipeline: never builds/deploys Netlify and never touches Supabase.
+on:
+  schedule:
+    # UTC 06:00 = Beijing 14:00, Monday–Friday (no DST in China).
+    - cron: '0 6 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: 'Publish fully verified new courses to R2 (otherwise dry run)'
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: littlefox-daily-r2
+  cancel-in-progress: false
+
+jobs:
+  incremental:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      TZ: Asia/Shanghai
+      R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+      R2_BUCKET: ${{ secrets.R2_BUCKET }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      LF_OPENAI_API_KEY: ${{ secrets.LF_OPENAI_API_KEY }}
+      LF_COURSE_MODEL: ${{ vars.LF_COURSE_MODEL || 'gpt-4o-mini' }}
+      # Scheduled runs publish only after all strict source and quiz gates pass.
+      # Manual runs are dry-run by default, with an explicit publish checkbox.
+      LF_ALLOW_PUBLISH: ${{ github.event_name == 'schedule' && '1' || (inputs.publish && '1' || '0') }}
+      LF_DRY_RUN: ${{ github.event_name == 'schedule' && '0' || (inputs.publish && '0' || '1') }}
+      # Off by default: optional authorized PDF mirroring only. Never mirror HLS video.
+      LF_ALLOW_PONE_BOOK_MIRROR: ${{ vars.LF_ALLOW_PONE_BOOK_MIRROR || '0' }}
+      LF_REPORT_FILE: ${{ runner.temp }}/littlefox-daily-report.json
+    steps:
+      - name: Checkout program only (no website deployment)
+        uses: actions/checkout@v4
+      - name: Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install existing R2 dependency
+        run: npm ci --omit=dev
+      - name: Validate new-episode parser, publishing safety and data schemas
+        run: |
+          node --check automation/littlefox-daily/core.mjs
+          node --check automation/littlefox-daily/run.mjs
+          node --test automation/littlefox-daily/*.test.mjs
+      - name: Check only today's new Little Fox courses; publish verified assets to R2
+        run: node automation/littlefox-daily/run.mjs
+      - name: Retain a small run report for troubleshooting
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: littlefox-daily-report-${{ github.run_id }}
+          path: ${{ runner.temp }}/littlefox-daily-report.json
+          if-no-files-found: ignore
+          retention-days: 7
