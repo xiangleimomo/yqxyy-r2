@@ -6,7 +6,7 @@
 
 **ChatGPT scheduled task** (weekdays 14:00 Asia/Shanghai) fetches the metadata and GitHub Actions artifact through the connected GitHub app, verifies and uses the actual text and caption data to write and independently review V2 teaching materials. It writes approved, original educational materials to `automation/littlefox-daily/outbox/Cxxxxxxx.json`, never copying the full official source text or XML into Git. If the GitHub artifact cannot be fetched or parsed, it reports the blocker rather than guessing.
 
-**GitHub Actions publisher** (separate component; development and end-to-end test still required) accepts an approved outbox, re-fetches official resources by C ID, resolves and verifies M3U8 using `readPlayer()` and `verifyPlaylist()`, validates teaching evidence, backs up existing R2 indexes, publishes and reads back. It makes **no AI API requests** and does not develop lessons. The historical `littlefox-daily-r2.yml` remains a manual-only legacy workflow and is not the new publisher.
+**GitHub Actions publisher** (`.github/workflows/littlefox-outbox-publish.yml`, `automation/littlefox-daily/publish-outbox.mjs`) automatically runs when ChatGPT creates a new `outbox/Cxxxxxxx.json` file. It re-fetches official resources by C ID, resolves and validates M3U8 with `readPlayer()` and `verifyPlaylist()`, validates V2 teaching evidence, backs up existing R2 indexes, uploads and reads back each file. It makes **no AI API requests** and does not develop lessons. It also supports an explicit `publish-request.json` dry-run/publish trigger for diagnostics. The historical `littlefox-daily-r2.yml` remains manual-only and is not used.
 
 ## Outbox protocol
 
@@ -62,4 +62,4 @@ For real courses, fields marked verified must reflect actual source reads. For l
 
 ## Validation before live use
 
-The new outbox-based R2 publisher is a **separate implementation** from the legacy GitHub AI-generation workflow. Until an actual outbox schema validator, publisher and isolated end-to-end dry run have been verified, the interface is a **documented handoff contract**, not a claim that R2 publishing is already operational.
+**Verified on 2026-11-10:** Blind GitHub official-source discovery ran as workflow `42811206721`, yielding official C ID `C0013536`, 20 bilingual paragraphs and 45 caption cues. ChatGPT staged a reviewed V2 course; publisher dry-run `42811948306` passed, then the guarded live run `42812071610` returned `published_verified` with eight R2 objects written and read back. This confirms the manual request-triggered path; the *new automatic outbox-file push trigger* has been configured but has not yet undergone its own separate production run. Do not describe that specific trigger as tested until its own run is observed.
