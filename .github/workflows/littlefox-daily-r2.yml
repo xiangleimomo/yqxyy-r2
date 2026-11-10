@@ -2,6 +2,11 @@ name: Little Fox Daily Incremental Course to R2
 
 # Independent content pipeline: never builds/deploys Netlify and never touches Supabase.
 on:
+  # One safe dry-run whenever THIS workflow definition is updated.
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/littlefox-daily-r2.yml'
   schedule:
     # UTC 06:00 = Beijing 14:00, Monday–Friday (no DST in China).
     - cron: '0 6 * * 1-5'
@@ -39,7 +44,7 @@ jobs:
       LF_DRY_RUN: ${{ github.event_name == 'schedule' && '0' || (inputs.publish && '0' || '1') }}
       # Off by default: optional authorized PDF mirroring only. Never mirror HLS video.
       LF_ALLOW_PONE_BOOK_MIRROR: ${{ vars.LF_ALLOW_PONE_BOOK_MIRROR || '0' }}
-      LF_REPORT_FILE: ${{ runner.temp }}/littlefox-daily-report.json
+      LF_REPORT_FILE: /tmp/littlefox-daily-report.json
     steps:
       - name: Checkout program only (no website deployment)
         uses: actions/checkout@v4
@@ -62,6 +67,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: littlefox-daily-report-${{ github.run_id }}
-          path: ${{ runner.temp }}/littlefox-daily-report.json
+          path: /tmp/littlefox-daily-report.json
           if-no-files-found: ignore
           retention-days: 7
