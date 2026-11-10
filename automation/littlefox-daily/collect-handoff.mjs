@@ -18,7 +18,7 @@ try{
   try{
    const old=await store.get(`data/${release.seriesId}/episodes.json`);if(!old)throw Error('R2 episode index missing');
    const episodes=JSON.parse(old);
-   if(episodes.some(e=>Number(e.episodeId)===release.seriesEpisodeNumber)){item.status='already_published';continue;}
+   if(process.env.LF_BLIND_TEST!=='1'&&episodes.some(e=>Number(e.episodeId)===release.seriesEpisodeNumber)){item.status='already_published';continue;}
    const id=await identifyCId(release,episodes,fetch);if(!id)throw Error('C ID unavailable');
    item.contentId=id;
    const player=await readPlayer(id,fetch);
