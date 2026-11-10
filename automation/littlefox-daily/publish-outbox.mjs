@@ -3,10 +3,25 @@
  * Supports dry-run first, guarded opt-in publish, R2 backups and readback.
  */
 import fs from 'node:fs/promises';
+import {execFileSync} from 'node:child_process';
 import {makeR2,readPlayer,isEpisodeMatch,verifyPlaylist,parseCaptions,bilingualTextParagraphs,ORIGINAL_TEXT,TRANSLATED_TEXT,checkQuiz,prepareUpdate} from './core.mjs';
 
 const checkedPath='automation/littlefox-daily/publish-request.json';
-const req=JSON.parse(await fs.readFile(checkedPath,'utf8'));
+let req;
+if(process.env.GITHUB_EVENT_NAME==='push'){
+  // When ChatGPT creates one approved outbox, publish automatically.
+  // Existing outbox edits are NOT considered a new publication request.
+  const changed=execFileSync('git',['diff-tree','--no-commit-id','--name-status','-r','HEAD'],{encoding:'utf8'})
+    .trim().split('\n').filter(Boolean).map(line=>{
+      const [change,path]=line.split('\t');return {change,path};
+    });
+  const touched=changed.filter(x=>/^automation\/littlefox-daily\/outbox\/C\d{7}\.json$/.test(x.path));
+  if(touched.length){
+    if(touched.length!==1||touched[0].change!=='A')throw Error('Only one newly added C-ID outbox is eligible for auto publication');
+    req={mode:'reviewed_littlefox_v2',contentId:touched[0].path.match(/(C\d{7})\.json$/)[1],publish:true};
+  }
+}
+req=req||JSON.parse(await fs.readFile(checkedPath,'utf8'));
 if(req.mode!=='reviewed_littlefox_v2'||!/^C\d{7}$/.test(req.contentId||'')||typeof req.publish!=='boolean')throw Error('Invalid release request');
 const id=req.contentId;
 const sourceFile='automation/littlefox-daily/outbox/'+id+'.json';
