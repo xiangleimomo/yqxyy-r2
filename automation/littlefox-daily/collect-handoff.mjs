@@ -2,7 +2,9 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {chinaDate,makeR2,scheduleReleases,identifyCId,readPlayer,isEpisodeMatch,verifyPlaylist,parseCaptions,bilingualTextParagraphs,ORIGINAL_TEXT,TRANSLATED_TEXT} from './core.mjs';
 const d=chinaDate(),out=`automation/littlefox-daily/inbox/${d.date}.json`;
-const result={schemaVersion:1,date:d.date,status:'checking',items:[],errors:[]};
+const privateOut='/tmp/littlefox-source-'+d.date+'.json';
+const result={schemaVersion:2,date:d.date,status:'checking',workflowRunId:process.env.GITHUB_RUN_ID||null,privateArtifactName:'littlefox-source-'+d.date,items:[],errors:[]};
+const sources={schemaVersion:1,date:d.date,items:[]};
 const get=async url=>{const r=await fetch(url,{signal:AbortSignal.timeout(20000)});if(!r.ok)throw Error('Official HTTP '+r.status);return r;};
 try{
  const store=await makeR2(process.env,fetch);
@@ -31,12 +33,19 @@ try{
    item.textOriginal=ORIGINAL_TEXT(id);item.textTranslated=TRANSLATED_TEXT(id);
    const [en,zh]=await Promise.all([get(item.textOriginal),get(item.textTranslated)]);
    const paragraphs=bilingualTextParagraphs(await en.text(),await zh.text());
+   if(paragraphs.length<3)throw Error('Verified Text has fewer than 3 paragraphs');
    item.paragraphCount=paragraphs.length;item.status='ready_for_chatgpt';
+   // Full source paragraphs are ONLY in the ephemeral GitHub Actions artifact,
+   // NEVER added to the public repository or printed into workflow logs.
+   sources.items.push({seriesId:release.seriesId,episodeNumber:release.seriesEpisodeNumber,contentId:id,title:release.title,level:release.level,releaseDate:d.date,officialSourceUrls:{textOriginal:item.textOriginal,textTranslated:item.textTranslated,caption:item.caption,storybook:item.storybook},paragraphs,captionCues:cues,verification:{playerTitle:player.item.cont_title,captionCueCount:cues.length,paragraphCount:paragraphs.length,storybookHeadStatus:pdf.status},status:'ready_for_chatgpt'});
+   item.sourceArtifact=true;
   }catch(e){item.status='blocked';item.error=String(e.message||e).slice(0,250);}
  }
  result.status=releases.length?'checked':'no_release_detected';
 }catch(e){result.status='blocked';result.errors.push(String(e.message||e).slice(0,300));}
+// The artifact is uploaded separately by Actions and kept for one day.
+await fs.writeFile(privateOut,JSON.stringify(sources,null,2)+'\n');
 await fs.mkdir(path.dirname(out),{recursive:true});
 await fs.writeFile(out,JSON.stringify(result,null,2)+'\n');
-console.log(JSON.stringify({status:result.status,items:result.items.length,errors:result.errors}));
+console.log(JSON.stringify({status:result.status,items:result.items.length,ready:sources.items.length,errors:result.errors,privateArtifactName:result.privateArtifactName}));
 if(result.status==='blocked')process.exitCode=1;
