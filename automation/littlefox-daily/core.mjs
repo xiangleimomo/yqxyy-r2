@@ -70,10 +70,23 @@ export async function readPlayer(id, http) {
   const r=await http(PLAYER,{headers:{'User-Agent':'Mozilla/5.0','Cookie':'h5play_info='+cookiesFor(id)}});
   if(!r.ok)throw Error('Little Fox player HTTP '+r.status);
   const html=await r.text();const item=playerItem(html,id);if(!item)throw Error(`Player did not return ${id}`);
-  const raw=item.video_url||''; const host=html.match(/\bPLAYER_CDN_HOST\s*=\s*["']([^"']+)/);
-  const base=host?new URL(host[1],'https:').href:'https://cdn.littlefox.com';
+  const raw=String(item.video_url||'').trim();
+  const host=html.match(/\bPLAYER_CDN_HOST\s*=\s*["']([^"']+)/);
+  const hostRaw=host?.[1]?.trim()||'';
+  let base='https://cdn.littlefox.com/';
+  // Official HTML may use protocol-relative CDN hosts (//cdn...) or a bare
+  // hostname (cdn.littlefox.com). `new URL(x,'https:')` is not a valid base.
+  if(hostRaw){
+    const resolved=/^https:\/\//i.test(hostRaw)?hostRaw:
+      hostRaw.startsWith('//')?'https:'+hostRaw:
+      /^cdn\.littlefox\.(?:com|co\.kr)(?:\/|$)/i.test(hostRaw)?'https://'+hostRaw:
+      new URL(hostRaw,PLAYER).href;
+    base=safeUrl(resolved,VIDEO_DOMAINS);
+  }
   if(!raw)throw Error('Official player has no video URL');
-  const video=safeUrl(new URL(raw,base).href,VIDEO_DOMAINS);
+  const absolute=/^cdn\.littlefox\.(?:com|co\.kr)\//i.test(raw)?'https://'+raw:
+    raw.startsWith('//')?'https:'+raw:new URL(raw,base).href;
+  const video=safeUrl(absolute,VIDEO_DOMAINS);
   const links=discoverTextLinks(html,id);
   return {item,video,links};
 }
@@ -304,37 +317,46 @@ export async function daily({env=process.env,http=fetch,store,now=new Date(),log
     const html=await response.text();const releases=scheduleReleases(html,date,seriesList);
     if(!releases.length){report.status='no_release_detected';report.warnings=['No new calendar entries matched existing series; verify the publishing schedule if official episodes were released today.'];return report;}
     // A shared catalog may change during a multi-episode run. Reload before each publish.
-    for(const release of releases){const item={seriesId:release.seriesId,title:release.title,status:'checking'};report.items.push(item);
+    for(const release of releases){const item={seriesId:release.seriesId,title:release.title,status:'checking',stage:'load_episode_index'};report.items.push(item);
       try{
         const base=`data/${release.seriesId}/`;
         const [episodes,readings,vocabularies,quizzes,series]=await Promise.all(['episodes.json','reading-lessons.json','vocabulary.json','quiz.json','series.json'].map(x=>readJson(base+x)));
         const existing=episodes.find(e=>Number(e.episodeId)===release.seriesEpisodeNumber);
         if(existing){item.contentId=existing.sourceContentId||existing.storyBook?.contentId;item.status='already_published';continue;}
+        item.stage='identify_official_cid';
         const id=await identifyCId(release,episodes,http);item.contentId=id||null;
         if(!id)throw Error('No official C ID and no verifiable next-ID candidate; refusing to guess');
+        item.stage='verify_player';
         const player=await readPlayer(id,http);
         if(!isEpisodeMatch(player.item.cont_title,release.title))throw Error(`C ID ${id} title mismatch: ${player.item.cont_title} / ${release.title}`);
+        item.stage='verify_m3u8';
         const video=await verifyPlaylist(player.video,http);
+        item.stage='verify_storybook';
         const bookResponse=await http(BOOK(id),{method:'HEAD'});
         if(!bookResponse.ok && bookResponse.status!==405)throw Error('Storybook PDF HTTP '+bookResponse.status);
         let storybook=BOOK(id);
         if(env.LF_ALLOW_PONE_BOOK_MIRROR==='1')storybook=await uploadAuthorizedPdfToPone({id,sourceUrl:BOOK(id),http});
+        item.stage='read_xml_captions';
         const cap=await http(CAPTION(id));if(!cap.ok)throw Error('Caption XML HTTP '+cap.status);
         const xml=await cap.text();const cues=parseCaptions(xml);if(cues.length<3)throw Error('Unrecognized or incomplete caption XML; keep pending');
         // Official Chinese-site source pages share the same verified C ID.
         // Fetch both: /org gives the exact English, /trans includes Chinese.
+        item.stage='parse_official_bilingual_text';
         const textUrl=ORIGINAL_TEXT(id), translationUrl=TRANSLATED_TEXT(id);
         const [originalResponse,translationResponse]=await Promise.all([http(textUrl),http(translationUrl)]);
         if(!originalResponse.ok||!translationResponse.ok)throw Error(`Official Text HTML unavailable: original ${originalResponse.status}; translation ${translationResponse.status}`);
         const paragraphs=bilingualTextParagraphs(await originalResponse.text(),await translationResponse.text());
         item.resources={video,storybook,caption:CAPTION(id),text:textUrl,textTranslation:translationUrl};
+        item.stage='build_and_review_lessons';
         const course=await aiCourse({id,title:release.title,paragraphs,level:release.level,http,env});
+        item.stage='prepare_r2_update';
         const freshSeriesList=await readJson('data/series-list.json');
         const update=prepareUpdate({seriesId:release.seriesId,release,id,video,cues,paragraphs,course,episodes,readings,vocabularies,quizzes,series,seriesList:freshSeriesList,sourceUrls:{text:textUrl,textTranslation:translationUrl,storybook},captionXml:xml});
         if(!update){item.status='already_published';continue;}
         item.episodeId=update.episodeId;
         if(env.LF_DRY_RUN!=='0'){item.status='ready_dry_run';item.fileCount=Object.keys(update.files).length;continue;}
         if(env.LF_ALLOW_PUBLISH!=='1')throw Error('LF_ALLOW_PUBLISH not enabled; no R2 course files modified');
+        item.stage='backup_r2';
         // Back up originals BEFORE modifying any mutable course JSON. Each run is idempotent.
         const snapshotDate=Date.now();
         for(const key of Object.keys(update.files).filter(k=>k.endsWith('.json'))){
@@ -345,14 +367,18 @@ export async function daily({env=process.env,http=fetch,store,now=new Date(),log
         const indexKey='data/series-list.json';
         const episodeKey=base+'episodes.json';
         const entries=Object.entries(update.files).filter(([k])=>k!==indexKey&&k!==episodeKey);
+        item.stage='upload_r2_assets';
         for(const [key,value] of entries)await store.put(key,value,key.endsWith('.vtt')?'text/vtt; charset=utf-8':key.endsWith('.xml')?'application/xml; charset=utf-8':'application/json; charset=utf-8');
         for(const [key,value] of entries){if(await store.get(key)!==value)throw Error('R2 read-back mismatch '+key);}
         // Final publication is the episode entry followed by the global discovery index.
+        item.stage='commit_r2_episode_index';
         await store.put(episodeKey,update.files[episodeKey]);
         if(await store.get(episodeKey)!==update.files[episodeKey])throw Error('R2 episode index read-back mismatch');
+        item.stage='commit_r2_global_index';
         await store.put(indexKey,update.files[indexKey]);
         if(await store.get(indexKey)!==update.files[indexKey])throw Error('R2 index read-back mismatch');
         // Verify the already-deployed public R2 reader without triggering a Netlify build.
+        item.stage='verify_public_site';
         const site=(env.LF_PUBLIC_SITE||'https://yqxyy-r2.netlify.app').replace(/\/+$/,'');
         try {
           const publicResponse=await http(`${site}/${episodeKey}?check=${Date.now()}`,{signal:AbortSignal.timeout(15000)});
@@ -362,7 +388,7 @@ export async function daily({env=process.env,http=fetch,store,now=new Date(),log
           item.status='published_verified';
         } catch(error) {item.status='published_r2_site_unverified';item.siteWarning=String(error.message||error).slice(0,260);}
         item.fileCount=Object.keys(update.files).length;
-      }catch(e){item.status='pending_failed';item.error=String(e.message||e).slice(0,400);}
+      }catch(e){item.status='pending_failed';item.error=`${item.stage}: ${String(e.message||e)}`.slice(0,450);}
     }
     report.status=report.items.some(x=>x.status==='pending_failed')?'partial_or_blocked':'complete';return report;
   }catch(e){report.status='failed';report.errors.push(String(e.message||e));return report;}
