@@ -54,9 +54,10 @@ function jsonArrayAfter(html,name) {
 export function playerItem(html,id){const x=jsonArrayAfter(html,'contents_info');return Array.isArray(x)?x.find(v=>v&&v.fc_id===id)||null:null;}
 export function nextIdFromEpisodes(episodes) {
   // A bounded candidate for the very next episode, never bulk historical enumeration.
-  const ordered=[...episodes].filter(e=>CONTENT_ID.test(e.sourceContentId||'')).sort((a,b)=>Number(a.episodeId)-Number(b.episodeId));
+  const ordered=[...episodes].filter(e=>CONTENT_ID.test(e.sourceContentId||e.storyBook?.contentId||'')).sort((a,b)=>Number(a.episodeId)-Number(b.episodeId));
   if(ordered.length<3)return null;
-  const tail=ordered.slice(-3);const nums=tail.map(x=>Number(x.sourceContentId.slice(1)));
+  const tail=ordered.slice(-3);if(tail.some((e,i)=>i>0&&Number(e.episodeId)!==Number(tail[i-1].episodeId)+1))return null;
+  const nums=tail.map(x=>Number((x.sourceContentId||x.storyBook.contentId).slice(1)));
   if(!(nums[1]===nums[0]+1&&nums[2]===nums[1]+1))return null;
   return 'C'+String(nums[2]+1).padStart(7,'0');
 }
