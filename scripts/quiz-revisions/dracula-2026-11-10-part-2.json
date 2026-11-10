@@ -1,0 +1,204 @@
+{
+  "seriesId": "little-fox-dracula-fs0016",
+  "level": 9,
+  "type": "editorial-complete-rewrite",
+  "scope": "only existing malformed quizzes",
+  "reference": "official-text",
+  "lessons": [
+    {
+      "episodeId": 4,
+      "questions": [
+        {
+          "question": "What unusual treatment did Van Helsing tell Dr. Seward to use for Lucy?",
+          "options": [
+            "A cold bath",
+            "A gold ring",
+            "A garlic necklace",
+            "An herbal tea"
+          ],
+          "answerIndex": 2,
+          "explanation": "范海辛建议在露西脖子上戴一圈大蒜。",
+          "evidenceParagraphId": "p3"
+        },
+        {
+          "question": "Why did Seward regret staying home for a night's rest?",
+          "options": [
+            "He received Van Helsing's warning too late",
+            "His hospital had been closed",
+            "Lucy had moved overseas",
+            "Arthur had taken his medical bag"
+          ],
+          "answerIndex": 0,
+          "explanation": "他第二天才看到教授要求守护露西的紧急来信，担心误事。",
+          "evidenceParagraphId": "p6"
+        },
+        {
+          "question": "What did Van Helsing stop Arthur from doing at Lucy's bedside?",
+          "options": [
+            "Calling her mother",
+            "Opening the window",
+            "Giving her medicine",
+            "Kissing her"
+          ],
+          "answerIndex": 3,
+          "explanation": "露西临终前突然露出獠牙，范海辛及时拉开想吻她的阿瑟。",
+          "evidenceParagraphId": "p12"
+        },
+        {
+          "question": "What disturbing discovery did the doctors make in Lucy's mausoleum?",
+          "options": [
+            "The garlic had disappeared",
+            "Her body was missing from the coffin",
+            "Arthur had already left",
+            "The coffin was filled with flowers"
+          ],
+          "answerIndex": 1,
+          "explanation": "两位医生打开墓室中的棺材，发现露西的遗体不见了。",
+          "evidenceParagraphId": "p16"
+        },
+        {
+          "question": "What convinced Arthur that Lucy was harming children?",
+          "options": [
+            "The count confessed in a letter",
+            "A child reported seeing the king",
+            "They saw Lucy carrying a child near the cemetery",
+            "The innkeeper showed a newspaper"
+          ],
+          "answerIndex": 2,
+          "explanation": "阿瑟亲眼看见露西在墓地附近拖着一个孩子，终于相信危险。",
+          "evidenceParagraphId": "p20"
+        }
+      ]
+    },
+    {
+      "episodeId": 5,
+      "questions": [
+        {
+          "question": "Why did Professor Van Helsing visit Jonathan and Mina?",
+          "options": [
+            "To purchase their house",
+            "To arrange a wedding",
+            "To find a lost diary",
+            "To investigate what happened to Lucy"
+          ],
+          "answerIndex": 3,
+          "explanation": "教授希望了解米娜在露西海边住所见到的情况，调查她的死因。",
+          "evidenceParagraphId": "p3"
+        },
+        {
+          "question": "What did Jonathan give Van Helsing to help explain the mystery?",
+          "options": [
+            "His diary from Transylvania",
+            "A glass mirror",
+            "A suitcase full of coins",
+            "A copy of the ship's tickets"
+          ],
+          "answerIndex": 0,
+          "explanation": "乔纳森将记录城堡经历的日记交给教授阅读。",
+          "evidenceParagraphId": "p6"
+        },
+        {
+          "question": "What connection did Jonathan make about the strange ship?",
+          "options": [
+            "It belonged to Lucy's father",
+            "It had been hired to bring Dracula and his coffins to England",
+            "It was carrying food to Arthur",
+            "It had rescued the count from a fire"
+          ],
+          "answerIndex": 1,
+          "explanation": "乔纳森联想到伯爵安排海运棺材，而露西遇袭那天正有一艘载棺材的船搁浅。",
+          "evidenceParagraphId": "p7"
+        },
+        {
+          "question": "Why did the group pour holy water into Dracula's coffins?",
+          "options": [
+            "To clean soil off the wooden boxes",
+            "To make the cellar smell better",
+            "To stop the vampire from using them safely as hiding places",
+            "To prepare the house for sale"
+          ],
+          "answerIndex": 2,
+          "explanation": "他们用圣水处理棺材，让伯爵无法安心藏身，从而削弱他。",
+          "evidenceParagraphId": "p12"
+        },
+        {
+          "question": "Where did the group find Dracula when they rushed home?",
+          "options": [
+            "In Jonathan's study",
+            "In the garden",
+            "At the front door",
+            "Holding Mina inside the locked bedroom"
+          ],
+          "answerIndex": 3,
+          "explanation": "众人破门而入，看见伯爵在房内抓着米娜。",
+          "evidenceParagraphId": "p17"
+        }
+      ]
+    },
+    {
+      "episodeId": 6,
+      "questions": [
+        {
+          "question": "What did Van Helsing discover about someone who had drunk vampire blood?",
+          "options": [
+            "That person would become a vampire unless the master vampire was killed in time",
+            "That person would forget everything",
+            "That person would sleep for a month",
+            "That person would become immune to vampires"
+          ],
+          "answerIndex": 0,
+          "explanation": "教授读到：喝过吸血鬼血液的人会转化，除非及时杀死源头吸血鬼。",
+          "evidenceParagraphId": "p3"
+        },
+        {
+          "question": "Why did the group decide Dracula might be heading back to Transylvania?",
+          "options": [
+            "He left a letter at the house",
+            "They heard the ship's horn after finding his coffins gone",
+            "The innkeeper told them he was hiding nearby",
+            "Mina saw him on a train"
+          ],
+          "answerIndex": 1,
+          "explanation": "伦敦宅邸的棺材全被搬走，港口船笛让乔纳森猜测伯爵要回故乡。",
+          "evidenceParagraphId": "p6"
+        },
+        {
+          "question": "How did the travelers try to catch up with Dracula's ship?",
+          "options": [
+            "They boarded a train directly to the castle",
+            "They hired a carriage to cross the sea",
+            "They waited in London for another month",
+            "They took a faster ship to Varna"
+          ],
+          "answerIndex": 3,
+          "explanation": "船工建议他们乘第二天开出的快船去瓦尔纳追赶伯爵。",
+          "evidenceParagraphId": "p12"
+        },
+        {
+          "question": "What made Jonathan agree to return to the frightening castle?",
+          "options": [
+            "He wanted to reclaim his old job",
+            "Arthur promised him money",
+            "He remembered Mina's danger and wanted to save her",
+            "The queen ordered him to go"
+          ],
+          "answerIndex": 2,
+          "explanation": "乔纳森虽然害怕重返囚禁自己的城堡，但想到米娜将变成吸血鬼，最终答应同行。",
+          "evidenceParagraphId": "p20"
+        },
+        {
+          "question": "How did Dracula's final escape attempt fail?",
+          "options": [
+            "He rushed into daylight and was struck by sunlight",
+            "The count's ship sank in the harbor",
+            "The innkeeper locked him inside a wagon",
+            "His gold cross fell to the floor"
+          ],
+          "answerIndex": 0,
+          "explanation": "伯爵试图冲出敞开的门，却被白天的阳光伤到，乔纳森趁机击败了他。",
+          "evidenceParagraphId": "p31"
+        }
+      ]
+    }
+  ]
+}
