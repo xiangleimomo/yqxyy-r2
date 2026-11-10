@@ -55,14 +55,20 @@ function jsonArrayAfter(html,name) {
   return null;
 }
 export function playerItem(html,id){const x=jsonArrayAfter(html,'contents_info');return Array.isArray(x)?x.find(v=>v&&v.fc_id===id)||null:null;}
-export function nextIdFromEpisodes(episodes) {
-  // A bounded candidate for the very next episode, never bulk historical enumeration.
-  const ordered=[...episodes].filter(e=>CONTENT_ID.test(e.sourceContentId||e.storyBook?.contentId||'')).sort((a,b)=>Number(a.episodeId)-Number(b.episodeId));
-  if(ordered.length<3)return null;
-  const tail=ordered.slice(-3);if(tail.some((e,i)=>i>0&&Number(e.episodeId)!==Number(tail[i-1].episodeId)+1))return null;
-  const nums=tail.map(x=>Number((x.sourceContentId||x.storyBook.contentId).slice(1)));
-  if(!(nums[1]===nums[0]+1&&nums[2]===nums[1]+1))return null;
-  return 'C'+String(nums[2]+1).padStart(7,'0');
+export function contentIdOffset(id,delta) {
+  if(!CONTENT_ID.test(id)||!Number.isSafeInteger(delta))return null;
+  const number=Number(id.slice(1))+delta;
+  return number>=0&&number<=9999999?'C'+String(number).padStart(7,'0'):null;
+}
+export function nextIdFromEpisodes(episodes,targetEpisodeNumber) {
+  // R2 fallback: only the newest verified episode BEFORE the requested episode.
+  // No assumption about the last three episodes being consecutive.
+  const ordered=[...(episodes||[])].filter(e=>Number.isSafeInteger(Number(e.episodeId))&&Number(e.episodeId)>0&&CONTENT_ID.test(e.sourceContentId||e.storyBook?.contentId||'')).sort((a,b)=>Number(a.episodeId)-Number(b.episodeId));
+  if(!ordered.length)return null;
+  const requested=targetEpisodeNumber==null?Number(ordered.at(-1).episodeId)+1:Number(targetEpisodeNumber);
+  if(!Number.isSafeInteger(requested)||requested<1)return null;
+  const previous=ordered.filter(e=>Number(e.episodeId)<requested).at(-1);
+  return previous?contentIdOffset(previous.sourceContentId||previous.storyBook.contentId,requested-Number(previous.episodeId)):null;
 }
 function cookiesFor(id){return Buffer.from(JSON.stringify({fc_ids:id,w:1000,h:700})).toString('base64');}
 export async function readPlayer(id, http) {
@@ -203,25 +209,56 @@ export function catalogSeriesId(seriesId){
   const known={'three-kingdoms':'FS0182','journey-to-the-west':'FS0078'};
   return known[seriesId]||seriesId.match(/-(FS\d+|SRV\d+)$/i)?.[1]?.toUpperCase()||null;
 }
+// Confirmed by official Little Fox Text (the 2026-11-10 user-verified example).
+// Store only vetted anchors. Additional series can be discovered from official catalog
+// first-episode data; never treat an unverified search result as an anchor.
+const FIRST_EPISODE_ANCHORS={
+  'little-fox-the-happy-prince-fs0181':'C0013521'
+};
+function firstEpisodeFromCatalog(catalog) {
+  const matches=catalog.filter(e=>/^(?:episode\\s*)?0?1\\s*[:.\\-]\\s*\\S/i.test(e.title));
+  return matches.length===1?matches[0].id:null;
+}
+async function verifiesOfficialEpisode(id,release,http){
+  try {
+    const player=await readPlayer(id,http);
+    return isEpisodeMatch(player.item.cont_title,release.title);
+  } catch {return false;}
+}
 export async function identifyCId(release, episodes, http){
+  const number=Number(release.seriesEpisodeNumber);
+  if(!Number.isSafeInteger(number)||number<1)throw Error('Invalid official episode number');
   const sid=catalogSeriesId(release.seriesId);
   let catalog=[];
   if(sid){
     const section=sid.startsWith('SRV')?'songs':'readers';
-    const page=await http(`https://www.littlefox.com/en/${section}/contents_list_v2/${sid}`);
-    if(page.ok)catalog=officialCatalogEntries(await page.text());
+    try {
+      const page=await http(`https://www.littlefox.com/en/${section}/contents_list_v2/${sid}`);
+      if(page.ok)catalog=officialCatalogEntries(await page.text());
+    }catch{/* official catalog may be unavailable; use verified fallbacks */}
   }
   const titleMatches=catalog.filter(x=>normalize(x.title)===normalize(release.title));
-  if(titleMatches.length>1)throw Error('Ambiguous official catalog title, manual verification required');
+  if(titleMatches.length>1)throw Error('Ambiguous official catalog title; manual assistance required');
   const fromCatalog=titleMatches[0]?.id||null;
-  if(release.directId&&fromCatalog&&release.directId!==fromCatalog)throw Error('Official schedule C ID conflicts with series catalog');
-  if(fromCatalog)return fromCatalog;
-  // Direct IDs are official when present in the calendar. Historical consecutive C IDs
-  // are only candidate hints and still require player C ID AND title verification.
-  if(release.directId)return release.directId;
-  const candidate=nextIdFromEpisodes(episodes);
-  if(!candidate)throw Error('Cannot verify new C ID from catalog/calendar or bounded next-ID candidate');
-  return candidate;
+  if(release.directId&&fromCatalog&&release.directId!==fromCatalog)throw Error('Official schedule and catalog C IDs conflict; manual assistance required');
+  // Prioritize official exact-match IDs, then the verified first Text anchor,
+  // then latest R2 episode + gap. Every candidate is checked against player.
+  const firstId=firstEpisodeFromCatalog(catalog)||FIRST_EPISODE_ANCHORS[release.seriesId]||null;
+  const candidates=[
+    ['official catalog',fromCatalog],
+    ['official calendar',release.directId],
+    ['first episode Text',firstId?contentIdOffset(firstId,number-1):null],
+    ['R2 previous episode',nextIdFromEpisodes(episodes,number)]
+  ];
+  const attempted=[];
+  for(const [source,id] of candidates){
+    if(!id||attempted.some(x=>x.id===id))continue;
+    const verified=await verifiesOfficialEpisode(id,release,http);
+    attempted.push({source,id});
+    if(verified)return id;
+  }
+  throw Error('C ID unresolved; manual assistance required ('+
+    (attempted.length?attempted.map(x=>x.source+':'+x.id).join(', '):'no official first-episode or R2 candidate')+')');
 }
 /** Log only XML structure/attribute names (never copyrighted transcript lines). */
 export function captionShape(xml){
