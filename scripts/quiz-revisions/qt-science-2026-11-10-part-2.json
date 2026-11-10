@@ -1,0 +1,204 @@
+{
+  "seriesId": "little-fox-qt-s-science-adventures-fs0047",
+  "level": 7,
+  "type": "editorial-complete-rewrite",
+  "scope": "existing quizzes only",
+  "reference": "official-text",
+  "lessons": [
+    {
+      "episodeId": 5,
+      "questions": [
+        {
+          "question": "Where did Will find himself after falling asleep while studying storms?",
+          "options": [
+            "In a hot air balloon",
+            "On a mountain train",
+            "In a canoe",
+            "At a weather station"
+          ],
+          "answerIndex": 0,
+          "explanation": "威尔研究天气睡着后，梦中站在热气球篮子里。",
+          "evidenceParagraphId": "p3"
+        },
+        {
+          "question": "Why did QT tell Will to turn on the balloon's burners?",
+          "options": [
+            "To make the rain stop",
+            "To signal his father",
+            "To warm the air so the balloon would stay up",
+            "To light up the clouds"
+          ],
+          "answerIndex": 2,
+          "explanation": "燃烧器给球内空气加热，热空气更轻，有助于气球上升。",
+          "evidenceParagraphId": "p7"
+        },
+        {
+          "question": "How did QT explain the creation of wind?",
+          "options": [
+            "By the moon pulling the clouds",
+            "Warm air rises and cooler air moves into its place",
+            "By waves breaking against rocks",
+            "When lightning strikes the ground"
+          ],
+          "answerIndex": 1,
+          "explanation": "太阳加热不同地区程度不同，热空气上升、冷空气流入，从而形成风。",
+          "evidenceParagraphId": "p9"
+        },
+        {
+          "question": "Why did QT urge Will to land as the thundercloud approached?",
+          "options": [
+            "The sun was setting",
+            "The balloon had lost its basket",
+            "A bird was chasing them",
+            "They could be in danger if the cloud produced lightning"
+          ],
+          "answerIndex": 3,
+          "explanation": "雷云靠近，QT担心热气球在空中遭遇闪电，建议降落。",
+          "evidenceParagraphId": "p21"
+        },
+        {
+          "question": "Why did Will hear thunder after seeing lightning?",
+          "options": [
+            "Light travels faster than sound",
+            "Thunder is created the next day",
+            "Lightning cannot make a noise",
+            "Rain carries the sound away"
+          ],
+          "answerIndex": 0,
+          "explanation": "QT说明光传播比声音快，所以先看到闪电，后听到雷声。",
+          "evidenceParagraphId": "p26"
+        }
+      ]
+    },
+    {
+      "episodeId": 6,
+      "questions": [
+        {
+          "question": "Why did QT say mosquitoes should not all disappear?",
+          "options": [
+            "They help make the rain fall",
+            "They are the only animals in wetlands",
+            "They build nests for birds",
+            "Other species depend on them for food"
+          ],
+          "answerIndex": 3,
+          "explanation": "QT解释蚊子是食物链一环，许多鸟和鱼以它们为食。",
+          "evidenceParagraphId": "p5"
+        },
+        {
+          "question": "Where did QT say Will was canoeing?",
+          "options": [
+            "On a lake near London",
+            "In the Florida Everglades",
+            "In the Pacific Ocean",
+            "In a mountain cave"
+          ],
+          "answerIndex": 1,
+          "explanation": "威尔在佛罗里达大沼泽地乘独木舟。",
+          "evidenceParagraphId": "p13"
+        },
+        {
+          "question": "How did QT explain that wetlands can help prevent flooding?",
+          "options": [
+            "They absorb extra rainwater and release it slowly",
+            "They block all rain from falling",
+            "They turn rivers into mountains",
+            "They stop clouds from forming"
+          ],
+          "answerIndex": 0,
+          "explanation": "湿地像海绵一样吸收暴雨的多余水分，再缓慢释放。",
+          "evidenceParagraphId": "p17"
+        },
+        {
+          "question": "What important role did QT describe for mangrove roots?",
+          "options": [
+            "They make fish glow",
+            "They heat the water",
+            "They help keep soil from being washed away",
+            "They turn saltwater into ice"
+          ],
+          "answerIndex": 2,
+          "explanation": "红树林的根能稳固泥土，减少水流冲刷。",
+          "evidenceParagraphId": "p21"
+        },
+        {
+          "question": "How did Will feel about wetlands when he woke?",
+          "options": [
+            "He still thought they were useless",
+            "He wanted to destroy the mosquitoes",
+            "He refused to write his report",
+            "He understood they were valuable and began writing about them"
+          ],
+          "answerIndex": 3,
+          "explanation": "梦醒后威尔改变看法，认为湿地和蚊子并非毫无用处，开始写报告。",
+          "evidenceParagraphId": "p25"
+        }
+      ]
+    },
+    {
+      "episodeId": 7,
+      "questions": [
+        {
+          "question": "What did Will use to think about Earth moving around the Sun?",
+          "options": [
+            "A lamp and a mirror",
+            "A basketball and a baseball",
+            "A globe and a candle",
+            "Two toy airplanes"
+          ],
+          "answerIndex": 1,
+          "explanation": "威尔把篮球当太阳、棒球当地球，试着理解太阳与地球的运动。",
+          "evidenceParagraphId": "p1"
+        },
+        {
+          "question": "What did QT say actually causes day and night?",
+          "options": [
+            "Earth rotating on its axis",
+            "The Sun moving around Earth",
+            "The Moon blocking all light",
+            "Clouds covering half the planet"
+          ],
+          "answerIndex": 0,
+          "explanation": "QT说昼夜交替来自地球绕自转轴旋转，而不是太阳绕地球转。",
+          "evidenceParagraphId": "p7"
+        },
+        {
+          "question": "How did QT explain the different phases of the Moon?",
+          "options": [
+            "The Moon changes its shape every day",
+            "The Moon grows smaller each night",
+            "The Sun turns the Moon on and off",
+            "We see different amounts of its sunlit half as it orbits"
+          ],
+          "answerIndex": 3,
+          "explanation": "月球本身形状不变，而是我们看到受光部分的比例在变化。",
+          "evidenceParagraphId": "p11"
+        },
+        {
+          "question": "What did QT identify as the main cause of Earth's seasons?",
+          "options": [
+            "The Earth growing farther away every day",
+            "The Moon passing in front of the Sun",
+            "Earth's axis being tilted as it moves around the Sun",
+            "The clouds becoming heavier in winter"
+          ],
+          "answerIndex": 2,
+          "explanation": "地轴倾斜使地球绕日运行时南北半球受太阳直射程度不同，因此出现季节。",
+          "evidenceParagraphId": "p19"
+        },
+        {
+          "question": "What danger suddenly threatened Will and QT near the Sun?",
+          "options": [
+            "The spaceship was pulled toward the Sun by gravity",
+            "The Moon collided with Earth",
+            "The ship ran out of water",
+            "The phone started a storm"
+          ],
+          "answerIndex": 0,
+          "explanation": "飞船离太阳太近，被太阳引力拉向太阳。",
+          "evidenceParagraphId": "p25"
+        }
+      ]
+    }
+  ]
+}
