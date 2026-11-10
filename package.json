@@ -4,10 +4,11 @@
   "private": true,
   "scripts": {
     "build": "node scripts/build-static.cjs",
-    "test": "node --test tests/r2.test.mjs",
+    "test": "node --test tests/r2.test.mjs tests/littlefox-daily.test.mjs",
     "dev": "node scripts/local-dev.cjs",
     "test:subtitles": "node tests/movie-subtitle-settings.browser.cjs && node tests/movie-subtitles.browser.cjs",
-    "test:movies": "node tests/movie-player-layout.browser.cjs && node tests/movie-source-editor.browser.cjs"
+    "test:movies": "node tests/movie-player-layout.browser.cjs && node tests/movie-source-editor.browser.cjs",
+    "test:littlefox": "node --test tests/littlefox-daily.test.mjs"
   },
   "dependencies": {
     "aws4fetch": "1.0.20"
