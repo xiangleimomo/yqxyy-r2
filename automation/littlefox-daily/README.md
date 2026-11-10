@@ -12,3 +12,13 @@ Manual dispatch defaults to dry-run. Scheduled dispatch can publish only after r
 Pone is an optional large-file adapter (`pone.mjs`), not the destination for JSON/HTML/VTT/XML; HLS streaming source links are referenced rather than mirrored. It is disabled unless approved and configured.
 
 > **AI credentials:** GitHub Models retired on July 30, 2026. For real V2 course generation, configure a separately billed GitHub Actions secret `LF_OPENAI_API_KEY` (or implement and verify another current provider). Without it, the pipeline fails closed and never publishes partial lessons.
+## C ID lookup (2026-11-10)
+
+- Determine the officially scheduled series, episode number and title before resolving a C ID.
+- Prefer a confirmed official first-episode Text C ID (or an unambiguous episode-1 entry in the official series catalog); calculate `firstCId + (episodeNumber - 1)`. The confirmed Happy Prince example is episode 1 `C0013521` -> episode 16 `C0013536`.
+- The official catalog/calendar may also provide the target C ID directly. Every candidate must be verified against the official player response and expected episode title; a successful HTTP response alone is insufficient.
+- If the first-episode path is unavailable or fails validation, use the latest earlier recorded episode in R2 `data/<seriesId>/episodes.json` and add the episode-number gap. No last-three-consecutive rule.
+- If both fail, stop that episode and report attempted IDs with `manual assistance required`; do not publish or invent a C ID. Additional series' first-episode anchors must be obtained from official sources and explicitly vetted, never guessed.
+- The current preverified first-episode anchor is kept in `core.mjs`. This change does not create or update the live R2 catalog, website, Supabase or Netlify. Existing GitHub Actions remain in their current enabled/disabled state.
+
+Validation: `node --test automation/littlefox-daily/core.test.mjs` in a normal Node.js checkout. The repository unit tests use mock official responses and do not prove live website/R2 connectivity.
