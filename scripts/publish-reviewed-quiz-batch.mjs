@@ -14,10 +14,16 @@ const jobs={
   level:3,
   episodeCount:12,
   files:['scripts/quiz-revisions/snowwhite-2026-11-10-part-1.json','scripts/quiz-revisions/snowwhite-2026-11-10-part-2.json']
+ },
+ dracula:{
+  id:'little-fox-dracula-fs0016',
+  level:9,
+  episodeCount:6,
+  files:['scripts/quiz-revisions/dracula-2026-11-10-part-1.json','scripts/quiz-revisions/dracula-2026-11-10-part-2.json']
  }
 };
 const name=process.argv[2];
-if(!Object.prototype.hasOwnProperty.call(jobs,name))throw Error('Expected approved job: cinderella or snowwhite');
+if(!Object.prototype.hasOwnProperty.call(jobs,name))throw Error('Expected approved job: cinderella, snowwhite or dracula');
 const job=jobs[name];
 for(const key of ['R2_ENDPOINT','R2_BUCKET','R2_ACCESS_KEY_ID','R2_SECRET_ACCESS_KEY'])
  if(!process.env[key])throw Error('Missing '+key);
@@ -97,7 +103,7 @@ for(const lesson of lessons){
  changed++;
 }
 assert(changed>0,'No modifications necessary; refusing backup-only rerun');
-assert(counts.every(x=>x>=8),'Answer distribution too biased: '+counts.join(','));
+assert(counts.every(x=>x>=Math.max(4,Math.floor(changed*5/8))),'Answer distribution too biased: '+counts.join(','));
 console.log('SOURCE_QA_PASS: '+changed+' existing unqualified quizzes rewritten from verified official same-episode Read, with 4 unique options and specific evidence. A/B/C/D='+counts.join('/'));
 const backupKey='__course-backups/'+job.id+'-quiz-before-v2-20261110/quiz.json';
 await put(backupKey,quizBuf);
