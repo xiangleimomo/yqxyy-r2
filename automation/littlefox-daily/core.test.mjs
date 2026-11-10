@@ -177,3 +177,14 @@ test('real 2026 Little Fox Subtitle Paragraph XML uses StartMilliseconds/EndMill
  assert.equal(cues[1].text,'She says & smiles.');
  assert.match(asVtt(cues),/00:00:12.125 --> 00:00:18.250/);
 });
+
+test('bilingual Text accepts separate ordered Chinese talk blocks only with exact paragraph count',async()=>{
+ const {bilingualTextParagraphs}=await import('./core.mjs');
+ const en=['First sentence one.','Second sentence two.','Third sentence three.','Fourth sentence four.'];
+ const zh=['第一句话。','第二句话。','第三句话。','第四句话。'];
+ const mk=values=>values.map(v=>`<div class='talk'><span>${v}</span></div>`).join('');
+ const org=`<div class='original_cont_box'>${mk(en)}<div class='original_cont_box2'></div>`;
+ const trans=`<section class='translation'>${mk(zh)}</section>`;
+ assert.deepEqual(bilingualTextParagraphs(org,trans).map(p=>p.translation),zh);
+ assert.throws(()=>bilingualTextParagraphs(org,`<section>${mk(zh.slice(0,3))}</section>`),/incomplete|align/);
+});
