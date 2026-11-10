@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'automation/littlefox-daily/publish-request.json'
+      - 'automation/littlefox-daily/outbox/C*.json'
   workflow_dispatch:
 permissions:
   contents: write
