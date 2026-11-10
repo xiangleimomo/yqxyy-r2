@@ -1,7 +1,0 @@
-{
-  "test": "chatgpt-github-connector-write",
-  "date": "2026-11-10",
-  "scope": "isolated_probe_only",
-  "coursePublished": false,
-  "netlifyDeployed": false
-}
