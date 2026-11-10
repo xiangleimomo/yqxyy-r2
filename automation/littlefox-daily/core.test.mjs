@@ -164,3 +164,16 @@ test('free GitHub Models is used when no separately billed OpenAI key exists',as
  assert.equal(requests[0].auth,'Bearer fake-actions-token');
  assert.equal(inferenceConfig({GITHUB_TOKEN:'fallback',LF_OPENAI_API_KEY:'paid-key'}).provider,'openai');
 });
+
+test('real 2026 Little Fox Subtitle Paragraph XML uses StartMilliseconds/EndMilliseconds',async()=>{
+ const {parseCaptions,asVtt}=await import('./core.mjs');
+ const xml=`<?xml version="1.0"?><Subtitle>
+   <Paragraph><Number>1</Number><StartMilliseconds>0</StartMilliseconds><EndMilliseconds>10416</EndMilliseconds><Text><![CDATA[A new day begins.]]></Text></Paragraph>
+   <Paragraph><Number>2</Number><StartMilliseconds>10416</StartMilliseconds><EndMilliseconds>12125</EndMilliseconds><Text>She says &amp; smiles.</Text></Paragraph>
+   <Paragraph><Number>3</Number><StartMilliseconds>12125</StartMilliseconds><EndMilliseconds>18250</EndMilliseconds><Text>Goodbye!</Text></Paragraph>
+ </Subtitle>`;
+ const cues=parseCaptions(xml);
+ assert.equal(cues.length,3);assert.equal(cues[0].start,0);assert.equal(cues[0].end,10.416);
+ assert.equal(cues[1].text,'She says & smiles.');
+ assert.match(asVtt(cues),/00:00:12.125 --> 00:00:18.250/);
+});
