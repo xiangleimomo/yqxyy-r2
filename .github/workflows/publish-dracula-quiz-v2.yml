@@ -1,0 +1,24 @@
+name: Publish Dracula V2 Quiz Corrections to R2
+on:
+  push:
+    paths:
+      - quiz-updates/dracula-v2-20261110.publish
+permissions:
+  contents: read
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+      R2_BUCKET: ${{ secrets.R2_BUCKET }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Validate official Read and publish 30 reviewed Dracula story questions
+        run: node scripts/publish-reviewed-quiz-batch.mjs dracula
