@@ -4,8 +4,8 @@
 
 - **北京时间周一至周五14:00**，只发现当天 Little Fox 官网新发布的课程；不扫描历史720P、不批量找1080P、不要求用户提供 m3u8。
 - 以 `Cxxxxxxx` 为官方内容标识。仅针对经官网播放器数据**确认编号及本集标题均匹配**的内容采集资源。
-- 四类输入：Video/m3u8（官方播放器返回，取其实际清晰度）、Storybook/PDF（官方固定路径）、Text/Read（真实官方课文，需可验证）、Caption/XML（官方字幕）。
-- 依据官方 **Text 而非仅字幕**制作阅读、词汇、Quiz；Quiz 采用 `docs/LITTLE_FOX_QUIZ_V2_STANDARD.md`（5题、四选一、中文解析、逐题原文证据）。对于没有足够文本、非叙事歌曲等不满足规则的内容保留失败记录，不造题。
+- 四类输入：Video/m3u8（官方播放器返回，取其实际清晰度）、Storybook/PDF（官方固定路径）、Text/Read（C 编号对应的官方英文原文及中文译文，必须按段核对）、Caption/XML（官方字幕）。
+- 依据官方 **Text 原文和逐段中文译文，而非仅字幕**制作阅读、词汇、Quiz；Quiz 采用 `docs/LITTLE_FOX_QUIZ_V2_STANDARD.md`（5题、四选一、中文解析、逐题原文证据）。对于没有足够文本、非叙事歌曲等不满足规则的内容保留失败记录，不造题。
 - 用现有 `data/<seriesId>/episodes.json`、`reading-lessons.json`、`vocabulary.json`、`quiz.json`、`series.json` 与 `subtitles/NNN.vtt` 结构；资源上传与读回校验完成，最后更新 `data/series-list.json`。旧资源不修改、不重复上架。
 - 不启用 GitHub Actions。更新 R2 数据不触发 Netlify 代码重新构建。
 
@@ -26,7 +26,7 @@
 | --- | --- |
 | `LF_RUN_ENABLED=1` | 定时任务启用开关。上线验收之前**不要**设置为1 |
 | `LF_JOB_TOKEN` | 长随机令牌，仅在 Netlify Functions 端可见，禁止写入 GitHub |
-| `LF_TEXT_URL_TEMPLATE` | **真实验证后**的 Little Fox 官方 Text 页面 URL 模板；用 `{C}` 表示 C 编号，不能假设一个未经验证的路径 |
+| 
 | `LF_OPENAI_API_KEY` | 自动生成阅读配套词汇和5道剧情 Quiz 所需的 API Key；ChatGPT Plus 订阅额度不等于 API 调用额度 |
 | `LF_COURSE_MODEL` | 具备 JSON 输出能力、可处理中文与英文的 API 模型名称。需先校验实际可用性和成本 |
 | `LF_DRY_RUN=1` | 默认演练，不上传课程文件，只写审核报告 |
@@ -38,7 +38,7 @@
 
 1. **官方更新日程**：根据 `/en/forum/publishing_schedule/YYYYMM` 中当天的 `<td>`，与 R2 `series-list.json` 的英文标题精准匹配。若网页结构改变或只有歌曲/特殊分类，记录异常，不伪造条目。
 2. **C 编号**：优先使用日历单元格中明确的 C 编号，否则仅在当前系列最后三集的编号连续时计算紧邻下一编号作为**待核验候选**；必须由官方播放器返回同一 ID 并验证标题匹配，才认定真实 C 编号。严禁按历史 C 号大范围扫描。
-3. **Text URL 尚待实际访问验证**：网页中真正包含该 C 编号的 Read/Text 官方链接会被提取；也可用经确认的 URL 模板。无真实 Text 或提取失败时不生成课程、不发布。现在**不能宣称 Text 全自动已经联通**。
+3. **Text 来源已明确**：英文原文 `https://cn.littlefox.com/cn/supplement/org/{C}`，含中文译文 `https://cn.littlefox.com/cn/supplement/trans/{C}`。程序固定按新集 C 编号构造两条 URL，分别获取并按英文原文对齐中文段落，最终存入 `reading-lessons.json` 的 `paragraphs[].text` 和 `paragraphs[].translation`。若响应不可访问、正文结构变更、段落对齐有歧义，则禁止发布并记录异常。已经通过模拟测试，但仍需在部署环境对当前官网 HTML 实测。
 4. **字幕 XML 结构尚待与当前在线 XML 对照**：代码支持有 `start/end` 等时间属性的 XML；若实物结构不同，应按样本完善解析，再开启发布。
 5. **Quiz 质量**：实现结构与证据硬校验，但 AI 产出的情节推断、翻译仍建议正式上线前抽查；无 AI API 凭据不自动生成，而是生成待处理报告。
 6. **Netlify 配置、部署未由提交代码自动完成**；需要发布部署并在 Netlify Functions 中核查计划运行。官网资源访问可能有授权或地区限制，不绕过访问控制。
