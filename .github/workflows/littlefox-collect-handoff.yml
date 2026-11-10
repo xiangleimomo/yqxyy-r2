@@ -1,7 +1,7 @@
 name: Little Fox Collect Handoff for ChatGPT
+# ChatGPT now owns the daily official-source check and course production.
+# Optional legacy collector is manual-only; do not duplicate scheduled discovery.
 on:
-  schedule:
-    - cron: '30 5 * * 1-5'
   workflow_dispatch:
 permissions:
   contents: write
