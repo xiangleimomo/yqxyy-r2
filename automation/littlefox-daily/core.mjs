@@ -140,6 +140,12 @@ export function textParagraphs(html){
   return meaningful.length>=4?meaningful.map((text,i)=>({id:`p${i+1}`,text,translation:''})):[];
 }
 /** Abort on ambiguous alignment instead of publishing misleading translations. */
+export function textPageShape(html){
+  const s=String(html);
+  const classes=[...s.matchAll(/<div\b[^>]*class=["']([^"']+)["'][^>]*>/gi)].slice(0,32).map(m=>m[1]);
+  const talks=[...s.matchAll(/<div\b[^>]*class=["'][^"']*\btalk\b[^"']*["'][^>]*>\s*<span\b[^>]*>([\s\S]*?)<\/span>/gi)].map(x=>cleanHtml(x[1]));
+  return JSON.stringify({length:s.length,classes:classes.slice(0,20),tags:{p:(s.match(/<p\b/gi)||[]).length,li:(s.match(/<li\b/gi)||[]).length,span:(s.match(/<span\b/gi)||[]).length,talk:talks.length},talkKinds:talks.slice(0,20).map(t=>/[\u3400-\u9fff]/u.test(t)?(/[a-z]{3}/i.test(t)?'mixed':'zh'):'en')});
+}
 export function bilingualTextParagraphs(originalHtml, translatedHtml){
   const originals=textParagraphs(originalHtml);
   if(originals.length<4)throw Error('Official /org Text paragraphs could not be identified');
@@ -150,6 +156,15 @@ export function bilingualTextParagraphs(originalHtml, translatedHtml){
     if(!zhInTrans.every(x=>/[\u3400-\u9fff]/u.test(x)))throw Error('Missing Chinese translations in /trans');
     return originals.map((x,i)=>({...x,translation:zhInTrans[i]}));
   }
+  // Some Little Fox /trans layouts keep all Chinese lines in their own talk
+  // elements, independently of the English list. Require exact 1:1 count and
+  // (when present) the same ordered English anchors; never approximate counts.
+  const allTalk=[...String(translatedHtml).matchAll(/<div\b[^>]*class=["'][^"']*\btalk\b[^"']*["'][^>]*>\s*<span\b[^>]*>([\s\S]*?)<\/span>/gi)]
+    .map(m=>cleanHtml(m[1])).filter(Boolean);
+  const exactEnglish=allTalk.filter(x=>/[a-z]/i.test(x)&&!/[\u3400-\u9fff]/u.test(x));
+  const pureChinese=allTalk.filter(x=>/[\u3400-\u9fff]/u.test(x)&&!/[a-z]{3}/i.test(x));
+  if(pureChinese.length===originals.length && (!exactEnglish.length || (exactEnglish.length===originals.length&&exactEnglish.every((x,i)=>normalize(x)===normalize(originals[i].text)))))
+    return originals.map((p,i)=>({...p,translation:pureChinese[i]}));
   // Another observed layout presents each English anchor followed by the Chinese
   // translation in p/span blocks. Exact original anchors are required.
   const cleaned=String(translatedHtml).replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'').replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi,'');
@@ -397,7 +412,10 @@ export async function daily({env=process.env,http=fetch,store,now=new Date(),log
         const textUrl=ORIGINAL_TEXT(id), translationUrl=TRANSLATED_TEXT(id);
         const [originalResponse,translationResponse]=await Promise.all([http(textUrl),http(translationUrl)]);
         if(!originalResponse.ok||!translationResponse.ok)throw Error(`Official Text HTML unavailable: original ${originalResponse.status}; translation ${translationResponse.status}`);
-        const paragraphs=bilingualTextParagraphs(await originalResponse.text(),await translationResponse.text());
+        const originalHtml=await originalResponse.text(),translatedHtml=await translationResponse.text();
+        let paragraphs;
+        try{paragraphs=bilingualTextParagraphs(originalHtml,translatedHtml);}
+        catch(e){throw Error(`${String(e.message||e)}; originalShape=${textPageShape(originalHtml)}; translationShape=${textPageShape(translatedHtml)}`);}
         item.resources={video,storybook,caption:CAPTION(id),text:textUrl,textTranslation:translationUrl};
         item.stage='build_and_review_lessons';
         const course=await aiCourse({id,title:release.title,paragraphs,level:release.level,http,env});
