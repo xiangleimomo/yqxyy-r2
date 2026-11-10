@@ -3,7 +3,7 @@ import path from 'node:path';
 import {chinaDate,makeR2,scheduleReleases,identifyCId,readPlayer,isEpisodeMatch,verifyPlaylist,parseCaptions,bilingualTextParagraphs,ORIGINAL_TEXT,TRANSLATED_TEXT} from './core.mjs';
 const d=chinaDate(),out=`automation/littlefox-daily/inbox/${d.date}.json`;
 const privateOut='/tmp/littlefox-source-'+d.date+'.json';
-const result={schemaVersion:2,date:d.date,status:'checking',workflowRunId:process.env.GITHUB_RUN_ID||null,privateArtifactName:'littlefox-source-'+d.date,items:[],errors:[]};
+const result={schemaVersion:2,date:d.date,status:'checking',workflowRunId:process.env.GITHUB_RUN_ID||null,privateArtifactName:'littlefox-source-'+(process.env.GITHUB_RUN_ID||'local'),items:[],errors:[]};
 const sources={schemaVersion:1,date:d.date,items:[]};
 const get=async url=>{const r=await fetch(url,{signal:AbortSignal.timeout(20000)});if(!r.ok)throw Error('Official HTTP '+r.status);return r;};
 try{
