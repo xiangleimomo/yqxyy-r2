@@ -1,12 +1,11 @@
 name: Publish QT Science Adventures V2 Quizzes
 on:
-  push:
-    paths:
-      - quiz-updates/qt-science-v2-20261110.publish
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
   publish:
+    if: ${{ false }}
     runs-on: ubuntu-latest
     env:
       R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}

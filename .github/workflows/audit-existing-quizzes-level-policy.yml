@@ -1,12 +1,11 @@
 name: Audit Existing Quiz V2 Quality by Little Fox Level
 on:
-  push:
-    paths:
-      - quiz-updates/level-aware-audit-20261110.request
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
   audit:
+    if: ${{ false }}
     runs-on: ubuntu-latest
     env:
       R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}

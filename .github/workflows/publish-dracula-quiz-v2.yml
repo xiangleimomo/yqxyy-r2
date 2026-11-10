@@ -1,12 +1,11 @@
 name: Publish Dracula V2 Quiz Corrections to R2
 on:
-  push:
-    paths:
-      - quiz-updates/dracula-v2-20261110.publish
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
   publish:
+    if: ${{ false }}
     runs-on: ubuntu-latest
     env:
       R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}

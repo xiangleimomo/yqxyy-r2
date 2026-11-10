@@ -1,12 +1,11 @@
 name: Publish Reviewed Little Fox V2 Quiz Batch
 on:
-  push:
-    paths:
-      - quiz-updates/quality-v2-20261110.publish
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
   publish:
+    if: ${{ false }}
     runs-on: ubuntu-latest
     env:
       R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
