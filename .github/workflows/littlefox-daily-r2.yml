@@ -7,6 +7,7 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/littlefox-daily-r2.yml'
+      - 'automation/littlefox-daily/**'
   schedule:
     # UTC 06:00 = Beijing 14:00, Monday–Friday (no DST in China).
     - cron: '0 6 * * 1-5'
