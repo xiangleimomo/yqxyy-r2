@@ -208,6 +208,11 @@ export async function identifyCId(release, episodes, http){
   if(!candidate)throw Error('Cannot verify new C ID from catalog/calendar or bounded next-ID candidate');
   return candidate;
 }
+/** Log only XML structure/attribute names (never copyrighted transcript lines). */
+export function captionShape(xml){
+  const tags=[...String(xml).matchAll(/<([A-Za-z][\w:-]*)([^<>]*)>/g)].slice(0,10).map(m=>({tag:m[1],attrs:[...m[2].matchAll(/([\w:-]+)\s*=/g)].map(a=>a[1]).slice(0,8)}));
+  return JSON.stringify({length:String(xml).length,first:String(xml).slice(0,20).replace(/[^<>()A-Za-z0-9?!=]/g,'_'),tags});
+}
 export function parseCaptions(xml){
   if(String(xml).length>2_500_000||/<!DOCTYPE|<!ENTITY/i.test(xml))throw Error('Invalid caption XML');
   const rows=[];
@@ -254,23 +259,39 @@ export function checkQuiz(quiz,paragraphs,id){
   if(answerKeys.every(x=>x===answerKeys[0]))errors.push('All answers use one key');
   return errors;
 }
+/** The repository GITHUB_TOKEN can use free-tier GitHub Models (models:read).
+ * OpenAI API remains an optional override for higher capacity/reliability.
+ */
+export function inferenceConfig(env){
+  if(env.LF_OPENAI_API_KEY)return {provider:'openai',url:'https://api.openai.com/v1/chat/completions',key:env.LF_OPENAI_API_KEY,model:env.LF_COURSE_MODEL||'gpt-4o-mini'};
+  if(env.GITHUB_TOKEN)return {provider:'github',url:'https://models.github.ai/inference/chat/completions',key:env.GITHUB_TOKEN,model:env.LF_GITHUB_MODEL||'openai/gpt-4.1-mini'};
+  throw Error('No inference authorization. Enable GitHub Actions models:read and GITHUB_TOKEN, or configure LF_OPENAI_API_KEY');
+}
+export async function courseInference({env,http,messages,temperature=0.2}){
+  const conf=inferenceConfig(env);
+  const payload={model:conf.model,temperature,response_format:{type:'json_object'},messages,max_tokens:4500};
+  let r;
+  for(let attempt=0;attempt<3;attempt++){
+    r=await http(conf.url,{method:'POST',headers:{authorization:'Bearer '+conf.key,'content-type':'application/json'},body:JSON.stringify(payload),signal:AbortSignal.timeout(90000)});
+    if(r.ok)break;
+    if((r.status===429||r.status>=500)&&attempt<2){await new Promise(done=>setTimeout(done,2000*(attempt+1)));continue;}
+    throw Error(`${conf.provider} inference HTTP ${r.status}; check rate limits and permissions`);
+  }
+  const data=await r.json();const content=data.choices?.[0]?.message?.content;
+  if(!content)throw Error(conf.provider+' inference returned no content');
+  return JSON.parse(content);
+}
 export async function aiCourse({id,title,paragraphs,level,http,env}){
-  if(!env.LF_OPENAI_API_KEY||!env.LF_COURSE_MODEL)throw Error('Missing LF_OPENAI_API_KEY or LF_COURSE_MODEL; stop before publication');
+  inferenceConfig(env);
   const quizRequired=Number(level)>=3;
   const input={contentId:id,title,level,paragraphs,quizRequired};
   const instruction='你是yqxyy的严谨少儿英语教研编辑。使用每段官方英文 Text 原文和已核验的官方中文译文作为参考，只依据给定本集官方Text原文编写，禁止借用其他集剧情。返回严格JSON，含 vocabulary (6-14个{word,meaningZh,example,exampleZh}) 和 quiz ({questions:[5题]}). 每题英文剧情理解四选一，options 为 A-D 键与唯一答案；中文 explanation 必须具体；evidence:{paragraphIds:[...],quote:某个段落原文完整精确文本,sourceContentId:当前CID}。问题覆盖开端、发展、结尾，不做词汇识别题。未知就报告不足，不编造。';
-  const r=await http('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{authorization:'Bearer '+env.LF_OPENAI_API_KEY,'content-type':'application/json'},body:JSON.stringify({model:env.LF_COURSE_MODEL,temperature:0.3,response_format:{type:'json_object'},messages:[{role:'system',content:instruction},{role:'user',content:JSON.stringify(input)}]})});
-  if(!r.ok)throw Error('AI course HTTP '+r.status);
-  const data=await r.json(), content=data.choices?.[0]?.message?.content;if(!content)throw Error('Empty AI response');
-  const result=JSON.parse(content);if(quizRequired){const errors=checkQuiz(result.quiz,paragraphs,id);if(errors.length)throw Error('Quiz quality gate: '+errors.join('; '));}else result.quiz=null;
+  const result=await courseInference({env,http,messages:[{role:'system',content:instruction},{role:'user',content:JSON.stringify(input)}],temperature:0.3});if(quizRequired){const errors=checkQuiz(result.quiz,paragraphs,id);if(errors.length)throw Error('Quiz quality gate: '+errors.join('; '));}else result.quiz=null;
   if(!Array.isArray(result.vocabulary)||result.vocabulary.length<4||result.vocabulary.some(x=>!x.word||!/[\u3400-\u9fff]/u.test(x.meaningZh||'')||!paragraphs.some(p=>p.text.includes(x.example||'\0'))))throw Error('Vocabulary failed the source and Chinese meaning gates');
   if(quizRequired){
     // A second independent model pass checks story fidelity, not just JSON shape.
     // Never auto-approve a quiz merely because its evidence quote exists.
-    const review=await http('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{authorization:'Bearer '+env.LF_OPENAI_API_KEY,'content-type':'application/json'},body:JSON.stringify({model:env.LF_COURSE_MODEL,temperature:0,response_format:{type:'json_object'},messages:[{role:'system',content:'你是一名独立的英语课程审稿人。请逐题检查该集英文剧情问题、全部A-D选项、唯一答案、中文解析与原文段落证据是否相符，能否从本集唯一推导答案，能否存在其他合理正确选项，5题是否覆盖不同情节点。发现任何无依据、含糊或单词识别型问题必须拒绝。只输出JSON {approved:boolean,contentId:string,issues:string[]}，不得修题。'},{role:'user',content:JSON.stringify({contentId:id,title,paragraphs,quiz:result.quiz})}]})});
-    if(!review.ok)throw Error('Independent AI quiz review HTTP '+review.status);
-    const response=await review.json();
-    const verdict=JSON.parse(response.choices?.[0]?.message?.content||'{}');
+    const verdict=await courseInference({env,http,messages:[{role:'system',content:'你是一名独立的英语课程审稿人。请逐题检查该集英文剧情问题、全部A-D选项、唯一答案、中文解析与原文段落证据是否相符，能否从本集唯一推导答案，能否存在其他合理正确选项，5题是否覆盖不同情节点。发现任何无依据、含糊或单词识别型问题必须拒绝。只输出JSON {approved:boolean,contentId:string,issues:string[]}，不得修题。'},{role:'user',content:JSON.stringify({contentId:id,title,paragraphs,quiz:result.quiz})}],temperature:0});
     if(verdict.approved!==true||verdict.contentId!==id||!Array.isArray(verdict.issues)||verdict.issues.length)throw Error('Independent Quiz review rejected: '+JSON.stringify(verdict.issues||[]).slice(0,260));
   }
   return result;
@@ -338,7 +359,20 @@ export async function daily({env=process.env,http=fetch,store,now=new Date(),log
         if(env.LF_ALLOW_PONE_BOOK_MIRROR==='1')storybook=await uploadAuthorizedPdfToPone({id,sourceUrl:BOOK(id),http});
         item.stage='read_xml_captions';
         const cap=await http(CAPTION(id));if(!cap.ok)throw Error('Caption XML HTTP '+cap.status);
-        const xml=await cap.text();const cues=parseCaptions(xml);if(cues.length<3)throw Error('Unrecognized or incomplete caption XML; keep pending');
+        const xml=await cap.text();
+        let cues=[];let nativeError='';
+        try{cues=parseCaptions(xml);}catch(e){nativeError=String(e.message||e);}
+        if(cues.length<3){
+          // Reuse the verified existing subtitle/XML parser from the main repo;
+          // its support for nested text fields is broader than the new parser.
+          try{
+            const legacy=(await import('../../scripts/import-official-littlefox-captions.cjs')).default;
+            cues=legacy.xmlCues(xml).map(x=>({start:x.startMs/1000,end:x.endMs/1000,text:x.text}));
+          }catch(e){
+            throw Error(`Caption XML cannot be parsed: ${String(e.message||e)}; native=${nativeError}; metadata=${captionShape(xml)}`);
+          }
+        }
+        if(cues.length<3)throw Error('Official XML has fewer than three timed cues; metadata='+captionShape(xml));
         // Official Chinese-site source pages share the same verified C ID.
         // Fetch both: /org gives the exact English, /trans includes Chinese.
         item.stage='parse_official_bilingual_text';
