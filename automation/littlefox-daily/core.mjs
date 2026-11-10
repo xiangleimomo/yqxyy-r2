@@ -215,6 +215,24 @@ export function captionShape(xml){
 }
 export function parseCaptions(xml){
   if(String(xml).length>2_500_000||/<!DOCTYPE|<!ENTITY/i.test(xml))throw Error('Invalid caption XML');
+  // Verified 2026-11-10 online: <Subtitle><Paragraph><StartMilliseconds>
+  //  ...</StartMilliseconds><EndMilliseconds>...</EndMilliseconds><Text>...
+  //  </Text></Paragraph></Subtitle>. Times are milliseconds, not seconds.
+  const byParagraph=[];
+  for(const m of String(xml).matchAll(/<Paragraph\b[^>]*>([\s\S]*?)<\/Paragraph>/gi)){
+    const chunk=m[1];
+    const take=name=>chunk.match(new RegExp('<'+name+'(?:\\s[^>]*)?>([\\s\\S]*?)<\\/'+name+'>','i'))?.[1]||'';
+    const start=Number(take('StartMilliseconds').trim())/1000;
+    const end=Number(take('EndMilliseconds').trim())/1000;
+    const value=take('Text').replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g,'$1');
+    const text=cleanHtml(value);
+    if(!value||!text)continue;
+    byParagraph.push({start,end,text});
+  }
+  if(byParagraph.length){
+    if(byParagraph.length>1500||byParagraph.some((v,i)=>!Number.isFinite(v.start)||!Number.isFinite(v.end)||v.end<=v.start||v.start<0||v.end>7200||(i&&v.start<byParagraph[i-1].start)))throw Error('Invalid Little Fox Paragraph millisecond timing');
+    return byParagraph;
+  }
   const rows=[];
   const attrMap=s=>Object.fromEntries([...String(s).matchAll(/([\w:-]+)\s*=\s*(?:"([^"]*)"|'([^']*)')/g)]
     .map(m=>[m[1].toLowerCase().replace(/[-_]/g,''),m[2]??m[3]]));
