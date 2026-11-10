@@ -21,7 +21,6 @@ on:
 
 permissions:
   contents: read
-  models: read
 
 concurrency:
   group: littlefox-daily-r2
@@ -39,8 +38,6 @@ jobs:
       R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
       R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
       LF_OPENAI_API_KEY: ${{ secrets.LF_OPENAI_API_KEY }}
-      GITHUB_TOKEN: ${{ github.token }}
-      LF_GITHUB_MODEL: ${{ vars.LF_GITHUB_MODEL || 'openai/gpt-4.1-mini' }}
       LF_COURSE_MODEL: ${{ vars.LF_COURSE_MODEL || 'gpt-4o-mini' }}
       # Scheduled runs publish only after all strict source and quiz gates pass.
       # Manual runs are dry-run by default, with an explicit publish checkbox.
