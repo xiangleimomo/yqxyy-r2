@@ -152,3 +152,15 @@ test('player resolver accepts official protocol-relative CDN host without invali
  const res=await readPlayer('C0013536',http);
  assert.equal(res.video,'https://cdn.littlefox.com/contents_5/hls/720/a/stream.m3u8');
 });
+
+test('free GitHub Models is used when no separately billed OpenAI key exists',async()=>{
+ const {inferenceConfig,courseInference}=await import('./core.mjs');
+ const c=inferenceConfig({GITHUB_TOKEN:'fake-actions-token'});
+ assert.equal(c.provider,'github');assert.equal(c.model,'openai/gpt-4.1-mini');
+ const requests=[];
+ const http=async(url,opts)=>{requests.push({url,auth:opts.headers.authorization});return {ok:true,json:async()=>({choices:[{message:{content:'{"approved":true}'}}]})}};
+ assert.deepEqual(await courseInference({env:{GITHUB_TOKEN:'fake-actions-token'},http,messages:[{role:'user',content:'test'}]}),{approved:true});
+ assert.equal(requests[0].url,'https://models.github.ai/inference/chat/completions');
+ assert.equal(requests[0].auth,'Bearer fake-actions-token');
+ assert.equal(inferenceConfig({GITHUB_TOKEN:'fallback',LF_OPENAI_API_KEY:'paid-key'}).provider,'openai');
+});
