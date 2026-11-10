@@ -1,0 +1,204 @@
+{
+  "seriesId": "little-fox-dracula-fs0016",
+  "level": 9,
+  "type": "editorial-complete-rewrite",
+  "scope": "only existing malformed quizzes",
+  "reference": "official-text",
+  "lessons": [
+    {
+      "episodeId": 1,
+      "questions": [
+        {
+          "question": "Why did Jonathan travel to Count Dracula's castle?",
+          "options": [
+            "To deliver legal property papers in person",
+            "To visit Mina's relatives",
+            "To investigate a shipwreck",
+            "To buy a new horse"
+          ],
+          "answerIndex": 0,
+          "explanation": "乔纳森是房产经纪人，伯爵要求他亲自送来英格兰房产的法律文件。",
+          "evidenceParagraphId": "p3"
+        },
+        {
+          "question": "What did the innkeeper give Jonathan before he went to the castle?",
+          "options": [
+            "A map of London",
+            "A silver key",
+            "A gold cross",
+            "A wooden stake"
+          ],
+          "answerIndex": 2,
+          "explanation": "旅馆老板担心他遭遇危险，摘下自己的金十字架送给他。",
+          "evidenceParagraphId": "p8"
+        },
+        {
+          "question": "What strange behavior did Jonathan notice during dinner?",
+          "options": [
+            "The count fell asleep at once",
+            "The count never ate and simply watched him",
+            "The count invited all the servants to join",
+            "The count refused to discuss England"
+          ],
+          "answerIndex": 1,
+          "explanation": "伯爵始终不吃东西，只看着乔纳森吃饭。",
+          "evidenceParagraphId": "p14"
+        },
+        {
+          "question": "What unusual feature did Dracula ask about the house in England?",
+          "options": [
+            "Whether it had a garden pond",
+            "Whether the rooms were painted blue",
+            "Whether it was close to a train station",
+            "Whether it had a cemetery nearby"
+          ],
+          "answerIndex": 3,
+          "explanation": "伯爵特别追问新房附近有没有墓地，令乔纳森惊讶。",
+          "evidenceParagraphId": "p19"
+        },
+        {
+          "question": "What made Jonathan realize he was a prisoner?",
+          "options": [
+            "Dracula locked him inside after the frightening shaving incident",
+            "The innkeeper followed him home",
+            "The carriage driver stole his documents",
+            "Mina sent him a warning letter"
+          ],
+          "answerIndex": 0,
+          "explanation": "剃须时伯爵对鲜血反应怪异，随后摔碎镜子并从外面锁门，使乔纳森意识到自己被囚禁。",
+          "evidenceParagraphId": "p24"
+        }
+      ]
+    },
+    {
+      "episodeId": 2,
+      "questions": [
+        {
+          "question": "What warning did Dracula leave on the dinner table?",
+          "options": [
+            "Never speak about Mina",
+            "Never open the castle gate",
+            "Never use a candle at night",
+            "Never sleep in any room except Jonathan's own"
+          ],
+          "answerIndex": 3,
+          "explanation": "伯爵留下字条警告：除自己的卧室外，不可在城堡其他房间入睡。",
+          "evidenceParagraphId": "p3"
+        },
+        {
+          "question": "What did Jonathan see Dracula doing outside the window?",
+          "options": [
+            "Riding a horse",
+            "Climbing the castle wall like an animal",
+            "Feeding the dogs",
+            "Carrying a coffin into the kitchen"
+          ],
+          "answerIndex": 1,
+          "explanation": "乔纳森看到伯爵像动物一样沿城堡外墙攀爬。",
+          "evidenceParagraphId": "p5"
+        },
+        {
+          "question": "What did Jonathan realize after the three women approached him?",
+          "options": [
+            "They and the count were vampires",
+            "They were Mina's friends",
+            "They were palace servants",
+            "They had come to rescue him"
+          ],
+          "answerIndex": 0,
+          "explanation": "乔纳森醒来后明白那三位女子是吸血鬼，伯爵也是。",
+          "evidenceParagraphId": "p13"
+        },
+        {
+          "question": "How did Jonathan reach the room below his own?",
+          "options": [
+            "He found a hidden staircase in the garden",
+            "He persuaded a servant to unlock the door",
+            "He made a rope from his curtains and climbed through the window",
+            "He borrowed a ladder from the count"
+          ],
+          "answerIndex": 2,
+          "explanation": "乔纳森把窗帘编成绳索，从窗户降到楼下房间。",
+          "evidenceParagraphId": "p18"
+        },
+        {
+          "question": "How did Jonathan finally escape Castle Dracula?",
+          "options": [
+            "He swam across a river",
+            "He hid inside a wooden coffin",
+            "He rode away on the count's horse",
+            "He slipped out through a door while workmen carried coffins"
+          ],
+          "answerIndex": 3,
+          "explanation": "趁工人搬运棺材、背对着自己时，他从另一道门偷偷逃走。",
+          "evidenceParagraphId": "p24"
+        }
+      ]
+    },
+    {
+      "episodeId": 3,
+      "questions": [
+        {
+          "question": "Whom did Mina visit while Jonathan was away?",
+          "options": [
+            "A doctor in Budapest",
+            "Her friend Lucy at a seaside home",
+            "Count Dracula in Transylvania",
+            "The captain of a ship"
+          ],
+          "answerIndex": 1,
+          "explanation": "乔纳森外出后，米娜到惠特比的海边拜访好友露西。",
+          "evidenceParagraphId": "p4"
+        },
+        {
+          "question": "What was found on the mysterious ship that crashed near the shore?",
+          "options": [
+            "Only food and blankets",
+            "A group of rescued sailors",
+            "A cage full of birds",
+            "Soil-filled coffins and no people aboard"
+          ],
+          "answerIndex": 3,
+          "explanation": "船上无人，却载着约五十个装土的木棺。",
+          "evidenceParagraphId": "p10"
+        },
+        {
+          "question": "What attacked Lucy near the cemetery?",
+          "options": [
+            "A large black dog",
+            "A white horse",
+            "A giant bird",
+            "A masked man in a carriage"
+          ],
+          "answerIndex": 0,
+          "explanation": "露西夜间走到墓地时，被树林里跳出的黑狗咬伤脖子。",
+          "evidenceParagraphId": "p15"
+        },
+        {
+          "question": "How did Mina learn what Jonathan had suffered at the castle?",
+          "options": [
+            "A newspaper printed his story",
+            "Arthur told her everything",
+            "Jonathan gave her his diary to read",
+            "A letter came from the count"
+          ],
+          "answerIndex": 2,
+          "explanation": "乔纳森把日记交给米娜，她从中读到城堡里的恐怖经历。",
+          "evidenceParagraphId": "p20"
+        },
+        {
+          "question": "What sad news did Arthur's letter bring at the end?",
+          "options": [
+            "Jonathan had gone missing again",
+            "Lucy had died despite the doctor's efforts",
+            "The ship had sunk a second time",
+            "The wedding church had closed"
+          ],
+          "answerIndex": 1,
+          "explanation": "阿瑟来信说医生尽力救治，露西仍然去世。",
+          "evidenceParagraphId": "p25"
+        }
+      ]
+    }
+  ]
+}
