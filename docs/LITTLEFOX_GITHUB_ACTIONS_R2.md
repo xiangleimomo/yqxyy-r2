@@ -31,11 +31,12 @@
 | Secrets | `R2_BUCKET` | 现有 `yqxyy-resources` |
 | Secrets | `R2_ACCESS_KEY_ID` | R2 上传身份，已有其他 R2 工作流复用 |
 | Secrets | `R2_SECRET_ACCESS_KEY` | R2 上传身份，已有其他 R2 工作流复用 |
-| Secrets | `LF_OPENAI_API_KEY` | 新增：官方文本→高质量教学内容和第二遍审稿所需的 OpenAI API 密钥；不是 ChatGPT Plus 登录信息 |
+| Secrets | `LF_OPENAI_API_KEY` | **可选**：优先使用 OpenAI API，空缺时改用 GitHub Models 免费额度（`models:read` 权限） |
+| Variables | `LF_GITHUB_MODEL` | 可选：默认 `openai/gpt-4.1-mini`，使用 GitHub Models 需要受账户免费额度和模型可用性限制 |
 | Variables | `LF_COURSE_MODEL` | 可选：具备 JSON 模式的 API 模型；默认 `gpt-4o-mini`，需要根据实际 API 权限和质量调整 |
 | Variables | `LF_ALLOW_PONE_BOOK_MIRROR` | 可选，默认 `0`。确认托管许可后才设 `1` |
 
-**不要把凭据写在代码或 R2 公有目录。** 需要单独考虑官网教材自动抓取与再发布的合法使用权限。没有可用的 API Key 或者官网材料不完整时，流水线会写报告、禁止发布不完整内容。
+**不要把凭据写在代码或 R2 公有目录。** 需要单独考虑官网教材自动抓取与再发布的合法使用权限。没有任何可用的模型调用凭据（含 GitHub Models 内置 GITHUB_TOKEN）或者官网材料不完整时，流水线会写报告、禁止发布不完整内容。
 
 ## 使用方式及安全开关
 
