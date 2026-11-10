@@ -136,6 +136,8 @@
   $("identifier").textContent=valid?((type==="movie"?"电影":"电视剧")+" · TMDB "+id):"无效 TMDB 参数";
   $("name").textContent=title.slice(0,120)||"TMDB OneClick Player";
   if(type==="tv")$("episodes").hidden=false;
+  $("season").value=String(clamp(query.get("season")||1,999));
+  $("episode").value=String(clamp(query.get("episode")||1,9999));
   video.addEventListener("playing",()=>status("正在播放","ok"));
   video.addEventListener("error",()=>{
     if(!state.hls)fail("视频播放出错","MediaError "+(video.error?.code||"unknown"));

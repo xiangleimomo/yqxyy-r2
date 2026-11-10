@@ -1,6 +1,7 @@
 (() => {
 "use strict";
 const defaults={
+ displayMode:"simple",
  movie:"https://api.obj2.top/hls/movie/{id}/master.m3u8",
  tv:"https://api.obj2.top/hls/tv/{id}/{season}/{episode}/master.m3u8",
  movieBackup:"",tvBackup:""
@@ -14,6 +15,7 @@ document.getElementById("save").onclick=async()=>{
  const values={};
  for(const k of keys){
   const raw=document.getElementById(k).value.trim();
+  if(k==="displayMode"){values[k]=["original","simple","poster"].includes(raw)?raw:"simple";continue;}
   if(raw){
    if(!raw.startsWith("https://")||!raw.includes("{id}")){
     document.getElementById("note").textContent=k+"：必须是包含 {id} 的 HTTPS 模板";return;

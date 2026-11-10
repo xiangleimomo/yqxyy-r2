@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "TMDB OneClick Player (yqxyy)",
-  "version": "2.0.0",
-  "description": "在 TMDB 电影/剧集海报上点击播放，网页内直接打开 yqxyy 同源 HLS 播放器及字幕轨道。",
+  "name": "影仓 TMDB OneClick Player",
+  "version": "3.0.0",
+  "description": "TMDB 原网页增强：默认精简模式，可切换原版/海报模式，点击影视海报直接打开 HLS 播放器。",
   "permissions": [
     "storage"
   ],
@@ -16,10 +16,12 @@
         "https://themoviedb.org/*"
       ],
       "js": [
-        "content.js"
+        "content.js",
+        "display-mode.js"
       ],
       "css": [
-        "content.css"
+        "content.css",
+        "display-mode.css"
       ],
       "run_at": "document_idle"
     }

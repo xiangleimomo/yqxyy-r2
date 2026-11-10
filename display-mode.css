@@ -1,0 +1,26 @@
+/* All visual changes are reversible via html[data-tmdboc-mode]. */
+.tmdboc-mode-toolbar{position:fixed!important;left:15px;bottom:16px;z-index:2147483643;display:flex;flex-direction:column;align-items:flex-start;gap:6px;font:13px/1.4 Arial,"Microsoft YaHei",sans-serif;color:#fff}
+.tmdboc-mode-toolbar button{font:inherit;cursor:pointer;border:1px solid rgba(148,163,184,.4);color:#fff;background:#172c46;border-radius:9px;padding:9px 13px}
+.tmdboc-mode-toolbar .tmdboc-mode-toggle{background:#163856;font-weight:700;box-shadow:0 4px 20px #0006}
+.tmdboc-mode-toolbar .tmdboc-mode-menu{display:flex;flex-direction:column;gap:4px;background:#0f2339;border:1px solid #345;padding:7px;border-radius:12px;box-shadow:0 4px 24px #0008}
+.tmdboc-mode-toolbar .tmdboc-mode-menu[hidden]{display:none!important}
+.tmdboc-mode-toolbar .tmdboc-mode-menu button{min-width:106px;text-align:left}
+.tmdboc-mode-toolbar .tmdboc-mode-menu button[aria-pressed="true"]{border-color:#43d49b;background:#126345}
+html[data-tmdboc-mode="simple"] a[data-tmdboc-secondary="1"],
+html[data-tmdboc-mode="poster"] a[data-tmdboc-secondary="1"]{display:none!important}
+html[data-tmdboc-mode="simple"] footer,html[data-tmdboc-mode="poster"] footer{display:none!important}
+html[data-tmdboc-mode="simple"] div.card.style_1,
+html[data-tmdboc-mode="simple"] div.card.style_2,
+html[data-tmdboc-mode="simple"] div.card.v4{border-radius:13px!important;overflow:hidden}
+html[data-tmdboc-mode="simple"] div.card.style_1 p.overview,
+html[data-tmdboc-mode="simple"] div.card.style_2 p.overview,
+html[data-tmdboc-mode="simple"] div.card.v4 p.overview{display:none!important}
+html[data-tmdboc-mode="poster"] div.card.style_1 .content,
+html[data-tmdboc-mode="poster"] div.card.style_2 .content,
+html[data-tmdboc-mode="poster"] div.card.v4.tight .details,
+html[data-tmdboc-mode="poster"] div.card.style_1 .hover,
+html[data-tmdboc-mode="poster"] div.card.style_2 .hover{display:none!important}
+html[data-tmdboc-mode="poster"] div.card.style_1,
+html[data-tmdboc-mode="poster"] div.card.style_2,
+html[data-tmdboc-mode="poster"] div.card.v4.tight{border:0!important;border-radius:11px!important;overflow:hidden!important;box-shadow:0 4px 18px #0002}
+@media(max-width:600px){.tmdboc-mode-toolbar{left:8px;bottom:9px}.tmdboc-mode-toolbar .tmdboc-mode-toggle{padding:8px}}

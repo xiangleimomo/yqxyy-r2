@@ -1,43 +1,44 @@
-# TMDB OneClick Player v2.0 (yqxyy adapter)
+# 影仓 · TMDB OneClick Player v3.0
 
-在 TMDB 官方网页中点击影片海报，按 TMDB ID 生成 HLS 直链，在当前网页弹窗播放。电视剧可选季数/集数；内置 HLS.js 1.5.20；自动检测 HLS 内置字幕，默认优先英文字幕，可手动关闭或切换。Chrome/Edge 桌面端使用。
+本项目使用 **TMDB 原网站** 作为唯一的电影、电视剧、海报、搜索与分类导航来源。Chrome/Edge 浏览器插件只增加播放能力和可切换的外观简化层，不建立新的影视库，也不修改 yqxyy 网站或 TMDB 服务端。
+
+## 三种模式（默认精简）
+
+- **原版**：不修改 TMDB 的布局和内容，仅增加海报播放和详情页播放入口。
+- **精简**：隐藏部分社区导航和页脚、收紧常见影视卡片，同时保留 TMDB 搜索、榜单、排序、分类、影视详情和电视剧季集导航。
+- **海报**：在常见影视卡片中隐藏文字说明、突出海报。TMDB 不同页面的 HTML 结构可能不同，因此并非所有页面都能完全变成纯海报墙。
+
+在 TMDB 网页左下角通过“影仓 · 精简 ▾”即时切换，设置同步保存。插件设置页亦可修改。
+
+## 基础播放
+
+点击海报 → 自动读取 TMDB ID → 在 **TMDB 当前网页弹窗** 打开 HLS 播放器。普通文字标题仍可点击进入 TMDB 详情页。详情页右下角额外提供“▶ 播放本片”。
+
+电影：https://api.obj2.top/hls/movie/{id}/master.m3u8
+
+电视剧：https://api.obj2.top/hls/tv/{id}/{season}/{episode}/master.m3u8
+
+电视剧可选择季、集。内置 HLS.js 1.5.20，字幕轨道由播放器自动检测并优先选择英文，可关闭或切换。所给地址属于播放规则，**不代表每部影片的源都实际存在或可访问**。
 
 ## 安装
 
-1. 下载此独立插件分支的 ZIP，并解压。
-2. 在 Chrome 打开 chrome://extensions 或 Edge 打开 edge://extensions。
-3. 开启开发者模式 → 加载已解压的扩展程序 → 选择包含 manifest.json 的文件夹。
-4. 打开 https://www.themoviedb.org ，点击海报上的 ▶ 标记或影片详情页右下角的 ▶ 播放本片。
+1. 下载 **tmdb-oneclick-player-v3** 分支的 ZIP，并解压到固定目录。
+2. Chrome 打开 chrome://extensions，Edge 打开 edge://extensions。
+3. 开启开发者模式，选择“加载已解压的扩展程序”，指向包含 manifest.json 的文件夹。
+4. 访问 https://www.themoviedb.org/ ，查看左下角显示模式控制器，点击电影海报试播。
+5. 安装 v3 前最好先禁用或删除旧 v2，防止同一网页重复注入。
 
-此分支的 ZIP 已包含 vendor/hls.min.js，无需额外脚本或 CDN 下载。
+插件 ZIP 包含独立的 vendor/hls.min.js 和 LICENSE，无需另外运行 setup_hls.bat。
 
-## 默认播放规则
+## 实现依据
 
-电影 https://api.obj2.top/hls/movie/{id}/master.m3u8
-电视剧 https://api.obj2.top/hls/tv/{id}/{season}/{episode}/master.m3u8
+- yqxyy-r2/js/movie-library.js：TMDB ID 到播放直链的拼接规则。
+- yqxyy-r2/js/movie-subtitles.js：HLS 字幕轨道识别与切换的实现思路。
+- yqxyy-r2/assets/vendor/hlsjs-1.5.20/：现成的 HLS.js 内核，Apache-2.0。
+- v2 现有播放器、弹窗、字幕控制、故障提示完整继承；v3 新增 display-mode.js/css，并支持三模式保存。
 
-配置可在扩展选项中调整，但宿主权限默认仅允许 api.obj2.top。剧集为第 1 季第 1 集起，允许输入季、集。视频是否真实可播取决于源站、网络、跨域、编码和访问许可。
+## 测试与限制
 
-## 从 yqxyy-r2 复用的实现
+代码已作构建结构核对，**尚无真实 TMDB 页面与 api.obj2.top 的端到端播放测试结果**。源站 403/404、跨域、浏览器媒体格式和 TMDB 网页结构变化仍可能导致播放或布局问题。原版模式可一键恢复布局。
 
-- js/movie-library.js：automaticSource 的 TMDB ID / season / episode 拼接规则。
-- js/movie-subtitles.js：基于 Hls.subtitleTracks、SUBTITLE_TRACKS_UPDATED 和 subtitleDisplay 的字幕轨道处理思想。
-- js/movies.js、js/desktop-player.js：播放器状态与用户控制方式。
-- assets/vendor/hlsjs-1.5.20/hls.min.js：仓库现成 HLS.js 播放内核，作为 Git blob 精确复用，随 ZIP 离线打包。
-
-本插件没有导入网站的 SFCloud 登录态、App 对象或学习页数据，避免耦合正式网站和 Supabase。没有修改网站 main 分支。
-
-## 测试建议
-
-1. 电影 TMDB 9502（用户提供样例）。
-2. 电视剧 TMDB 111474，第 1 季第 1 集。
-3. 有字幕源时选择 English；无字幕时下拉只显示关闭字幕。
-4. 关闭弹窗、切换剧集、播放失败报告。
-
-本分支已检查源码结构；没有在真实 TMDB 和 api.obj2.top 网络环境下完成端到端播放测试，不保证样例源此刻仍可访问。
-
-## 平台及合规
-
-安卓 Google Chrome 不能安装此类扩展。仅用于访问你有权访问的影片源，不包含 DRM 绕过或下载破解功能。
-
-HLS.js 遵循 Apache-2.0 许可，许可证位于 vendor/LICENSE。
+这不是 APK，也不支持安卓版 Chrome 安装扩展。插件仅用于播放合法授权或有权访问的资源。
