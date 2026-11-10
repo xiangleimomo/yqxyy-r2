@@ -153,16 +153,22 @@ test('player resolver accepts official protocol-relative CDN host without invali
  assert.equal(res.video,'https://cdn.littlefox.com/contents_5/hls/720/a/stream.m3u8');
 });
 
-test('free GitHub Models is used when no separately billed OpenAI key exists',async()=>{
+test('AI inference uses an explicit working API key; retired GitHub Models token is never accepted',async()=>{
  const {inferenceConfig,courseInference}=await import('./core.mjs');
- const c=inferenceConfig({GITHUB_TOKEN:'fake-actions-token'});
- assert.equal(c.provider,'github');assert.equal(c.model,'openai/gpt-4.1-mini');
- const requests=[];
- const http=async(url,opts)=>{requests.push({url,auth:opts.headers.authorization});return {ok:true,json:async()=>({choices:[{message:{content:'{"approved":true}'}}]})}};
- assert.deepEqual(await courseInference({env:{GITHUB_TOKEN:'fake-actions-token'},http,messages:[{role:'user',content:'test'}]}),{approved:true});
- assert.equal(requests[0].url,'https://models.github.ai/inference/chat/completions');
- assert.equal(requests[0].auth,'Bearer fake-actions-token');
- assert.equal(inferenceConfig({GITHUB_TOKEN:'fallback',LF_OPENAI_API_KEY:'paid-key'}).provider,'openai');
+ assert.throws(()=>inferenceConfig({GITHUB_TOKEN:'irrelevant'}),/Missing LF_OPENAI_API_KEY/);
+ assert.equal(inferenceConfig({LF_OPENAI_API_KEY:'user-secret'}).provider,'openai');
+ const req=[];
+ const http=async(url,init)=>{req.push({url,auth:init.headers.authorization});return {ok:true,headers:{get:()=> 'application/json'},json:async()=>({choices:[{message:{content:'{"approved":true}'}}]})};};
+ assert.deepEqual(await courseInference({env:{LF_OPENAI_API_KEY:'user-secret'},http,messages:[{role:'user',content:'test'}]}),{approved:true});
+ assert.equal(req[0].url,'https://api.openai.com/v1/chat/completions');
+ assert.equal(req[0].auth,'Bearer user-secret');
+});
+
+test('HTTP 200 non-JSON inference does not publish fake lessons',async()=>{
+ const {courseInference}=await import('./core.mjs');
+ const env={LF_OPENAI_API_KEY:'fake-test-key'};
+ await assert.rejects(courseInference({env,http:async()=>({ok:true,headers:{get:()=> 'text/plain'},json:async()=>{throw Error('Unexpected token O')}}),messages:[]}),/non-JSON/);
+ await assert.rejects(courseInference({env,http:async()=>({ok:true,headers:{get:()=> 'application/json'},json:async()=>{throw Error('invalid json')}}),messages:[]}),/invalid JSON/);
 });
 
 test('real 2026 Little Fox Subtitle Paragraph XML uses StartMilliseconds/EndMilliseconds',async()=>{
