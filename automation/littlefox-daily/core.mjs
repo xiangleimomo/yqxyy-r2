@@ -292,13 +292,14 @@ export function checkQuiz(quiz,paragraphs,id){
   if(answerKeys.every(x=>x===answerKeys[0]))errors.push('All answers use one key');
   return errors;
 }
-/** The repository GITHUB_TOKEN can use free-tier GitHub Models (models:read).
- * OpenAI API remains an optional override for higher capacity/reliability.
+/** High-quality automatic lessons need a working model API credential.
+ * GitHub Models was retired on 2026-07-30 and GITHUB_TOKEN cannot be used
+ * for hosted inference. GitHub-hosted runner minutes and model billing are separate.
+ * Only invoke a verified supported provider, never a retired endpoint.
  */
 export function inferenceConfig(env){
   if(env.LF_OPENAI_API_KEY)return {provider:'openai',url:'https://api.openai.com/v1/chat/completions',key:env.LF_OPENAI_API_KEY,model:env.LF_COURSE_MODEL||'gpt-4o-mini'};
-  if(env.GITHUB_TOKEN)return {provider:'github',url:'https://models.github.ai/inference/chat/completions',key:env.GITHUB_TOKEN,model:env.LF_GITHUB_MODEL||'openai/gpt-4.1-mini'};
-  throw Error('No inference authorization. Enable GitHub Actions models:read and GITHUB_TOKEN, or configure LF_OPENAI_API_KEY');
+  throw Error('Missing LF_OPENAI_API_KEY GitHub Actions secret: GitHub Models retired July 30 2026; official resources checked, course creation and publication paused');
 }
 export async function courseInference({env,http,messages,temperature=0.2}){
   const conf=inferenceConfig(env);
@@ -310,9 +311,15 @@ export async function courseInference({env,http,messages,temperature=0.2}){
     if((r.status===429||r.status>=500)&&attempt<2){await new Promise(done=>setTimeout(done,2000*(attempt+1)));continue;}
     throw Error(`${conf.provider} inference HTTP ${r.status}; check rate limits and permissions`);
   }
-  const data=await r.json();const content=data.choices?.[0]?.message?.content;
+  // Some retired/incorrect endpoints return HTTP 200 with a plain-text body
+  // like "OK\r\n". Verify JSON explicitly before treating any response as a model.
+  const mime=(r.headers?.get?.('content-type')||'').toLowerCase();
+  if(mime&&!mime.includes('json'))throw Error(`${conf.provider} inference returned non-JSON content-type ${mime}; no course generated`);
+  let data;
+  try{data=await r.json();}catch{throw Error(`${conf.provider} inference returned invalid JSON; no course generated`);}
+  const content=data?.choices?.[0]?.message?.content;
   if(!content)throw Error(conf.provider+' inference returned no content');
-  return JSON.parse(content);
+  try{return JSON.parse(content);}catch{throw Error(conf.provider+' inference message is not valid lesson JSON');}
 }
 export async function aiCourse({id,title,paragraphs,level,http,env}){
   inferenceConfig(env);
