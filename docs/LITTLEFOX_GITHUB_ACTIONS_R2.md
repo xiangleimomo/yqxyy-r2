@@ -31,12 +31,11 @@
 | Secrets | `R2_BUCKET` | 现有 `yqxyy-resources` |
 | Secrets | `R2_ACCESS_KEY_ID` | R2 上传身份，已有其他 R2 工作流复用 |
 | Secrets | `R2_SECRET_ACCESS_KEY` | R2 上传身份，已有其他 R2 工作流复用 |
-| Secrets | `LF_OPENAI_API_KEY` | **可选**：优先使用 OpenAI API，空缺时改用 GitHub Models 免费额度（`models:read` 权限） |
-| Variables | `LF_GITHUB_MODEL` | 可选：默认 `openai/gpt-4.1-mini`，使用 GitHub Models 需要受账户免费额度和模型可用性限制 |
+| Secrets | `LF_OPENAI_API_KEY` | **必需（正式自动制课时）**：可用的 OpenAI API 密钥；与 ChatGPT Plus 订阅分别计费；没有则仅验证官方资料并报告，不发布课程 |
 | Variables | `LF_COURSE_MODEL` | 可选：具备 JSON 模式的 API 模型；默认 `gpt-4o-mini`，需要根据实际 API 权限和质量调整 |
 | Variables | `LF_ALLOW_PONE_BOOK_MIRROR` | 可选，默认 `0`。确认托管许可后才设 `1` |
 
-**不要把凭据写在代码或 R2 公有目录。** 需要单独考虑官网教材自动抓取与再发布的合法使用权限。没有任何可用的模型调用凭据（含 GitHub Models 内置 GITHUB_TOKEN）或者官网材料不完整时，流水线会写报告、禁止发布不完整内容。
+**不要把凭据写在代码或 R2 公有目录。** 需要单独考虑官网教材自动抓取与再发布的合法使用权限。缺少 `LF_OPENAI_API_KEY` 或官网材料不完整时，流水线仍报告发现的新剧集及资源核验情况，但禁止发布不完整课件。**GitHub Models 已于 2026-07-30 全面退役，`GITHUB_TOKEN` 的 `models:read` 权限不再提供模型推理；GitHub Actions 免费运行额度不等于免费的模型服务。**
 
 ## 使用方式及安全开关
 
