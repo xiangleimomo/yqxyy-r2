@@ -1,0 +1,29 @@
+name: Publish Reviewed Little Fox V2 Quiz Batch
+on:
+  push:
+    paths:
+      - quiz-updates/cinderella-v2-20261110.publish
+      - quiz-updates/snowwhite-v2-20261110.publish
+permissions:
+  contents: read
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+      R2_BUCKET: ${{ secrets.R2_BUCKET }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Publish Cinderella V2 quizzes if triggered
+        if: contains(github.event.head_commit.modified, 'quiz-updates/cinderella-v2-20261110.publish') || contains(github.event.head_commit.added, 'quiz-updates/cinderella-v2-20261110.publish')
+        run: node scripts/publish-reviewed-quiz-batch.mjs cinderella
+      - name: Publish Snow White V2 quizzes if triggered
+        if: contains(github.event.head_commit.modified, 'quiz-updates/snowwhite-v2-20261110.publish') || contains(github.event.head_commit.added, 'quiz-updates/snowwhite-v2-20261110.publish')
+        run: node scripts/publish-reviewed-quiz-batch.mjs snowwhite
