@@ -89,7 +89,7 @@ export async function verifyPlaylist(url,http,depth=0){
     const res=lines[i].match(/RESOLUTION=\d+x(\d+)/);choices.push({height:Number(res?.[1]||0),url:new URL(lines[i+1],url).href});
   }
   if(choices.length){choices.sort((a,b)=>b.height-a.height);return verifyPlaylist(safeUrl(choices[0].url,VIDEO_DOMAINS),http,depth+1);}
-  if(!lines.some(x=>x&&!x.startsWith('#')))throw Error('Empty media playlist');
+  if(!lines.some(x=>x&&!x.startsWith('#'))||!lines.some(x=>x.startsWith('#EXTINF:')))throw Error('Empty media playlist');
   return url;
 }
 export function discoverTextLinks(html,id){
@@ -130,7 +130,7 @@ export function checkQuiz(quiz,paragraphs,id){
     if(!q.question||seen.has(normalize(q.question)))errors.push(`Q${i+1} duplicate/missing prompt`);seen.add(normalize(q.question));
     if(/which word appears|complete the sentence|fill in the blank/i.test(q.question||''))errors.push(`Q${i+1} is not a story question`);
     if(!Array.isArray(q.options)||q.options.length!==4||q.options.some((x,j)=>x.key!=='ABCD'[j])||new Set(q.options.map(o=>normalize(o.text))).size!==4)errors.push(`Q${i+1} invalid options`);
-    if(!'ABCD'.includes(q.answer)||!q.options?.some(o=>o.key===q.answer))errors.push(`Q${i+1} invalid answer`);
+    if(typeof q.answer!=='string'||!['A','B','C','D'].includes(q.answer)||!q.options?.some(o=>o.key===q.answer))errors.push(`Q${i+1} invalid answer`);
     if(!/[\u3400-\u9fff]/u.test(q.explanation||''))errors.push(`Q${i+1} needs specific Chinese explanation`);
     const e=q.evidence,matching=paragraphs.some(p=>e?.paragraphIds?.includes(p.id)&&p.text===e?.quote);
     if(e?.sourceContentId!==id||!matching)errors.push(`Q${i+1} missing verbatim evidence`);
@@ -190,6 +190,7 @@ export async function daily({env=process.env,http=fetch,store,now=new Date(),log
     if(!response.ok)throw Error('Little Fox schedule HTTP '+response.status);
     const html=await response.text();const releases=scheduleReleases(html,date,seriesList);
     if(!releases.length){report.status='no_match';report.errors.push('No verified calendar entry matched an existing series; check official publishing page structure and names.');return report;}
+    // A shared catalog may change during a multi-episode run. Reload before each publish.
     for(const release of releases){const item={seriesId:release.seriesId,title:release.title,status:'checking'};report.items.push(item);
       try{
         const base=`data/${release.seriesId}/`;
@@ -213,7 +214,8 @@ export async function daily({env=process.env,http=fetch,store,now=new Date(),log
         item.resources={video,storybook:BOOK(id),caption:CAPTION(id),text:textUrl||null};
         if(!paragraphs.length)throw Error('Official Text unavailable or unverified; cannot produce evidence-based course');
         const course=await aiCourse({id,title:release.title,paragraphs,level:release.level,http,env});
-        const update=prepareUpdate({seriesId:release.seriesId,release,id,video,cues,paragraphs,course,episodes,readings,vocabularies,quizzes,series,seriesList,sourceUrls:{text:textUrl},captionXml:xml});
+        const freshSeriesList=await readJson('data/series-list.json');
+        const update=prepareUpdate({seriesId:release.seriesId,release,id,video,cues,paragraphs,course,episodes,readings,vocabularies,quizzes,series,seriesList:freshSeriesList,sourceUrls:{text:textUrl},captionXml:xml});
         if(!update){item.status='already_published';continue;}
         item.episodeId=update.episodeId;
         if(env.LF_DRY_RUN!=='0'){item.status='ready_dry_run';item.fileCount=Object.keys(update.files).length;continue;}
@@ -223,12 +225,18 @@ export async function daily({env=process.env,http=fetch,store,now=new Date(),log
         for(const key of Object.keys(update.files).filter(k=>k.endsWith('.json'))){
           const original=await store.get(key);if(original!==null)await store.put(`data/__littlefox-sync/backups/${snapshotDate}/${key.slice(5)}`,original);
         }
-        // Immutable subtitle first. Then course files. Discovery index LAST.
-        const entries=Object.entries(update.files).filter(([k])=>k!=='data/series-list.json');
+        // Subtitles and lesson content first; episodes.json becomes visible LAST for an existing series.
+        // Updating the global series catalog alone does not hide an episode in an already-listed series.
+        const indexKey='data/series-list.json';
+        const episodeKey=base+'episodes.json';
+        const entries=Object.entries(update.files).filter(([k])=>k!==indexKey&&k!==episodeKey);
         for(const [key,value] of entries)await store.put(key,value,key.endsWith('.vtt')?'text/vtt; charset=utf-8':key.endsWith('.xml')?'application/xml; charset=utf-8':'application/json; charset=utf-8');
         for(const [key,value] of entries){if(await store.get(key)!==value)throw Error('R2 read-back mismatch '+key);}
-        await store.put('data/series-list.json',update.files['data/series-list.json']);
-        if(await store.get('data/series-list.json')!==update.files['data/series-list.json'])throw Error('R2 index read-back mismatch');
+        // Final publication is the episode entry followed by the global discovery index.
+        await store.put(episodeKey,update.files[episodeKey]);
+        if(await store.get(episodeKey)!==update.files[episodeKey])throw Error('R2 episode index read-back mismatch');
+        await store.put(indexKey,update.files[indexKey]);
+        if(await store.get(indexKey)!==update.files[indexKey])throw Error('R2 index read-back mismatch');
         item.status='published_verified';item.fileCount=Object.keys(update.files).length;
       }catch(e){item.status='pending_failed';item.error=String(e.message||e).slice(0,400);}
     }
