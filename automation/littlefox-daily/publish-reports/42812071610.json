@@ -1,0 +1,41 @@
+{
+  "contentId": "C0013536",
+  "seriesId": "little-fox-the-happy-prince-fs0181",
+  "episodeNumber": 16,
+  "requestedPublish": true,
+  "checkedAt": "2026-11-10T12:00:31.618Z",
+  "status": "published_verified",
+  "stages": [
+    {
+      "name": "r2_current_index_checked",
+      "existingEpisodes": 15
+    },
+    {
+      "name": "official_video_verified",
+      "host": "cdn.littlefox.com"
+    },
+    {
+      "name": "official_text_xml_pdf_verified",
+      "paragraphs": 20,
+      "cues": 45,
+      "storybookStatus": 200
+    },
+    {
+      "name": "v2_curriculum_and_quiz_checked",
+      "words": 10,
+      "questions": 5,
+      "sections": 4
+    },
+    {
+      "name": "r2_patch_prepared",
+      "files": 8
+    },
+    {
+      "name": "backups_written"
+    },
+    {
+      "name": "r2_written_and_readback",
+      "objects": 8
+    }
+  ]
+}
