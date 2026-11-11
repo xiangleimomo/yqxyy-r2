@@ -1,0 +1,26 @@
+{
+  "contentId": "C0013410",
+  "seriesId": "three-kingdoms",
+  "episodeNumber": 14,
+  "requestedPublish": true,
+  "checkedAt": "2026-11-11T13:50:25.453Z",
+  "status": "blocked",
+  "stages": [
+    {
+      "name": "r2_real_state_checked",
+      "episodeIndexExists": true,
+      "existingEpisodes": 14,
+      "targetExists": true
+    },
+    {
+      "name": "official_video_verified",
+      "host": "cdn.littlefox.com",
+      "contentId": "C0013410"
+    },
+    {
+      "name": "r2_episodes_backup_written",
+      "key": "data/__littlefox-sync/backups/video-repair-C0013410-2026-11-11T13-50-28-106Z/three-kingdoms/episodes.json"
+    }
+  ],
+  "error": "Unexpected non-whitespace character after JSON at position 17765 (line 465 column 2)"
+}
