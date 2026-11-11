@@ -2,8 +2,8 @@
   "schemaVersion": 2,
   "date": "2026-11-11",
   "status": "checked",
-  "workflowRunId": "43026999285",
-  "privateArtifactName": "littlefox-source-43026999285",
+  "workflowRunId": "43027297625",
+  "privateArtifactName": "littlefox-source-43027297625",
   "items": [
     {
       "seriesId": "three-kingdoms",
@@ -18,7 +18,7 @@
       "captionCueCount": 57,
       "textOriginal": "https://cn.littlefox.com/cn/supplement/org/C0013410",
       "textTranslated": "https://cn.littlefox.com/cn/supplement/trans/C0013410",
-      "error": "Official /org Text paragraphs could not be identified; orgShape={\"length\":37439,\"classes\":[\"layerpop_m2\",\"layerpop_m_tit\",\"layerpop_m2_cont\",\"original_box\",\"original_tab_box\",\"explan\",\"original_bt_box\",\"original_cont_box\",\"talk\",\"talk\",\"talk\",\"talk\",\"talk\",\"talk\",\"talk\",\"talk\",\"talk\",\"talk\",\"talk\",\"talk\"],\"tags\":{\"p\":0,\"li\":2,\"span\":95,\"talk\":72},\"talkKinds\":[\"en\",\"en\",\"en\",\"en\",\"en\",\"en\",\"en\",\"en\",\"en\",\"en\",\"en\",\"en\",\"en\",\"en\",\"en\",\"en\",\"en\",\"en\",\"en\",\"en\"]}; transShape={\"length\":34721,\"classes\":[\"layerpop_m2\",\"layerpop_m_tit\",\"layerpop_m2_cont\",\"original_box\",\"original_tab_box\",\"explan\",\"original_bt_box\",\"original_cont_box\",\"btn-area\",\"e\",\"talk\",\"k\",\"talk\",\"e\",\"talk\",\"talk\",\"talk\",\"k\",\"talk\",\"talk\"],\"tags\":{\"p\":0,\"li\":2,\"span\":94,\"talk\":69},\"talkKinds\":[\"en\",\"zh\",\"en\",\"en\",\"en\",\"zh\",\"zh\",\"zh\",\"en\",\"en\",\"en\",\"en\",\"en\",\"zh\",\"zh\",\"zh\",\"zh\",\"en\",\"en\",\"en\"]}"
+      "error": "Official /org Text paragraphs could not be identified; orgShape={\"length\":37439,\"classes\":[\"layerpop_m2\",\"layerpop_m_tit\",\"layerpop_m2_cont\",\"original_box\",\"original_tab_box\",\"explan\",\"original_bt_box\",\"original_cont_box\",\"talk\",\"talk\",\"talk\",\"talk\",\"talk\",\"talk\",\"talk\",\"talk\",\"talk\",\"talk\",\"talk\",\"talk\"],\"tags\":{\"p\":0,\"li\":2,\"span\":95,\"talk\":72},\"talkKinds\":\"EEEEOEEEEEEEEEOEEEEEEEEOEEEEEEEEEEEEEEEEOEEEEEEEEEOEEEEEEEEOEEEEEEEEEEEE\",\"talkLengths\":\"192,324,84,83,3,167,85,34,67,41,65,220,50,48,3,119,64,180,36,107,73,112,28,3,39,83,38,205,88,37,50,135,33,75,187,77,192,324,84,83,3,167,85,34,67,41,65,220,50,48,3,119,64,180,36,107,73,112,28,3,39,83,38,205,88,37,50,135,33,75,187,77\"}; transShape={\"length\":34721,\"classes\":[\"layerpop_m2\",\"layerpop_m_tit\",\"layerpop_m2_cont\",\"original_box\",\"original_tab_box\",\"explan\",\"original_bt_box\",\"original_cont_box\",\"btn-area\",\"e\",\"talk\",\"k\",\"talk\",\"e\",\"talk\",\"talk\",\"talk\",\"k\",\"talk\",\"talk\"],\"tags\":{\"p\":0,\"li\":2,\"span\":94,\"talk\":69},\"talkKinds\":\"EZEEEZZZOEEEEZZZZEEEZZZEEOEEZZZZEEEEZZZZEEOEEEZZZZZEEEZZZEEEEZZZZEEZZ\",\"talkLengths\":\"192,56,324,84,83,89,24,21,3,167,85,34,67,36,24,10,23,41,65,220,15,22,58,50,48,3,119,64,21,13,36,24,180,36,107,73,50,15,34,23,11"
     }
   ],
   "errors": []
