@@ -1,0 +1,14 @@
+{
+  "contentId": "C0013410",
+  "seriesId": "three-kingdoms",
+  "episodeNumber": 14,
+  "requestedPublish": true,
+  "checkedAt": "2026-11-11T13:38:28.427Z",
+  "status": "already_published",
+  "stages": [
+    {
+      "name": "duplicate_existing",
+      "reason": "R2 already holds target episode or C ID"
+    }
+  ]
+}
