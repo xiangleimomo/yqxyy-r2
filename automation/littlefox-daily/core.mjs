@@ -150,7 +150,7 @@ export function textPageShape(html){
   const s=String(html);
   const classes=[...s.matchAll(/<div\b[^>]*class=["']([^"']+)["'][^>]*>/gi)].slice(0,32).map(m=>m[1]);
   const talks=[...s.matchAll(/<div\b[^>]*class=["'][^"']*\btalk\b[^"']*["'][^>]*>\s*<span\b[^>]*>([\s\S]*?)<\/span>/gi)].map(x=>cleanHtml(x[1]));
-  return JSON.stringify({length:s.length,classes:classes.slice(0,20),tags:{p:(s.match(/<p\b/gi)||[]).length,li:(s.match(/<li\b/gi)||[]).length,span:(s.match(/<span\b/gi)||[]).length,talk:talks.length},talkKinds:talks.slice(0,20).map(t=>/[\u3400-\u9fff]/u.test(t)?(/[a-z]{3}/i.test(t)?'mixed':'zh'):'en')});
+  return JSON.stringify({length:s.length,classes:classes.slice(0,20),tags:{p:(s.match(/<p\b/gi)||[]).length,li:(s.match(/<li\b/gi)||[]).length,span:(s.match(/<span\b/gi)||[]).length,talk:talks.length},talkKinds:talks.map(t=>/[\u3400-\u9fff]/u.test(t)?(/[a-z]{3}/i.test(t)?'M':'Z'):(/[a-z]/i.test(t)?'E':'O')).join(''),talkLengths:talks.map(t=>t.length).join(',')});
 }
 export function bilingualTextParagraphs(originalHtml, translatedHtml){
   const originals=textParagraphs(originalHtml);
