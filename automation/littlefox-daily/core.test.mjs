@@ -223,3 +223,17 @@ test('both incorrect candidate IDs fail closed and request manual assistance',as
   const http=async url=>({ok:!url.includes('contents_list_v2'),status:404,text:async()=>''});
   await assert.rejects(identifyCId({seriesId:'little-fox-the-happy-prince-fs0181',seriesEpisodeNumber:16,title:'A Happy Ending'},[{episodeId:15,sourceContentId:'C0013545'}],http),/manual assistance required/);
 });
+
+test('duplicated /org reading panels match mixed grouped /trans talks exactly',async()=>{
+ const {textParagraphs,bilingualTextParagraphs}=await import('./core.mjs');
+ const en=['The general entered the room.','The leader called for help.','The soldiers marched to camp.','They waited for a reply.','The army reached the gate.'];
+ const zh=['将军走进了房间。','首领请求援助。','士兵向营地行进。','他们等待答复。','军队到达城门。'];
+ const mk=lines=>lines.map(x=>`<div class="talk"><span>${x}</span></div>`).join('');
+ const panel=mk([...en.slice(0,2),'...',...en.slice(2)]);
+ const org=`<div class="original_cont_box">${panel}${panel}</div>`;
+ const trans=`<div class="original_cont_box"><div class="e">${mk(en.slice(0,2))}</div><div class="k">${mk(zh.slice(0,2))}</div><div class="e">${mk(['...',...en.slice(2)])}</div><div class="k">${mk(zh.slice(2))}</div></div>`;
+ assert.deepEqual(textParagraphs(org).map(x=>x.text),en);
+ assert.deepEqual(bilingualTextParagraphs(org,trans).map(x=>x.translation),zh);
+ const bad=trans.replace('将军走进了房间。','其他句子的中文翻译。').replace('The leader called for help.','Different English anchor.');
+ assert.throws(()=>bilingualTextParagraphs(org,bad),/align|incomplete|anchor|translation/);
+});
