@@ -2,6 +2,8 @@
   "mode": "reviewed_littlefox_v2",
   "contentId": "C0013410",
   "publish": true,
-  "repairVideo": true,
-  "reason": "User requested publishing official verified video for Three Kingdoms episode 14 into R2. Inspect actual R2 state, repair existing episode video only or publish missing approved V2 episode if append-only; backup and readback."
+  "forceRepublish": true,
+  "repairVideo": false,
+  "recoverBackupKey": "data/__littlefox-sync/backups/video-repair-C0013410-2026-11-11T13-50-28-106Z/three-kingdoms/episodes.json",
+  "reason": "User explicitly requested complete overwrite of existing episode 14 in R2 as a true full workflow test. Recover valid episode index from exact backup; regenerate official video, English text, subtitle XML/VTT, reading, vocabulary and quiz; backup and read back all R2 objects."
 }
