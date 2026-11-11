@@ -2,8 +2,8 @@
   "schemaVersion": 2,
   "date": "2026-11-11",
   "status": "checked",
-  "workflowRunId": "43026137677",
-  "privateArtifactName": "littlefox-source-43026137677",
+  "workflowRunId": "43026999285",
+  "privateArtifactName": "littlefox-source-43026999285",
   "items": [
     {
       "seriesId": "three-kingdoms",
@@ -18,7 +18,7 @@
       "captionCueCount": 57,
       "textOriginal": "https://cn.littlefox.com/cn/supplement/org/C0013410",
       "textTranslated": "https://cn.littlefox.com/cn/supplement/trans/C0013410",
-      "error": "Official /org Text paragraphs could not be identified"
+      "error": "Official /org Text paragraphs could not be identified; orgShape={\"length\":37439,\"classes\":[\"layerpop_m2\",\"layerpop_m_tit\",\"layerpop_m2_cont\",\"original_box\",\"original_tab_box\",\"explan\",\"original_bt_box\",\"original_cont_box\",\"talk\",\"talk\",\"talk\",\"talk\",\"talk\",\"talk\",\"talk\",\"talk\",\"talk\",\"talk\",\"talk\",\"talk\"],\"tags\":{\"p\":0,\"li\":2,\"span\":95,\"talk\":72},\"talkKinds\":[\"en\",\"en\",\"en\",\"en\",\"en\",\"en\",\"en\",\"en\",\"en\",\"en\",\"en\",\"en\",\"en\",\"en\",\"en\",\"en\",\"en\",\"en\",\"en\",\"en\"]}; transShape={\"length\":34721,\"classes\":[\"layerpop_m2\",\"layerpop_m_tit\",\"layerpop_m2_cont\",\"original_box\",\"original_tab_box\",\"explan\",\"original_bt_box\",\"original_cont_box\",\"btn-area\",\"e\",\"talk\",\"k\",\"talk\",\"e\",\"talk\",\"talk\",\"talk\",\"k\",\"talk\",\"talk\"],\"tags\":{\"p\":0,\"li\":2,\"span\":94,\"talk\":69},\"talkKinds\":[\"en\",\"zh\",\"en\",\"en\",\"en\",\"zh\",\"zh\",\"zh\",\"en\",\"en\",\"en\",\"en\",\"en\",\"zh\",\"zh\",\"zh\",\"zh\",\"en\",\"en\",\"en\"]}"
     }
   ],
   "errors": []
