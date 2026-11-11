@@ -18,12 +18,19 @@ try{
   try{
    const old=await store.get(`data/${release.seriesId}/episodes.json`);if(!old)throw Error('R2 episode index missing');
    const episodes=JSON.parse(old);
-   if(process.env.LF_BLIND_TEST!=='1'&&episodes.some(e=>Number(e.episodeId)===release.seriesEpisodeNumber)){item.status='already_published';continue;}
+   if(process.env.LF_BLIND_TEST!=='1'&&episodes.some(e=>Number(e.episodeId)===release.seriesEpisodeNumber&&e.video?.hlsUrl&&e.sourceContentId)){item.status='already_published';continue;}
    const id=await identifyCId(release,episodes,fetch);if(!id)throw Error('C ID unavailable');
    item.contentId=id;
-   const player=await readPlayer(id,fetch);
-   if(!isEpisodeMatch(player.item.cont_title,release.title))throw Error('Official title mismatch');
-   item.video=await verifyPlaylist(player.video,fetch);
+   // Video may be published later than the official Text and C ID.
+   // Distinguish a confirmed C ID from release readiness.
+   const metadata=await readPlayer(id,fetch,false);
+   if(!isEpisodeMatch(metadata.item.cont_title,release.title))throw Error('Official title mismatch');
+   item.contentIdVerified=true;
+   let pendingVideoReason=null;
+   try {
+     const player=await readPlayer(id,fetch);
+     item.video=await verifyPlaylist(player.video,fetch);
+   } catch(e) { pendingVideoReason=String(e.message||e).slice(0,250); }
    item.storybook=`https://res.littlefox.com/en/supplement/load_pdf/${id}`;
    const pdf=await fetch(item.storybook,{method:'HEAD',signal:AbortSignal.timeout(20000)});
    if(!pdf.ok&&pdf.status!==405)throw Error('Storybook HTTP '+pdf.status);
@@ -37,8 +44,9 @@ try{
    catch (e) { throw Error('English Text parser error: '+String(e.message||e)+'; orgShape='+textPageShape(orgHtml)); }
    if(paragraphs.length<3)throw Error('Official English Text paragraphs unavailable; orgShape='+textPageShape(orgHtml));
    // Only verified English is required. No translated text is fetched or aligned.
-   if(paragraphs.length<3)throw Error('Verified Text has fewer than 3 paragraphs');
-   item.paragraphCount=paragraphs.length;item.status='ready_for_chatgpt';
+   item.paragraphCount=paragraphs.length;
+   if(pendingVideoReason){item.status='awaiting_video';item.videoStatus='not_yet_available';item.videoError=pendingVideoReason;continue;}
+   item.videoStatus='verified';item.status='ready_for_chatgpt';
    // Full source paragraphs are ONLY in the ephemeral GitHub Actions artifact,
    // NEVER added to the public repository or printed into workflow logs.
    sources.items.push({seriesId:release.seriesId,episodeNumber:release.seriesEpisodeNumber,contentId:id,title:release.title,level:release.level,releaseDate:d.date,officialSourceUrls:{textOriginal:item.textOriginal,caption:item.caption,storybook:item.storybook},paragraphs,captionCues:cues,verification:{playerTitle:player.item.cont_title,captionCueCount:cues.length,paragraphCount:paragraphs.length,textLanguage:'en',storybookHeadStatus:pdf.status},status:'ready_for_chatgpt'});
