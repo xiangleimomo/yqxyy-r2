@@ -71,7 +71,7 @@ export function nextIdFromEpisodes(episodes,targetEpisodeNumber) {
   return previous?contentIdOffset(previous.sourceContentId||previous.storyBook.contentId,requested-Number(previous.episodeId)):null;
 }
 function cookiesFor(id){return Buffer.from(JSON.stringify({fc_ids:id,w:1000,h:700})).toString('base64');}
-export async function readPlayer(id, http) {
+export async function readPlayer(id, http, requireVideo=true) {
   if(!CONTENT_ID.test(id))throw Error('Invalid C ID');
   const r=await http(PLAYER,{headers:{'User-Agent':'Mozilla/5.0','Cookie':'h5play_info='+cookiesFor(id)}});
   if(!r.ok)throw Error('Little Fox player HTTP '+r.status);
@@ -89,7 +89,8 @@ export async function readPlayer(id, http) {
       new URL(hostRaw,PLAYER).href;
     base=safeUrl(resolved,VIDEO_DOMAINS);
   }
-  if(!raw)throw Error('Official player has no video URL');
+  if(!raw && requireVideo)throw Error('Official player has no video URL');
+  if(!raw)return {item,video:null,links:discoverTextLinks(html,id)};
   const absolute=/^cdn\.littlefox\.(?:com|co\.kr)\//i.test(raw)?'https://'+raw:
     raw.startsWith('//')?'https:'+raw:new URL(raw,base).href;
   const video=safeUrl(absolute,VIDEO_DOMAINS);
@@ -230,7 +231,7 @@ function firstEpisodeFromCatalog(catalog) {
 }
 async function verifiesOfficialEpisode(id,release,http){
   try {
-    const player=await readPlayer(id,http);
+    const player=await readPlayer(id,http,false);
     return isEpisodeMatch(player.item.cont_title,release.title);
   } catch {return false;}
 }
