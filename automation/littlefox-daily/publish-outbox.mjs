@@ -46,7 +46,7 @@ try{
     // An earlier video-only repair accidentally appended a literal escaped
     // newline to JSON. Recover only from an explicitly selected R2 backup.
     const key=req.recoverBackupKey;
-    if(req.repairVideo!==true||typeof key!=='string'||
+    if(!(req.repairVideo===true||req.forceRepublish===true)||typeof key!=='string'||
        !key.startsWith('data/__littlefox-sync/backups/video-repair-'+id+'-')||
        !key.endsWith('/'+out.seriesId+'/episodes.json')||key.includes('..'))
       throw Error('R2 episode index invalid; explicit trusted backup key required');
@@ -60,7 +60,7 @@ try{
   if(!Array.isArray(episodes))throw Error('Invalid R2 episode index');
   const existingMatches=episodes.map((e,i)=>({e,i})).filter(({e})=>Number(e.episodeId)===out.episodeNumber||e.sourceContentId===id||e.storyBook?.contentId===id);
   step('r2_real_state_checked',{episodeIndexExists:episodeIndexRaw!==null,existingEpisodes:episodes.length,targetExists:existingMatches.length>0});
-  if(req.repairVideo===true&&existingMatches.length>0){
+  if(req.repairVideo===true&&existingMatches.length>0&&!req.forceRepublish){
     // Explicitly requested video-only repair for an existing lesson. Never
     // rewrite learning materials, quiz, subtitles, or series/global indexes.
     if(req.publish!==true)throw Error('Video repair requires explicit publish:true');
@@ -95,7 +95,7 @@ try{
       throw Error('R2 video repair changed unexpected episode fields');
     report.status='video_repaired_verified';
     step('r2_video_only_written_and_verified',{episodeNumber:out.episodeNumber,videoUrl:video,changedEpisodeCount:1,untouchedEpisodeCount:episodes.length-1});
-  }else if(existingMatches.length){
+  }else if(existingMatches.length&&!req.forceRepublish){
     report.status='already_published';step('duplicate_existing', {reason:'R2 already holds target episode or C ID'});
   }else{
     const [seriesList,readings,vocabularies,quizzes,series]=await Promise.all([
@@ -103,7 +103,21 @@ try{
       mustRead(base+'vocabulary.json'),mustRead(base+'quiz.json'),mustRead(base+'series.json')
     ]);
     if(!Array.isArray(seriesList)||!seriesList.some(x=>x.seriesId===out.seriesId))throw Error('Series absent from official R2 series index');
-    if(Math.max(0,...episodes.map(e=>Number(e.episodeId)||0))+1!==out.episodeNumber)throw Error('R2 target episode is absent but earlier episode index is incomplete; refusing to fabricate missing episodes. Restore prior episodes before publishing target.');
+    // Explicit full re-publication is allowed for exactly one verified existing
+    // episode. Remove only that entry from the in-memory index so prepareUpdate
+    // generates the same episodeId. All other episodes must remain identical.
+    if(req.forceRepublish && (!req.publish || existingMatches.length>1 ||
+       (existingMatches.length===1 &&
+        (Number(existingMatches[0].e.episodeId)!==out.episodeNumber ||
+         (existingMatches[0].e.sourceContentId||existingMatches[0].e.storyBook?.contentId)!==id))))
+      throw Error('Unsafe target for forced full republish');
+    if(req.forceRepublish && episodes.some(e=>Number(e.episodeId)>out.episodeNumber))
+      throw Error('Cannot force-republish non-final episode with append-only generator');
+    const appendBase=req.forceRepublish?
+      episodes.filter(e=>Number(e.episodeId)!==out.episodeNumber):episodes;
+    if(Math.max(0,...appendBase.map(e=>Number(e.episodeId)||0))+1!==out.episodeNumber)
+      throw Error('R2 episode sequence has gaps; cannot safely republish');
+    step('target_mode',{mode:req.forceRepublish?'full_republish':'new_publish',previousEntry:existingMatches.length>0});
     step('r2_current_index_checked',{existingEpisodes:episodes.length});
     const player=await readPlayer(id,fetch);
     if(!isEpisodeMatch(player.item.cont_title,out.title))throw Error('Official player title mismatch '+player.item.cont_title);
@@ -132,7 +146,7 @@ try{
     if(!Array.isArray(out.sections)||out.sections.length<2||out.sections.some(s=>!Array.isArray(s.paragraphIds)||!s.paragraphIds.every(pid=>paragraphs.some(p=>p.id===pid))))throw Error('Invalid V2 story sections');
     step('v2_curriculum_and_quiz_checked',{words:vocabulary.length,questions:questions?.length||0,sections:out.sections.length});
     const release={title:out.title,seriesEpisodeNumber:out.episodeNumber,date:out.releaseDate};
-    const prepared=prepareUpdate({seriesId:out.seriesId,release,id,video,cues,paragraphs,course:{vocabulary,quiz:Number(out.level)>=3?{questions}:null},episodes,readings,vocabularies,quizzes,series,seriesList,sourceUrls:{text:want.textOriginal,storybook:want.storybook},captionXml:xml});
+    const prepared=prepareUpdate({seriesId:out.seriesId,release,id,video,cues,paragraphs,course:{vocabulary,quiz:Number(out.level)>=3?{questions}:null},episodes:appendBase,readings,vocabularies,quizzes,series,seriesList,sourceUrls:{text:want.textOriginal,storybook:want.storybook},captionXml:xml});
     if(!prepared)throw Error('Unexpected duplicate after preflight');
     const files=prepared.files;
     step('r2_patch_prepared',{files:Object.keys(files).length});
