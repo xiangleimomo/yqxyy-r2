@@ -42,7 +42,7 @@ try{
    // NEVER added to the public repository or printed into workflow logs.
    sources.items.push({seriesId:release.seriesId,episodeNumber:release.seriesEpisodeNumber,contentId:id,title:release.title,level:release.level,releaseDate:d.date,officialSourceUrls:{textOriginal:item.textOriginal,textTranslated:item.textTranslated,caption:item.caption,storybook:item.storybook},paragraphs,captionCues:cues,verification:{playerTitle:player.item.cont_title,captionCueCount:cues.length,paragraphCount:paragraphs.length,storybookHeadStatus:pdf.status},status:'ready_for_chatgpt'});
    item.sourceArtifact=true;
-  }catch(e){item.status='blocked';item.error=String(e.message||e).slice(0,250);}
+  }catch(e){item.status='blocked';item.error=String(e.message||e).slice(0,1200);}
  }
  result.status=releases.length?'checked':'no_release_detected';
 }catch(e){result.status='blocked';result.errors.push(String(e.message||e).slice(0,300));}
