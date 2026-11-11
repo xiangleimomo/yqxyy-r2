@@ -23,10 +23,17 @@ try{
    item.contentId=id;
    // Video may be published later than the official Text and C ID.
    // Distinguish a confirmed C ID from release readiness.
-   const metadata=await readPlayer(id,fetch,false);
-   if(!isEpisodeMatch(metadata.item.cont_title,release.title))throw Error('Official title mismatch');
+   let metadata=null, pendingVideoReason=null;
+   try {
+     metadata=await readPlayer(id,fetch,false);
+     if(!isEpisodeMatch(metadata.item.cont_title,release.title))throw Error('Official title mismatch');
+   } catch(e) {
+     if(String(e.message||e)==='Official title mismatch')throw e;
+     // identifyCId already independently checked a matching official
+     // catalog + real Text when the pre-release player is unavailable.
+     pendingVideoReason='Player metadata not yet available: '+String(e.message||e).slice(0,180);
+   }
    item.contentIdVerified=true;
-   let pendingVideoReason=null;
    try {
      const player=await readPlayer(id,fetch);
      item.video=await verifyPlaylist(player.video,fetch);
@@ -49,7 +56,7 @@ try{
    item.videoStatus='verified';item.status='ready_for_chatgpt';
    // Full source paragraphs are ONLY in the ephemeral GitHub Actions artifact,
    // NEVER added to the public repository or printed into workflow logs.
-   sources.items.push({seriesId:release.seriesId,episodeNumber:release.seriesEpisodeNumber,contentId:id,title:release.title,level:release.level,releaseDate:d.date,officialSourceUrls:{textOriginal:item.textOriginal,caption:item.caption,storybook:item.storybook},paragraphs,captionCues:cues,verification:{playerTitle:metadata.item.cont_title,captionCueCount:cues.length,paragraphCount:paragraphs.length,textLanguage:'en',storybookHeadStatus:pdf.status},status:'ready_for_chatgpt'});
+   sources.items.push({seriesId:release.seriesId,episodeNumber:release.seriesEpisodeNumber,contentId:id,title:release.title,level:release.level,releaseDate:d.date,officialSourceUrls:{textOriginal:item.textOriginal,caption:item.caption,storybook:item.storybook},paragraphs,captionCues:cues,verification:{playerTitle:metadata?.item?.cont_title||null,captionCueCount:cues.length,paragraphCount:paragraphs.length,textLanguage:'en',storybookHeadStatus:pdf.status},status:'ready_for_chatgpt'});
    item.sourceArtifact=true;
   }catch(e){item.status='blocked';item.error=String(e.message||e).slice(0,1200);}
  }
