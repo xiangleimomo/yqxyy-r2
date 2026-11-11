@@ -229,11 +229,23 @@ function firstEpisodeFromCatalog(catalog) {
   const matches=catalog.filter(e=>/^(?:episode\s*)?0?1\s*[:.\-]\s*\S/i.test(e.title));
   return matches.length===1?matches[0].id:null;
 }
-async function verifiesOfficialEpisode(id,release,http){
+async function verifiesOfficialEpisode(id,release,http,exactOfficialCatalogMatch=false){
   try {
     const player=await readPlayer(id,http,false);
-    return isEpisodeMatch(player.item.cont_title,release.title);
-  } catch {return false;}
+    if(isEpisodeMatch(player.item.cont_title,release.title))return true;
+    // A conflicting official title is stronger evidence than a catalog guess.
+    return false;
+  } catch {
+    // Prior to video launch the player may omit the episode entirely, while
+    // the official catalog already supplies this exact C ID and title.
+    // In that case validate the actual English Text independently.
+    if(!exactOfficialCatalogMatch)return false;
+    try {
+      const response=await http(ORIGINAL_TEXT(id));
+      if(!response.ok)return false;
+      return textParagraphs(await response.text()).length>=3;
+    } catch {return false;}
+  }
 }
 export async function identifyCId(release, episodes, http){
   const number=Number(release.seriesEpisodeNumber);
@@ -263,7 +275,7 @@ export async function identifyCId(release, episodes, http){
   const attempted=[];
   for(const [source,id] of candidates){
     if(!id||attempted.some(x=>x.id===id))continue;
-    const verified=await verifiesOfficialEpisode(id,release,http);
+    const verified=await verifiesOfficialEpisode(id,release,http,source==='official catalog');
     attempted.push({source,id});
     if(verified)return id;
   }
