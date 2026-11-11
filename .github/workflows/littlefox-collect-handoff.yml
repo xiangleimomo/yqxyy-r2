@@ -24,6 +24,8 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci --omit=dev
+      - name: Test official source parsing
+        run: node --test automation/littlefox-daily/core.test.mjs
       - name: Verify official releases and prepare metadata
         id: collect
         continue-on-error: true
