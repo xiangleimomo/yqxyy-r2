@@ -1,6 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import {chinaDate,makeR2,scheduleReleases,identifyCId,readPlayer,isEpisodeMatch,verifyPlaylist,parseCaptions,bilingualTextParagraphs,ORIGINAL_TEXT,TRANSLATED_TEXT} from './core.mjs';
+import {chinaDate,makeR2,scheduleReleases,identifyCId,readPlayer,isEpisodeMatch,verifyPlaylist,parseCaptions,bilingualTextParagraphs,textPageShape,ORIGINAL_TEXT,TRANSLATED_TEXT} from './core.mjs';
 const d=chinaDate(),out=`automation/littlefox-daily/inbox/${d.date}.json`;
 const privateOut='/tmp/littlefox-source-'+d.date+'.json';
 const result={schemaVersion:2,date:d.date,status:'checking',workflowRunId:process.env.GITHUB_RUN_ID||null,privateArtifactName:'littlefox-source-'+(process.env.GITHUB_RUN_ID||'local'),items:[],errors:[]};
@@ -32,7 +32,10 @@ try{
    if(cues.length<3)throw Error('Caption missing');item.captionCueCount=cues.length;
    item.textOriginal=ORIGINAL_TEXT(id);item.textTranslated=TRANSLATED_TEXT(id);
    const [en,zh]=await Promise.all([get(item.textOriginal),get(item.textTranslated)]);
-   const paragraphs=bilingualTextParagraphs(await en.text(),await zh.text());
+   const orgHtml=await en.text(), transHtml=await zh.text();
+   let paragraphs;
+   try { paragraphs=bilingualTextParagraphs(orgHtml,transHtml); }
+   catch (e) { throw Error(String(e.message||e)+'; orgShape='+textPageShape(orgHtml)+'; transShape='+textPageShape(transHtml)); }
    if(paragraphs.length<3)throw Error('Verified Text has fewer than 3 paragraphs');
    item.paragraphCount=paragraphs.length;item.status='ready_for_chatgpt';
    // Full source paragraphs are ONLY in the ephemeral GitHub Actions artifact,
