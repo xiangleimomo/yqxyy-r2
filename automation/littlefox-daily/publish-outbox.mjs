@@ -39,12 +39,16 @@ try{
   const store=await makeR2(process.env,fetch);
   const base='data/'+out.seriesId+'/';
   const mustRead=async key=>{const val=await store.get(key);if(val===null)throw Error('Missing R2 '+key);return JSON.parse(val)};
-  const episodes=await mustRead(base+'episodes.json');
-  if(req.repairVideo===true){
+  const episodeIndexRaw=await store.get(base+'episodes.json');
+  const episodes=episodeIndexRaw===null?[]:JSON.parse(episodeIndexRaw);
+  if(!Array.isArray(episodes))throw Error('Invalid R2 episode index');
+  const existingMatches=episodes.map((e,i)=>({e,i})).filter(({e})=>Number(e.episodeId)===out.episodeNumber||e.sourceContentId===id||e.storyBook?.contentId===id);
+  step('r2_real_state_checked',{episodeIndexExists:episodeIndexRaw!==null,existingEpisodes:episodes.length,targetExists:existingMatches.length>0});
+  if(req.repairVideo===true&&existingMatches.length>0){
     // Explicitly requested video-only repair for an existing lesson. Never
     // rewrite learning materials, quiz, subtitles, or series/global indexes.
     if(req.publish!==true)throw Error('Video repair requires explicit publish:true');
-    const matches=episodes.map((e,i)=>({e,i})).filter(({e})=>Number(e.episodeId)===out.episodeNumber||e.sourceContentId===id||e.storyBook?.contentId===id);
+    const matches=existingMatches;
     if(matches.length!==1||Number(matches[0].e.episodeId)!==out.episodeNumber||
        (matches[0].e.sourceContentId||matches[0].e.storyBook?.contentId)!==id)
       throw Error('Existing episode and C ID do not match uniquely; refusing video repair');
@@ -75,7 +79,7 @@ try{
       throw Error('R2 video repair changed unexpected episode fields');
     report.status='video_repaired_verified';
     step('r2_video_only_written_and_verified',{episodeNumber:out.episodeNumber,videoUrl:video,changedEpisodeCount:1,untouchedEpisodeCount:episodes.length-1});
-  }else if(episodes.some(e=>Number(e.episodeId)===out.episodeNumber||e.sourceContentId===id)){
+  }else if(existingMatches.length){
     report.status='already_published';step('duplicate_existing', {reason:'R2 already holds target episode or C ID'});
   }else{
     const [seriesList,readings,vocabularies,quizzes,series]=await Promise.all([
@@ -83,7 +87,7 @@ try{
       mustRead(base+'vocabulary.json'),mustRead(base+'quiz.json'),mustRead(base+'series.json')
     ]);
     if(!Array.isArray(seriesList)||!seriesList.some(x=>x.seriesId===out.seriesId))throw Error('Series absent from official R2 series index');
-    if(Math.max(0,...episodes.map(e=>Number(e.episodeId)||0))+1!==out.episodeNumber)throw Error('Episode sequence not append-only');
+    if(Math.max(0,...episodes.map(e=>Number(e.episodeId)||0))+1!==out.episodeNumber)throw Error('R2 target episode is absent but earlier episode index is incomplete; refusing to fabricate missing episodes. Restore prior episodes before publishing target.');
     step('r2_current_index_checked',{existingEpisodes:episodes.length});
     const player=await readPlayer(id,fetch);
     if(!isEpisodeMatch(player.item.cont_title,out.title))throw Error('Official player title mismatch '+player.item.cont_title);
