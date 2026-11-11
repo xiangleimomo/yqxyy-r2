@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 2,
+  "date": "2026-11-11",
+  "status": "checked",
+  "workflowRunId": "43023783919",
+  "privateArtifactName": "littlefox-source-43023783919",
+  "items": [
+    {
+      "seriesId": "three-kingdoms",
+      "episodeNumber": 14,
+      "title": "Eighteen Armies",
+      "level": 5,
+      "status": "already_published"
+    }
+  ],
+  "errors": []
+}
