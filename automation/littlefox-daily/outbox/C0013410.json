@@ -1,0 +1,500 @@
+{
+  "schemaVersion": 1,
+  "status": "ready_for_publish",
+  "reviewStatus": "approved",
+  "seriesId": "three-kingdoms",
+  "episodeNumber": 14,
+  "contentId": "C0013410",
+  "title": "Eighteen Armies",
+  "level": 5,
+  "releaseDate": "2026-11-11",
+  "officialSourceUrls": {
+    "textOriginal": "https://cn.littlefox.com/cn/supplement/org/C0013410",
+    "caption": "https://cdn.littlefox.com/contents/caption/C0013410.xml",
+    "storybook": "https://res.littlefox.com/en/supplement/load_pdf/C0013410"
+  },
+  "sourceVerification": {
+    "englishText": true,
+    "storybook": true,
+    "storybookMethod": "HEAD HTTP 200",
+    "subtitleXml": true,
+    "episodeTitleMatched": true,
+    "workflowRunId": "43029246741",
+    "sourceArtifactName": "littlefox-source-43029246741"
+  },
+  "captionMetadata": {
+    "cueCount": 57,
+    "firstCueStart": 0,
+    "lastCueEnd": 363.4
+  },
+  "lesson": {
+    "themeZh": "群雄联合与勇气",
+    "learningObjectivesZh": [
+      "解释曹操联合诸侯的目的",
+      "概述十八路军队集结和董卓的应对",
+      "分析关羽主动请战及温酒的意义"
+    ],
+    "sections": [
+      {
+        "id": "s1",
+        "title": "A Call to Resist",
+        "titleZh": "讨伐董卓的号召",
+        "paragraphIds": [
+          "p1",
+          "p2",
+          "p3",
+          "p4"
+        ],
+        "startSeconds": 0,
+        "endSeconds": 75.2,
+        "summaryZh": "曹操假借皇帝名义发出讨伐董卓的诏书，袁绍响应。",
+        "focus": [
+          "story comprehension",
+          "cause and effect"
+        ]
+      },
+      {
+        "id": "s2",
+        "title": "The Eighteen Armies",
+        "titleZh": "十八路诸侯集结",
+        "paragraphIds": [
+          "p5",
+          "p6",
+          "p7",
+          "p8",
+          "p9",
+          "p10",
+          "p11",
+          "p12",
+          "p13"
+        ],
+        "startSeconds": 75.2,
+        "endSeconds": 173.7,
+        "summaryZh": "刘备与关羽、张飞加入盟军，十八支军队推举袁绍为首领。",
+        "focus": [
+          "story comprehension",
+          "cause and effect"
+        ]
+      },
+      {
+        "id": "s3",
+        "title": "Dong Zhuo Chooses His General",
+        "titleZh": "董卓派出华雄",
+        "paragraphIds": [
+          "p14",
+          "p15",
+          "p16",
+          "p17",
+          "p18",
+          "p19",
+          "p20",
+          "p21"
+        ],
+        "startSeconds": 173.7,
+        "endSeconds": 248.5,
+        "summaryZh": "董卓得知盟军逼近洛阳，拒绝吕布请战，派华雄迎敌。",
+        "focus": [
+          "story comprehension",
+          "cause and effect"
+        ]
+      },
+      {
+        "id": "s4",
+        "title": "A Battle Without a Winner",
+        "titleZh": "难分胜负的战斗",
+        "paragraphIds": [
+          "p22",
+          "p23",
+          "p24",
+          "p25",
+          "p26",
+          "p27",
+          "p28"
+        ],
+        "startSeconds": 248.5,
+        "endSeconds": 306.6,
+        "summaryZh": "盟军与华雄部队激战却无法突破，诸侯商议对策。",
+        "focus": [
+          "story comprehension",
+          "cause and effect"
+        ]
+      },
+      {
+        "id": "s5",
+        "title": "Guan Yu's Promise",
+        "titleZh": "关羽请战与温酒",
+        "paragraphIds": [
+          "p29",
+          "p30",
+          "p31",
+          "p32",
+          "p33"
+        ],
+        "startSeconds": 306.6,
+        "endSeconds": 363.4,
+        "summaryZh": "关羽主动要求单挑华雄，曹操递上温酒，关羽表示回来再喝。",
+        "focus": [
+          "story comprehension",
+          "cause and effect"
+        ]
+      }
+    ]
+  },
+  "sections": [
+    {
+      "id": "s1",
+      "title": "A Call to Resist",
+      "titleZh": "讨伐董卓的号召",
+      "paragraphIds": [
+        "p1",
+        "p2",
+        "p3",
+        "p4"
+      ],
+      "startSeconds": 0,
+      "endSeconds": 75.2,
+      "summaryZh": "曹操假借皇帝名义发出讨伐董卓的诏书，袁绍响应。",
+      "focus": [
+        "story comprehension",
+        "cause and effect"
+      ]
+    },
+    {
+      "id": "s2",
+      "title": "The Eighteen Armies",
+      "titleZh": "十八路诸侯集结",
+      "paragraphIds": [
+        "p5",
+        "p6",
+        "p7",
+        "p8",
+        "p9",
+        "p10",
+        "p11",
+        "p12",
+        "p13"
+      ],
+      "startSeconds": 75.2,
+      "endSeconds": 173.7,
+      "summaryZh": "刘备与关羽、张飞加入盟军，十八支军队推举袁绍为首领。",
+      "focus": [
+        "story comprehension",
+        "cause and effect"
+      ]
+    },
+    {
+      "id": "s3",
+      "title": "Dong Zhuo Chooses His General",
+      "titleZh": "董卓派出华雄",
+      "paragraphIds": [
+        "p14",
+        "p15",
+        "p16",
+        "p17",
+        "p18",
+        "p19",
+        "p20",
+        "p21"
+      ],
+      "startSeconds": 173.7,
+      "endSeconds": 248.5,
+      "summaryZh": "董卓得知盟军逼近洛阳，拒绝吕布请战，派华雄迎敌。",
+      "focus": [
+        "story comprehension",
+        "cause and effect"
+      ]
+    },
+    {
+      "id": "s4",
+      "title": "A Battle Without a Winner",
+      "titleZh": "难分胜负的战斗",
+      "paragraphIds": [
+        "p22",
+        "p23",
+        "p24",
+        "p25",
+        "p26",
+        "p27",
+        "p28"
+      ],
+      "startSeconds": 248.5,
+      "endSeconds": 306.6,
+      "summaryZh": "盟军与华雄部队激战却无法突破，诸侯商议对策。",
+      "focus": [
+        "story comprehension",
+        "cause and effect"
+      ]
+    },
+    {
+      "id": "s5",
+      "title": "Guan Yu's Promise",
+      "titleZh": "关羽请战与温酒",
+      "paragraphIds": [
+        "p29",
+        "p30",
+        "p31",
+        "p32",
+        "p33"
+      ],
+      "startSeconds": 306.6,
+      "endSeconds": 363.4,
+      "summaryZh": "关羽主动要求单挑华雄，曹操递上温酒，关羽表示回来再喝。",
+      "focus": [
+        "story comprehension",
+        "cause and effect"
+      ]
+    }
+  ],
+  "vocabulary": [
+    {
+      "word": "warlords",
+      "meaningZh": "军阀",
+      "example": "The warlords gathered their soldiers.",
+      "exampleZh": "军阀们集结士兵。",
+      "paragraphIds": [
+        "p1"
+      ],
+      "sourceContentId": "C0013410"
+    },
+    {
+      "word": "overthrow",
+      "meaningZh": "推翻",
+      "example": "The generals planned to overthrow the ruler.",
+      "exampleZh": "将军们计划推翻统治者。",
+      "paragraphIds": [
+        "p2"
+      ],
+      "sourceContentId": "C0013410"
+    },
+    {
+      "word": "edict",
+      "meaningZh": "诏书",
+      "example": "An edict called for the armies to unite.",
+      "exampleZh": "一道诏书号召各军联合。",
+      "paragraphIds": [
+        "p3"
+      ],
+      "sourceContentId": "C0013410"
+    },
+    {
+      "word": "magistrate",
+      "meaningZh": "地方官",
+      "example": "He became the magistrate of the county.",
+      "exampleZh": "他成为该县的地方官。",
+      "paragraphIds": [
+        "p5"
+      ],
+      "sourceContentId": "C0013410"
+    },
+    {
+      "word": "loyalty",
+      "meaningZh": "忠诚",
+      "example": "The general valued his soldier's loyalty.",
+      "exampleZh": "将军看重士兵的忠诚。",
+      "paragraphIds": [
+        "p16"
+      ],
+      "sourceContentId": "C0013410"
+    },
+    {
+      "word": "outnumbered",
+      "meaningZh": "人数处于劣势",
+      "example": "The defenders were outnumbered.",
+      "exampleZh": "守军人数处于劣势。",
+      "paragraphIds": [
+        "p27"
+      ],
+      "sourceContentId": "C0013410"
+    },
+    {
+      "word": "single combat",
+      "meaningZh": "单挑",
+      "example": "The warrior asked for single combat.",
+      "exampleZh": "武士请求单挑。",
+      "paragraphIds": [
+        "p29"
+      ],
+      "sourceContentId": "C0013410"
+    },
+    {
+      "word": "oath brother",
+      "meaningZh": "结义兄弟",
+      "example": "He trusted his oath brother.",
+      "exampleZh": "他信任自己的结义兄弟。",
+      "paragraphIds": [
+        "p31"
+      ],
+      "sourceContentId": "C0013410"
+    }
+  ],
+  "quiz": {
+    "questions": [
+      {
+        "id": "q1",
+        "type": "single-choice",
+        "category": "reading",
+        "question": "Why did Cao Cao send an imperial edict to the warlords?",
+        "options": [
+          {
+            "key": "A",
+            "text": "To invite them to a feast."
+          },
+          {
+            "key": "B",
+            "text": "To persuade them to help overthrow Dong Zhuo."
+          },
+          {
+            "key": "C",
+            "text": "To announce that he was leaving China."
+          },
+          {
+            "key": "D",
+            "text": "To ask them to fight the Yellow Turbans."
+          }
+        ],
+        "answer": "B",
+        "explanation": "曹操伪造皇帝办公室发出的诏书，是为了联合各路军阀推翻董卓、解救皇帝。",
+        "source": "editorial-official-read",
+        "evidence": {
+          "paragraphIds": [
+            "p2"
+          ],
+          "sourceContentId": "C0013410"
+        }
+      },
+      {
+        "id": "q2",
+        "type": "single-choice",
+        "category": "reading",
+        "question": "Why did Liu Bei decide to join Cao Cao's forces?",
+        "options": [
+          {
+            "key": "A",
+            "text": "He wanted to become the leader of all the armies."
+          },
+          {
+            "key": "B",
+            "text": "He was ordered to protect Dong Zhuo."
+          },
+          {
+            "key": "C",
+            "text": "He believed Emperor Xian needed help."
+          },
+          {
+            "key": "D",
+            "text": "He wanted to leave Pingyuan to become a merchant."
+          }
+        ],
+        "answer": "C",
+        "explanation": "刘备听到诏书后担心皇帝安危，明确表示必须加入曹操帮助皇帝。",
+        "source": "editorial-official-read",
+        "evidence": {
+          "paragraphIds": [
+            "p8"
+          ],
+          "sourceContentId": "C0013410"
+        }
+      },
+      {
+        "id": "q3",
+        "type": "single-choice",
+        "category": "reading",
+        "question": "Whom did Dong Zhuo choose to fight the allied armies first?",
+        "options": [
+          {
+            "key": "A",
+            "text": "Hua Xiong"
+          },
+          {
+            "key": "B",
+            "text": "Lu Bu"
+          },
+          {
+            "key": "C",
+            "text": "Yuan Shao"
+          },
+          {
+            "key": "D",
+            "text": "Gongsun Zan"
+          }
+        ],
+        "answer": "A",
+        "explanation": "虽然吕布主动请战，董卓却认为无需出动最强武将，决定派华雄迎敌。",
+        "source": "editorial-official-read",
+        "evidence": {
+          "paragraphIds": [
+            "p20"
+          ],
+          "sourceContentId": "C0013410"
+        }
+      },
+      {
+        "id": "q4",
+        "type": "single-choice",
+        "category": "reading",
+        "question": "What problem did the allied armies face after the battle?",
+        "options": [
+          {
+            "key": "A",
+            "text": "They had lost their camp to Dong Zhuo."
+          },
+          {
+            "key": "B",
+            "text": "Their leader had surrendered."
+          },
+          {
+            "key": "C",
+            "text": "They could not find the road to Luoyang."
+          },
+          {
+            "key": "D",
+            "text": "They could not break through Hua Xiong's forces."
+          }
+        ],
+        "answer": "D",
+        "explanation": "双方激战后没有胜者，袁绍指出盟军无法突破华雄的部队。",
+        "source": "editorial-official-read",
+        "evidence": {
+          "paragraphIds": [
+            "p26"
+          ],
+          "sourceContentId": "C0013410"
+        }
+      },
+      {
+        "id": "q5",
+        "type": "single-choice",
+        "category": "reading",
+        "question": "Why did Guan Yu leave Cao Cao's warm wine untouched?",
+        "options": [
+          {
+            "key": "A",
+            "text": "He thought the wine was poisoned."
+          },
+          {
+            "key": "B",
+            "text": "He promised to return before it grew cold."
+          },
+          {
+            "key": "C",
+            "text": "He wanted Yuan Shao to drink it instead."
+          },
+          {
+            "key": "D",
+            "text": "He had already finished the battle."
+          }
+        ],
+        "answer": "B",
+        "explanation": "关羽自信能够很快击败华雄，因此让曹操先把温酒放在桌上，等他回来再喝。",
+        "source": "editorial-official-read",
+        "evidence": {
+          "paragraphIds": [
+            "p33"
+          ],
+          "sourceContentId": "C0013410"
+        }
+      }
+    ]
+  },
+  "reviewNotes": "按官方英文33段、57条字幕独立编制，5题覆盖起因、联盟、董卓决策、战局及关羽请战。此集R2已存在，提交用于验证重复保护，不覆盖已有课程。"
+}
