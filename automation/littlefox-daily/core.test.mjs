@@ -250,3 +250,17 @@ test('C ID resolves from official catalog and matching player title before video
  assert.equal(meta.video,null);
  await assert.rejects(readPlayer('C0013999',http),/no video URL/);
 });
+
+test('pre-release exact official catalog and English Text can confirm C ID with no player metadata',async()=>{
+ const {identifyCId}=await import('./core.mjs');
+ const paragraphs=['First English line is readable.','Second English line is readable.','Third English line is readable.','Fourth English line is readable.'];
+ const http=async url=>({
+   ok:!url.includes('player'),
+   text:async()=>url.includes('contents_list_v2')
+      ?'<span data-contname="Eighteen Armies" data-fcid="C0013410"></span>'
+      :url.includes('/supplement/org/')
+       ?paragraphs.map(t=>'<p>'+t+'</p>').join('')
+       :''
+ });
+ assert.equal(await identifyCId({seriesId:'three-kingdoms',seriesEpisodeNumber:14,title:'Eighteen Armies'},[],http),'C0013410');
+});
