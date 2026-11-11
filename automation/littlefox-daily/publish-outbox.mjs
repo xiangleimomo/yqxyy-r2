@@ -46,7 +46,9 @@ try{
     // An earlier video-only repair accidentally appended a literal escaped
     // newline to JSON. Recover only from an explicitly selected R2 backup.
     const key=req.recoverBackupKey;
-    if(req.repairVideo!==true||!/^data\\/__littlefox-sync\\/backups\\/video-repair-C\\d{7}-[^/]+\\/three-kingdoms\\/episodes\\.json$/.test(key||''))
+    if(req.repairVideo!==true||typeof key!=='string'||
+       !key.startsWith('data/__littlefox-sync/backups/video-repair-'+id+'-')||
+       !key.endsWith('/'+out.seriesId+'/episodes.json')||key.includes('..'))
       throw Error('R2 episode index invalid; explicit trusted backup key required');
     const saved=await store.get(key);
     if(saved===null)throw Error('Requested R2 recovery backup missing');
