@@ -136,8 +136,17 @@ function officialTalkBlocks(html, section='original_cont_box') {
   return parts;
 }
 export function textParagraphs(html){
-  const talk=officialTalkBlocks(html);
-  if(talk.length>=4 && talk.every(t=>/[a-z]/i.test(t)))return talk.map((text,i)=>({id:`p${i+1}`,text,translation:''}));
+  const renderedTalk=officialTalkBlocks(html);
+  // Official /org sometimes renders the same reading in two identical panels.
+  // Collapse only an exact duplicate half; never merge merely similar text.
+  const half=renderedTalk.length/2;
+  const talk=renderedTalk.length>=8 && Number.isInteger(half) &&
+    renderedTalk.slice(0,half).every((line,i)=>line===renderedTalk[i+half])
+      ?renderedTalk.slice(0,half):renderedTalk;
+  // Punctuation-only talk nodes are visual separators, not bilingual paragraphs.
+  // Keep all substantive English lines in original order for exact /trans checks.
+  const englishTalk=talk.filter(t=>/[a-z]/i.test(t) && !/[\u3400-\u9fff]/u.test(t));
+  if(englishTalk.length>=4)return englishTalk.map((text,i)=>({id:`p${i+1}`,text,translation:''}));
   // Fallback for a verified plain <p> format in editions without .talk nodes.
   const source=String(html).replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'').replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi,'');
   const scoped=source.match(/<div\b[^>]*class=["'][^"']*\boriginal_cont_box\b[^"']*["'][^>]*>([\s\S]*?)(?:<div\b[^>]*class=["'][^"']*\boriginal_cont_box2\b|$)/i)?.[1] || source;
