@@ -4,7 +4,7 @@
  */
 import fs from 'node:fs/promises';
 import {execFileSync} from 'node:child_process';
-import {makeR2,readPlayer,isEpisodeMatch,verifyPlaylist,parseCaptions,bilingualTextParagraphs,ORIGINAL_TEXT,TRANSLATED_TEXT,checkQuiz,prepareUpdate} from './core.mjs';
+import {makeR2,readPlayer,isEpisodeMatch,verifyPlaylist,parseCaptions,textParagraphs,ORIGINAL_TEXT,checkQuiz,prepareUpdate} from './core.mjs';
 
 const checkedPath='automation/littlefox-daily/publish-request.json';
 let req;
@@ -29,9 +29,9 @@ const out=JSON.parse(await fs.readFile(sourceFile,'utf8'));
 if(out.schemaVersion!==1||out.contentId!==id||out.reviewStatus!=='approved'||out.status!=='ready_for_publish')throw Error('Not an approved V2 outbox');
 if(!/^[a-z0-9-]+$/.test(out.seriesId||'')||!Number.isSafeInteger(out.episodeNumber)||out.episodeNumber<1||Number(out.level)<0)throw Error('Invalid series, level or episode');
 if(typeof out.title!=='string'||out.title.length<3)throw Error('Missing verified title');
-const want={textOriginal:ORIGINAL_TEXT(id),textTranslated:TRANSLATED_TEXT(id),caption:'https://cdn.littlefox.com/contents/caption/'+id+'.xml',storybook:'https://res.littlefox.com/en/supplement/load_pdf/'+id};
+const want={textOriginal:ORIGINAL_TEXT(id),caption:'https://cdn.littlefox.com/contents/caption/'+id+'.xml',storybook:'https://res.littlefox.com/en/supplement/load_pdf/'+id};
 for(const [key,url] of Object.entries(want))if(out.officialSourceUrls?.[key]!==url)throw Error('Official URL does not match '+key);
-if(!Object.values(['englishText','chineseText','storybook','subtitleXml','episodeTitleMatched']).every(k=>out.sourceVerification?.[k]===true))throw Error('Source verification flags missing');
+if(!Object.values(['englishText','storybook','subtitleXml','episodeTitleMatched']).every(k=>out.sourceVerification?.[k]===true))throw Error('Source verification flags missing');
 const report={contentId:id,seriesId:out.seriesId,episodeNumber:out.episodeNumber,requestedPublish:req.publish,checkedAt:new Date().toISOString(),status:'checking',stages:[]};
 const step=(name,details={})=>report.stages.push({name,...details});
 const get=async(url,opts={})=>{const r=await fetch(url,{...opts,signal:AbortSignal.timeout(25000)});if(!r.ok)throw Error('Official '+new URL(url).hostname+' HTTP '+r.status);return r;};
@@ -54,9 +54,9 @@ try{
     if(!isEpisodeMatch(player.item.cont_title,out.title))throw Error('Official player title mismatch '+player.item.cont_title);
     const video=await verifyPlaylist(player.video,fetch);
     step('official_video_verified',{host:new URL(video).hostname});
-    const [er,zr,cr,pdf]=await Promise.all([get(want.textOriginal),get(want.textTranslated),get(want.caption),get(want.storybook,{method:'HEAD'})]);
-    const [en,zh,xml]=await Promise.all([er.text(),zr.text(),cr.text()]);
-    const paragraphs=bilingualTextParagraphs(en,zh);
+    const [er,cr,pdf]=await Promise.all([get(want.textOriginal),get(want.caption),get(want.storybook,{method:'HEAD'})]);
+    const [en,xml]=await Promise.all([er.text(),cr.text()]);
+    const paragraphs=textParagraphs(en);
     const cues=parseCaptions(xml);
     if(paragraphs.length<3||cues.length<3)throw Error('Official source lacks sufficient paragraphs or captions');
     if(out.captionMetadata.cueCount!==cues.length)throw Error('XML cue count drifted');
@@ -77,7 +77,7 @@ try{
     if(!Array.isArray(out.sections)||out.sections.length<2||out.sections.some(s=>!Array.isArray(s.paragraphIds)||!s.paragraphIds.every(pid=>paragraphs.some(p=>p.id===pid))))throw Error('Invalid V2 story sections');
     step('v2_curriculum_and_quiz_checked',{words:vocabulary.length,questions:questions?.length||0,sections:out.sections.length});
     const release={title:out.title,seriesEpisodeNumber:out.episodeNumber,date:out.releaseDate};
-    const prepared=prepareUpdate({seriesId:out.seriesId,release,id,video,cues,paragraphs,course:{vocabulary,quiz:Number(out.level)>=3?{questions}:null},episodes,readings,vocabularies,quizzes,series,seriesList,sourceUrls:{text:want.textOriginal,textTranslation:want.textTranslated,storybook:want.storybook},captionXml:xml});
+    const prepared=prepareUpdate({seriesId:out.seriesId,release,id,video,cues,paragraphs,course:{vocabulary,quiz:Number(out.level)>=3?{questions}:null},episodes,readings,vocabularies,quizzes,series,seriesList,sourceUrls:{text:want.textOriginal,storybook:want.storybook},captionXml:xml});
     if(!prepared)throw Error('Unexpected duplicate after preflight');
     const files=prepared.files;
     step('r2_patch_prepared',{files:Object.keys(files).length});
