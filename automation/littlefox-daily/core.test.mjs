@@ -237,3 +237,16 @@ test('duplicated /org reading panels match mixed grouped /trans talks exactly',a
  const bad=trans.replace('将军走进了房间。','其他句子的中文翻译。').replace('The leader called for help.','Different English anchor.');
  assert.throws(()=>bilingualTextParagraphs(org,bad),/align|incomplete|anchor|translation|differs/);
 });
+
+test('C ID resolves from official catalog and matching player title before video URL is published',async()=>{
+ const {identifyCId,readPlayer}=await import('./core.mjs');
+ const http=async(url)=>({ok:true,text:async()=>url.includes('contents_list_v2')
+  ?'<div data-contname="New Story" data-fcid="C0013999"></div>'
+  :'var contents_info = [{"fc_id":"C0013999","cont_title":"New Story","video_url":""}];'});
+ const release={seriesId:'little-fox-example-fs0183',seriesEpisodeNumber:1,title:'New Story'};
+ assert.equal(await identifyCId(release,[],http),'C0013999');
+ const meta=await readPlayer('C0013999',http,false);
+ assert.equal(meta.item.cont_title,'New Story');
+ assert.equal(meta.video,null);
+ await assert.rejects(readPlayer('C0013999',http),/no video URL/);
+});
