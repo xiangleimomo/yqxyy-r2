@@ -1,6 +1,7 @@
 {
   "mode": "reviewed_littlefox_v2",
-  "contentId": "C0013536",
+  "contentId": "C0013410",
   "publish": true,
-  "reason": "Approved V2 lesson; dry-run passed on GitHub Actions run 42811948306. Publish exactly this previously verified new episode and read back."
+  "repairVideo": true,
+  "reason": "User requested publishing official verified video for Three Kingdoms episode 14 into R2. Inspect actual R2 state, repair existing episode video only or publish missing approved V2 episode if append-only; backup and readback."
 }
