@@ -235,5 +235,5 @@ test('duplicated /org reading panels match mixed grouped /trans talks exactly',a
  assert.deepEqual(textParagraphs(org).map(x=>x.text),en);
  assert.deepEqual(bilingualTextParagraphs(org,trans).map(x=>x.translation),zh);
  const bad=trans.replace('将军走进了房间。','其他句子的中文翻译。').replace('The leader called for help.','Different English anchor.');
- assert.throws(()=>bilingualTextParagraphs(org,bad),/align|incomplete|anchor|translation/);
+ assert.throws(()=>bilingualTextParagraphs(org,bad),/align|incomplete|anchor|translation|differs/);
 });
