@@ -40,7 +40,21 @@ try{
   const base='data/'+out.seriesId+'/';
   const mustRead=async key=>{const val=await store.get(key);if(val===null)throw Error('Missing R2 '+key);return JSON.parse(val)};
   const episodeIndexRaw=await store.get(base+'episodes.json');
-  const episodes=episodeIndexRaw===null?[]:JSON.parse(episodeIndexRaw);
+  let episodes;
+  try { episodes=episodeIndexRaw===null?[]:JSON.parse(episodeIndexRaw); }
+  catch(parseError){
+    // An earlier video-only repair accidentally appended a literal escaped
+    // newline to JSON. Recover only from an explicitly selected R2 backup.
+    const key=req.recoverBackupKey;
+    if(req.repairVideo!==true||!/^data\\/__littlefox-sync\\/backups\\/video-repair-C\\d{7}-[^/]+\\/three-kingdoms\\/episodes\\.json$/.test(key||''))
+      throw Error('R2 episode index invalid; explicit trusted backup key required');
+    const saved=await store.get(key);
+    if(saved===null)throw Error('Requested R2 recovery backup missing');
+    episodes=JSON.parse(saved);
+    if(!Array.isArray(episodes)||!episodes.some(e=>Number(e.episodeId)===out.episodeNumber&&
+       (e.sourceContentId||e.storyBook?.contentId)===id))throw Error('Recovery backup missing matching C ID');
+    step('r2_recovered_from_verified_backup',{key});
+  }
   if(!Array.isArray(episodes))throw Error('Invalid R2 episode index');
   const existingMatches=episodes.map((e,i)=>({e,i})).filter(({e})=>Number(e.episodeId)===out.episodeNumber||e.sourceContentId===id||e.storyBook?.contentId===id);
   step('r2_real_state_checked',{episodeIndexExists:episodeIndexRaw!==null,existingEpisodes:episodes.length,targetExists:existingMatches.length>0});
@@ -68,7 +82,7 @@ try{
       new Date().toISOString().replace(/[:.]/g,'-')+'/'+target.slice(5);
     await store.put(backup,previous);
     step('r2_episodes_backup_written',{key:backup});
-    const next=JSON.stringify(modified,null,2)+'\\n';
+    const next=JSON.stringify(modified,null,2)+'\n';
     await store.put(target,next);
     const got=await store.get(target);
     if(got!==next)throw Error('R2 video repair readback mismatch');
