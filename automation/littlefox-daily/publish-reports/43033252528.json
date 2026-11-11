@@ -1,0 +1,56 @@
+{
+  "contentId": "C0013410",
+  "seriesId": "three-kingdoms",
+  "episodeNumber": 14,
+  "requestedPublish": true,
+  "checkedAt": "2026-11-11T13:53:43.287Z",
+  "status": "published_verified",
+  "stages": [
+    {
+      "name": "r2_recovered_from_verified_backup",
+      "key": "data/__littlefox-sync/backups/video-repair-C0013410-2026-11-11T13-50-28-106Z/three-kingdoms/episodes.json"
+    },
+    {
+      "name": "r2_real_state_checked",
+      "episodeIndexExists": true,
+      "existingEpisodes": 14,
+      "targetExists": true
+    },
+    {
+      "name": "target_mode",
+      "mode": "full_republish",
+      "previousEntry": true
+    },
+    {
+      "name": "r2_current_index_checked",
+      "existingEpisodes": 14
+    },
+    {
+      "name": "official_video_verified",
+      "host": "cdn.littlefox.com"
+    },
+    {
+      "name": "official_text_xml_pdf_verified",
+      "paragraphs": 33,
+      "cues": 57,
+      "storybookStatus": 200
+    },
+    {
+      "name": "v2_curriculum_and_quiz_checked",
+      "words": 8,
+      "questions": 5,
+      "sections": 5
+    },
+    {
+      "name": "r2_patch_prepared",
+      "files": 8
+    },
+    {
+      "name": "backups_written"
+    },
+    {
+      "name": "r2_written_and_readback",
+      "objects": 8
+    }
+  ]
+}
