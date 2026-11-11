@@ -2,15 +2,15 @@
   "schemaVersion": 2,
   "date": "2026-11-11",
   "status": "checked",
-  "workflowRunId": "43034573003",
-  "privateArtifactName": "littlefox-source-43034573003",
+  "workflowRunId": "43034769323",
+  "privateArtifactName": "littlefox-source-43034769323",
   "items": [
     {
       "seriesId": "three-kingdoms",
       "episodeNumber": 14,
       "title": "Eighteen Armies",
       "level": 5,
-      "status": "blocked",
+      "status": "ready_for_chatgpt",
       "contentId": "C0013410",
       "contentIdVerified": true,
       "video": "https://cdn.littlefox.com/contents_5/hls/1080/cf02556235/17939317418db7b8a002edf0b81837b1d347a3657c/stream.m3u8?_=1793931750",
@@ -20,7 +20,7 @@
       "textOriginal": "https://cn.littlefox.com/cn/supplement/org/C0013410",
       "paragraphCount": 33,
       "videoStatus": "verified",
-      "error": "player is not defined"
+      "sourceArtifact": true
     }
   ],
   "errors": []
