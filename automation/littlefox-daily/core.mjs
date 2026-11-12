@@ -49,7 +49,7 @@ export function scheduleReleases(html, date, seriesList) {
     const numbered=tail.match(/(?:^|[\s,;])0?(\d+)\s*[:：]\s*(.+)$/);
     const m=labeled||numbered;
     if(!m||!m[2]?.trim())return null;
-    return {number:Number(m[1]),title:m[2].trim().replace(/^[-,:：\s]+/,'')};
+    return {number:Number(m[1]),title:m[2].trim().replace(/^[-,:：\s]+/,''),keyword:(String(seriesTitle)+' '+tail).replace(/\s+/g,' ').trim()};
   };
   for(const cell of cells){
     if(!hasDay(cell))continue;
@@ -66,7 +66,7 @@ export function scheduleReleases(html, date, seriesList) {
       const directIds=[...cell.html.matchAll(/C\d{7}/g)].map(m=>m[0]);
       matches.push({
         seriesId:series.seriesId,seriesTitle:series.title,level:Number(series.level),
-        calendarEpisodeNumber:parsed.number,title:parsed.title,date:date.date,
+        calendarEpisodeNumber:parsed.number,title:parsed.title,calendarKeyword:parsed.keyword,date:date.date,
         directId:[...new Set(directIds)].length===1?directIds[0]:null
       });
       break;
@@ -316,7 +316,7 @@ export async function searchBingOfficialTextId(release,http=fetch){
   if(!title||!Number.isInteger(chapter)||chapter<1)throw Error('Missing official sub-series chapter/title for Bing C-ID search');
   // Little Fox Text pages are indexed by the displayed sub-series title, e.g.
   // "The New Heroes 13: Racing the Wind", NOT the absolute R2 episode number 213.
-  const exactKeyword=fullSeries+' '+chapter+': '+title;
+  const exactKeyword=String(release.calendarKeyword||(fullSeries+' '+chapter+': '+title)).replace(/\s+/g,' ').trim();
   // Search the exact phrase shown in the official monthly calendar.
   const queries=[
     '"'+exactKeyword+'"',
