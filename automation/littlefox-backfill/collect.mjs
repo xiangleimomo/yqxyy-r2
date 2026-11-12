@@ -13,12 +13,12 @@ for(const target of request.items){
  const stage=(name,details={})=>row.stages.push({name,...details});
  try{
   if(!/^C\d{7}$/.test(target.contentId)||!/^little-fox-[a-z0-9-]+$/.test(target.seriesId)||!Number.isInteger(target.episodeNumber))throw Error('Invalid target metadata');
-  const [indexRaw,playerResult,textResponse,captionResponse]=await Promise.all([
+  const [indexRaw,playerResult,textResponse]=await Promise.all([
    store.get('data/'+target.seriesId+'/episodes.json'),
    readPlayer(target.contentId,fetch,false).catch(e=>({error:String(e.message||e)})),
-   get(ORIGINAL_TEXT(target.contentId)),
-   get('https://cdn.littlefox.com/contents/caption/'+target.contentId+'.xml')
+   get(ORIGINAL_TEXT(target.contentId))
   ]);
+  const captionResponse=await fetch('https://cdn.littlefox.com/contents/caption/'+target.contentId+'.xml',{signal:AbortSignal.timeout(25000)}).catch(e=>({ok:false,status:0,error:String(e.message||e)}));
   const episodes=JSON.parse(indexRaw||'[]');
   if(!Array.isArray(episodes))throw Error('R2 episodes.json is not an array');
   const playerTitle=playerResult?.item?.cont_title||null;
@@ -30,15 +30,24 @@ for(const target of request.items){
   const paragraphs=textParagraphs(englishHtml);
   if(paragraphs.length<3)throw Error('Official English Text paragraphs unavailable; '+textPageShape(englishHtml));
   stage('english_text',{paragraphCount:paragraphs.length});
-  const xml=await captionResponse.text();
-  const cues=parseCaptions(xml);
-  if(cues.length<3)throw Error('Official caption XML has fewer than 3 valid timed cues');
-  stage('caption_xml',{cueCount:cues.length});
-  let videoUrl=null,videoVerified=false;
+  const xml=captionResponse.ok?await captionResponse.text():'';
+  const cues=captionResponse.ok?parseCaptions(xml):[];
+  if(cues.length<3&&Number(target.level)>=3)throw Error('Official caption XML unavailable or has fewer than 3 valid timed cues; HTTP '+(captionResponse.status||0));
+  stage('caption_xml',{available:captionResponse.ok,cueCount:cues.length,httpStatus:captionResponse.status||0});
+  let videoUrl=null,videoVerified=false,mediaKind=null;
   if(playerResult?.video){
     videoUrl=playerResult.video;
-    try{videoUrl=await verifyPlaylist(videoUrl,fetch);videoVerified=true;}catch(e){stage('video_not_verified',{error:String(e.message||e)});}
-  }else stage('video_pending',{reason:playerResult?.error||'No player video URL'});
+    if(/\\.m3u8(?:$|[?#])/i.test(videoUrl)){
+      try{videoUrl=await verifyPlaylist(videoUrl,fetch);videoVerified=true;mediaKind='hls';}catch(e){stage('video_not_verified',{error:String(e.message||e)});}
+    }else{
+      try{
+        const mediaHost=new URL(videoUrl).hostname.toLowerCase();
+        const mediaHead=await fetch(videoUrl,{method:'HEAD',signal:AbortSignal.timeout(25000)});
+        if(/(^|\\.)littlefox\\.com$/.test(mediaHost)&&mediaHead.ok){videoVerified=true;mediaKind='direct-media';}
+        else stage('video_not_verified',{host:mediaHost,status:mediaHead.status});
+      }catch(e){stage('video_not_verified',{error:String(e.message||e)});}
+    }
+  }else stage('video_pending',{reason:playerResult?.error||'No player media URL'});
   const book=await get(src.storybookUrl,{method:'HEAD'}).catch(async e=>{
     const r=await fetch(src.storybookUrl,{headers:{Range:'bytes=0-7'},signal:AbortSignal.timeout(25000)});
     if(!r.ok)throw e;
@@ -47,8 +56,10 @@ for(const target of request.items){
   const pdfStatus=book.status;
   stage('storybook',{status:pdfStatus});
   const existing=episodes.filter(e=>Math.abs(Number(e.episodeId)-Number(target.episodeNumber))<=2||Number(e.episodeId)>=Math.max(0,...episodes.map(x=>Number(x.episodeId)||0))-2).map(e=>({episodeId:Number(e.episodeId),title:e.title||null,contentId:e.sourceContentId||e.storyBook?.contentId||null,videoType:e.video?.source||null,videoUrl:e.video?.hlsUrl||null,storybook:e.storyBook?.pdfUrl||null}));
-  Object.assign(src,{status:videoVerified?'ready_for_chatgpt':'awaiting_video',title:actualTitle,paragraphs,captionCues:cues,captionXml:xml,player:{title:playerTitle,videoUrl:playerResult?.video||null},videoUrl,videoVerified,storybookStatus:pdfStatus,verification:{englishText:true,captionXml:true,storybook:pdfStatus===200||pdfStatus===206||pdfStatus===405,episodeTitleMatched:!target.title||isEpisodeMatch(actualTitle,target.title),video:videoVerified},r2NearbyEpisodes:existing});
-  row.status=src.status;row.actualTitle=actualTitle;row.paragraphCount=paragraphs.length;row.captionCueCount=cues.length;row.videoVerified=videoVerified;row.storybookStatus=pdfStatus;
+  const songReady=Number(target.level)<3&&videoVerified&&(pdfStatus===200||pdfStatus===206||pdfStatus===405);
+  const ready=videoVerified&&cues.length>=3&&(pdfStatus===200||pdfStatus===206||pdfStatus===405);
+  Object.assign(src,{status:ready?'ready_for_chatgpt':songReady?'ready_for_song_review':videoVerified?'awaiting_caption_or_storybook':'awaiting_video',title:actualTitle,paragraphs,captionCues:cues,captionXml:xml||null,player:{title:playerTitle,videoUrl:playerResult?.video||null},videoUrl,videoVerified,mediaKind,storybookStatus:pdfStatus,verification:{englishText:true,captionXml:cues.length>=3,storybook:pdfStatus===200||pdfStatus===206||pdfStatus===405,episodeTitleMatched:!target.title||isEpisodeMatch(actualTitle,target.title),video:videoVerified},r2NearbyEpisodes:existing});
+  row.status=src.status;row.actualTitle=actualTitle;row.paragraphCount=paragraphs.length;row.captionCueCount=cues.length;row.videoVerified=videoVerified;row.mediaKind=mediaKind;row.storybookStatus=pdfStatus;
  }catch(e){row.status='blocked';row.error=String(e.message||e).slice(0,500);src.status='blocked';src.error=row.error;}
  output.items.push(src);report.items.push(row);
 }
