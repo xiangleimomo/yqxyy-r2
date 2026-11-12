@@ -119,7 +119,7 @@ test('Bing C-ID discovery rejects nonofficial links, mismatched titles and ambig
  const {searchBingOfficialTextId}=await import('./core.mjs');
  const release={seriesTitle:'Red Magic',calendarEpisodeNumber:14,title:'The Plot Thickens'};
  const bad=async()=>({ok:true,text:async()=>'<a href="https://evil.example/supplement/trans/C0013574">The Plot Thickens</a><a href="https://cn.littlefox.com/cn/supplement/trans/C0013575">A Different Story</a>'});
- await assert.rejects(searchBingOfficialTextId(release,bad),/No exact official/);
+ await assert.rejects(searchBingOfficialTextId(release,bad),/Bing found no unique official/);
  const ambiguous=async()=>({ok:true,text:async()=>'<a href="https://cn.littlefox.com/cn/supplement/trans/C0013574">The Plot Thickens</a><a href="https://cn.littlefox.com/cn/supplement/org/C0013575">The Plot Thickens</a>'});
  await assert.rejects(searchBingOfficialTextId(release,ambiguous),/multiple official Text C-IDs/);
 });
