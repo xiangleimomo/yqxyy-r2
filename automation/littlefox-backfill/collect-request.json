@@ -1,0 +1,39 @@
+{
+  "mode": "collect_historical_missing",
+  "publish": false,
+  "purpose": "Collect official sources only for trailing missing Little Fox episodes that can be appended without renumbering existing lessons. No R2 writes.",
+  "items": [
+    {
+      "seriesId": "little-fox-conversation-songs-2-srv01035",
+      "seriesTitle": "Conversation Songs 2",
+      "level": 0,
+      "episodeNumber": 36,
+      "contentId": "C0005362",
+      "title": "What Did You See?"
+    },
+    {
+      "seriesId": "little-fox-daisy-dolittle-fs0175",
+      "seriesTitle": "Daisy Dolittle",
+      "level": 5,
+      "episodeNumber": 37,
+      "contentId": "C0013549",
+      "title": null
+    },
+    {
+      "seriesId": "little-fox-red-magic-fs0059",
+      "seriesTitle": "Red Magic",
+      "level": 7,
+      "episodeNumber": 213,
+      "contentId": "C0013573",
+      "title": "Racing the Wind"
+    },
+    {
+      "seriesId": "little-fox-red-magic-fs0059",
+      "seriesTitle": "Red Magic",
+      "level": 7,
+      "episodeNumber": 214,
+      "contentId": "C0013574",
+      "title": "The Plot Thickens"
+    }
+  ]
+}
