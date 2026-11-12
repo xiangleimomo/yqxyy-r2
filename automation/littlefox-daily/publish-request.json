@@ -1,9 +1,8 @@
 {
   "mode": "reviewed_littlefox_v2",
-  "contentId": "C0013410",
+  "contentId": "C0013574",
   "publish": true,
-  "forceRepublish": true,
+  "forceRepublish": false,
   "repairVideo": false,
-  "recoverBackupKey": "data/__littlefox-sync/backups/video-repair-C0013410-2026-11-11T13-50-28-106Z/three-kingdoms/episodes.json",
-  "reason": "User explicitly requested complete overwrite of existing episode 14 in R2 as a true full workflow test. Recover valid episode index from exact backup; regenerate official video, English text, subtitle XML/VTT, reading, vocabulary and quiz; backup and read back all R2 objects."
+  "reason": "Historical backfill: publish already-reviewed Red Magic episode 214 only after episode 213 was independently published_verified. Append to the verified R2 tail; do not overwrite existing lessons or reindex earlier episodes."
 }
