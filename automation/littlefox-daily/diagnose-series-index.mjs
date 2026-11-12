@@ -3,7 +3,7 @@ import {makeR2} from './core.mjs';
 
 const request=JSON.parse(await fs.readFile('automation/littlefox-daily/r2-diagnostic-request.json','utf8'));
 if(!/^little-fox-[a-z0-9-]+$/.test(request.seriesId||''))throw new Error('Invalid seriesId');
-if(!/^C\\d{7}$/.test(request.contentId||''))throw new Error('Invalid contentId');
+if(!/^C\d{7}$/.test(request.contentId||''))throw new Error('Invalid contentId');
 const store=await makeR2(process.env,fetch);
 const key='data/'+request.seriesId+'/episodes.json';
 const raw=await store.get(key);
