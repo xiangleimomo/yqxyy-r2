@@ -8,5 +8,5 @@
     "title": "Racing the Wind",
     "level": 7
   },
-  "purpose": "Collection-only regression test for missing Red Magic absolute episode 213. Search Bing using the exact visible official Text keyword 'The New Heroes 13: Racing the Wind' (series sub-title + calendar chapter + story title), extract C-ID from official Little Fox Text URL, then collect source materials. No R2 writes."
+  "purpose": "Collection-only regression test for missing Red Magic absolute episode 213. Search Bing using the exact visible official Text keyword 'The New Heroes 13: Racing the Wind' (series sub-title + calendar chapter + story title), extract C-ID from official Little Fox Text URL, then collect source materials. No R2 writes. Retry exact official keyword with relative Bing redirect URL decoding fixed."
 }
