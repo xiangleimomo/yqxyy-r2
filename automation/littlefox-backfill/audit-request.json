@@ -1,0 +1,8 @@
+{
+  "mode": "read_only_historical_backfill_audit",
+  "scope": "all_littlefox_series_in_r2",
+  "compareAgainst": "official_full_series_catalogs",
+  "publish": false,
+  "writeToR2": false,
+  "createdAt": "2026-11-12"
+}
