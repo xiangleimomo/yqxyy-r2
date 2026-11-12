@@ -14,7 +14,8 @@ Pone is an optional large-file adapter (`pone.mjs`), not the destination for JSO
 > **AI credentials:** GitHub Models retired on July 30, 2026. For real V2 course generation, configure a separately billed GitHub Actions secret `LF_OPENAI_API_KEY` (or implement and verify another current provider). Without it, the pipeline fails closed and never publishes partial lessons.
 ## C ID lookup (2026-11-10)
 
-- Determine the officially scheduled series, episode number and title before resolving a C ID.
+- Use the monthly calendar only to identify the release date, series and title. Its `Chapter N` / local label is NOT necessarily the absolute episode number across a multi-arc series.
+- Resolve the exact title in the official full-series catalog (`contents_list_v2/FSxxxx`) and use that entry's one-based position as the canonical `seriesEpisodeNumber`. Keep the calendar's number separately as `calendarEpisodeNumber` for traceability. If the exact title cannot be found uniquely in the official catalog, stop; never silently substitute the calendar label.
 - Prefer a confirmed official first-episode Text C ID (or an unambiguous episode-1 entry in the official series catalog); calculate `firstCId + (episodeNumber - 1)`. The confirmed Happy Prince example is episode 1 `C0013521` -> episode 16 `C0013536`.
 - The official catalog/calendar may also provide the target C ID directly. Every candidate must be verified against the official player response and expected episode title; a successful HTTP response alone is insufficient.
 - If the first-episode path is unavailable or fails validation, use the latest earlier recorded episode in R2 `data/<seriesId>/episodes.json` and add the episode-number gap. No last-three-consecutive rule.
