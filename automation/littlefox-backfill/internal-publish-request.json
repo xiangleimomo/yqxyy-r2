@@ -19,5 +19,6 @@
     "C0006047",
     "C0013312"
   ],
-  "reason": "First dry-run all 16 manually authored course specs; no R2 writes. Existing daily episodes.json and Supabase progress remain untouched."
+  "reason": "First dry-run all 16 manually authored course specs; no R2 writes. Existing daily episodes.json and Supabase progress remain untouched.",
+  "retry": 1
 }
