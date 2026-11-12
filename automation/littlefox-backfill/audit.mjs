@@ -34,9 +34,9 @@ async function worker(){
    // the reliable key for deciding whether a lesson is already present in R2.
    const catalog=[],seenOfficial=new Set();
    for(const tag of catalogHtml.match(/<[^>]+>/g)||[]){
-    const id=tag.match(/\\bdata-fcid\\s*=\\s*["'](C\\d{7})["']/i)?.[1]?.toUpperCase();
+    const id=tag.match(/\bdata-fcid\s*=\s*["'](C\d{7})["']/i)?.[1]?.toUpperCase();
     if(!id||seenOfficial.has(id))continue;
-    const title=tag.match(/\\bdata-contname\\s*=\\s*["']([^"']+)["']/i)?.[1]||'';
+    const title=tag.match(/\bdata-contname\s*=\s*["']([^"']+)["']/i)?.[1]||'';
     catalog.push({id,title:title?title.replace(/&amp;/g,'&').replace(/&quot;/g,'"').trim():'',seriesEpisodeNumber:catalog.length+1});
     seenOfficial.add(id);
    }
@@ -88,8 +88,8 @@ const summary=[
 '- Official episodes: '+report.summary.officialEpisodes,
 '- Existing R2 episode rows: '+report.summary.r2Episodes,
 '- Missing episodes: '+report.summary.missingEpisodes,
-'- C-ID/title conflicts: '+report.summary.conflicts,
-'- Existing but incomplete lessons: '+report.summary.incompleteExisting,
+'- Episode-number mapping anomalies (reported separately): '+report.summary.mappingAnomalies,
+'- R2 content IDs absent from official catalog: '+report.summary.orphanR2ContentIds,\n'- Duplicate R2 content IDs: '+report.summary.duplicateR2ContentIds,\n'- R2 rows without a C-ID: '+report.summary.r2EpisodesWithoutContentId,
 '',
 'Missing episodes are determined by official C-ID membership, not by episode-number alignment. Mapping anomalies are reported separately and never auto-corrected. This audit performs GET requests only; it does not write to R2 or publish lessons.'
 ].join('\n');
