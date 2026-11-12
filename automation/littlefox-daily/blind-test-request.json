@@ -9,5 +9,5 @@
   },
   "rules": "One-time test of the revised monthly-calendar-first discovery and first-episode Text C-ID offset logic. Collect only verified official English Text, caption XML and Storybook/player metadata into private artifact and inbox. Do not publish to R2. If no exact official calendar row or first-episode anchor can be verified, mark blocked with diagnostics; never invent IDs or source content.",
   "r2Publishing": false,
-  "reason": "manual_calendar_first_regression_test_20261112_after_first_id_priority_and_test_fix"
+  "reason": "manual_calendar_first_regression_test_20261112_final_catalog_fallback_test_fix"
 }
