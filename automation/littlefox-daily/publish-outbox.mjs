@@ -59,7 +59,7 @@ try{
   }
   if(!Array.isArray(episodes))throw Error('Invalid R2 episode index');
   const existingMatches=episodes.map((e,i)=>({e,i})).filter(({e})=>Number(e.episodeId)===out.episodeNumber||e.sourceContentId===id||e.storyBook?.contentId===id);
-  step('r2_real_state_checked',{episodeIndexExists:episodeIndexRaw!==null,existingEpisodes:episodes.length,targetExists:existingMatches.length>0});
+  step('r2_real_state_checked',{episodeIndexExists:episodeIndexRaw!==null,existingEpisodes:episodes.length,latestEpisode:episodes.reduce((best,e)=>Number(e.episodeId)>Number(best?.episodeId||0)?{episodeId:Number(e.episodeId),title:e.title||null,contentId:e.sourceContentId||e.storyBook?.contentId||null}:best,null),targetExists:existingMatches.length>0,matchingEntries:existingMatches.map(({e})=>({episodeId:Number(e.episodeId),title:e.title||null,contentId:e.sourceContentId||e.storyBook?.contentId||null}))});
   if(req.repairVideo===true&&existingMatches.length>0&&!req.forceRepublish){
     // Explicitly requested video-only repair for an existing lesson. Never
     // rewrite learning materials, quiz, subtitles, or series/global indexes.
@@ -97,6 +97,10 @@ try{
     step('r2_video_only_written_and_verified',{episodeNumber:out.episodeNumber,videoUrl:video,changedEpisodeCount:1,untouchedEpisodeCount:episodes.length-1});
   }else if(existingMatches.length&&!req.forceRepublish){
     report.status='already_published';step('duplicate_existing', {reason:'R2 already holds target episode or C ID'});
+  }else if(!req.forceRepublish&&out.episodeNumber>Math.max(0,...episodes.map(e=>Number(e.episodeId)||0))+1){
+    const latest=Math.max(0,...episodes.map(e=>Number(e.episodeId)||0));
+    report.status='blocked_sequence_gap';
+    step('r2_sequence_gap',{latestR2Episode:latest,nextExpectedEpisode:latest+1,targetEpisode:out.episodeNumber,missingEpisodeNumbers:Array.from({length:out.episodeNumber-latest-1},(_,i)=>latest+i+1)});
   }else{
     const [seriesList,readings,vocabularies,quizzes,series]=await Promise.all([
       mustRead('data/series-list.json'), mustRead(base+'reading-lessons.json'),
