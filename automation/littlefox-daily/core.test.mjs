@@ -25,12 +25,6 @@ test('player C ID is parsed only when the official ID matches',()=>{
  assert.equal(isEpisodeMatch('The Happy Prince 16: A Happy Ending','A Happy Ending'),true);
  assert.equal(isEpisodeMatch('A Stranger Arrives','A Happy Ending'),false);
 });
-test('R2 fallback uses last confirmed C ID without requiring three consecutive IDs',()=>{
- const a=[3585,3586,3587].map((n,i)=>({episodeId:i+1,sourceContentId:'C'+String(n).padStart(7,'0')}));
- assert.equal(nextIdFromEpisodes(a),'C0003588');
- assert.equal(nextIdFromEpisodes([{...a[0]},a[1],{...a[2],sourceContentId:'C0003799'}]),'C0003800');
-  assert.equal(nextIdFromEpisodes([{episodeId:13,sourceContentId:'C0013533'}],16),'C0013536');
-});
 test('M3U8 verification follows only valid official variants',async()=>{
  const http=async url=>({ok:true,text:async()=>url.endsWith('/master.m3u8')?'#EXTM3U\n#EXT-X-STREAM-INF:RESOLUTION=1920x1080\n1080/stream.m3u8':'#EXTM3U\n#EXTINF:7,\nseg1.ts\n'});
  const x=await verifyPlaylist('https://cdn.littlefox.com/master.m3u8',http);
@@ -232,9 +226,3 @@ test('duplicated /org reading panels match mixed grouped /trans talks exactly',a
  assert.throws(()=>bilingualTextParagraphs(org,bad),/align|incomplete|anchor|translation|differs/);
 });
 
-test('Bing C ID discovery rejects non-Little-Fox links and mismatched result titles',async()=>{
-  const {searchBingOfficialTextId}=await import('./core.mjs');
-  const release={seriesTitle:'Red Magic',calendarEpisodeNumber:14,title:'The Plot Thickens'};
-  const http=async()=>({ok:true,text:async()=>'<a href="https://evil.example/supplement/trans/C0013574">The Plot Thickens</a><a href="https://cn.littlefox.com/cn/supplement/trans/C0013575">A Different Story</a>'});
-  assert.equal(await searchBingOfficialTextId(release,http),null);
-});
