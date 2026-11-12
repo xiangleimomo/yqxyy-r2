@@ -1,7 +1,13 @@
 {
-  "mode": "blind_source_discovery",
+  "mode": "calendar_indexed_episode_test",
   "date": "2026-11-12",
-  "rules": "Run today's real official-source collection: identify today's release and C ID from the official calendar and verified player/Text/captions; collect the private source artifact and inbox metadata only. Do not publish to R2 or modify website data.",
+  "target": {
+    "series": "Red Magic, The New Heroes",
+    "episodeNumber": 14,
+    "title": "The Plot Thickens",
+    "level": 7
+  },
+  "rules": "One-time test of the revised monthly-calendar-first discovery and first-episode Text C-ID offset logic. Collect only verified official English Text, caption XML and Storybook/player metadata into private artifact and inbox. Do not publish to R2. If no exact official calendar row or first-episode anchor can be verified, mark blocked with diagnostics; never invent IDs or source content.",
   "r2Publishing": false,
-  "reason": "manual_one_time_collection_20261112"
+  "reason": "manual_calendar_first_regression_test_20261112"
 }
