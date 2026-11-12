@@ -1,0 +1,42 @@
+name: Little Fox Historical Backfill Source Collection
+on:
+  push:
+    paths:
+      - 'automation/littlefox-backfill/collect-request.json'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: littlefox-historical-backfill-collection
+  cancel-in-progress: false
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      TZ: Asia/Shanghai
+      R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+      R2_BUCKET: ${{ secrets.R2_BUCKET }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --omit=dev
+      - name: Validate source collector
+        run: node --check automation/littlefox-backfill/collect.mjs
+      - name: Collect official sources for approved historical gaps (read only)
+        run: node automation/littlefox-backfill/collect.mjs
+      - name: Retain source artifact for ChatGPT
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: littlefox-historical-sources-${{ github.run_id }}
+          path: |
+            /tmp/littlefox-backfill-sources.json
+            /tmp/littlefox-backfill-collection-report.json
+          if-no-files-found: warn
+          retention-days: 1
