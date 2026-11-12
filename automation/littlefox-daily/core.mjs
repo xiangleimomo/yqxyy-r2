@@ -316,7 +316,7 @@ export async function searchBingOfficialTextId(release,http=fetch){
   if(!title||!Number.isInteger(chapter)||chapter<1)throw Error('Missing official sub-series chapter/title for Bing C-ID search');
   // Little Fox Text pages are indexed by the displayed sub-series title, e.g.
   // "The New Heroes 13: Racing the Wind", NOT the absolute R2 episode number 213.
-  const exactKeyword=subSeries+' '+chapter+': '+title;
+  const exactKeyword=fullSeries+' '+chapter+': '+title;
   const queries=[
     '"'+exactKeyword+'" site:littlefox.com',
     '"'+exactKeyword+'" Little Fox Text',
