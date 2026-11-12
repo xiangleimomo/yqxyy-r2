@@ -19,8 +19,8 @@
     "storybookMethod": "HEAD HTTP 200 (PDF content not extracted)",
     "subtitleXml": true,
     "episodeTitleMatched": true,
-    "workflowRunId": "43184586703",
-    "sourceArtifactName": "littlefox-source-43184586703"
+    "workflowRunId": "43190974262",
+    "sourceArtifactName": "littlefox-source-43190974262"
   },
   "captionMetadata": {
     "cueCount": 80,
@@ -489,7 +489,7 @@
       }
     ]
   },
-  "reviewNotes": "基于 GitHub Actions Run 43184586703 的真实官方素材：43段英文Text、80条字幕时间轴，Storybook HEAD HTTP 200；官方播放器标题与 Red Magic, The New Heroes 第14集 The Plot Thickens 匹配。4个教学分段按本集段落及字幕时间轴划分。5道原创英文剧情理解题分别定位 p8、p15、p17、p34、p43，覆盖开端担忧、伪装与绑架经过、识别线索及结尾危机；逐题核对本集证据、四个不重复选项、唯一答案和中文解析。未使用其他集或原著剧情。 Official FS0059 catalog identifies this as series episode 214; the monthly calendar's local chapter label 14 is not the global series index. A read-only R2 diagnostic found the latest stored episode is 212 (Panno's Story, C0013572), so episode 213 (Racing the Wind) is missing and must be backfilled before episode 214 can be published. R2 read-only diagnostic GitHub Run 43190816140 confirmed 212 stored episodes, latest episode 212 / C0013572; the official page lists 213 Racing the Wind and 214 The Plot Thickens. Regression tests for catalog-order numbering passed in the same diagnostic run.",
+  "reviewNotes": "基于 GitHub Actions Run 43190974262 的真实官方素材：43段英文Text、80条字幕时间轴，Storybook HEAD HTTP 200；官方播放器标题与 Red Magic, The New Heroes 第14集 The Plot Thickens 匹配。4个教学分段按本集段落及字幕时间轴划分。5道原创英文剧情理解题分别定位 p8、p15、p17、p34、p43，覆盖开端担忧、伪装与绑架经过、识别线索及结尾危机；逐题核对本集证据、四个不重复选项、唯一答案和中文解析。未使用其他集或原著剧情。 Official FS0059 catalog identifies this as series episode 214; the monthly calendar's local chapter label 14 is not the global series index. A read-only R2 diagnostic found the latest stored episode is 212 (Panno's Story, C0013572), so episode 213 (Racing the Wind) is missing and must be backfilled before episode 214 can be published. R2 read-only diagnostic GitHub Run 43190816140 confirmed 212 stored episodes, latest episode 212 / C0013572; the official page lists 213 Racing the Wind and 214 The Plot Thickens. Regression tests for catalog-order numbering passed in the same diagnostic run. The corrected source artifact's 43 English paragraphs and 80 caption cues were compared against the first verified artifact and matched exactly.",
   "calendarEpisodeNumber": 14,
   "publicationPrerequisite": {
     "status": "blocked_sequence_gap",
