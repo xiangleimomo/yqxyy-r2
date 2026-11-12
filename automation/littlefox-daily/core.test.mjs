@@ -12,13 +12,13 @@ test('today only; never scan historic 720p assets',()=>{
 });
 test('monthly calendar resolves full series names and Chapter N labels',()=>{
  const series=[{seriesId:'red-magic',title:'Red Magic',level:7}];
- const html='<table><tr><td><span class="day">12</span><div>Red Magic, The New Heroes Chapter 14 The Plot Thickens</div></td></tr></table>';
- const releases=scheduleReleases(html,{date:'2026-11-12',day:12},series);
+ const html='<table><tr><td><span class="day">5</span><div>Red Magic, The New Heroes 13: Racing the Wind</div></td></tr></table>';
+ const releases=scheduleReleases(html,{date:'2026-11-05',day:5},series);
  assert.equal(releases.length,1);
- assert.equal(releases[0].calendarEpisodeNumber,14);
+ assert.equal(releases[0].calendarEpisodeNumber,13);
  assert.equal(releases[0].seriesEpisodeNumber,undefined);
- assert.equal(releases[0].title,'The Plot Thickens');
- assert.equal(releases[0].calendarKeyword,'Red Magic, The New Heroes Chapter 14 The Plot Thickens');
+ assert.equal(releases[0].title,'Racing the Wind');
+ assert.equal(releases[0].calendarKeyword,'Red Magic, The New Heroes 13: Racing the Wind');
 });
 test('player C ID is parsed only when the official ID matches',()=>{
  assert.deepEqual(playerItem('var contents_info = [{"fc_id":"C0013595","cont_title":"The Secret Lab"}];','C0013595'),{fc_id:'C0013595',cont_title:'The Secret Lab'});
@@ -113,6 +113,7 @@ test('Bing official Text URL is the sole C-ID discovery source; no arithmetic fa
  assert.equal(await searchBingOfficialTextId(release,http),'C0013573');
  assert.equal(await identifyCId(release,[{episodeId:212,sourceContentId:'C0013572'}],http),'C0013573');
  assert.ok(calls.some(url=>url.includes('bing.com/search')));
+ assert.ok(calls.some(url=>decodeURIComponent(new URL(url).searchParams.get('q')||'').includes('Red Magic, The New Heroes 13: Racing the Wind')));
  assert.ok(!calls.some(url=>url.includes('contents_list_v2')));
 });
 
