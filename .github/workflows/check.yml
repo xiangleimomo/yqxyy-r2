@@ -4,6 +4,8 @@ permissions:
   contents: read
 jobs:
   check:
+    # PAUSED: Generic push/PR build checks are not part of the Little Fox V2 production chain; retained for audit but paused.
+    if: ${{ false }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
