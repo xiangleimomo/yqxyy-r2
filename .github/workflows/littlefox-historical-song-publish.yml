@@ -1,0 +1,59 @@
+name: Little Fox Historical Song Backfill to R2
+on:
+  push:
+    paths:
+      - 'automation/littlefox-backfill/song-publish-request.json'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: littlefox-historical-song-backfill-r2
+  cancel-in-progress: false
+jobs:
+  publish_song:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      TZ: Asia/Shanghai
+      R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+      R2_BUCKET: ${{ secrets.R2_BUCKET }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --omit=dev
+      - name: Validate song-specific publisher
+        run: node --check automation/littlefox-backfill/publish-song.mjs
+      - name: Verify official lyrics and publish song using existing R2 low-level schema
+        id: publish
+        continue-on-error: true
+        run: node automation/littlefox-backfill/publish-song.mjs
+      - name: Archive publish report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: littlefox-song-backfill-${{ github.run_id }}
+          path: /tmp/littlefox-song-publish-report.json
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Commit metadata-only report
+        if: always()
+        run: |
+          if [ -f /tmp/littlefox-song-publish-report.json ]; then
+            mkdir -p automation/littlefox-backfill/song-publish-reports
+            cp /tmp/littlefox-song-publish-report.json "automation/littlefox-backfill/song-publish-reports/${{ github.run_id }}.json"
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add automation/littlefox-backfill/song-publish-reports/
+            if ! git diff --cached --quiet; then
+              git commit -m 'data(littlefox): historical song R2 publish report'
+              git push origin HEAD:main
+            fi
+          fi
+      - name: Fail visibly if publication failed
+        if: steps.publish.outcome == 'failure'
+        run: exit 1
