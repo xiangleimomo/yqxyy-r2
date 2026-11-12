@@ -23,3 +23,7 @@ Pone is an optional large-file adapter (`pone.mjs`), not the destination for JSO
 - The current preverified first-episode anchor is kept in `core.mjs`. This change does not create or update the live R2 catalog, website, Supabase or Netlify. Existing GitHub Actions remain in their current enabled/disabled state.
 
 Validation: `node --test automation/littlefox-daily/core.test.mjs` in a normal Node.js checkout. The repository unit tests use mock official responses and do not prove live website/R2 connectivity.
+
+## Bing-assisted C ID discovery (2026-11-12)
+
+The scheduled GitHub collector owns steps 1-5: read the official monthly calendar; build an exact Bing query from series/chapter/title; extract only Little Fox official `/supplement/trans/Cxxxxxxx` or `/supplement/org/Cxxxxxxx` links; cross-check the result against the exact title and absolute position in the official full-series catalog; and verify the candidate against the official player or official English Text. Bing is a discovery source, not proof. A non-Little-Fox result, title mismatch, ambiguous result, or disagreement with the official catalog fails closed. ChatGPT receives only the verified source artifact and handles the teaching materials; GitHub then handles R2 publishing.
