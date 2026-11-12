@@ -302,7 +302,7 @@ export async function identifyCId(release, episodes, http){
     // The requested deterministic route: first episode's official Text C ID + episode offset.
     // Still verify the computed target against the official player/Text before accepting it.
     ['first episode Text + episode offset',firstId?contentIdOffset(firstId,number-1):null],
-    ['official catalog exact title',fromCatalog],
+    ['official catalog',fromCatalog],
     ['official calendar',release.directId],
     ['R2 previous episode',nextIdFromEpisodes(episodes,number)]
   ];
