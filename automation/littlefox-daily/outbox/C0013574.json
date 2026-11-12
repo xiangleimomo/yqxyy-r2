@@ -3,7 +3,7 @@
   "status": "ready_for_publish",
   "reviewStatus": "approved",
   "seriesId": "little-fox-red-magic-fs0059",
-  "episodeNumber": 14,
+  "episodeNumber": 214,
   "contentId": "C0013574",
   "title": "The Plot Thickens",
   "level": 7,
@@ -489,5 +489,19 @@
       }
     ]
   },
-  "reviewNotes": "基于 GitHub Actions Run 43184586703 的真实官方素材：43段英文Text、80条字幕时间轴，Storybook HEAD HTTP 200；官方播放器标题与 Red Magic, The New Heroes 第14集 The Plot Thickens 匹配。4个教学分段按本集段落及字幕时间轴划分。5道原创英文剧情理解题分别定位 p8、p15、p17、p34、p43，覆盖开端担忧、伪装与绑架经过、识别线索及结尾危机；逐题核对本集证据、四个不重复选项、唯一答案和中文解析。未使用其他集或原著剧情。"
+  "reviewNotes": "基于 GitHub Actions Run 43184586703 的真实官方素材：43段英文Text、80条字幕时间轴，Storybook HEAD HTTP 200；官方播放器标题与 Red Magic, The New Heroes 第14集 The Plot Thickens 匹配。4个教学分段按本集段落及字幕时间轴划分。5道原创英文剧情理解题分别定位 p8、p15、p17、p34、p43，覆盖开端担忧、伪装与绑架经过、识别线索及结尾危机；逐题核对本集证据、四个不重复选项、唯一答案和中文解析。未使用其他集或原著剧情。 Official FS0059 catalog identifies this as series episode 214; the monthly calendar's local chapter label 14 is not the global series index. A read-only R2 diagnostic found the latest stored episode is 212 (Panno's Story, C0013572), so episode 213 (Racing the Wind) is missing and must be backfilled before episode 214 can be published.",
+  "calendarEpisodeNumber": 14,
+  "publicationPrerequisite": {
+    "status": "blocked_sequence_gap",
+    "r2LatestEpisodeNumber": 212,
+    "r2LatestContentId": "C0013572",
+    "missingEpisodeNumbers": [
+      213
+    ],
+    "officialPreviousEpisode": {
+      "episodeNumber": 213,
+      "title": "Racing the Wind"
+    },
+    "note": "R2 must first receive the missing official episode 213. Do not publish episode 214 until episode 213 is verified and added."
+  }
 }
