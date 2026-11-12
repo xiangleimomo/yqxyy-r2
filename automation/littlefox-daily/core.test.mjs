@@ -284,3 +284,33 @@ test('pre-release exact official catalog and English Text can confirm C ID with 
  });
  assert.equal(await identifyCId({seriesId:'three-kingdoms',seriesEpisodeNumber:14,title:'Eighteen Armies'},[],http),'C0013410');
 });
+
+test('Bing exact-title result extracts official Text C ID and cross-checks series episode 214',async()=>{
+  const {searchBingOfficialTextId,identifyCId,resolveOfficialSeriesEpisode}=await import('./core.mjs');
+  const catalog=Array.from({length:213},(_,i)=>`<li data-fcid="C${String(13361+i).padStart(7,'0')}" data-contname="Episode ${i+1}"></li>`).join('')+
+    '<li data-fcid="C0013574" data-contname="The Plot Thickens"></li>';
+  const bing='<li class="b_algo"><h2><a href="https://cn.littlefox.com/cn/supplement/trans/C0013574">Red Magic, The New Heroes 14: The Plot Thickens | Little Fox</a></h2></li>';
+  const calls=[];
+  const http=async(url)=>{
+    calls.push(url);
+    if(url.includes('bing.com/search'))return {ok:true,text:async()=>bing};
+    if(url.includes('contents_list_v2/FS0059'))return {ok:true,text:async()=>catalog};
+    if(url.includes('/player_h5/view'))return {ok:true,text:async()=>'<script>var contents_info = [{"fc_id":"C0013574","cont_title":"The Plot Thickens","video_url":"https://cdn.littlefox.com/a.m3u8"}];</script>'};
+    throw Error('Unexpected URL '+url);
+  };
+  const release={seriesId:'little-fox-red-magic-fs0059',seriesTitle:'Red Magic, The New Heroes',calendarEpisodeNumber:14,title:'The Plot Thickens'};
+  const resolved=await resolveOfficialSeriesEpisode(release,http);
+  assert.equal(resolved.seriesEpisodeNumber,214);
+  assert.equal(resolved.contentId,'C0013574');
+  const found=await searchBingOfficialTextId(release,http);
+  assert.equal(found,'C0013574');
+  assert.equal(await identifyCId({...release,...resolved},[],http),'C0013574');
+  assert.ok(calls.some(url=>url.includes('bing.com/search')));
+});
+
+test('Bing C ID discovery rejects non-Little-Fox links and mismatched result titles',async()=>{
+  const {searchBingOfficialTextId}=await import('./core.mjs');
+  const release={seriesTitle:'Red Magic',calendarEpisodeNumber:14,title:'The Plot Thickens'};
+  const http=async()=>({ok:true,text:async()=>'<a href="https://evil.example/supplement/trans/C0013574">The Plot Thickens</a><a href="https://cn.littlefox.com/cn/supplement/trans/C0013575">A Different Story</a>'});
+  assert.equal(await searchBingOfficialTextId(release,http),null);
+});
