@@ -5,9 +5,6 @@ on:
   schedule:
     - cron: '50 6 * * 1-5'
   workflow_dispatch:
-  push:
-    paths:
-      - 'automation/littlefox-daily/blind-test-request.json'
 permissions:
   contents: write
 concurrency:
@@ -32,7 +29,6 @@ jobs:
           R2_BUCKET: ${{ secrets.R2_BUCKET }}
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-          LF_BLIND_TEST: ${{ github.event_name == 'push' && '1' || '0' }}
         run: node automation/littlefox-daily/collect-handoff.mjs
       - name: Check official parser regression tests (blocking)
         if: always()
