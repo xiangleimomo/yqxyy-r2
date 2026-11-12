@@ -5,7 +5,8 @@
   "publish": false,
   "writeToR2": false,
   "createdAt": "2026-11-12",
-  "retry": 5,
-  "updatedAt": "2026-11-12T10:24:17.921Z",
-  "comparison": "official_content_id_membership"
+  "retry": 6,
+  "updatedAt": "2026-11-12T10:54:57.605Z",
+  "comparison": "official_content_id_membership",
+  "postBackfillCheck": true
 }
