@@ -8,5 +8,5 @@
     "title": "Racing the Wind",
     "level": 7
   },
-  "purpose": "One-time collection-only regression test for the missing Red Magic series episode 213. Discover C-ID exclusively from Bing's official Little Fox Text URL; then collect actual official English Text, caption XML, Storybook and video metadata into the private one-day Actions artifact. Do not publish to R2."
+  "purpose": "One-time collection-only regression test for the missing Red Magic series episode 213. Discover C-ID exclusively from Bing's official Little Fox Text URL; then collect actual official English Text, caption XML, Storybook and video metadata into the private one-day Actions artifact. Do not publish to R2. Retry after correcting the Bing result-link regular expression; still collection-only and no R2 writes."
 }
