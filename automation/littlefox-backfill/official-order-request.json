@@ -1,6 +1,6 @@
 {
   "mode": "preserve_ids_add_official_order",
-  "publish": false,
+  "publish": true,
   "seriesIds": [
     "little-fox-red-magic-fs0059",
     "little-fox-bird-and-kip-fs0064",
@@ -13,5 +13,5 @@
     "little-fox-around-the-world-in-80-days-fs0037",
     "little-fox-all-time-favorites-srv01014"
   ],
-  "reason": "Read-only dry run: add officialEpisodeNumber metadata, preserve existing episodeId, routes and progress."
+  "reason": "Approved migration: dry run 43222632437 passed for 10 series. Add officialEpisodeNumber and legacyEpisodeMax, preserve every episodeId, contentId, source URL, quiz index, and learning record; R2 backups/readback required."
 }
