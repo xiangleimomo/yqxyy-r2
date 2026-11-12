@@ -309,38 +309,42 @@ function unwrapBingHref(href){
   }catch{return null;}
 }
 export async function searchBingOfficialTextId(release,http=fetch){
-  const series=String(release.seriesTitle||release.seriesId||'').replace(/[-_]+/g,' ').trim();
+  const fullSeries=String(release.seriesTitle||release.seriesId||'').replace(/[-_]+/g,' ').trim();
+  const subSeries=String(release.subSeriesTitle||fullSeries.split(',').pop()||fullSeries).trim();
   const title=String(release.title||'').trim();
-  const episode=Number(release.seriesEpisodeNumber||release.episodeNumber);
-  if(!title||!Number.isInteger(episode)||episode<1)throw Error('Missing absolute series episode number/title for Bing C-ID search');
+  const chapter=Number(release.calendarEpisodeNumber);
+  if(!title||!Number.isInteger(chapter)||chapter<1)throw Error('Missing official sub-series chapter/title for Bing C-ID search');
+  // Little Fox Text pages are indexed by the displayed sub-series title, e.g.
+  // "The New Heroes 13: Racing the Wind", NOT the absolute R2 episode number 213.
+  const exactKeyword=subSeries+' '+chapter+': '+title;
   const queries=[
-    'site:littlefox.com "'+series+'" "'+episode+'. '+title+'"',
-    'site:littlefox.com "'+episode+'. '+title+'"',
-    '"'+series+'" "'+episode+'" "'+title+'" Little Fox Text',
-    'site:cn.littlefox.com/cn/supplement/trans "'+title+'"'
+    '"'+exactKeyword+'" site:littlefox.com',
+    '"'+exactKeyword+'" Little Fox Text',
+    '"'+subSeries+'" "'+chapter+': '+title+'"',
+    '"'+fullSeries+'" "'+exactKeyword+'"'
   ];
   const diagnostics=[];
   for(let qi=0;qi<queries.length;qi++){
     const response=await http('https://www.bing.com/search?q='+encodeURIComponent(queries[qi]),{headers:{'User-Agent':'Mozilla/5.0 (compatible; LittleFoxCourseBot/1.0)'}});
     if(!response.ok){diagnostics.push('HTTP '+response.status);continue;}
     const html=await response.text(),matches=new Map(),hosts=new Set(),foundIds=new Set();
-    const anchors=[...html.matchAll(/<a\b[^>]*href\s*=\s*["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi)];
+    const anchors=[...html.matchAll(/<a\\b[^>]*href\\s*=\\s*["']([^"']+)["'][^>]*>([\\s\\S]*?)<\\/a>/gi)];
     for(const m of anchors){
       const u=unwrapBingHref(m[1]);
       if(!u)continue;
       hosts.add(u.hostname.toLowerCase());
-      if(!/(^|\.)littlefox\.com$/i.test(u.hostname))continue;
-      const id=u.pathname.match(/\/supplement\/(?:trans|org)\/(C\d{7})(?:\/|$)/i)?.[1]?.toUpperCase();
+      if(!/(^|\\.)littlefox\\.com$/i.test(u.hostname))continue;
+      const id=u.pathname.match(/\\/supplement\\/(?:trans|org)\\/(C\\d{7})(?:\\/|$)/i)?.[1]?.toUpperCase();
       if(!id)continue;
       foundIds.add(id);
       const anchorTitle=normalize(cleanHtml(m[2]));
-      if(anchorTitle.includes(normalize(title)))matches.set(id,{id,url:u.href});
+      if(anchorTitle.includes(normalize(exactKeyword))||anchorTitle.includes(normalize(title)))matches.set(id,{id,url:u.href});
     }
-    diagnostics.push('q='+(qi+1)+',anchors='+anchors.length+',hosts='+[...hosts].slice(0,8).join(',')+',officialCids='+[...foundIds].join(','));
+    diagnostics.push('q='+(qi+1)+',keyword='+exactKeyword+',anchors='+anchors.length+',hosts='+[...hosts].slice(0,8).join(',')+',officialCids='+[...foundIds].join(','));
     if(matches.size===1)return [...matches.keys()][0];
-    if(matches.size>1)throw Error('Bing returned multiple official Text C-IDs for title: '+[...matches.keys()].join(', '));
+    if(matches.size>1)throw Error('Bing returned multiple official Text C-IDs for keyword '+exactKeyword+': '+[...matches.keys()].join(', '));
   }
-  throw Error('Bing found no unique official Little Fox Text C-ID. '+diagnostics.join(' | '));
+  throw Error('Bing found no unique official Little Fox Text C-ID for '+exactKeyword+'. '+diagnostics.join(' | '));
 }
 export async function identifyCId(release, episodes, http){
   // Sole discovery source: the C-ID embedded in the matching official Little Fox Text URL found by Bing.
