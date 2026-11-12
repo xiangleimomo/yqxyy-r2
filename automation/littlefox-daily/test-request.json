@@ -1,5 +1,6 @@
 {
   "mode": "run_core_regression_tests",
   "requestedAt": "2026-11-12",
-  "retry": 1
+  "retry": 2,
+  "reason": "Check official-order frontend syntax and build, preservation of daily pipeline tests, and historical publisher syntax"
 }
