@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import {makeR2,officialCatalogEntries,catalogSeriesId,isEpisodeMatch} from '../littlefox-daily/core.mjs';
 
-const report={schemaVersion:1,mode:'read_only_historical_backfill_audit',checkedAt:new Date().toISOString(),scope:'all Little Fox series represented in R2 series-list.json with a resolvable official FS/SRV catalog',summary:{seriesListed:0,seriesAudited:0,seriesUnresolved:0,officialEpisodes:0,r2Episodes:0,missingEpisodes:0,conflicts:0,incompleteExisting:0},series:[],missingEpisodes:[],conflicts:[],incompleteExisting:[],unresolved:[]};
+const report={schemaVersion:1,mode:'read_only_historical_backfill_audit',checkedAt:new Date().toISOString(),scope:'all Little Fox series represented in R2 series-list.json with a resolvable official FS/SRV catalog',summary:{seriesListed:0,seriesAudited:0,seriesUnresolved:0,officialEpisodes:0,r2Episodes:0,missingEpisodes:0,mappingAnomalies:0,orphanR2ContentIds:0,duplicateR2ContentIds:0,r2EpisodesWithoutContentId:0},series:[],missingEpisodes:[],mappingAnomalies:[],orphanR2ContentIdsList:[],duplicateR2ContentIdsList:[],r2EpisodesWithoutContentIdList:[],unresolved:[]};
 const store=await makeR2(process.env,fetch);
 const raw=await store.get('data/series-list.json');
 if(raw===null)throw Error('R2 data/series-list.json not found');
@@ -28,46 +28,54 @@ async function worker(){
     getJson('data/'+seriesId+'/quiz.json')
    ]);
    if(!catalogResponse.ok)throw Error('Official catalog HTTP '+catalogResponse.status);
-   const catalog=officialCatalogEntries(await catalogResponse.text());
-   if(!catalog.length)throw Error('Official catalog parser returned zero C-ID/title rows');
+   const catalogHtml=await catalogResponse.text();
+   // Build the official catalog in DOM order from unique data-fcid values.
+   // Some Little Fox cards expose shortened display titles; C-ID membership is
+   // the reliable key for deciding whether a lesson is already present in R2.
+   const catalog=[],seenOfficial=new Set();
+   for(const tag of catalogHtml.match(/<[^>]+>/g)||[]){
+    const id=tag.match(/\\bdata-fcid\\s*=\\s*["'](C\\d{7})["']/i)?.[1]?.toUpperCase();
+    if(!id||seenOfficial.has(id))continue;
+    const title=tag.match(/\\bdata-contname\\s*=\\s*["']([^"']+)["']/i)?.[1]||'';
+    catalog.push({id,title:title?title.replace(/&amp;/g,'&').replace(/&quot;/g,'"').trim():'',seriesEpisodeNumber:catalog.length+1});
+    seenOfficial.add(id);
+   }
+   if(!catalog.length)throw Error('Official catalog parser returned zero C-ID rows');
    if(!Array.isArray(episodes))throw Error('R2 episodes.json missing or not an array');
-   const epByNo=new Map(),cidSeen=new Map();
+   const r2ByCid=new Map(),r2ByNo=new Map(),officialIds=new Set(catalog.map(x=>x.id));
    for(const ep of episodes){
-    const n=Number(ep.episodeId);if(Number.isInteger(n)&&n>0)epByNo.set(n,ep);
+    const n=Number(ep.episodeId);if(Number.isInteger(n)&&n>0)r2ByNo.set(n,ep);
     const cid=ep.sourceContentId||ep.storyBook?.contentId;
-    if(cid){if(!cidSeen.has(cid))cidSeen.set(cid,[]);cidSeen.get(cid).push(n);}
+    if(cid){if(!r2ByCid.has(cid))r2ByCid.set(cid,[]);r2ByCid.get(cid).push(ep);}
    }
-   const miss=[],conf=[],incomplete=[];
+   const miss=[],mapping=[],orphan=[],duplicates=[],noCid=[];
    for(const official of catalog){
-    const n=official.seriesEpisodeNumber,existing=epByNo.get(n);
-    if(!existing){miss.push({seriesId,seriesTitle:title,level,episodeNumber:n,contentId:official.id,title:official.title,catalogId,catalogUrl,officialTextUrl:'https://cn.littlefox.com/cn/supplement/org/'+official.id,captionUrl:'https://cdn.littlefox.com/contents/caption/'+official.id+'.xml',storybookUrl:'https://res.littlefox.com/en/supplement/load_pdf/'+official.id});continue;}
-    const actualCid=existing.sourceContentId||existing.storyBook?.contentId||null;
-    const issues=[];
-    if(actualCid!==official.id)issues.push({kind:'content_id_mismatch',expected:official.id,actual:actualCid});
-    if(norm(existing.title)!==norm(official.title))issues.push({kind:'title_mismatch',expected:official.title,actual:existing.title||null});
-    if(issues.length){conf.push({seriesId,seriesTitle:title,episodeNumber:n,officialContentId:official.id,officialTitle:official.title,issues});continue;}
-    const read=readings?.[String(n)],vocab=vocabularies?.[String(n)],quiz=quizzes?.[String(n)];
-    const missing=[];
-    if(!Array.isArray(read?.paragraphs)||!read.paragraphs.length)missing.push('reading');
-    if(!Array.isArray(vocab)||!vocab.length)missing.push('vocabulary');
-    if(level>=3&&(!Array.isArray(quiz?.questions)||quiz.questions.length!==5))missing.push('five_question_quiz');
-    if(!existing.video?.hlsUrl)missing.push('video_url');
-    if(!existing.storyBook?.pdfUrl)missing.push('storybook_url');
-    if(missing.length)incomplete.push({seriesId,seriesTitle:title,level,episodeNumber:n,contentId:official.id,title:official.title,missing});
+    const matches=r2ByCid.get(official.id)||[];
+    if(!matches.length){
+      miss.push({seriesId,seriesTitle:title,level,episodeNumber:official.seriesEpisodeNumber,contentId:official.id,title:official.title||null,catalogId,catalogUrl,officialTextUrl:'https://cn.littlefox.com/cn/supplement/org/'+official.id,captionUrl:'https://cdn.littlefox.com/contents/caption/'+official.id+'.xml',storybookUrl:'https://res.littlefox.com/en/supplement/load_pdf/'+official.id});
+      continue;
+    }
+    if(matches.length>1)duplicates.push({seriesId,seriesTitle:title,contentId:official.id,episodeNumbers:matches.map(x=>Number(x.episodeId))});
+    const correct=matches.find(x=>Number(x.episodeId)===official.seriesEpisodeNumber);
+    if(!correct)mapping.push({seriesId,seriesTitle:title,officialEpisodeNumber:official.seriesEpisodeNumber,contentId:official.id,r2EpisodeNumbers:matches.map(x=>Number(x.episodeId)),officialTitle:official.title||null,r2Titles:matches.map(x=>x.title||null)});
    }
-   for(const [cid,nums] of cidSeen)if(nums.length>1)conf.push({seriesId,seriesTitle:title,contentId:cid,issues:[{kind:'duplicate_content_id',episodeNumbers:nums}]});
+   for(const [cid,entries] of r2ByCid){
+    if(!officialIds.has(cid))orphan.push({seriesId,seriesTitle:title,contentId:cid,episodeNumbers:entries.map(x=>Number(x.episodeId)),titles:entries.map(x=>x.title||null)});
+   }
+   for(const ep of episodes)if(!(ep.sourceContentId||ep.storyBook?.contentId))noCid.push({seriesId,seriesTitle:title,episodeNumber:Number(ep.episodeId)||null,title:ep.title||null});
    report.summary.seriesAudited++;report.summary.officialEpisodes+=catalog.length;report.summary.r2Episodes+=episodes.length;
-   report.summary.missingEpisodes+=miss.length;report.summary.conflicts+=conf.length;report.summary.incompleteExisting+=incomplete.length;
-   report.missingEpisodes.push(...miss);report.conflicts.push(...conf);report.incompleteExisting.push(...incomplete);
-   report.series.push({seriesId,title,level,catalogId,officialEpisodeCount:catalog.length,r2EpisodeCount:episodes.length,missingCount:miss.length,conflictCount:conf.length,incompleteCount:incomplete.length,latestOfficialTitle:catalog.at(-1)?.title||null,latestR2Episode:Math.max(0,...episodes.map(e=>Number(e.episodeId)||0))});
+   report.summary.missingEpisodes+=miss.length;report.summary.mappingAnomalies+=mapping.length;report.summary.orphanR2ContentIds+=orphan.length;report.summary.duplicateR2ContentIds+=duplicates.length;report.summary.r2EpisodesWithoutContentId+=noCid.length;
+   report.missingEpisodes.push(...miss);report.mappingAnomalies.push(...mapping);report.orphanR2ContentIdsList.push(...orphan);report.duplicateR2ContentIdsList.push(...duplicates);report.r2EpisodesWithoutContentIdList.push(...noCid);
+   report.series.push({seriesId,title,level,catalogId,officialEpisodeCount:catalog.length,r2EpisodeCount:episodes.length,missingCount:miss.length,mappingAnomalyCount:mapping.length,orphanContentIdCount:orphan.length,duplicateContentIdCount:duplicates.length,withoutContentIdCount:noCid.length,latestOfficialTitle:catalog.at(-1)?.title||null,latestR2Episode:Math.max(0,...episodes.map(e=>Number(e.episodeId)||0))});
   }catch(e){report.summary.seriesUnresolved++;report.unresolved.push({seriesId,title,catalogId,reason:String(e.message||e).slice(0,300)});}
  }
 }
 await Promise.all(Array.from({length:4},worker));
 report.series.sort((a,b)=>String(a.title||a.seriesId).localeCompare(String(b.title||b.seriesId)));
 report.missingEpisodes.sort((a,b)=>a.seriesId.localeCompare(b.seriesId)||a.episodeNumber-b.episodeNumber);
-report.conflicts.sort((a,b)=>a.seriesId.localeCompare(b.seriesId)||Number(a.episodeNumber||0)-Number(b.episodeNumber||0));
-report.incompleteExisting.sort((a,b)=>a.seriesId.localeCompare(b.seriesId)||a.episodeNumber-b.episodeNumber);
+report.mappingAnomalies.sort((a,b)=>a.seriesId.localeCompare(b.seriesId)||a.officialEpisodeNumber-b.officialEpisodeNumber);
+report.orphanR2ContentIdsList.sort((a,b)=>a.seriesId.localeCompare(b.seriesId));
+report.duplicateR2ContentIdsList.sort((a,b)=>a.seriesId.localeCompare(b.seriesId));
 await fs.writeFile('/tmp/littlefox-backfill-audit.json',JSON.stringify(report,null,2)+'\n');
 const csv=['seriesId,seriesTitle,level,episodeNumber,contentId,title,catalogId',...report.missingEpisodes.map(x=>[x.seriesId,x.seriesTitle,x.level,x.episodeNumber,x.contentId,x.title,x.catalogId].map(v=>'"'+String(v??'').replaceAll('"','""')+'"').join(','))].join('\n')+'\n';
 await fs.writeFile('/tmp/littlefox-backfill-missing.csv',csv);
@@ -83,7 +91,7 @@ const summary=[
 '- C-ID/title conflicts: '+report.summary.conflicts,
 '- Existing but incomplete lessons: '+report.summary.incompleteExisting,
 '',
-'This audit performs GET requests only. It does not write to R2, modify daily workflows, or publish lessons.'
+'Missing episodes are determined by official C-ID membership, not by episode-number alignment. Mapping anomalies are reported separately and never auto-corrected. This audit performs GET requests only; it does not write to R2 or publish lessons.'
 ].join('\n');
 console.log('LITTLEFOX_BACKFILL_AUDIT '+JSON.stringify(report.summary));
 console.log(summary);
