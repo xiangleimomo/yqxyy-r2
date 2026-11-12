@@ -37,13 +37,13 @@ for(const target of request.items){
   let videoUrl=null,videoVerified=false,mediaKind=null;
   if(playerResult?.video){
     videoUrl=playerResult.video;
-    if(/\\.m3u8(?:$|[?#])/i.test(videoUrl)){
+    if(/\.m3u8(?:$|[?#])/i.test(videoUrl)){
       try{videoUrl=await verifyPlaylist(videoUrl,fetch);videoVerified=true;mediaKind='hls';}catch(e){stage('video_not_verified',{error:String(e.message||e)});}
     }else{
       try{
         const mediaHost=new URL(videoUrl).hostname.toLowerCase();
         const mediaHead=await fetch(videoUrl,{method:'HEAD',signal:AbortSignal.timeout(25000)});
-        if(/(^|\\.)littlefox\\.com$/.test(mediaHost)&&mediaHead.ok){videoVerified=true;mediaKind='direct-media';}
+        if(/(^|\.)littlefox\.com$/.test(mediaHost)&&mediaHead.ok){videoVerified=true;mediaKind='direct-media';}
         else stage('video_not_verified',{host:mediaHost,status:mediaHead.status});
       }catch(e){stage('video_not_verified',{error:String(e.message||e)});}
     }
