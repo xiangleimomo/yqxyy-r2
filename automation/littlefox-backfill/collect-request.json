@@ -1,7 +1,7 @@
 {
   "mode": "collect_historical_missing",
   "publish": false,
-  "purpose": "Collect official sources only for trailing missing Little Fox episodes that can be appended without renumbering existing lessons. No R2 writes. Probe the level-0 song separately: captions may be absent for non-narrative songs, so collect official lyrics/player/PDF and inspect existing R2 song schema without writing.",
+  "purpose": "Read-only probe for the missing level-0 Conversation Songs 2 episode C0005362. Verify official player HLS, English lyrics and PDF; caption XML previously returned 404. No R2 writes.",
   "items": [
     {
       "seriesId": "little-fox-conversation-songs-2-srv01035",
@@ -10,31 +10,7 @@
       "episodeNumber": 36,
       "contentId": "C0005362",
       "title": "What Did You See?"
-    },
-    {
-      "seriesId": "little-fox-daisy-dolittle-fs0175",
-      "seriesTitle": "Daisy Dolittle",
-      "level": 5,
-      "episodeNumber": 37,
-      "contentId": "C0013549",
-      "title": null
-    },
-    {
-      "seriesId": "little-fox-red-magic-fs0059",
-      "seriesTitle": "Red Magic",
-      "level": 7,
-      "episodeNumber": 213,
-      "contentId": "C0013573",
-      "title": "Racing the Wind"
-    },
-    {
-      "seriesId": "little-fox-red-magic-fs0059",
-      "seriesTitle": "Red Magic",
-      "level": 7,
-      "episodeNumber": 214,
-      "contentId": "C0013574",
-      "title": "The Plot Thickens"
     }
   ],
-  "retry": 2
+  "retry": 3
 }
