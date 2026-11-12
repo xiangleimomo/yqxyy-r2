@@ -19,7 +19,9 @@ concurrency:
 
 jobs:
   incremental:
-    if: github.ref == 'refs/heads/main'
+    # PAUSED: legacy AI-generated daily pipeline superseded by ChatGPT-reviewed outbox.
+    # Keep the workflow file for audit/history; do not run this old course generator.
+    if: false
     runs-on: ubuntu-latest
     timeout-minutes: 45
     env:
