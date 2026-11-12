@@ -8,6 +8,8 @@ permissions:
   contents: read
 jobs:
   probe:
+    # PAUSED: One-off read-only diagnostic probe is superseded by the daily collector; retained for manual history but paused.
+    if: ${{ false }}
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 8
