@@ -258,18 +258,21 @@ async renderSeries(seriesId){
   if(!seriesId) return this.renderHome();
   const [bundle] = await Promise.all([this.loadSeries(seriesId)]);
   const {series, episodes} = bundle;
+  // A duplicated old C-ID remains directly addressable for progress/history,
+  // but must not appear twice in the public official chapter list.
+  const shownEpisodes=shownEpisodes.filter(e=>!e.legacyDuplicateOf);
     if(this.movieCourseUnavailable(series))return;
   if(this.isGuestRestrictedLevel(series.level)){
     this.el().innerHTML=this.guestLevelGate();
     this.bindGuestEpisodeGate();
     return;
   }
-  const episodeGroups = Array.from({length:Math.ceil(episodes.length / 10)}, (_, index)=>{
+  const episodeGroups = Array.from({length:Math.ceil(shownEpisodes.length / 10)}, (_, index)=>{
     const start=index * 10 + 1;
-    return {start, end:Math.min(start + 9, episodes.length)};
+    return {start, end:Math.min(start + 9, shownEpisodes.length)};
   });
   const savedEpisodeId=this.storage('selectedEpisodes')?.[seriesId];
-  const initialEpisode=episodes.find(ep=>Number(ep.episodeId)===Number(savedEpisodeId) && ep.status==='published' && this.canAccessEpisode(seriesId,ep.episodeId) && !this.isGuestEpisodeLimit(seriesId,ep.episodeId)) || episodes[0];
+  const initialEpisode=shownEpisodes.find(ep=>Number(ep.episodeId)===Number(savedEpisodeId) && ep.status==='published' && this.canAccessEpisode(seriesId,ep.episodeId) && !this.isGuestEpisodeLimit(seriesId,ep.episodeId)) || shownEpisodes[0];
   let activeEpisodeId=Number(initialEpisode?.episodeId || 1);
   this.el().classList.add('series-page-shell');
   this.el().classList.toggle('movie-study-course',Boolean(series.movieId));
@@ -294,7 +297,7 @@ async renderSeries(seriesId){
         <div class="episode-filter-bar">
           <input id="episodeTitleSearch" type="search" placeholder="搜索课程标题" aria-label="搜索课程标题">
           <select id="episodeRangeFilter" aria-label="按集数筛选">
-            <option value="all">全部 ${episodes.length} 集</option>
+            <option value="all">全部 ${shownEpisodes.length} 集</option>
             ${episodeGroups.map(group=>`<option value="${group.start}-${group.end}">${group.start}–${group.end} 集</option>`).join('')}
           </select>
         </div>
@@ -308,7 +311,7 @@ async renderSeries(seriesId){
       const query=(document.getElementById('episodeTitleSearch')?.value || '').trim().toLowerCase();
       const range=(document.getElementById('episodeRangeFilter')?.value || 'all').split('-').map(Number);
       const [start,end]=range;
-      const visible=episodes.filter(ep=>{
+      const visible=shownEpisodes.filter(ep=>{
         const displayNo=this.displayEpisodeNumber(ep);
         const inRange=Number.isNaN(start) || (displayNo>=start && displayNo<=end);
         const title=`${ep.title || ''} ${ep.titleZh || ''}`.toLowerCase();
@@ -331,7 +334,7 @@ async renderSeries(seriesId){
       document.querySelectorAll('.episode-side-item').forEach(btn=>btn.onclick=()=>openEpisode(btn.dataset.ep));
     };
     const openEpisode = (id)=>{
-      const ep=episodes.find(e=>Number(e.episodeId)===Number(id)) || episodes[0];
+      const ep=shownEpisodes.find(e=>Number(e.episodeId)===Number(id)) || shownEpisodes[0];
       if(this.isGuestEpisodeLimit(seriesId, ep.episodeId)){
         document.getElementById('episodeWorkspace').innerHTML=this.guestEpisodeGate(seriesId, ep);
         this.bindGuestEpisodeGate();
