@@ -15,7 +15,8 @@ test('monthly calendar resolves full series names and Chapter N labels',()=>{
  const html='<table><tr><td><span class="day">12</span><div>Red Magic, The New Heroes Chapter 14 The Plot Thickens</div></td></tr></table>';
  const releases=scheduleReleases(html,{date:'2026-11-12',day:12},series);
  assert.equal(releases.length,1);
- assert.equal(releases[0].calendarEpisodeNumber,14);\n assert.equal(releases[0].seriesEpisodeNumber,undefined);
+ assert.equal(releases[0].calendarEpisodeNumber,14);
+ assert.equal(releases[0].seriesEpisodeNumber,undefined);
  assert.equal(releases[0].title,'The Plot Thickens');
 });
 test('player C ID is parsed only when the official ID matches',()=>{
@@ -108,7 +109,9 @@ test('official catalog C IDs are discovered without scanning historic video reso
  const page='<span data-contname="New%20Beginning" data-fcid="C0013596"></span><li data-fcid="C0013597" data-contname="A Big Day"></li><li data-fcid="C0013597" data-contname="A Big Day"></li>';
  const parsed=officialCatalogEntries(page);
  assert.equal(parsed.length,2);
- assert.equal(parsed[1].id,'C0013597');\n assert.equal(parsed[0].seriesEpisodeNumber,1);\n assert.equal(parsed[1].seriesEpisodeNumber,2);
+ assert.equal(parsed[1].id,'C0013597');
+ assert.equal(parsed[0].seriesEpisodeNumber,1);
+ assert.equal(parsed[1].seriesEpisodeNumber,2);
  assert.equal(catalogSeriesId('three-kingdoms'),'FS0182');
  const http=async url=>({ok:true,text:async()=>url.includes('contents_list_v2')?'<div data-contname="A Big Day" data-fcid="C0013597"></div>':'var contents_info = [{"fc_id":"C0013597","cont_title":"A Big Day","video_url":"https://cdn.littlefox.com/stream.m3u8"}];'});
  const id=await identifyCId({seriesId:'little-fox-example-fs0183',seriesEpisodeNumber:1,title:'A Big Day'},[],http);
