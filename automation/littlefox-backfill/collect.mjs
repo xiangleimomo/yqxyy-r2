@@ -21,6 +21,12 @@ for(const target of request.items){
   const captionResponse=await fetch('https://cdn.littlefox.com/contents/caption/'+target.contentId+'.xml',{signal:AbortSignal.timeout(25000)}).catch(e=>({ok:false,status:0,error:String(e.message||e)}));
   const episodes=JSON.parse(indexRaw||'[]');
   if(!Array.isArray(episodes))throw Error('R2 episodes.json is not an array');
+  const [readingIndex,vocabularyIndex,quizIndex,seriesRecord]=await Promise.all([
+   store.get('data/'+target.seriesId+'/reading-lessons.json').then(v=>v===null?null:JSON.parse(v)),
+   store.get('data/'+target.seriesId+'/vocabulary.json').then(v=>v===null?null:JSON.parse(v)),
+   store.get('data/'+target.seriesId+'/quiz.json').then(v=>v===null?null:JSON.parse(v)),
+   store.get('data/'+target.seriesId+'/series.json').then(v=>v===null?null:JSON.parse(v))
+  ]);
   const playerTitle=playerResult?.item?.cont_title||null;
   const actualTitle=playerTitle||target.title||null;
   if(!actualTitle)throw Error('Official player did not provide a title and no catalog title was available');
@@ -55,10 +61,12 @@ for(const target of request.items){
   });
   const pdfStatus=book.status;
   stage('storybook',{status:pdfStatus});
-  const existing=episodes.filter(e=>Math.abs(Number(e.episodeId)-Number(target.episodeNumber))<=2||Number(e.episodeId)>=Math.max(0,...episodes.map(x=>Number(x.episodeId)||0))-2).map(e=>({episodeId:Number(e.episodeId),title:e.title||null,contentId:e.sourceContentId||e.storyBook?.contentId||null,videoType:e.video?.source||null,videoUrl:e.video?.hlsUrl||null,storybook:e.storyBook?.pdfUrl||null}));
+  const existing=episodes.filter(e=>Math.abs(Number(e.episodeId)-Number(target.episodeNumber))<=2||Number(e.episodeId)>=Math.max(0,...episodes.map(x=>Number(x.episodeId)||0))-2);
+  const lastNo=Math.max(0,...episodes.map(x=>Number(x.episodeId)||0));
+  const existingData={lastEpisode:episodes.find(e=>Number(e.episodeId)===lastNo)||null,reading:readingIndex?.[String(lastNo)]||null,vocabulary:vocabularyIndex?.[String(lastNo)]||null,quiz:quizIndex?.[String(lastNo)]||null,series:seriesRecord||null};
   const songReady=Number(target.level)<3&&videoVerified&&(pdfStatus===200||pdfStatus===206||pdfStatus===405);
   const ready=videoVerified&&cues.length>=3&&(pdfStatus===200||pdfStatus===206||pdfStatus===405);
-  Object.assign(src,{status:ready?'ready_for_chatgpt':songReady?'ready_for_song_review':videoVerified?'awaiting_caption_or_storybook':'awaiting_video',title:actualTitle,paragraphs,captionCues:cues,captionXml:xml||null,player:{title:playerTitle,videoUrl:playerResult?.video||null},videoUrl,videoVerified,mediaKind,storybookStatus:pdfStatus,verification:{englishText:true,captionXml:cues.length>=3,storybook:pdfStatus===200||pdfStatus===206||pdfStatus===405,episodeTitleMatched:!target.title||isEpisodeMatch(actualTitle,target.title),video:videoVerified},r2NearbyEpisodes:existing});
+  Object.assign(src,{status:ready?'ready_for_chatgpt':songReady?'ready_for_song_review':videoVerified?'awaiting_caption_or_storybook':'awaiting_video',title:actualTitle,paragraphs,captionCues:cues,captionXml:xml||null,player:{title:playerTitle,videoUrl:playerResult?.video||null},videoUrl,videoVerified,mediaKind,storybookStatus:pdfStatus,verification:{englishText:true,captionXml:cues.length>=3,storybook:pdfStatus===200||pdfStatus===206||pdfStatus===405,episodeTitleMatched:!target.title||isEpisodeMatch(actualTitle,target.title),video:videoVerified},r2NearbyEpisodes:existing,r2NearbyData:existingData});
   row.status=src.status;row.actualTitle=actualTitle;row.paragraphCount=paragraphs.length;row.captionCueCount=cues.length;row.videoVerified=videoVerified;row.mediaKind=mediaKind;row.storybookStatus=pdfStatus;
  }catch(e){row.status='blocked';row.error=String(e.message||e).slice(0,500);src.status='blocked';src.error=row.error;}
  output.items.push(src);report.items.push(row);
