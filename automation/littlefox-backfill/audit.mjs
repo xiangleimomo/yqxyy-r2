@@ -89,10 +89,12 @@ const summary=[
 '- Existing R2 episode rows: '+report.summary.r2Episodes,
 '- Missing episodes: '+report.summary.missingEpisodes,
 '- Episode-number mapping anomalies (reported separately): '+report.summary.mappingAnomalies,
-'- R2 content IDs absent from official catalog: '+report.summary.orphanR2ContentIds,\n'- Duplicate R2 content IDs: '+report.summary.duplicateR2ContentIds,\n'- R2 rows without a C-ID: '+report.summary.r2EpisodesWithoutContentId,
+'- R2 content IDs absent from official catalog: '+report.summary.orphanR2ContentIds,
+'- Duplicate R2 content IDs: '+report.summary.duplicateR2ContentIds,
+'- R2 rows without a C-ID: '+report.summary.r2EpisodesWithoutContentId,
 '',
 'Missing episodes are determined by official C-ID membership, not by episode-number alignment. Mapping anomalies are reported separately and never auto-corrected. This audit performs GET requests only; it does not write to R2 or publish lessons.'
-].join('\n');
+].join('\n');'\n');
 console.log('LITTLEFOX_BACKFILL_AUDIT '+JSON.stringify(report.summary));
 console.log(summary);
 if(process.env.GITHUB_STEP_SUMMARY)await fs.appendFile(process.env.GITHUB_STEP_SUMMARY,summary+'\n');
