@@ -8,6 +8,11 @@ const req=JSON.parse(await fs.readFile(root+'internal-publish-request.json','utf
 if(req.mode!=='historical_supplemental_v2'||typeof req.publish!=='boolean'||!Array.isArray(req.contentIds)||req.contentIds.length!==16||new Set(req.contentIds).size!==16)throw Error('Invalid 16-episode supplemental V2 request');
 const packs=await Promise.all([1,2,3,4].map(i=>fs.readFile(root+'specs/batch-'+i+'.json','utf8').then(JSON.parse)));
 const specs=new Map(packs.flat().map(x=>[x.id,x]));
+// The previous GitHub Actions collector captured real official English Text,
+// timed XML and player metadata for all sixteen episodes. The private artifact
+// is not committed to GitHub and avoids unreliable later CDN re-requests.
+const sourceArtifact=JSON.parse(await fs.readFile('/tmp/littlefox-internal-sources/littlefox-backfill-sources.json','utf8'));
+const sourceMap=new Map((sourceArtifact.items||[]).map(x=>[x.contentId,x]));
 if(specs.size!==16||req.contentIds.some(id=>!specs.has(id)))throw Error('Missing or duplicate editorial lesson specification');
 const store=await makeR2(process.env,fetch),report={checkedAt:new Date().toISOString(),mode:req.mode,publish:req.publish,items:[],summary:{requested:16,ready:0,published:0,already:0,blocked:0},status:'checking'};
 const runKey='historical-supplemental-'+new Date().toISOString().replace(/[:.]/g,'-');
@@ -63,19 +68,22 @@ async function processLesson(s){
     if(Number(already.episodeId)!==internalId||already.sourceContentId!==s.id)throw Error('Supplemental ID/C-ID collision');
     line.status='already_published';step('idempotent_no_change');report.summary.already++;return line;
   }
-  const [player,english,xmlResponse,pdf]=await Promise.all([
+  const source=sourceMap.get(s.id);
+  if(!source||source.status!=='ready_for_chatgpt'||source.seriesId!==s.seriesId||Number(source.episodeNumber)!==Number(s.officialEpisodeNumber)||
+    !source.verification?.englishText||!source.verification?.captionXml||!source.verification?.storybook||!source.verification?.episodeTitleMatched||!source.verification?.video)
+      throw Error('Earlier verified official source artifact missing or inconsistent for '+s.id);
+  const [player,pdf]=await Promise.all([
     readPlayer(s.id,fetch),
-    get(ORIGINAL_TEXT(s.id)),
-    get(CAPTION(s.id)),
     fetch(BOOK(s.id),{method:'HEAD',signal:AbortSignal.timeout(30000)})
   ]);
-  if(!isEpisodeMatch(player.item.cont_title,s.title))throw Error('Official title mismatch '+player.item.cont_title+' vs '+s.title);
+  if(!isEpisodeMatch(player.item.cont_title,s.title)||!isEpisodeMatch(source.title,s.title))throw Error('Official title mismatch '+player.item.cont_title+' vs '+s.title);
   if(!pdf.ok)throw Error('Official Storybook HTTP '+pdf.status);
   const video=await verifyPlaylist(player.video,fetch);
-  const paragraphs=textParagraphs(await english.text()),xml=await xmlResponse.text(),cues=parseCaptions(xml);
+  const paragraphs=source.paragraphs,xml=source.captionXml,cues=parseCaptions(xml);
+  if(!Array.isArray(paragraphs)||typeof xml!=='string'||!xml.length)throw Error('Official collector artifact lacks Text or subtitle XML');
   if(paragraphs.length<6||cues.length<5)throw Error('Insufficient official English Text or subtitle cues');
   if(s.sections.at(-1)?.[0]!==paragraphs.length)throw Error('Editorial sections do not match current official paragraph count');
-  step('official_video_text_caption_pdf_verified',{paragraphs:paragraphs.length,cues:cues.length,pdf:pdf.status,host:new URL(video).hostname});
+  step('official_video_text_caption_pdf_verified',{collectorRunId:43221955132,paragraphs:paragraphs.length,cues:cues.length,pdf:pdf.status,host:new URL(video).hostname});
   const lessonSections=sectionize(s.sections,paragraphs);
   const level=Number(series.level);if(!Number.isFinite(level))throw Error('R2 series level unavailable');
   const words=[];
