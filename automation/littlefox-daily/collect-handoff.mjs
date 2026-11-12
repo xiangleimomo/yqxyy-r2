@@ -14,7 +14,7 @@ try{
  let releases=scheduleReleases(schedule,d,series);
  if(process.env.LF_BLIND_TEST==='1'){
   const test=JSON.parse(await fs.readFile('automation/littlefox-daily/blind-test-request.json','utf8'));
-  if(test.mode!=='manual_episode_test'||!test.target?.seriesId||!Number.isInteger(test.target?.episodeNumber)||!/^C?$/.test('C'))throw Error('Invalid manual episode test request');
+  if(test.mode!=='manual_episode_test'||!test.target?.seriesId||!Number.isInteger(test.target?.episodeNumber)||!/^little-fox-[a-z0-9-]+$/.test(test.target.seriesId)||!test.target.title||!test.target.seriesTitle||!Number.isInteger(test.target.level))throw Error('Invalid manual episode test request');
   releases=[{...test.target,date:d.date,seriesTitle:test.target.seriesTitle,seriesEpisodeNumber:test.target.episodeNumber,calendarEpisodeNumber:test.target.calendarEpisodeNumber}];
  }
  for(const calendarRelease of releases){
