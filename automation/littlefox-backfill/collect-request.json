@@ -1,7 +1,7 @@
 {
   "mode": "collect_historical_missing",
   "publish": false,
-  "purpose": "Collect official sources only for trailing missing Little Fox episodes that can be appended without renumbering existing lessons. No R2 writes.",
+  "purpose": "Collect official sources only for trailing missing Little Fox episodes that can be appended without renumbering existing lessons. No R2 writes. Probe the level-0 song separately: captions may be absent for non-narrative songs, so collect official lyrics/player/PDF and inspect existing R2 song schema without writing.",
   "items": [
     {
       "seriesId": "little-fox-conversation-songs-2-srv01035",
@@ -36,5 +36,5 @@
       "title": "The Plot Thickens"
     }
   ],
-  "retry": 1
+  "retry": 2
 }
