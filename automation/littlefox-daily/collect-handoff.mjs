@@ -11,12 +11,7 @@ try{
  const index=await store.get('data/series-list.json');if(!index)throw Error('Missing R2 series-list.json');
  const series=JSON.parse(index);
  const schedule=await(await get(`https://res.littlefox.com/en/forum/publishing_schedule/${d.yearMonth}`)).text();
- let releases=scheduleReleases(schedule,d,series);
- if(process.env.LF_BLIND_TEST==='1'){
-  const test=JSON.parse(await fs.readFile('automation/littlefox-daily/blind-test-request.json','utf8'));
-  if(test.mode!=='manual_episode_test'||!test.target?.seriesId||!Number.isInteger(test.target?.episodeNumber)||!/^little-fox-[a-z0-9-]+$/.test(test.target.seriesId)||!test.target.title||!test.target.seriesTitle||!Number.isInteger(test.target.level))throw Error('Invalid manual episode test request');
-  releases=[{...test.target,date:d.date,seriesTitle:test.target.seriesTitle,seriesEpisodeNumber:test.target.episodeNumber,calendarEpisodeNumber:test.target.calendarEpisodeNumber}];
- }
+ const releases=scheduleReleases(schedule,d,series);
  for(const calendarRelease of releases){
   const item={seriesId:calendarRelease.seriesId,calendarEpisodeNumber:calendarRelease.calendarEpisodeNumber,title:calendarRelease.title,level:calendarRelease.level,status:'checking'};
   result.items.push(item);
