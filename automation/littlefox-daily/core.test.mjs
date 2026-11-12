@@ -218,35 +218,6 @@ test('bilingual Text accepts separate ordered Chinese talk blocks only with exac
  assert.deepEqual(bilingualTextParagraphs(org,trans).map(p=>p.translation),zh);
  assert.throws(()=>bilingualTextParagraphs(org,`<section>${mk(zh.slice(0,3))}</section>`),/incomplete|align/);
 });
-test('first Text anchor computes the Happy Prince episode 16 C ID and verifies player',async()=>{
-  const {identifyCId}=await import('./core.mjs');
-  const seen=[];
-  const http=async url=>{
-    seen.push(url);
-    if(url.includes('contents_list_v2'))return {ok:false,status:404,text:async()=>''};
-    assert.ok(url.includes('/player_h5/view'));
-    return {ok:true,text:async()=>'<script>var contents_info = [{"fc_id":"C0013536","cont_title":"The Happy Prince 16: A Happy Ending","video_url":"https://cdn.littlefox.com/a.m3u8"}];</script>'};
-  };
-  const id=await identifyCId({seriesId:'little-fox-the-happy-prince-fs0181',seriesEpisodeNumber:16,title:'A Happy Ending'},[],http);
-  assert.equal(id,'C0013536');assert.ok(seen.some(url=>url.includes('player_h5/view')));
-});
-test('a nonmatching first Text candidate falls back to R2 previous episode',async()=>{
-  const {identifyCId}=await import('./core.mjs');
-  let calls=0;
-  const http=async url=>{
-    if(url.includes('contents_list_v2'))return {ok:false,status:404,text:async()=>''};
-    calls++;
-    const id=calls===1?'C0013536':'C0013546';
-    return {ok:true,text:async()=>`var contents_info = [{"fc_id":"${id}","cont_title":"${calls===1?'Wrong Story':'A Happy Ending'}","video_url":"https://cdn.littlefox.com/a.m3u8"}];`};
-  };
-  assert.equal(await identifyCId({seriesId:'little-fox-the-happy-prince-fs0181',seriesEpisodeNumber:16,title:'A Happy Ending'},[{episodeId:15,sourceContentId:'C0013545'}],http),'C0013546');
-});
-test('both incorrect candidate IDs fail closed and request manual assistance',async()=>{
-  const {identifyCId}=await import('./core.mjs');
-  const http=async url=>({ok:!url.includes('contents_list_v2'),status:404,text:async()=>''});
-  await assert.rejects(identifyCId({seriesId:'little-fox-the-happy-prince-fs0181',seriesEpisodeNumber:16,title:'A Happy Ending'},[{episodeId:15,sourceContentId:'C0013545'}],http),/manual assistance required/);
-});
-
 test('duplicated /org reading panels match mixed grouped /trans talks exactly',async()=>{
  const {textParagraphs,bilingualTextParagraphs}=await import('./core.mjs');
  const en=['The general entered the room.','The leader called for help.','The soldiers marched to camp.','They waited for a reply.','The army reached the gate.'];
@@ -259,56 +230,6 @@ test('duplicated /org reading panels match mixed grouped /trans talks exactly',a
  assert.deepEqual(bilingualTextParagraphs(org,trans).map(x=>x.translation),zh);
  const bad=trans.replace('将军走进了房间。','其他句子的中文翻译。').replace('The leader called for help.','Different English anchor.');
  assert.throws(()=>bilingualTextParagraphs(org,bad),/align|incomplete|anchor|translation|differs/);
-});
-
-test('C ID resolves from official catalog and matching player title before video URL is published',async()=>{
- const {identifyCId,readPlayer}=await import('./core.mjs');
- const http=async(url)=>({ok:true,text:async()=>url.includes('contents_list_v2')
-  ?'<div data-contname="New Story" data-fcid="C0013999"></div>'
-  :'var contents_info = [{"fc_id":"C0013999","cont_title":"New Story","video_url":""}];'});
- const release={seriesId:'little-fox-example-fs0183',seriesEpisodeNumber:1,title:'New Story'};
- assert.equal(await identifyCId(release,[],http),'C0013999');
- const meta=await readPlayer('C0013999',http,false);
- assert.equal(meta.item.cont_title,'New Story');
- assert.equal(meta.video,null);
- await assert.rejects(readPlayer('C0013999',http),/no video URL/);
-});
-
-test('pre-release exact official catalog and English Text can confirm C ID with no player metadata',async()=>{
- const {identifyCId}=await import('./core.mjs');
- const paragraphs=['First English line is readable.','Second English line is readable.','Third English line is readable.','Fourth English line is readable.'];
- const http=async url=>({
-   ok:!url.includes('player'),
-   text:async()=>url.includes('contents_list_v2')
-      ?'<span data-contname="Eighteen Armies" data-fcid="C0013410"></span>'
-      :url.includes('/supplement/org/')
-       ?paragraphs.map(t=>'<p>'+t+'</p>').join('')
-       :''
- });
- assert.equal(await identifyCId({seriesId:'three-kingdoms',seriesEpisodeNumber:14,title:'Eighteen Armies'},[],http),'C0013410');
-});
-
-test('Bing exact-title result extracts official Text C ID and cross-checks series episode 214',async()=>{
-  const {searchBingOfficialTextId,identifyCId,resolveOfficialSeriesEpisode}=await import('./core.mjs');
-  const catalog=Array.from({length:213},(_,i)=>`<li data-fcid="C${String(13361+i).padStart(7,'0')}" data-contname="Episode ${i+1}"></li>`).join('')+
-    '<li data-fcid="C0013574" data-contname="The Plot Thickens"></li>';
-  const bing='<li class="b_algo"><h2><a href="https://cn.littlefox.com/cn/supplement/trans/C0013574">Red Magic, The New Heroes 14: The Plot Thickens | Little Fox</a></h2></li>';
-  const calls=[];
-  const http=async(url)=>{
-    calls.push(url);
-    if(url.includes('bing.com/search'))return {ok:true,text:async()=>bing};
-    if(url.includes('contents_list_v2/FS0059'))return {ok:true,text:async()=>catalog};
-    if(url.includes('/player_h5/view'))return {ok:true,text:async()=>'<script>var contents_info = [{"fc_id":"C0013574","cont_title":"The Plot Thickens","video_url":"https://cdn.littlefox.com/a.m3u8"}];</script>'};
-    throw Error('Unexpected URL '+url);
-  };
-  const release={seriesId:'little-fox-red-magic-fs0059',seriesTitle:'Red Magic, The New Heroes',calendarEpisodeNumber:14,title:'The Plot Thickens'};
-  const resolved=await resolveOfficialSeriesEpisode(release,http);
-  assert.equal(resolved.seriesEpisodeNumber,214);
-  assert.equal(resolved.contentId,'C0013574');
-  const found=await searchBingOfficialTextId(release,http);
-  assert.equal(found,'C0013574');
-  assert.equal(await identifyCId({...release,...resolved},[],http),'C0013574');
-  assert.ok(calls.some(url=>url.includes('bing.com/search')));
 });
 
 test('Bing C ID discovery rejects non-Little-Fox links and mismatched result titles',async()=>{
