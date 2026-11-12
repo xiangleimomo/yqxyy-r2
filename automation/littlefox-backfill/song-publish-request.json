@@ -1,0 +1,6 @@
+{
+  "mode": "historical_song_v2",
+  "contentId": "C0005362",
+  "publish": true,
+  "reason": "User requested historical Little Fox gaps be backfilled. Level-0 Conversation Songs 2 has official English lyrics and verified HLS; official caption XML is HTTP 404 and existing episodes 33–35 have no captions or Storybook field. Publish using the existing low-level song schema without inventing subtitle timings or a quiz."
+}
