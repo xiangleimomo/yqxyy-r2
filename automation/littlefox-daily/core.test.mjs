@@ -18,6 +18,7 @@ test('monthly calendar resolves full series names and Chapter N labels',()=>{
  assert.equal(releases[0].calendarEpisodeNumber,14);
  assert.equal(releases[0].seriesEpisodeNumber,undefined);
  assert.equal(releases[0].title,'The Plot Thickens');
+ assert.equal(releases[0].calendarKeyword,'Red Magic, The New Heroes Chapter 14 The Plot Thickens');
 });
 test('player C ID is parsed only when the official ID matches',()=>{
  assert.deepEqual(playerItem('var contents_info = [{"fc_id":"C0013595","cont_title":"The Secret Lab"}];','C0013595'),{fc_id:'C0013595',cont_title:'The Secret Lab'});
@@ -100,13 +101,13 @@ test('bilingual text parser accepts verified English and Chinese in the same par
 
 test('Bing official Text URL is the sole C-ID discovery source; no arithmetic fallback',async()=>{
  const {searchBingOfficialTextId,identifyCId}=await import('./core.mjs');
- const release={seriesId:'little-fox-red-magic-fs0059',seriesTitle:'Red Magic, The New Heroes',calendarEpisodeNumber:14,title:'The Plot Thickens'};
- const bing='<li class="b_algo"><h2><a href="https://cn.littlefox.com/cn/supplement/trans/C0013574">Red Magic, The New Heroes 14: The Plot Thickens | Little Fox</a></h2></li>';
+ const release={seriesId:'little-fox-red-magic-fs0059',seriesTitle:'Red Magic',calendarEpisodeNumber:13,calendarKeyword:'Red Magic, The New Heroes 13: Racing the Wind',title:'Racing the Wind'};
+ const bing='<li class="b_algo"><h2><a href="https://cn.littlefox.com/cn/supplement/trans/C0013574">Red Magic, The New Heroes 13: Racing the Wind | Little Fox</a></h2></li>';
  const calls=[];
  const http=async url=>{
   calls.push(url);
   if(url.includes('bing.com/search'))return {ok:true,text:async()=>bing};
-  if(url.includes('/player_h5/view'))return {ok:true,text:async()=>'<script>var contents_info = [{"fc_id":"C0013574","cont_title":"The Plot Thickens","video_url":"https://cdn.littlefox.com/a.m3u8"}];</script>'};
+  if(url.includes('/player_h5/view'))return {ok:true,text:async()=>'<script>var contents_info = [{"fc_id":"C0013574","cont_title":"Racing the Wind","video_url":"https://cdn.littlefox.com/a.m3u8"}];</script>'};
   throw Error('Unexpected URL '+url);
  };
  assert.equal(await searchBingOfficialTextId(release,http),'C0013574');
@@ -117,7 +118,7 @@ test('Bing official Text URL is the sole C-ID discovery source; no arithmetic fa
 
 test('Bing C-ID discovery rejects nonofficial links, mismatched titles and ambiguous results',async()=>{
  const {searchBingOfficialTextId}=await import('./core.mjs');
- const release={seriesTitle:'Red Magic',calendarEpisodeNumber:14,title:'The Plot Thickens'};
+ const release={seriesTitle:'Red Magic',calendarEpisodeNumber:13,calendarKeyword:'Red Magic, The New Heroes 13: Racing the Wind',title:'Racing the Wind'};
  const bad=async()=>({ok:true,text:async()=>'<a href="https://evil.example/supplement/trans/C0013574">The Plot Thickens</a><a href="https://cn.littlefox.com/cn/supplement/trans/C0013575">A Different Story</a>'});
  await assert.rejects(searchBingOfficialTextId(release,bad),/Bing found no unique official/);
  const ambiguous=async()=>({ok:true,text:async()=>'<a href="https://cn.littlefox.com/cn/supplement/trans/C0013574">The Plot Thickens</a><a href="https://cn.littlefox.com/cn/supplement/org/C0013575">The Plot Thickens</a>'});
