@@ -1,0 +1,33 @@
+name: Little Fox R2 Series Index Diagnostic
+on:
+  push:
+    paths:
+      - 'automation/littlefox-daily/r2-diagnostic-request.json'
+permissions:
+  contents: read
+jobs:
+  inspect_r2:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+      R2_BUCKET: ${{ secrets.R2_BUCKET }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --omit=dev
+      - name: Read-only inspect the requested R2 series index
+        run: node automation/littlefox-daily/diagnose-series-index.mjs
+      - name: Retain read-only diagnostic report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: littlefox-r2-series-diagnostic-${{ github.run_id }}
+          path: /tmp/littlefox-r2-series-diagnostic.json
+          if-no-files-found: error
+          retention-days: 7
