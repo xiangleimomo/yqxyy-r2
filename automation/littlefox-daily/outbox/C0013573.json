@@ -1,0 +1,490 @@
+{
+  "schemaVersion": 1,
+  "status": "ready_for_publish",
+  "reviewStatus": "approved",
+  "seriesId": "little-fox-red-magic-fs0059",
+  "episodeNumber": 213,
+  "contentId": "C0013573",
+  "title": "Racing the Wind",
+  "level": 7,
+  "releaseDate": "2026-11-05",
+  "officialSourceUrls": {
+    "textOriginal": "https://cn.littlefox.com/cn/supplement/org/C0013573",
+    "caption": "https://cdn.littlefox.com/contents/caption/C0013573.xml",
+    "storybook": "https://res.littlefox.com/en/supplement/load_pdf/C0013573"
+  },
+  "sourceVerification": {
+    "englishText": true,
+    "storybook": true,
+    "storybookMethod": "HEAD HTTP 200 (PDF content not extracted)",
+    "subtitleXml": true,
+    "episodeTitleMatched": true,
+    "workflowRunId": "43201460328",
+    "sourceArtifactName": "littlefox-historical-sources-43201460328"
+  },
+  "captionMetadata": {
+    "cueCount": 84,
+    "firstCueStart": 0.046,
+    "lastCueEnd": 396.688
+  },
+  "lesson": {
+    "themeZh": "一次看似顺利的飞龙车旅程如何变成远疆危机",
+    "learningObjectivesZh": [
+      "说明Perda期待前往Mount Mystery的原因及选择飞龙车的背景",
+      "理解飞行途中不使用魔法的原因，以及众人休息前后的事件顺序",
+      "根据环境变化和Gunt离开的画面判断旅程发生了什么意外"
+    ],
+    "sections": [
+      {
+        "id": "s1",
+        "title": "Preparing for the Dragon-Coach Trip",
+        "titleZh": "飞龙车出发前的准备",
+        "paragraphIds": [
+          "p1",
+          "p2",
+          "p3",
+          "p4",
+          "p5",
+          "p6",
+          "p7",
+          "p8",
+          "p9",
+          "p10",
+          "p11",
+          "p12",
+          "p13",
+          "p14",
+          "p15"
+        ],
+        "startSeconds": 0.046,
+        "endSeconds": 146.666,
+        "summaryZh": "Perda兴奋地准备前往Mount Mystery，期待见到Zella和朋友们并参观洞穴。Zann解释了选择飞龙车的原因：Gunt熟悉飞龙，能够更快地带大家抵达。Perda还注意到一只通常凶猛的wind racer竟然温顺地让Gunt抚摸。",
+        "focus": [
+          "出行目的",
+          "交通方式",
+          "人物观察"
+        ]
+      },
+      {
+        "id": "s2",
+        "title": "A Fast Flight and a Quiet Nap",
+        "titleZh": "高速飞行与途中休息",
+        "paragraphIds": [
+          "p16",
+          "p17",
+          "p18",
+          "p19",
+          "p20",
+          "p21",
+          "p22",
+          "p23",
+          "p24",
+          "p25",
+          "p26",
+          "p27",
+          "p28",
+          "p29",
+          "p30",
+          "p31",
+          "p32",
+          "p33",
+          "p34",
+          "p35",
+          "p36"
+        ],
+        "startSeconds": 146.667,
+        "endSeconds": 321.649,
+        "summaryZh": "大家登上封闭式飞龙车。Gunt提醒他们飞行时不要使用魔法，以免分散飞龙的注意力。飞行速度很快，众人喝了冰凉的airberry juice后决定小睡，并请Gunt到达时叫醒他们。",
+        "focus": [
+          "安全提醒",
+          "事件顺序",
+          "人物行动"
+        ]
+      },
+      {
+        "id": "s3",
+        "title": "The Wrong Destination",
+        "titleZh": "抵达错误的目的地",
+        "paragraphIds": [
+          "p37",
+          "p38",
+          "p39",
+          "p40",
+          "p41",
+          "p42",
+          "p43",
+          "p44",
+          "p45",
+          "p46"
+        ],
+        "startSeconds": 321.65,
+        "endSeconds": 396.688,
+        "summaryZh": "Perda醒来后发现自己昏昏沉沉，外面也异常黑暗。Boz确认他们并未抵达Mount Mystery，而是被带到了Far Frontier。最后，Perda看见Gunt正骑着一条飞龙离开，另一条飞龙跟在后面。",
+        "focus": [
+          "异常发现",
+          "目的地反转",
+          "结尾悬念"
+        ]
+      }
+    ]
+  },
+  "sections": [
+    {
+      "id": "s1",
+      "title": "Preparing for the Dragon-Coach Trip",
+      "titleZh": "飞龙车出发前的准备",
+      "paragraphIds": [
+        "p1",
+        "p2",
+        "p3",
+        "p4",
+        "p5",
+        "p6",
+        "p7",
+        "p8",
+        "p9",
+        "p10",
+        "p11",
+        "p12",
+        "p13",
+        "p14",
+        "p15"
+      ],
+      "startSeconds": 0.046,
+      "endSeconds": 146.666,
+      "summaryZh": "Perda兴奋地准备前往Mount Mystery，期待见到Zella和朋友们并参观洞穴。Zann解释了选择飞龙车的原因：Gunt熟悉飞龙，能够更快地带大家抵达。Perda还注意到一只通常凶猛的wind racer竟然温顺地让Gunt抚摸。",
+      "focus": [
+        "出行目的",
+        "交通方式",
+        "人物观察"
+      ]
+    },
+    {
+      "id": "s2",
+      "title": "A Fast Flight and a Quiet Nap",
+      "titleZh": "高速飞行与途中休息",
+      "paragraphIds": [
+        "p16",
+        "p17",
+        "p18",
+        "p19",
+        "p20",
+        "p21",
+        "p22",
+        "p23",
+        "p24",
+        "p25",
+        "p26",
+        "p27",
+        "p28",
+        "p29",
+        "p30",
+        "p31",
+        "p32",
+        "p33",
+        "p34",
+        "p35",
+        "p36"
+      ],
+      "startSeconds": 146.667,
+      "endSeconds": 321.649,
+      "summaryZh": "大家登上封闭式飞龙车。Gunt提醒他们飞行时不要使用魔法，以免分散飞龙的注意力。飞行速度很快，众人喝了冰凉的airberry juice后决定小睡，并请Gunt到达时叫醒他们。",
+      "focus": [
+        "安全提醒",
+        "事件顺序",
+        "人物行动"
+      ]
+    },
+    {
+      "id": "s3",
+      "title": "The Wrong Destination",
+      "titleZh": "抵达错误的目的地",
+      "paragraphIds": [
+        "p37",
+        "p38",
+        "p39",
+        "p40",
+        "p41",
+        "p42",
+        "p43",
+        "p44",
+        "p45",
+        "p46"
+      ],
+      "startSeconds": 321.65,
+      "endSeconds": 396.688,
+      "summaryZh": "Perda醒来后发现自己昏昏沉沉，外面也异常黑暗。Boz确认他们并未抵达Mount Mystery，而是被带到了Far Frontier。最后，Perda看见Gunt正骑着一条飞龙离开，另一条飞龙跟在后面。",
+      "focus": [
+        "异常发现",
+        "目的地反转",
+        "结尾悬念"
+      ]
+    }
+  ],
+  "vocabulary": [
+    {
+      "word": "hummed",
+      "meaningZh": "哼唱；轻声哼歌",
+      "example": "She hummed a tune while walking home.",
+      "exampleZh": "她回家路上轻声哼着一首曲子。",
+      "paragraphIds": [
+        "p1"
+      ],
+      "sourceContentId": "C0013573"
+    },
+    {
+      "word": "meadow",
+      "meaningZh": "草地；牧草地",
+      "example": "The children played in the green meadow.",
+      "exampleZh": "孩子们在绿色草地上玩耍。",
+      "paragraphIds": [
+        "p1"
+      ],
+      "sourceContentId": "C0013573"
+    },
+    {
+      "word": "harnessed",
+      "meaningZh": "套上挽具；拴套",
+      "example": "The horses were harnessed to the carriage.",
+      "exampleZh": "马匹被套上挽具，拉着马车。",
+      "paragraphIds": [
+        "p4"
+      ],
+      "sourceContentId": "C0013573"
+    },
+    {
+      "word": "enclosed",
+      "meaningZh": "封闭的；围起来的",
+      "example": "They traveled in an enclosed vehicle.",
+      "exampleZh": "他们乘坐一辆封闭式车辆出行。",
+      "paragraphIds": [
+        "p4"
+      ],
+      "sourceContentId": "C0013573"
+    },
+    {
+      "word": "fierce",
+      "meaningZh": "凶猛的；猛烈的",
+      "example": "The fierce animal stayed far from the visitors.",
+      "exampleZh": "那只凶猛的动物远离了游客。",
+      "paragraphIds": [
+        "p6",
+        "p14"
+      ],
+      "sourceContentId": "C0013573"
+    },
+    {
+      "word": "tame",
+      "meaningZh": "温顺的；驯服的",
+      "example": "The tame rabbit let the child touch its back.",
+      "exampleZh": "那只温顺的兔子让孩子摸它的背。",
+      "paragraphIds": [
+        "p14"
+      ],
+      "sourceContentId": "C0013573"
+    },
+    {
+      "word": "scorching pace",
+      "meaningZh": "极快的速度",
+      "example": "The train moved at a scorching pace.",
+      "exampleZh": "火车以极快的速度行驶。",
+      "paragraphIds": [
+        "p24"
+      ],
+      "sourceContentId": "C0013573"
+    },
+    {
+      "word": "blur",
+      "meaningZh": "模糊的一片；模糊影像",
+      "example": "The trees became a blur as the car sped past.",
+      "exampleZh": "汽车飞驰而过时，树木变成了模糊的影子。",
+      "paragraphIds": [
+        "p24"
+      ],
+      "sourceContentId": "C0013573"
+    },
+    {
+      "word": "grogginess",
+      "meaningZh": "昏昏沉沉；迷糊状态",
+      "example": "A glass of water helped her shake off her grogginess.",
+      "exampleZh": "一杯水帮助她摆脱了昏沉的状态。",
+      "paragraphIds": [
+        "p39"
+      ],
+      "sourceContentId": "C0013573"
+    }
+  ],
+  "quiz": {
+    "episodeId": 213,
+    "title": "Racing the Wind",
+    "styleReference": "yqxyy-v2-story-comprehension",
+    "revision": "2026-11-12",
+    "questions": [
+      {
+        "id": "q1",
+        "type": "single-choice",
+        "category": "reading",
+        "question": "Why was Perda looking forward to the trip to Mount Mystery?",
+        "options": [
+          {
+            "key": "A",
+            "text": "She wanted to buy new blankets for the airship."
+          },
+          {
+            "key": "B",
+            "text": "She hoped to learn how to drive the dragon coach."
+          },
+          {
+            "key": "C",
+            "text": "She was excited to meet Zella and her friends and see the cave."
+          },
+          {
+            "key": "D",
+            "text": "She planned to visit the palace menagerie."
+          }
+        ],
+        "answer": "C",
+        "explanation": "Perda期待这次旅行，因为她想见到Zella和她的朋友们，也想看看Mount Mystery的洞穴。",
+        "evidence": {
+          "paragraphIds": [
+            "p1"
+          ],
+          "sourceContentId": "C0013573"
+        }
+      },
+      {
+        "id": "q2",
+        "type": "single-choice",
+        "category": "reading",
+        "question": "Why did Gunt's dragon coach seem like a good way to reach Mount Mystery?",
+        "options": [
+          {
+            "key": "A",
+            "text": "Gunt was an expert with dragons and expected the trip to take only a few hours."
+          },
+          {
+            "key": "B",
+            "text": "The coach could travel through a wormhole without the researchers noticing."
+          },
+          {
+            "key": "C",
+            "text": "The coach did not need dragons or any other power."
+          },
+          {
+            "key": "D",
+            "text": "It allowed everyone to use magic during the flight."
+          }
+        ],
+        "answer": "A",
+        "explanation": "Gunt是宫廷动物园的负责人，熟悉飞龙。他表示飞龙车只需几个小时，比使用传送魔法或cloud gliders更快。",
+        "evidence": {
+          "paragraphIds": [
+            "p7"
+          ],
+          "sourceContentId": "C0013573"
+        }
+      },
+      {
+        "id": "q3",
+        "type": "single-choice",
+        "category": "reading",
+        "question": "What surprised Perda when Gunt patted one of the wind racers?",
+        "options": [
+          {
+            "key": "A",
+            "text": "The dragon immediately flew away."
+          },
+          {
+            "key": "B",
+            "text": "The dragon refused to stand near the airship."
+          },
+          {
+            "key": "C",
+            "text": "The dragon had lost its ability to fly."
+          },
+          {
+            "key": "D",
+            "text": "The dragon acted tame even though wind racers were usually fierce."
+          }
+        ],
+        "answer": "D",
+        "explanation": "Perda知道wind racers通常很凶猛，不会让人抚摸；但Gunt身边的那只却表现得很温顺，因此她很惊讶。",
+        "evidence": {
+          "paragraphIds": [
+            "p14"
+          ],
+          "sourceContentId": "C0013573"
+        }
+      },
+      {
+        "id": "q4",
+        "type": "single-choice",
+        "category": "reading",
+        "question": "Why did Nax stop the researcher from using magic during the flight?",
+        "options": [
+          {
+            "key": "A",
+            "text": "The airship had already reached its destination."
+          },
+          {
+            "key": "B",
+            "text": "Gunt had warned that magic might distract the dragons."
+          },
+          {
+            "key": "C",
+            "text": "The airberry juice would become warm if magic was used."
+          },
+          {
+            "key": "D",
+            "text": "The researcher had forgotten how to use magic."
+          }
+        ],
+        "answer": "B",
+        "explanation": "Gunt在出发前提醒大家，飞行时使用魔法可能会分散飞龙的注意力。Nax因此及时阻止研究员施法。",
+        "evidence": {
+          "paragraphIds": [
+            "p17",
+            "p28"
+          ],
+          "sourceContentId": "C0013573"
+        }
+      },
+      {
+        "id": "q5",
+        "type": "single-choice",
+        "category": "reading",
+        "question": "What did the group discover after waking from their nap?",
+        "options": [
+          {
+            "key": "A",
+            "text": "They had arrived at Mount Mystery earlier than expected."
+          },
+          {
+            "key": "B",
+            "text": "The dragons had stopped because they were tired."
+          },
+          {
+            "key": "C",
+            "text": "They had been taken to the Far Frontier, and Gunt was flying away on a dragon."
+          },
+          {
+            "key": "D",
+            "text": "Gunt had gone ahead to prepare a place for them."
+          }
+        ],
+        "answer": "C",
+        "explanation": "醒来后，众人发现周围一片漆黑，Boz确认这里是Far Frontier而不是Mount Mystery。Perda随后看到Gunt骑着一条飞龙离开。",
+        "evidence": {
+          "paragraphIds": [
+            "p41",
+            "p45",
+            "p46"
+          ],
+          "sourceContentId": "C0013573"
+        }
+      }
+    ]
+  },
+  "calendarEpisodeNumber": 13,
+  "reviewNotes": "基于 GitHub Actions Run 43201460328 的真实官方素材：46段英文Text、84条字幕时间轴，Storybook HEAD HTTP 200；官方播放器标题为 Red Magic, The New Heroes 13: Racing the Wind，与本集标题 Racing the Wind 匹配。3个教学分段按本集段落及真实字幕时间轴划分。5道原创英文剧情理解题分别定位 p1、p7、p14、p17/p28、p41/p45/p46，覆盖出行目的、交通选择、飞龙异常、飞行规则和结尾发现。逐题核对四个不重复选项、唯一答案和具体中文解析；未使用其他集或原著剧情。"
+}
