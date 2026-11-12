@@ -258,6 +258,6 @@
         "contentId": "C0013312"
       }
     ],
-    "safety": "The remaining 16 missing C-IDs are internal gaps. Existing episodeId values are already referenced by lesson routes and per-episode R2 JSON keys. Publishing them by append would show incorrect numbering; renumbering existing entries can break existing lesson links and user progress. No internal rows, front end, Netlify, or Supabase were changed."
+    "safety": "The remaining 16 missing C-IDs are internal gaps. Existing episodeId values are already referenced by lesson routes and per-episode R2 JSON keys. Publishing them by append would show incorrect numbering; renumbering existing entries can break existing lesson links and user progress. No internal rows, front end, Netlify, or Supabase were changed. The current app routes lessons as #/lesson/{seriesId}/{episodeId}; episodeProgress/markComplete keys local progress as {seriesId}:{episodeId} and calls SFFamily.record(seriesId,episodeId,module). Therefore renumbering existing episodeId values can invalidate saved lesson routes, local progress, and cloud progress; no such renumbering or Supabase/front-end edit was performed."
   }
 }
