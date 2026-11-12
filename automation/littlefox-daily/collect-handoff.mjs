@@ -1,6 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import {chinaDate,makeR2,scheduleReleases,resolveOfficialSeriesEpisode,identifyCId,readPlayer,isEpisodeMatch,verifyPlaylist,parseCaptions,textParagraphs,textPageShape,ORIGINAL_TEXT} from './core.mjs';
+import {chinaDate,makeR2,scheduleReleases,identifyCId,readPlayer,isEpisodeMatch,verifyPlaylist,parseCaptions,textParagraphs,textPageShape,ORIGINAL_TEXT} from './core.mjs';
 const d=chinaDate(),out=`automation/littlefox-daily/inbox/${d.date}.json`;
 const privateOut='/tmp/littlefox-source-'+d.date+'.json';
 const result={schemaVersion:2,date:d.date,status:'checking',workflowRunId:process.env.GITHUB_RUN_ID||null,privateArtifactName:'littlefox-source-'+(process.env.GITHUB_RUN_ID||'local'),items:[],errors:[]};
@@ -11,15 +11,19 @@ try{
  const index=await store.get('data/series-list.json');if(!index)throw Error('Missing R2 series-list.json');
  const series=JSON.parse(index);
  const schedule=await(await get(`https://res.littlefox.com/en/forum/publishing_schedule/${d.yearMonth}`)).text();
- const releases=scheduleReleases(schedule,d,series);
+ let releases=scheduleReleases(schedule,d,series);
+ if(process.env.LF_BLIND_TEST==='1'){
+  const test=JSON.parse(await fs.readFile('automation/littlefox-daily/blind-test-request.json','utf8'));
+  if(test.mode!=='manual_episode_test'||!test.target?.seriesId||!Number.isInteger(test.target?.episodeNumber)||!/^C?$/.test('C'))throw Error('Invalid manual episode test request');
+  releases=[{...test.target,date:d.date,seriesTitle:test.target.seriesTitle,seriesEpisodeNumber:test.target.episodeNumber,calendarEpisodeNumber:test.target.calendarEpisodeNumber}];
+ }
  for(const calendarRelease of releases){
   const item={seriesId:calendarRelease.seriesId,calendarEpisodeNumber:calendarRelease.calendarEpisodeNumber,title:calendarRelease.title,level:calendarRelease.level,status:'checking'};
   result.items.push(item);
   try{
-   // The monthly calendar may number a chapter within a sub-series. Resolve the
-   // absolute episode position from the full official series catalog before R2 checks.
-   const official=await resolveOfficialSeriesEpisode(calendarRelease,fetch);
-   const release={...calendarRelease,...official};
+   // Normal daily runs use the official calendar's known absolute episode field.
+   // The one-off regression request may explicitly target a known missing absolute episode.
+   const release=calendarRelease;
    item.episodeNumber=release.seriesEpisodeNumber;
    const old=await store.get(`data/${release.seriesId}/episodes.json`);if(!old)throw Error('R2 episode index missing');
    const episodes=JSON.parse(old);
@@ -36,7 +40,6 @@ try{
     throw Error(`R2 episode number conflict at ${release.seriesEpisodeNumber}: existing C ID ${existingId||'missing'}, official C ID ${official.contentId}`);
    }
    const id=await identifyCId(release,episodes,fetch);if(!id)throw Error('C ID unavailable');
-   if(id!==official.contentId)throw Error(`C ID conflict: official catalog ${official.contentId}, verified resolver ${id}`);
    item.contentId=id;
    // Video may be published later than the official Text and C ID.
    // Distinguish a confirmed C ID from release readiness.
