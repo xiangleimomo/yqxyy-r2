@@ -21,6 +21,8 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci --omit=dev
+      - name: Run Little Fox parser and episode-index regression tests
+        run: node --test automation/littlefox-daily/core.test.mjs
       - name: Read-only inspect the requested R2 series index
         run: node automation/littlefox-daily/diagnose-series-index.mjs
       - name: Retain read-only diagnostic report
