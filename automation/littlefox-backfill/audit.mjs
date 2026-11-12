@@ -94,7 +94,7 @@ const summary=[
 '- R2 rows without a C-ID: '+report.summary.r2EpisodesWithoutContentId,
 '',
 'Missing episodes are determined by official C-ID membership, not by episode-number alignment. Mapping anomalies are reported separately and never auto-corrected. This audit performs GET requests only; it does not write to R2 or publish lessons.'
-].join('\n');'\n');
+].join('\n');
 console.log('LITTLEFOX_BACKFILL_AUDIT '+JSON.stringify(report.summary));
 console.log(summary);
 if(process.env.GITHUB_STEP_SUMMARY)await fs.appendFile(process.env.GITHUB_STEP_SUMMARY,summary+'\n');
