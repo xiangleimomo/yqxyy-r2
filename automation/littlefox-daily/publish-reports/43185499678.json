@@ -1,0 +1,20 @@
+{
+  "contentId": "C0013574",
+  "seriesId": "little-fox-red-magic-fs0059",
+  "episodeNumber": 14,
+  "requestedPublish": true,
+  "checkedAt": "2026-11-12T08:45:10.353Z",
+  "status": "already_published",
+  "stages": [
+    {
+      "name": "r2_real_state_checked",
+      "episodeIndexExists": true,
+      "existingEpisodes": 212,
+      "targetExists": true
+    },
+    {
+      "name": "duplicate_existing",
+      "reason": "R2 already holds target episode or C ID"
+    }
+  ]
+}
