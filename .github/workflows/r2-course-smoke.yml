@@ -5,6 +5,8 @@ permissions:
   contents: read
 jobs:
   smoke:
+    # PAUSED: standalone R2 smoke test is not part of the daily Little Fox V2 chain; retain for future diagnostics.
+    if: ${{ false }}
     runs-on: ubuntu-latest
     env:
       R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
