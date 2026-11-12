@@ -26,38 +26,30 @@ export function decodeHtml(s) {
 export function cleanHtml(html) {return decodeHtml(String(html).replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,' ').replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi,' ').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ')).trim();}
 export function safeUrl(url, allow=OFFICIAL_DOMAINS) {const u=new URL(url);if(u.protocol!=='https:'||!allow.has(u.hostname)||u.username||u.password)throw Error('Unapproved official host: '+u.hostname);return u.href;}
 export function scheduleReleases(html, date, seriesList) {
-  // Parse each calendar cell independently. Official markup has varied: the day
-  // may be in a data attribute or visible text, and episode labels may say
-  // "Chapter 14 The Plot Thickens", "14: The Plot Thickens", etc.
+  // Read the official monthly calendar's day cells. Match the date anywhere
+  // in the cell's date/header text instead of assuming a fixed first-35-char layout.
   const source=String(html);
-  const cells=[...source.matchAll(/<td\\b([^>]*)>([\\s\\S]*?)<\\/td>/gi)].map(m=>{
+  const cells=[...source.matchAll(/<td\b([^>]*)>([\s\S]*?)<\/td>/gi)].map(m=>{
     const attrs=m[1]||'',inner=m[2]||'';
     return {attrs,html:inner,text:cleanHtml(inner)};
   });
   const matches=[];
   const day=String(Number(date.day));
   const hasDay=cell=>{
-    const attrDate=(cell.attrs.match(/\\b(?:data-date|datetime|data-day|title)\\s*=\\s*["']([^"']+)["']/i)||[])[1]||'';
+    const attrDate=(cell.attrs.match(/\b(?:data-date|datetime|data-day|title)\s*=\s*["']([^"']+)["']/i)||[])[1]||'';
     if(attrDate && new RegExp('(?:^|[^0-9])0?'+day+'(?:[^0-9]|$)').test(attrDate))return true;
-    // Avoid the old first-35-character assumption; match a standalone day
-    // token anywhere in the cell's leading date/header text.
-    const text=cell.text;
-    return new RegExp('(?:^|[^0-9])0?'+day+'(?:[^0-9]|$)').test(text.slice(0,100));
+    return new RegExp('(?:^|[^0-9])0?'+day+'(?:[^0-9]|$)').test(cell.text.slice(0,120));
   };
   const episodeFromText=(text,seriesTitle)=>{
-    const normalizedText=text.toLowerCase();
-    const titleAt=normalizedText.indexOf(String(seriesTitle).toLowerCase());
+    const titleAt=text.toLowerCase().indexOf(String(seriesTitle).toLowerCase());
     if(titleAt<0)return null;
     const tail=text.slice(titleAt+String(seriesTitle).length).trim();
-    const patterns=[
-      /(?:chapter|episode|ep\\.?|#)\\s*0?(\\d+)\\s*[:：.\\-]?\\s*(.+)$/i,
-      /(?:^|[\\s,;])0?(\\d+)\\s*[:：]\\s*(.+)$/
-    ];
-    for(const pattern of patterns){
-      const m=tail.match(pattern);
-      if(m&&m[2]?.trim())return {number:Number(m[1]),title:m[2].trim().replace(/^[-,:：\\s]+/,'')};
-    }
-    return null;
+    // The schedule sometimes inserts a subtitle between series name and episode.
+    const labeled=tail.match(/(?:chapter|episode|ep\.?|#)\s*0?(\d+)\s*[:：.\-]?\s*(.+)$/i);
+    const numbered=tail.match(/(?:^|[\s,;])0?(\d+)\s*[:：]\s*(.+)$/);
+    const m=labeled||numbered;
+    if(!m||!m[2]?.trim())return null;
+    return {number:Number(m[1]),title:m[2].trim().replace(/^[-,:：\s]+/,'')};
   };
   for(const cell of cells){
     if(!hasDay(cell))continue;
@@ -71,7 +63,7 @@ export function scheduleReleases(html, date, seriesList) {
       let parsed=null;
       for(const name of names){parsed=episodeFromText(cell.text,name);if(parsed)break;}
       if(!parsed)continue;
-      const directIds=[...cell.html.matchAll(/C\\d{7}/g)].map(m=>m[0]);
+      const directIds=[...cell.html.matchAll(/C\d{7}/g)].map(m=>m[0]);
       matches.push({
         seriesId:series.seriesId,seriesTitle:series.title,level:Number(series.level),
         seriesEpisodeNumber:parsed.number,title:parsed.title,date:date.date,
