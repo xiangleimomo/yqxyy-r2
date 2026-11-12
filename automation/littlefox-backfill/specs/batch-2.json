@@ -1,0 +1,750 @@
+[
+  {
+    "id": "C0010172",
+    "officialEpisodeNumber": 152,
+    "seriesId": "little-fox-red-magic-fs0059",
+    "title": "At the Lab",
+    "sections": [
+      [
+        19,
+        "A Trip Home Through the Vortex",
+        "穿过漩涡回家",
+        "大家拴在一起穿过漩涡回到Edgewood，再传送至Zann父母的实验室。"
+      ],
+      [
+        33,
+        "Zing and the Ancient Relics",
+        "Zing与古老遗物",
+        "Zing因没能同行而发怒，Perda在实验室看见古老护身符和陶杯。"
+      ],
+      [
+        41,
+        "The Source of Magic in Danger",
+        "魔法之源与危险",
+        "研究人员准备研究Wormwood树木片，Zing喷火飞向一本珍贵旧书，留下悬念。"
+      ]
+    ],
+    "words": [
+      "vortex|漩涡",
+      "shackled|被镣铐束缚的",
+      "wormhole|虫洞",
+      "puddle|水洼",
+      "research|研究",
+      "relics|古代遗物",
+      "amulet|护身符",
+      "pottery|陶器",
+      "charm|魔法护符",
+      "flames|火焰"
+    ],
+    "questions": [
+      {
+        "id": "q1",
+        "question": "Why was the group magically shackled together while traveling through the vortex?",
+        "options": [
+          {
+            "key": "A",
+            "text": "So no one would become separated in the vortex."
+          },
+          {
+            "key": "B",
+            "text": "So they could carry the ancient relics together."
+          },
+          {
+            "key": "C",
+            "text": "So Zing would stop breathing fire."
+          },
+          {
+            "key": "D",
+            "text": "So the palace guards could arrest them."
+          }
+        ],
+        "answer": "A",
+        "explanation": "大家在漩涡中用魔法锁链连成一排，是为了防止有人与团队分离。",
+        "evidence": {
+          "paragraphIds": [
+            "p3"
+          ]
+        }
+      },
+      {
+        "id": "q2",
+        "question": "Why did Zann land in a puddle near the lab?",
+        "options": [
+          {
+            "key": "A",
+            "text": "Perda had pushed him into the water."
+          },
+          {
+            "key": "B",
+            "text": "Nax had sent him to the wrong city."
+          },
+          {
+            "key": "C",
+            "text": "He could be careless when choosing exactly where to zap."
+          },
+          {
+            "key": "D",
+            "text": "A dragon had knocked him off his broom."
+          }
+        ],
+        "answer": "C",
+        "explanation": "Zann虽然擅长魔法，但有时传送落点不够准确，因此踩进了水洼。",
+        "evidence": {
+          "paragraphIds": [
+            "p18"
+          ]
+        }
+      },
+      {
+        "id": "q3",
+        "question": "How did Zann protect himself when Zing flew at him breathing fire?",
+        "options": [
+          {
+            "key": "A",
+            "text": "He ran into the palace."
+          },
+          {
+            "key": "B",
+            "text": "He cast a Shield spell."
+          },
+          {
+            "key": "C",
+            "text": "He jumped through a wormhole."
+          },
+          {
+            "key": "D",
+            "text": "He hid inside the relic case."
+          }
+        ],
+        "answer": "B",
+        "explanation": "Zing喷火冲过来时，Zann及时施放Shield魔法挡住火焰。",
+        "evidence": {
+          "paragraphIds": [
+            "p21"
+          ]
+        }
+      },
+      {
+        "id": "q4",
+        "question": "Where had the most powerful relics been taken?",
+        "options": [
+          {
+            "key": "A",
+            "text": "To Swamp Bottom to be hidden."
+          },
+          {
+            "key": "B",
+            "text": "To the Cave of the Unknown."
+          },
+          {
+            "key": "C",
+            "text": "To a shop near the lab."
+          },
+          {
+            "key": "D",
+            "text": "To the palace for full-time protection."
+          }
+        ],
+        "answer": "D",
+        "explanation": "研究员解释最强大的遗物已运往宫殿严密守护，实验室只留下少数研究。",
+        "evidence": {
+          "paragraphIds": [
+            "p27"
+          ]
+        }
+      },
+      {
+        "id": "q5",
+        "question": "Why were the researchers interested in the piece of Wormwood tree?",
+        "options": [
+          {
+            "key": "A",
+            "text": "The tree had been identified as the Source of magic."
+          },
+          {
+            "key": "B",
+            "text": "The tree could make dragons sleep."
+          },
+          {
+            "key": "C",
+            "text": "The wood was needed to repair a wagon."
+          },
+          {
+            "key": "D",
+            "text": "The tree was a present from a king."
+          }
+        ],
+        "answer": "A",
+        "explanation": "Asta解释Wormwood树已被发现是魔法之源，因此研究人员想进一步研究木片。",
+        "evidence": {
+          "paragraphIds": [
+            "p36"
+          ]
+        }
+      }
+    ],
+    "schemaVersion": 1,
+    "qualityStatus": "manually_authored_from_official_text"
+  },
+  {
+    "id": "C0010198",
+    "officialEpisodeNumber": 178,
+    "seriesId": "little-fox-red-magic-fs0059",
+    "title": "New Developments",
+    "sections": [
+      [
+        16,
+        "Escape from Trof's Farm",
+        "逃出Trof的农场",
+        "Perda放出plonks分散Trof注意，协助Mellis与Anso逃离，但Zing被农夫捉走。"
+      ],
+      [
+        33,
+        "An Unexpected Mansion",
+        "意外出现的豪宅",
+        "Mellis和Perda跟随人群来到Vilkor新建的豪宅，怀疑Zira正在操纵他。"
+      ],
+      [
+        46,
+        "A Compel Spell and a Sacrifice",
+        "强迫咒与牺牲",
+        "两人受到Compel法术控制并被壮汉抓住，Mellis用魔法替Perda创造逃走机会。"
+      ]
+    ],
+    "words": [
+      "shackled|被束缚的",
+      "plonks|plonk动物（复数）",
+      "fence|围栏",
+      "furious|愤怒的",
+      "rescue|营救",
+      "mansion|豪宅",
+      "compel|强迫",
+      "hesitated|犹豫",
+      "goons|打手",
+      "escaped|逃脱的"
+    ],
+    "questions": [
+      {
+        "id": "q1",
+        "question": "How did Perda distract Trof at the start of the escape?",
+        "options": [
+          {
+            "key": "A",
+            "text": "She opened the fence so the plonks ran away."
+          },
+          {
+            "key": "B",
+            "text": "She asked Vilkor to arrest Trof."
+          },
+          {
+            "key": "C",
+            "text": "She hid inside a giant tree."
+          },
+          {
+            "key": "D",
+            "text": "She turned Mellis into a dragon."
+          }
+        ],
+        "answer": "A",
+        "explanation": "Perda打开围栏放走plonks，Trof只好追赶动物，从而松开Mellis。",
+        "evidence": {
+          "paragraphIds": [
+            "p4"
+          ]
+        }
+      },
+      {
+        "id": "q2",
+        "question": "What happened to Zing while Perda was trying to escape?",
+        "options": [
+          {
+            "key": "A",
+            "text": "Zing flew safely back to Magica."
+          },
+          {
+            "key": "B",
+            "text": "Anso took Zing to his house."
+          },
+          {
+            "key": "C",
+            "text": "Trof grabbed the dragon and trapped him."
+          },
+          {
+            "key": "D",
+            "text": "Zing transformed into a bird."
+          }
+        ],
+        "answer": "C",
+        "explanation": "Trof伸手从空中抓住Zing，把它关进装置里，迫使Perda暂时留下它。",
+        "evidence": {
+          "paragraphIds": [
+            "p7"
+          ]
+        }
+      },
+      {
+        "id": "q3",
+        "question": "Why did Mellis want to follow the people heading to Vilkor's new house?",
+        "options": [
+          {
+            "key": "A",
+            "text": "She wanted to receive a golden staff."
+          },
+          {
+            "key": "B",
+            "text": "She hoped they might find Zann there."
+          },
+          {
+            "key": "C",
+            "text": "She was searching for more plonks."
+          },
+          {
+            "key": "D",
+            "text": "She wanted to ask Vilkor for a party invitation."
+          }
+        ],
+        "answer": "B",
+        "explanation": "Mellis猜测Zann可能已经回到新建的豪宅附近，因此建议暗中跟随人群。",
+        "evidence": {
+          "paragraphIds": [
+            "p23"
+          ]
+        }
+      },
+      {
+        "id": "q4",
+        "question": "What caused Perda and Mellis to move against their will?",
+        "options": [
+          {
+            "key": "A",
+            "text": "A sudden strong wind pushed them."
+          },
+          {
+            "key": "B",
+            "text": "Anso called them from his home."
+          },
+          {
+            "key": "C",
+            "text": "Zing used magic to lead them."
+          },
+          {
+            "key": "D",
+            "text": "A Compel spell pulled them down the street."
+          }
+        ],
+        "answer": "D",
+        "explanation": "Perda辨认出这种不由自主被拖走的感觉像Compel强迫咒。",
+        "evidence": {
+          "paragraphIds": [
+            "p36"
+          ]
+        }
+      },
+      {
+        "id": "q5",
+        "question": "How did Mellis give Perda a chance to escape from the goons?",
+        "options": [
+          {
+            "key": "A",
+            "text": "She hit a goon with a magically created rock."
+          },
+          {
+            "key": "B",
+            "text": "She opened a wormhole in the mansion."
+          },
+          {
+            "key": "C",
+            "text": "She called the villagers to help."
+          },
+          {
+            "key": "D",
+            "text": "She ordered Trof to release Zing."
+          }
+        ],
+        "answer": "A",
+        "explanation": "Mellis变出石头击中抓住Perda的打手，并催Perda赶快传送逃跑。",
+        "evidence": {
+          "paragraphIds": [
+            "p44"
+          ]
+        }
+      }
+    ],
+    "schemaVersion": 1,
+    "qualityStatus": "manually_authored_from_official_text"
+  },
+  {
+    "id": "C0010200",
+    "officialEpisodeNumber": 180,
+    "seriesId": "little-fox-red-magic-fs0059",
+    "title": "An Important Decision",
+    "sections": [
+      [
+        17,
+        "Running from the Miners",
+        "躲避追赶的矿工",
+        "Perda魔力不足，Zann和她在树林里躲避追兵，却不愿立即离开。"
+      ],
+      [
+        32,
+        "A Troubling Story in the Cave",
+        "洞穴里的愧疚",
+        "Zann坦白矿工Yarb被卷进漩涡的经过，Perda劝他先解决眼前危机。"
+      ],
+      [
+        48,
+        "Choosing to Rescue Their Friends",
+        "决定救回伙伴",
+        "两人讨论是否先回Magica求援，最后决定留在当地营救Mellis与Zing。"
+      ]
+    ],
+    "words": [
+      "uncertain|不确定的",
+      "shackles|镣铐",
+      "wormhole|虫洞",
+      "pursuers|追赶者",
+      "underbrush|灌木丛",
+      "miners|矿工",
+      "guilty|内疚的",
+      "sacrificed|牺牲",
+      "rescue|救援",
+      "hesitated|犹豫"
+    ],
+    "questions": [
+      {
+        "id": "q1",
+        "question": "Why could Perda not simply zap the two friends away herself?",
+        "options": [
+          {
+            "key": "A",
+            "text": "She had used almost all her magic energy reaching the woods."
+          },
+          {
+            "key": "B",
+            "text": "She had forgotten where Magica was."
+          },
+          {
+            "key": "C",
+            "text": "Zann had forbidden all magic spells."
+          },
+          {
+            "key": "D",
+            "text": "There were no spells in her spellbook."
+          }
+        ],
+        "answer": "A",
+        "explanation": "Perda从村庄传送到树林已消耗很多魔力，难以继续带两人传送。",
+        "evidence": {
+          "paragraphIds": [
+            "p5"
+          ]
+        }
+      },
+      {
+        "id": "q2",
+        "question": "Why did Zann refuse to leave the woods immediately?",
+        "options": [
+          {
+            "key": "A",
+            "text": "He wanted to find more food in the forest."
+          },
+          {
+            "key": "B",
+            "text": "He was waiting for the plonk farmer."
+          },
+          {
+            "key": "C",
+            "text": "He was troubled by something that had happened to a miner."
+          },
+          {
+            "key": "D",
+            "text": "He needed to repair the dragon coach."
+          }
+        ],
+        "answer": "C",
+        "explanation": "Zann因矿工Yarb卷入漩涡而内疚，不愿立刻放弃寻找他的可能。",
+        "evidence": {
+          "paragraphIds": [
+            "p15"
+          ]
+        }
+      },
+      {
+        "id": "q3",
+        "question": "What did Zann feel responsible for?",
+        "options": [
+          {
+            "key": "A",
+            "text": "Mellis losing her magic forever."
+          },
+          {
+            "key": "B",
+            "text": "A miner being sucked into the vortex."
+          },
+          {
+            "key": "C",
+            "text": "Trof losing his entire farm."
+          },
+          {
+            "key": "D",
+            "text": "Zira destroying the village well."
+          }
+        ],
+        "answer": "B",
+        "explanation": "Zann认为自己造成矿工掉进漩涡，甚至想进去救他。",
+        "evidence": {
+          "paragraphIds": [
+            "p23"
+          ]
+        }
+      },
+      {
+        "id": "q4",
+        "question": "What had Mellis done to help Perda escape?",
+        "options": [
+          {
+            "key": "A",
+            "text": "She trapped Zira inside the laboratory."
+          },
+          {
+            "key": "B",
+            "text": "She drove the dragons back to First City."
+          },
+          {
+            "key": "C",
+            "text": "She asked Vilkor to take her place."
+          },
+          {
+            "key": "D",
+            "text": "She sacrificed her freedom by distracting the goons."
+          }
+        ],
+        "answer": "D",
+        "explanation": "Mellis利用新魔法牵制打手，让Perda有机会传送离开，自己却被留下。",
+        "evidence": {
+          "paragraphIds": [
+            "p37"
+          ]
+        }
+      },
+      {
+        "id": "q5",
+        "question": "What did Zann finally agree to do before returning to Magica?",
+        "options": [
+          {
+            "key": "A",
+            "text": "Go back to the village to rescue Mellis and Zing."
+          },
+          {
+            "key": "B",
+            "text": "Wait in the cave until morning."
+          },
+          {
+            "key": "C",
+            "text": "Tell the miners how to use dark magic."
+          },
+          {
+            "key": "D",
+            "text": "Travel through the wormhole without Perda."
+          }
+        ],
+        "answer": "A",
+        "explanation": "Perda提醒他不能抛下Mellis和Zing，Zann最终同意先回村救人。",
+        "evidence": {
+          "paragraphIds": [
+            "p44"
+          ]
+        }
+      }
+    ],
+    "schemaVersion": 1,
+    "qualityStatus": "manually_authored_from_official_text"
+  },
+  {
+    "id": "C0010205",
+    "officialEpisodeNumber": 185,
+    "seriesId": "little-fox-red-magic-fs0059",
+    "title": "Strange Behavior",
+    "sections": [
+      [
+        14,
+        "Zira Is Surprisingly Friendly",
+        "Zira异常友好",
+        "Zira没有因孩子们擅自传送而惩罚他们，反而盛情款待并夸奖Vilkor。"
+      ],
+      [
+        32,
+        "The Truth about Trof's Punishment",
+        "Trof受到的残酷惩罚",
+        "孩子们讨论Trof被关进地牢的事，向Vilkor说明危险并请求他阻止Zira。"
+      ],
+      [
+        40,
+        "A Shocking Accusation",
+        "突然的指控",
+        "Vilkor想向Zira交涉，却被闯进来的Krub打断；Krub指控Zann是杀人犯。"
+      ]
+    ],
+    "words": [
+      "banquet|宴会",
+      "royalty|王室成员",
+      "flattering|奉承",
+      "dungeon|地牢",
+      "cruel|残酷的",
+      "security|安全保卫",
+      "concerned|担心的",
+      "figurehead|傀儡首领",
+      "pleaded|恳求",
+      "prisoner|囚犯"
+    ],
+    "questions": [
+      {
+        "id": "q1",
+        "question": "What puzzled Zann about Zira's treatment of the children?",
+        "options": [
+          {
+            "key": "A",
+            "text": "She treated them like royalty instead of punishing them."
+          },
+          {
+            "key": "B",
+            "text": "She ordered them to leave the banquet before dessert."
+          },
+          {
+            "key": "C",
+            "text": "She claimed she had never met them."
+          },
+          {
+            "key": "D",
+            "text": "She refused to let them talk to Mellis."
+          }
+        ],
+        "answer": "A",
+        "explanation": "Zira知道孩子们擅自传送并释放了Trof，却没有惩罚，反而像贵宾一样款待。",
+        "evidence": {
+          "paragraphIds": [
+            "p8"
+          ]
+        }
+      },
+      {
+        "id": "q2",
+        "question": "Why did Zann think Zira was praising Vilkor so much?",
+        "options": [
+          {
+            "key": "A",
+            "text": "She had just discovered his secret magical talent."
+          },
+          {
+            "key": "B",
+            "text": "She believed he had rescued every villager."
+          },
+          {
+            "key": "C",
+            "text": "She was flattering him so he would do what she wanted."
+          },
+          {
+            "key": "D",
+            "text": "She hoped he would teach her to zap."
+          }
+        ],
+        "answer": "C",
+        "explanation": "Zann看出Zira夸奖Vilkor是为了利用他的虚荣心，影响他的决定。",
+        "evidence": {
+          "paragraphIds": [
+            "p12"
+          ]
+        }
+      },
+      {
+        "id": "q3",
+        "question": "Why did Mellis think Zira punished Trof so cruelly?",
+        "options": [
+          {
+            "key": "A",
+            "text": "Trof had stolen the palace's ancient relics."
+          },
+          {
+            "key": "B",
+            "text": "She might have wanted to frighten the other villagers."
+          },
+          {
+            "key": "C",
+            "text": "She wanted to reward him with a dungeon room."
+          },
+          {
+            "key": "D",
+            "text": "Trof had refused to attend the banquet."
+          }
+        ],
+        "answer": "B",
+        "explanation": "Mellis怀疑Zira用残酷惩罚来恐吓其他村民，也可能阻止他们靠近井边。",
+        "evidence": {
+          "paragraphIds": [
+            "p22"
+          ]
+        }
+      },
+      {
+        "id": "q4",
+        "question": "How did Vilkor initially react after hearing about Trof and the gorzogs?",
+        "options": [
+          {
+            "key": "A",
+            "text": "He immediately released Trof himself."
+          },
+          {
+            "key": "B",
+            "text": "He denied that Zira existed."
+          },
+          {
+            "key": "C",
+            "text": "He promised to move everyone back to Magica."
+          },
+          {
+            "key": "D",
+            "text": "He said security was Zira's responsibility and largely dismissed the concern."
+          }
+        ],
+        "answer": "D",
+        "explanation": "Vilkor起初认为Trof也许活该，安保由Zira决定，未认真处理孩子们的担忧。",
+        "evidence": {
+          "paragraphIds": [
+            "p29"
+          ]
+        }
+      },
+      {
+        "id": "q5",
+        "question": "What dramatic accusation ended the episode?",
+        "options": [
+          {
+            "key": "A",
+            "text": "Krub demanded Zann's arrest, calling him a murderer."
+          },
+          {
+            "key": "B",
+            "text": "Zira accused Vilkor of stealing gold."
+          },
+          {
+            "key": "C",
+            "text": "Trof confessed that he had hidden Zing."
+          },
+          {
+            "key": "D",
+            "text": "Perda claimed she had destroyed the wormhole."
+          }
+        ],
+        "answer": "A",
+        "explanation": "Krub突然闯入，指着Zann要求Zira将他作为杀人犯逮捕，形成悬念。",
+        "evidence": {
+          "paragraphIds": [
+            "p40"
+          ]
+        }
+      }
+    ],
+    "schemaVersion": 1,
+    "qualityStatus": "manually_authored_from_official_text"
+  }
+]
