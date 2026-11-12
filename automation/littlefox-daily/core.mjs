@@ -317,11 +317,11 @@ export async function searchBingOfficialTextId(release,http=fetch){
   // Little Fox Text pages are indexed by the displayed sub-series title, e.g.
   // "The New Heroes 13: Racing the Wind", NOT the absolute R2 episode number 213.
   const exactKeyword=fullSeries+' '+chapter+': '+title;
+  // Search the exact phrase shown in the official monthly calendar.
   const queries=[
+    '"'+exactKeyword+'"',
     '"'+exactKeyword+'" site:littlefox.com',
-    '"'+exactKeyword+'" Little Fox Text',
-    '"'+subSeries+'" "'+chapter+': '+title+'"',
-    '"'+fullSeries+'" "'+exactKeyword+'"'
+    '"'+exactKeyword+'" Little Fox Text'
   ];
   const diagnostics=[];
   for(let qi=0;qi<queries.length;qi++){
