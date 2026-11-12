@@ -7,7 +7,7 @@
     "title": "The Plot Thickens",
     "level": 7
   },
-  "rules": "One-time test of the revised monthly-calendar-first discovery and first-episode Text C-ID offset logic. Collect only verified official English Text, caption XML and Storybook/player metadata into private artifact and inbox. Do not publish to R2. If no exact official calendar row or first-episode anchor can be verified, mark blocked with diagnostics; never invent IDs or source content.",
+  "rules": "One-time regression test of GitHub-owned discovery steps 1-5: read today's official monthly calendar; search Bing using series + chapter + exact title; extract the Little Fox official Text URL C ID; verify it against the full-series catalog absolute episode position and official player/Text; collect verified English Text, caption XML and Storybook metadata into the private one-day artifact and inbox. Do not publish to R2. If any source cannot be verified, mark blocked; never invent IDs or source content.",
   "r2Publishing": false,
-  "reason": "manual calendar-first regression: verify global Red Magic episode 214 via official FS0059 catalog and R2 sequence gap; collect source only, no R2 writes"
+  "reason": "Trigger GitHub collector after adding Bing official Text URL C-ID discovery; expected Red Magic Chapter 14 = absolute series episode 214 = C0013574; safe collection-only regression, no R2 writes."
 }
