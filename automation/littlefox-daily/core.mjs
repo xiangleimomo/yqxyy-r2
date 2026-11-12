@@ -266,7 +266,7 @@ const FIRST_EPISODE_ANCHORS={
   'little-fox-the-happy-prince-fs0181':'C0013521'
 };
 function firstEpisodeFromCatalog(catalog) {
-  const matches=catalog.filter(e=>/^(?:episode\s*)?0?1\s*[:.\-]\s*\S/i.test(e.title));
+  const matches=catalog.filter(e=>/(?:^|[\s,:;])(?:chapter\s*)?0?1\s*[:.\-]?\s*\S/i.test(e.title));
   return matches.length===1?matches[0].id:null;
 }
 async function verifiesOfficialEpisode(id,release,http,exactOfficialCatalogMatch=false){
