@@ -2013,7 +2013,9 @@ addPoints(n=1){
     if(before && passed(Number(before.episodeId)))return true;
     // Existing IDs retain their previous access route. New appended historical
     // IDs may not unlock using their unrelated internal ID-1.
-    return id<=Number(this.cache[`data/${seriesId}/series.json`]?.totalEpisodes||0) && passed(id-1);
+    const record=this.cache[`data/${seriesId}/series.json`];
+    const legacyMax=Number(record?.legacyEpisodeMax??record?.totalEpisodes??0);
+    return id<=legacyMax && passed(id-1);
   },
   episodeProgress(seriesId, episodeId){
     const p=this.storage('progress') || {};
