@@ -2,8 +2,8 @@
   "schemaVersion": 2,
   "date": "2026-11-12",
   "status": "checked",
-  "workflowRunId": "43196171758",
-  "privateArtifactName": "littlefox-source-43196171758",
+  "workflowRunId": "43196650474",
+  "privateArtifactName": "littlefox-source-43196650474",
   "items": [
     {
       "seriesId": "little-fox-red-magic-fs0059",
@@ -12,7 +12,7 @@
       "level": 7,
       "status": "blocked",
       "episodeNumber": 213,
-      "error": "Bing found no unique official Little Fox Text C-ID. q=1,anchors=54,hosts=,www.reddit.com,en.wikipedia.org,www.youtube.com,www.imdb.com,www.merriam-webster.com,www.starfall.com,www.redproject.org,officialCids= | q=2,anchors=55,hosts=,www.allareacodes.com,en.wikipedia.org,www.youtube.com,www.att.com,codedialer.com,www.zip-codes.com,training.fema.gov,officialCids= | q=3,anchors=49,hosts=,www.reddit.com,en.wikipedia.org,www.youtube.com,www.imdb.com,www.merriam-webster.com,www.starfall.com,www.redproject.org,officialCids= | q=4,anchors=48,hosts=,www.crazygames.com,poki.com,www.msn.com,www.racing.com,www.nascar.com,www.racingpost.com,www.espn.com,officialCids="
+      "error": "Bing found no unique official Little Fox Text C-ID for The New Heroes 13: Racing the Wind. q=1,keyword=The New Heroes 13: Racing the Wind,anchors=48,hosts=,en.m.wikipedia.org,www.merriam-webster.com,dictionary.cambridge.org,learnenglish.britishcouncil.org,firstenglishgrade.com,www.grammarly.com,m.youtube.com,officialCids= | q=2,keyword=The New Heroes 13: Racing the Wind,anchors=54,hosts=,en.m.wikipedia.org,www.merriam-webster.com,dictionary.cambridge.org,learnenglish.britishcouncil.org,firstenglishgrade.com,www.grammarly.com,m.youtube.com,officialCids= | q=3,keyword=The New Heroes 13: Racing the Wind,anchors=47,hosts=,en.m.wikipedia.org,www.merriam-webster.com,dictionary.cambridge.org,learnenglish.britishcouncil.org,firstenglishgrade.com,www.grammarly.com,m.youtube.com,officialCids= | q=4,keyword=The New Heroes 13: Racing the Wind,anchors=48,hosts=,www.reddit.com,en.wikipedia.org,www.youtube.com,www.imdb.com,www.merriam-webster.com,www.starfall.com,www.redproject.org,officialCids="
     }
   ],
   "errors": []
