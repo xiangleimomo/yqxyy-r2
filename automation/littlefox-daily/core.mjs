@@ -292,13 +292,13 @@ async function verifiesOfficialEpisode(id,release,http,exactOfficialCatalogMatch
 }
 /** Search Bing for the exact episode and extract only Little Fox official Text URLs.
  * Search is a discovery aid, never sufficient proof by itself: the C ID must also
- * match the exact title in the official series catalog and pass official Text/player checks.
+ * extract the C-ID directly from the matching official Text URL returned by Bing.
  */
 function unwrapBingHref(href){
   let value=decodeHtml(String(href||'')).replace(/&amp;/g,'&');
   try{
     let u=new URL(value);
-    if(/(^|\\.)bing\\.com$/i.test(u.hostname)){
+    if(/(^|\.)bing\.com$/i.test(u.hostname)){
       const token=u.searchParams.get('u')||u.searchParams.get('url')||'';
       if(token.startsWith('a1'))value=Buffer.from(token.slice(2),'base64').toString('utf8');
       else if(token)value=decodeURIComponent(token);
@@ -316,10 +316,10 @@ export async function searchBingOfficialTextId(release,http=fetch){
   const response=await http('https://www.bing.com/search?q='+encodeURIComponent(query),{headers:{'User-Agent':'Mozilla/5.0 (compatible; LittleFoxCourseBot/1.0)'}});
   if(!response.ok)throw Error('Bing search HTTP '+response.status);
   const html=await response.text(),matches=new Map();
-  for(const m of html.matchAll(/<a\\b[^>]*href\\s*=\\s*["']([^"']+)["'][^>]*>([\\s\\S]*?)<\\/a>/gi)){
+  for(const m of html.matchAll(/<a\b[^>]*href\s*=\s*["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi)){
     const u=unwrapBingHref(m[1]);
     if(!u||!['cn.littlefox.com','www.littlefox.com'].includes(u.hostname.toLowerCase()))continue;
-    const id=u.pathname.match(/\\/supplement\\/(?:trans|org)\\/(C\\d{7})(?:\\/|$)/i)?.[1]?.toUpperCase();
+    const id=u.pathname.match(/\/supplement\/(?:trans|org)\/(C\d{7})(?:\/|$)/i)?.[1]?.toUpperCase();
     if(!id)continue;
     const resultTitle=normalize(cleanHtml(m[2]));
     if(!resultTitle.includes(normalize(release.title)))continue;
