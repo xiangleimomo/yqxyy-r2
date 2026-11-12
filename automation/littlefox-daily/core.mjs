@@ -295,71 +295,38 @@ async function verifiesOfficialEpisode(id,release,http,exactOfficialCatalogMatch
  * match the exact title in the official series catalog and pass official Text/player checks.
  */
 export async function searchBingOfficialTextId(release,http=fetch){
+  // Bing discovers the exact official Little Fox Text URL; its C-ID is the source of truth.
   const series=String(release.seriesTitle||release.seriesId||'').replace(/[-_]+/g,' ').trim();
   const chapter=release.calendarEpisodeNumber?(' Chapter '+release.calendarEpisodeNumber):'';
   const query=[series+chapter,release.title].filter(Boolean).join(' ').trim();
-  if(!query) return null;
+  if(!query||!release.title)throw Error('Missing series/chapter/title for Bing C-ID search');
   const url='https://www.bing.com/search?q='+encodeURIComponent(query);
   const response=await http(url,{headers:{'User-Agent':'Mozilla/5.0 (compatible; LittleFoxCourseBot/1.0)'}});
-  if(!response.ok) return null;
+  if(!response.ok)throw Error('Bing search HTTP '+response.status);
   const html=await response.text();
   const seen=new Set(),matches=[];
-  for(const match of html.matchAll(/<a\\b[^>]*href\\s*=\\s*["']([^"']+)["'][^>]*>([\\s\\S]*?)<\\/a>/gi)){
+  for(const match of html.matchAll(/<a\b[^>]*href\s*=\s*["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi)){
     let href=decodeHtml(match[1]).replace(/&amp;/g,'&');
     let u;try{u=new URL(href);}catch{continue;}
     if(!['cn.littlefox.com','www.littlefox.com'].includes(u.hostname.toLowerCase()))continue;
-    const id=u.pathname.match(/\\/supplement\\/(?:trans|org)\\/(C\\d{7})(?:\\/|$)/i)?.[1]?.toUpperCase();
+    if(!/\/supplement\/(?:trans|org)\/C\d{7}(?:\/|$)/i.test(u.pathname))continue;
+    const id=u.pathname.match(/\/supplement\/(?:trans|org)\/(C\d{7})(?:\/|$)/i)?.[1]?.toUpperCase();
     if(!id||seen.has(id))continue;
     const resultTitle=normalize(cleanHtml(match[2]));
     const expected=normalize(release.title);
     if(expected&&!resultTitle.includes(expected))continue;
-    seen.add(id);matches.push(id);
+    seen.add(id);matches.push({id,url:u.href,title:cleanHtml(match[2])});
   }
-  return matches.length===1?matches[0]:null;
+  if(matches.length!==1)throw Error(matches.length?'Bing returned multiple matching official Text C-IDs':'No exact official Little Fox Text URL found in Bing results');
+  return matches[0].id;
 }
 export async function identifyCId(release, episodes, http){
-  const number=Number(release.seriesEpisodeNumber);
-  if(!Number.isSafeInteger(number)||number<1)throw Error('Invalid official episode number');
-  const sid=catalogSeriesId(release.seriesId);
-  let catalog=[];
-  if(sid){
-    const section=sid.startsWith('SRV')?'songs':'readers';
-    try {
-      const page=await http(`https://www.littlefox.com/en/${section}/contents_list_v2/${sid}`);
-      if(page.ok)catalog=officialCatalogEntries(await page.text());
-    }catch{/* official catalog may be unavailable; use verified fallbacks */}
-  }
-  const titleMatches=catalog.filter(x=>normalize(x.title)===normalize(release.title));
-  if(titleMatches.length>1)throw Error('Ambiguous official catalog title; manual assistance required');
-  const fromCatalog=titleMatches[0]?.id||null;
-  if(release.directId&&fromCatalog&&release.directId!==fromCatalog)throw Error('Official schedule and catalog C IDs conflict; manual assistance required');
-  // Prioritize official exact-match IDs, then the verified first Text anchor,
-  // then latest R2 episode + gap. Every candidate is checked against player.
-  const firstId=firstEpisodeFromCatalog(catalog)||FIRST_EPISODE_ANCHORS[release.seriesId]||null;
-  // Bing's exact-title result is checked against the official full-series catalog
-  // before it can be accepted. This captures the C ID exposed by the official Text URL,
-  // including cases where a monthly "Chapter 14" is actually series episode 214.
-  let bingId=null;
-  try { bingId=await searchBingOfficialTextId(release,http); } catch {/* search is an optional discovery route */}
-  if(bingId&&fromCatalog&&bingId!==fromCatalog)throw Error('Bing official Text and full-series catalog C IDs conflict; manual assistance required');
-  if(bingId&&!fromCatalog)bingId=null; // no exact catalog title = no trusted Bing candidate
-  const candidates=[
-    ['Bing official Text URL',bingId],
-    // The first-episode Text C ID + absolute series episode offset is a verified fallback.
-    ['first episode Text + episode offset',firstId?contentIdOffset(firstId,number-1):null],
-    ['official catalog',fromCatalog],
-    ['official calendar',release.directId],
-    ['R2 previous episode',nextIdFromEpisodes(episodes,number)]
-  ];
-  const attempted=[];
-  for(const [source,id] of candidates){
-    if(!id||attempted.some(x=>x.id===id))continue;
-    const verified=await verifiesOfficialEpisode(id,release,http,source==='official catalog');
-    attempted.push({source,id});
-    if(verified)return id;
-  }
-  throw Error('C ID unresolved; manual assistance required ('+
-    (attempted.length?attempted.map(x=>x.source+':'+x.id).join(', '):'no official first-episode or R2 candidate')+')');
+  // No episode-number arithmetic, R2 previous-ID increment, or full-catalog inference.
+  // The C-ID is obtained directly from the exact official Text URL discovered by Bing.
+  const id=await searchBingOfficialTextId(release,http);
+  const verified=await verifiesOfficialEpisode(id,release,http,false);
+  if(!verified)throw Error('Bing C-ID failed official Text/player title verification: '+id);
+  return id;
 }
 /** Log only XML structure/attribute names (never copyrighted transcript lines). */
 export function captionShape(xml){
