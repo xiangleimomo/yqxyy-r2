@@ -3,6 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#248b66" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="yqxyy" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="icon" type="image/svg+xml" href="/assets/yqxyy-app-icon.svg" />
   <script>if(window.matchMedia("(max-width:1100px), (pointer:coarse) and (max-width:1400px)").matches)document.documentElement.classList.add("sf-mobile-app");</script>
   <meta name="referrer" content="no-referrer" />
   <title>English Story Learning</title>
@@ -141,5 +146,14 @@
   <script src="js/app.js?v=20261108-utility-counts-8"></script>
   <script src="js/mobile-games.js?v=20261009-1"></script>
 <div id="readingPopup" class="reading-popup"></div>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js').catch(function (err) {
+      console.warn('PWA registration unavailable:', err);
+    });
+  });
+}
+</script>
 </body>
 </html>
