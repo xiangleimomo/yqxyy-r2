@@ -6,6 +6,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  actions: read
 concurrency:
   group: littlefox-historical-supplemental-publish-r2
   cancel-in-progress: false
@@ -27,6 +28,13 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci --omit=dev
+      - name: Retrieve previously verified official sources (private Actions artifact)
+        uses: actions/download-artifact@v4
+        with:
+          name: littlefox-historical-sources-43221955132
+          run-id: 43221955132
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: /tmp/littlefox-internal-sources
       - name: Validate historical publisher syntax
         run: node --check automation/littlefox-backfill/publish-internal.mjs
       - name: Validate V2 source and curriculum (publish only when request allows)
