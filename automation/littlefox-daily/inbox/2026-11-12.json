@@ -2,8 +2,8 @@
   "schemaVersion": 2,
   "date": "2026-11-12",
   "status": "checked",
-  "workflowRunId": "43196650474",
-  "privateArtifactName": "littlefox-source-43196650474",
+  "workflowRunId": "43196806975",
+  "privateArtifactName": "littlefox-source-43196806975",
   "items": [
     {
       "seriesId": "little-fox-red-magic-fs0059",
@@ -12,7 +12,7 @@
       "level": 7,
       "status": "blocked",
       "episodeNumber": 213,
-      "error": "Bing found no unique official Little Fox Text C-ID for The New Heroes 13: Racing the Wind. q=1,keyword=The New Heroes 13: Racing the Wind,anchors=48,hosts=,en.m.wikipedia.org,www.merriam-webster.com,dictionary.cambridge.org,learnenglish.britishcouncil.org,firstenglishgrade.com,www.grammarly.com,m.youtube.com,officialCids= | q=2,keyword=The New Heroes 13: Racing the Wind,anchors=54,hosts=,en.m.wikipedia.org,www.merriam-webster.com,dictionary.cambridge.org,learnenglish.britishcouncil.org,firstenglishgrade.com,www.grammarly.com,m.youtube.com,officialCids= | q=3,keyword=The New Heroes 13: Racing the Wind,anchors=47,hosts=,en.m.wikipedia.org,www.merriam-webster.com,dictionary.cambridge.org,learnenglish.britishcouncil.org,firstenglishgrade.com,www.grammarly.com,m.youtube.com,officialCids= | q=4,keyword=The New Heroes 13: Racing the Wind,anchors=48,hosts=,www.reddit.com,en.wikipedia.org,www.youtube.com,www.imdb.com,www.merriam-webster.com,www.starfall.com,www.redproject.org,officialCids="
+      "error": "Bing found no unique official Little Fox Text C-ID for The New Heroes 13: Racing the Wind. q=1,keyword=The New Heroes 13: Racing the Wind,anchors=49,hosts=,en.wikipedia.org,dictionary.cambridge.org,www.merriam-webster.com,learnenglish.britishcouncil.org,firstenglishgrade.com,www.youtube.com,www.grammarly.com,officialCids= | q=2,keyword=The New Heroes 13: Racing the Wind,anchors=47,hosts=,en.wikipedia.org,dictionary.cambridge.org,www.merriam-webster.com,learnenglish.britishcouncil.org,firstenglishgrade.com,www.youtube.com,www.grammarly.com,officialCids= | q=3,keyword=The New Heroes 13: Racing the Wind,anchors=49,hosts=,en.wikipedia.org,dictionary.cambridge.org,www.merriam-webster.com,learnenglish.britishcouncil.org,firstenglishgrade.com,www.youtube.com,www.grammarly.com,officialCids= | q=4,keyword=The New Heroes 13: Racing the Wind,anchors=55,hosts=,www.reddit.com,en.m.wikipedia.org,m.imdb.com,m.youtube.com,www.merriam-webster.com,www.starfall.com,www.britannica.com,officialCids="
     }
   ],
   "errors": []
