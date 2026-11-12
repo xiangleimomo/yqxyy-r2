@@ -299,9 +299,11 @@ export async function identifyCId(release, episodes, http){
   // then latest R2 episode + gap. Every candidate is checked against player.
   const firstId=firstEpisodeFromCatalog(catalog)||FIRST_EPISODE_ANCHORS[release.seriesId]||null;
   const candidates=[
-    ['official catalog',fromCatalog],
+    // The requested deterministic route: first episode's official Text C ID + episode offset.
+    // Still verify the computed target against the official player/Text before accepting it.
+    ['first episode Text + episode offset',firstId?contentIdOffset(firstId,number-1):null],
+    ['official catalog exact title',fromCatalog],
     ['official calendar',release.directId],
-    ['first episode Text',firstId?contentIdOffset(firstId,number-1):null],
     ['R2 previous episode',nextIdFromEpisodes(episodes,number)]
   ];
   const attempted=[];
