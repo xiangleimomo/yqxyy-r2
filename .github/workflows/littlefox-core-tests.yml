@@ -1,0 +1,30 @@
+name: Little Fox Core Regression Tests
+on:
+  push:
+    paths:
+      - 'automation/littlefox-daily/test-request.json'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: littlefox-core-regression-tests
+  cancel-in-progress: false
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --omit=dev
+      - name: Syntax checks
+        run: |
+          node --check automation/littlefox-daily/core.mjs
+          node --check automation/littlefox-daily/collect-handoff.mjs
+          node --check automation/littlefox-backfill/audit.mjs
+          node --check automation/littlefox-backfill/collect.mjs
+      - name: Run Little Fox core regression tests
+        run: node --test automation/littlefox-daily/core.test.mjs
