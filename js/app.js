@@ -189,15 +189,23 @@ const App = {
     </article>`;
   },
   async loadSeries(seriesId){
-    const [series, episodes] = await Promise.all([
+    const isLittleFox=String(seriesId).startsWith('little-fox-');
+    const [series, episodes, historical] = await Promise.all([
       this.getJSON(`data/${seriesId}/series.json`),
-      this.getJSON(`data/${seriesId}/episodes.json`)
+      this.getJSON(`data/${seriesId}/episodes.json`),
+      isLittleFox
+        ?this.getJSON(`data/${seriesId}/historical-episodes.json`).catch(()=>[])
+        :Promise.resolve([])
     ]);
-    // Keep episodeId immutable: routes, Quiz/word data and learning progress use it.
-    // Official catalog position is a separate display/sort value for Little Fox.
-    const sortedEpisodes=String(seriesId).startsWith('little-fox-')
-      ? [...episodes].sort((a,b)=>this.displayEpisodeNumber(a)-this.displayEpisodeNumber(b)||Number(a.episodeId)-Number(b.episodeId))
-      : episodes;
+    // Supplemental historical chapters use separate stable internal IDs and do
+    // not alter the normal episodes.json index consumed by daily incremental jobs.
+    const allEpisodes=isLittleFox&&Array.isArray(historical)
+      ?[...episodes,...historical.filter(e=>!episodes.some(x=>Number(x.episodeId)===Number(e.episodeId)))]
+      :episodes;
+    this.cache[`data/${seriesId}/merged-episodes`]=allEpisodes;
+    const sortedEpisodes=isLittleFox
+      ?[...allEpisodes].sort((a,b)=>this.displayEpisodeNumber(a)-this.displayEpisodeNumber(b)||Number(a.episodeId)-Number(b.episodeId))
+      :allEpisodes;
     return {series, episodes:sortedEpisodes};
   },
   displayEpisodeNumber(ep){
@@ -2000,7 +2008,7 @@ addPoints(n=1){
     };
     // Preserve legacy unlocks and progress for all existing lessons, even when
     // newly backfilled historical chapters are inserted before them.
-    const entries=this.cache[`data/${seriesId}/episodes.json`];
+    const entries=this.cache[`data/${seriesId}/merged-episodes`]||this.cache[`data/${seriesId}/episodes.json`];
     const current=Array.isArray(entries)?entries.find(e=>Number(e.episodeId)===id):null;
     if(!current || !Number.isInteger(Number(current.officialEpisodeNumber)))
       return passed(id-1);
