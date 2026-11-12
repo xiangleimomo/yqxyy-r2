@@ -259,5 +259,30 @@
       }
     ],
     "safety": "The remaining 16 missing C-IDs are internal gaps. Existing episodeId values are already referenced by lesson routes and per-episode R2 JSON keys. Publishing them by append would show incorrect numbering; renumbering existing entries can break existing lesson links and user progress. No internal rows, front end, Netlify, or Supabase were changed. The current app routes lessons as #/lesson/{seriesId}/{episodeId}; episodeProgress/markComplete keys local progress as {seriesId}:{episodeId} and calls SFFamily.record(seriesId,episodeId,module). Therefore renumbering existing episodeId values can invalidate saved lesson routes, local progress, and cloud progress; no such renumbering or Supabase/front-end edit was performed."
+  },
+  "finalVerification": {
+    "checkedAt": "2026-11-12",
+    "sourceRunId": 43221955132,
+    "officialOrderRunId": 43222867692,
+    "supplementalPublishRunId": 43225892005,
+    "finalAuditRunId": 43226860158,
+    "historyBackfillsCompleted": 20,
+    "tailBackfillsCompleted": 4,
+    "internalBackfillsCompleted": 16,
+    "officialSeriesAudited": 158,
+    "officialUniqueContentIds": 6220,
+    "normalR2EpisodeRows": 6220,
+    "supplementalHistoricalRows": 16,
+    "missingOfficialContentIds": 0,
+    "unresolvedSeries": 0,
+    "officialEpisodeMappingAnomalies": 0,
+    "duplicateLegacyContentIds": 15,
+    "orphanR2ContentIds": 1,
+    "existingInternalIdsPreserved": true,
+    "existingProgressKeysPreserved": true,
+    "dailyIncrementalJobUnmodified": true,
+    "websiteFrontendDeployed": false,
+    "netlifyLastPublishedDeploy": "2026-11-08",
+    "note": "R2 content is fully covered; new supplemental index requires a one-off production deployment of updated GitHub frontend to be displayed. Daily main episodes.json continues append-only. Existing 15 duplicate legacy rows remain available at prior internal IDs but are hidden from official sorted lists by frontend code."
   }
 }
