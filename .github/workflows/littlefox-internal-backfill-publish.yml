@@ -1,0 +1,41 @@
+name: Little Fox Historical Supplemental V2 to R2
+on:
+  push:
+    paths:
+      - 'automation/littlefox-backfill/internal-publish-request.json'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: littlefox-historical-supplemental-publish-r2
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      TZ: Asia/Shanghai
+      R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+      R2_BUCKET: ${{ secrets.R2_BUCKET }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      LF_ALLOW_PUBLISH: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --omit=dev
+      - name: Validate historical publisher syntax
+        run: node --check automation/littlefox-backfill/publish-internal.mjs
+      - name: Validate V2 source and curriculum (publish only when request allows)
+        run: node automation/littlefox-backfill/publish-internal.mjs
+      - name: Archive complete per-episode source review and R2 readback report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: littlefox-internal-backfill-${{ github.run_id }}
+          path: /tmp/littlefox-internal-supplemental-publish-report.json
+          if-no-files-found: error
+          retention-days: 7
