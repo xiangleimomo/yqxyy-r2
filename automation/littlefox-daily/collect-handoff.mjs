@@ -1,6 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import {chinaDate,makeR2,scheduleReleases,identifyCId,readPlayer,isEpisodeMatch,verifyPlaylist,parseCaptions,textParagraphs,textPageShape,ORIGINAL_TEXT} from './core.mjs';
+import {chinaDate,makeR2,scheduleReleases,resolveOfficialSeriesEpisode,identifyCId,readPlayer,isEpisodeMatch,verifyPlaylist,parseCaptions,textParagraphs,textPageShape,ORIGINAL_TEXT} from './core.mjs';
 const d=chinaDate(),out=`automation/littlefox-daily/inbox/${d.date}.json`;
 const privateOut='/tmp/littlefox-source-'+d.date+'.json';
 const result={schemaVersion:2,date:d.date,status:'checking',workflowRunId:process.env.GITHUB_RUN_ID||null,privateArtifactName:'littlefox-source-'+(process.env.GITHUB_RUN_ID||'local'),items:[],errors:[]};
@@ -16,9 +16,12 @@ try{
   const item={seriesId:calendarRelease.seriesId,calendarEpisodeNumber:calendarRelease.calendarEpisodeNumber,title:calendarRelease.title,level:calendarRelease.level,status:'checking'};
   result.items.push(item);
   try{
-   // Normal daily runs use the official calendar's known absolute episode field.
-   // The one-off regression request may explicitly target a known missing absolute episode.
-   const release=calendarRelease;
+   // The calendar identifies today's series/chapter/title. The official full-series
+   // catalog supplies only the absolute episode position used by the R2 index.
+   // The C-ID itself is discovered independently and exclusively from Bing's
+   // matching official Little Fox Text URL below.
+   const position=await resolveOfficialSeriesEpisode(calendarRelease,fetch);
+   const release={...calendarRelease,seriesEpisodeNumber:position.seriesEpisodeNumber};
    item.episodeNumber=release.seriesEpisodeNumber;
    const old=await store.get(`data/${release.seriesId}/episodes.json`);if(!old)throw Error('R2 episode index missing');
    const episodes=JSON.parse(old);
@@ -44,8 +47,8 @@ try{
      if(!isEpisodeMatch(metadata.item.cont_title,release.title))throw Error('Official title mismatch');
    } catch(e) {
      if(String(e.message||e)==='Official title mismatch')throw e;
-     // identifyCId already independently checked a matching official
-     // catalog + real Text when the pre-release player is unavailable.
+     // Bing already found the exact official Little Fox Text URL; the English Text
+     // is fetched and parsed below even when the player/video is not yet available.
      pendingVideoReason='Player metadata not yet available: '+String(e.message||e).slice(0,180);
    }
    item.contentIdVerified=true;
