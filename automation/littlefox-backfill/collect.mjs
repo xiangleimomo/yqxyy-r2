@@ -12,7 +12,7 @@ for(const target of request.items){
  const src={...target,status:'blocked',verification:{},paragraphs:[],captionCues:[],player:null,videoUrl:null,storybookUrl:'https://res.littlefox.com/en/supplement/load_pdf/'+target.contentId};
  const stage=(name,details={})=>row.stages.push({name,...details});
  try{
-  if(!/^C\\d{7}$/.test(target.contentId)||!/^little-fox-[a-z0-9-]+$/.test(target.seriesId)||!Number.isInteger(target.episodeNumber))throw Error('Invalid target metadata');
+  if(!/^C\d{7}$/.test(target.contentId)||!/^little-fox-[a-z0-9-]+$/.test(target.seriesId)||!Number.isInteger(target.episodeNumber))throw Error('Invalid target metadata');
   const [indexRaw,playerResult,textResponse,captionResponse]=await Promise.all([
    store.get('data/'+target.seriesId+'/episodes.json'),
    readPlayer(target.contentId,fetch,false).catch(e=>({error:String(e.message||e)})),
