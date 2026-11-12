@@ -193,7 +193,16 @@ const App = {
       this.getJSON(`data/${seriesId}/series.json`),
       this.getJSON(`data/${seriesId}/episodes.json`)
     ]);
-    return {series, episodes};
+    // Keep episodeId immutable: routes, Quiz/word data and learning progress use it.
+    // Official catalog position is a separate display/sort value for Little Fox.
+    const sortedEpisodes=String(seriesId).startsWith('little-fox-')
+      ? [...episodes].sort((a,b)=>this.displayEpisodeNumber(a)-this.displayEpisodeNumber(b)||Number(a.episodeId)-Number(b.episodeId))
+      : episodes;
+    return {series, episodes:sortedEpisodes};
+  },
+  displayEpisodeNumber(ep){
+    const official=Number(ep?.officialEpisodeNumber);
+    return Number.isSafeInteger(official)&&official>0?official:Number(ep?.episodeId)||0;
   },
   movieCourseUnavailable(series){
     if(!series.movieId || !['draft','retired','coming'].includes(series.status))return false;
@@ -292,9 +301,10 @@ async renderSeries(seriesId){
       const range=(document.getElementById('episodeRangeFilter')?.value || 'all').split('-').map(Number);
       const [start,end]=range;
       const visible=episodes.filter(ep=>{
-        const inRange=Number.isNaN(start) || (Number(ep.episodeId)>=start && Number(ep.episodeId)<=end);
+        const displayNo=this.displayEpisodeNumber(ep);
+        const inRange=Number.isNaN(start) || (displayNo>=start && displayNo<=end);
         const title=`${ep.title || ''} ${ep.titleZh || ''}`.toLowerCase();
-        return inRange && (!query || title.includes(query) || String(ep.episodeId)===query);
+        return inRange && (!query || title.includes(query) || String(this.displayEpisodeNumber(ep))===query || String(ep.episodeId)===query);
       });
       const list=document.getElementById('episodeSideList');
       list.innerHTML=visible.length ? visible.map(e=>{
@@ -305,7 +315,7 @@ async renderSeries(seriesId){
         const done=!!(prog.modules.quiz);
         return `<button class="episode-side-item ${Number(e.episodeId)===activeEpisodeId?'active':''} ${unlocked?'':'locked'}" data-ep="${e.episodeId}" data-available="${available}" ${unlocked || guestLocked?'':'disabled'}>
           ${this.episodeCover(e,'episode-thumbnail')}
-          <span class="episode-side-details"><span class="episode-side-title"><span class="num">${e.episodeId}</span><span>${e.title}${done?' ✓':''}</span></span>
+          <span class="episode-side-details"><span class="episode-side-title"><span class="num">${this.displayEpisodeNumber(e)}</span><span>${e.title}${done?' ✓':''}</span></span>
           <small>${!available?'即将上线':(unlocked?(done?'已完成':'可学习'):(guestLocked?'🔒 注册后解锁':'🔒 未解锁'))}</small></span>
         </button>`;
       }).join('') : '<div class="episode-filter-empty">没有找到匹配课程</div>';
@@ -327,7 +337,7 @@ async renderSeries(seriesId){
       this.rememberEpisode(seriesId,activeEpisodeId);
       document.querySelectorAll('.episode-side-item').forEach(x=>x.classList.toggle('active', Number(x.dataset.ep)===Number(ep.episodeId)));
       document.getElementById('episodeWorkspace').innerHTML=`
-        <div class="episode-preview">${this.episodeCover(ep,'episode-preview-cover')}<div><h2>Episode ${ep.episodeId} · ${ep.title}</h2>
+        <div class="episode-preview">${this.episodeCover(ep,'episode-preview-cover')}<div><h2>Episode ${this.displayEpisodeNumber(ep)} · ${ep.title}</h2>
         <p class="muted">${ep.titleZh || ''}</p></div></div>
         ${series.movieId?`<p class="muted">${this.escapeHtml(ep.summaryEn || '')} · ${Math.ceil(ep.video.duration/60)} 分钟</p>`:''}
         <div class="module-grid">
@@ -357,7 +367,7 @@ episodeCard(seriesId,e,review={}){
   const intro = (review.summaryEn || e.summaryEn || '').trim();
   const fallback = isReady ? 'Click to open this lesson and learn with Watch, Listen and Read, Words, and Quiz.' : (e.status==='preparing' ? 'This lesson page is being prepared. The content will be added after the story and vocabulary materials are organized.' : 'This lesson is listed as a preview. It will be unlocked after the official materials are available.');
   return `<article class="episode-card ${isReady?'ready':''}">
-    <a href="${href}" class="episode-no">${e.episodeId}</a>
+    <a href="${href}" class="episode-no">${this.displayEpisodeNumber(e)}</a>
     <div class="episode-main">
       <div class="episode-title">
         <a href="${href}"><h3>${e.title}</h3></a>
@@ -401,9 +411,9 @@ async renderLesson(seriesId, episodeId){
     const lessonData = {seriesId, episodeId, series, ep, ...assets, phrases:[], grammar:[], review:{}};
     this.disposeHlsPlayers(this.el());
     this.el().innerHTML = `
-      <div class="breadcrumb"><a href="${series.movieId?'#/movies':'#/home'}">${series.movieId?'光影课堂':'动画故事'}</a><span>›</span><a href="#/series/${seriesId}">${series.seriesTitle}</a><span>›</span><span>Episode ${episodeId}</span></div>
+      <div class="breadcrumb"><a href="${series.movieId?'#/movies':'#/home'}">${series.movieId?'光影课堂':'动画故事'}</a><span>›</span><a href="#/series/${seriesId}">${series.seriesTitle}</a><span>›</span><span>Episode ${this.displayEpisodeNumber(ep)}</span></div>
       <section class="lesson-head">
-        <h1>Episode ${episodeId} · ${ep.title}</h1>
+        <h1>Episode ${this.displayEpisodeNumber(ep)} · ${ep.title}</h1>
         ${Number(series.level) !== 0 && ep.storyBook?.availability === 'pdf' ? `<a class="btn secondary" href="#/reader/${this.escapeHtml(ep.storyBook.bookId)}/${this.escapeHtml(seriesId)}">📖 绘本</a>` : ''}
         <div class="muted">${ep.titleZh || ''} · ${series.seriesTitleZh || ''}</div>
         <div class="lesson-tabs">
@@ -1981,12 +1991,29 @@ addPoints(n=1){
     if(this.isAdmin())return true;
     if(!this.requiresQuizUnlock(seriesId)) return true;
     const id=Number(episodeId);
-    if(id<=1) return true;
+    if(id<=1)return true;
     const p=this.storage('progress') || {};
-    const prev=p[`${seriesId}:${id-1}`];
     const q=this.storage('quizScores') || {};
-    const quiz=q[`${seriesId}:${id-1}`];
-    return !!(prev && prev.modules && prev.modules.quiz && quiz && Number(quiz.total)>0 && Number(quiz.score)/Number(quiz.total)>=0.8);
+    const passed=prevId=>{
+      const prev=p[`${seriesId}:${prevId}`], quiz=q[`${seriesId}:${prevId}`];
+      return !!(prev?.modules?.quiz && quiz && Number(quiz.total)>0 && Number(quiz.score)/Number(quiz.total)>=0.8);
+    };
+    // Preserve legacy unlocks and progress for all existing lessons, even when
+    // newly backfilled historical chapters are inserted before them.
+    const entries=this.cache[`data/${seriesId}/episodes.json`];
+    const current=Array.isArray(entries)?entries.find(e=>Number(e.episodeId)===id):null;
+    if(!current || !Number.isInteger(Number(current.officialEpisodeNumber)))
+      return passed(id-1);
+    if(Number(current.officialEpisodeNumber)<=1)return true;
+    if(p[`${seriesId}:${id}`]?.modules?.quiz || q[`${seriesId}:${id}`])
+      return true;
+    const before=entries
+      .filter(e=>Number(e.episodeId)!==id && Number(e.officialEpisodeNumber)>0 && Number(e.officialEpisodeNumber)<Number(current.officialEpisodeNumber))
+      .sort((a,b)=>Number(b.officialEpisodeNumber)-Number(a.officialEpisodeNumber))[0];
+    if(before && passed(Number(before.episodeId)))return true;
+    // Existing IDs retain their previous access route. New appended historical
+    // IDs may not unlock using their unrelated internal ID-1.
+    return id<=Number(this.cache[`data/${seriesId}/series.json`]?.totalEpisodes||0) && passed(id-1);
   },
   episodeProgress(seriesId, episodeId){
     const p=this.storage('progress') || {};
