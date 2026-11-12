@@ -298,7 +298,7 @@ function unwrapBingHref(href){
   let value=decodeHtml(String(href||'')).replace(/&amp;/g,'&');
   try{
     let u=new URL(value);
-    if(/(^|\.)bing\.com$/i.test(u.hostname)){
+    if(/(^|\\.)bing\\.com$/i.test(u.hostname)){
       const token=u.searchParams.get('u')||u.searchParams.get('url')||'';
       if(token.startsWith('a1'))value=Buffer.from(token.slice(2),'base64').toString('utf8');
       else if(token)value=decodeURIComponent(token);
@@ -310,27 +310,39 @@ function unwrapBingHref(href){
 }
 export async function searchBingOfficialTextId(release,http=fetch){
   const series=String(release.seriesTitle||release.seriesId||'').replace(/[-_]+/g,' ').trim();
-  const chapter=release.calendarEpisodeNumber?(' Chapter '+release.calendarEpisodeNumber):'';
-  const query=[series+chapter,release.title].filter(Boolean).join(' ').trim();
-  if(!query||!release.title)throw Error('Missing series/chapter/title for Bing C-ID search');
-  const response=await http('https://www.bing.com/search?q='+encodeURIComponent(query),{headers:{'User-Agent':'Mozilla/5.0 (compatible; LittleFoxCourseBot/1.0)'}});
-  if(!response.ok)throw Error('Bing search HTTP '+response.status);
-  const html=await response.text(),matches=new Map();
-  for(const m of html.matchAll(/<a\b[^>]*href\s*=\s*["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi)){
-    const u=unwrapBingHref(m[1]);
-    if(!u||!['cn.littlefox.com','www.littlefox.com'].includes(u.hostname.toLowerCase()))continue;
-    const id=u.pathname.match(/\/supplement\/(?:trans|org)\/(C\d{7})(?:\/|$)/i)?.[1]?.toUpperCase();
-    if(!id)continue;
-    const resultTitle=normalize(cleanHtml(m[2]));
-    if(!resultTitle.includes(normalize(release.title)))continue;
-    matches.set(id,{id,url:u.href,title:cleanHtml(m[2])});
+  const title=String(release.title||'').trim();
+  if(!title)throw Error('Missing title for Bing C-ID search');
+  const queries=[
+    `site:cn.littlefox.com/cn/supplement/trans "${title}" "${series}"`,
+    `site:www.littlefox.com/en/supplement/org "${title}" "${series}"`,
+    `"${series}" "${title}" Little Fox`
+  ];
+  const diagnostics=[];
+  for(const query of queries){
+    const response=await http('https://www.bing.com/search?q='+encodeURIComponent(query),{headers:{'User-Agent':'Mozilla/5.0 (compatible; LittleFoxCourseBot/1.0)'}});
+    if(!response.ok){diagnostics.push('HTTP '+response.status);continue;}
+    const html=await response.text(),matches=new Map(),hosts=new Set(),foundIds=new Set();
+    const hrefs=[...html.matchAll(/href\\s*=\\s*["']([^"']+)["']/gi)];
+    for(const m of hrefs){
+      const u=unwrapBingHref(m[1]);
+      if(!u)continue;
+      hosts.add(u.hostname.toLowerCase());
+      if(!/(^|\\.)littlefox\\.com$/i.test(u.hostname))continue;
+      const id=u.pathname.match(/\\/supplement\\/(?:trans|org)\\/(C\\d{7})(?:\\/|$)/i)?.[1]?.toUpperCase();
+      if(!id)continue;
+      foundIds.add(id);
+      const nearby=html.slice(Math.max(0,m.index-700),Math.min(html.length,m.index+1800));
+      const titleMatch=normalize(cleanHtml(nearby)).includes(normalize(title));
+      if(titleMatch)matches.set(id,{id,url:u.href});
+    }
+    diagnostics.push(`q=${queries.indexOf(query)+1},html=${html.length},hrefs=${hrefs.length},hosts=${[...hosts].slice(0,8).join(',')},officialCids=${[...foundIds].join(',')},titleSeen=${normalize(cleanHtml(html)).includes(normalize(title))}`);
+    if(matches.size===1)return [...matches.keys()][0];
+    if(matches.size>1)throw Error('Bing returned multiple official Text C-IDs for title: '+[...matches.keys()].join(', '));
   }
-  if(matches.size!==1)throw Error(matches.size?'Bing returned multiple matching official Text C-IDs':'No exact official Little Fox Text URL found in Bing results');
-  return [...matches.keys()][0];
+  throw Error('Bing found no unique official Text C-ID. '+diagnostics.join(' | '));
 }
 export async function identifyCId(release, episodes, http){
-  // Sole discovery source: the C-ID embedded in the official Little Fox Text URL found by Bing.
-  // Do not infer C-IDs from episode arithmetic, first-episode anchors, catalog order, or R2 history.
+  // Sole discovery source: the C-ID embedded in the matching official Little Fox Text URL found by Bing.
   return searchBingOfficialTextId(release,http);
 }
 /** Log only XML structure/attribute names (never copyrighted transcript lines). */
