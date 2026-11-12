@@ -1,6 +1,8 @@
 import fs from 'node:fs/promises';
-import {makeR2,readPlayer,isEpisodeMatch,verifyPlaylist,parseCaptions,textParagraphs,ORIGINAL_TEXT,BOOK,CAPTION,asVtt,checkQuiz,catalogSeriesId,officialCatalogEntries} from '../littlefox-daily/core.mjs';
+import {makeR2,readPlayer,isEpisodeMatch,verifyPlaylist,parseCaptions,textParagraphs,ORIGINAL_TEXT,asVtt,checkQuiz,catalogSeriesId,officialCatalogEntries} from '../littlefox-daily/core.mjs';
 
+const BOOK=id=>'https://res.littlefox.com/en/supplement/load_pdf/'+id;
+const CAPTION=id=>'https://cdn.littlefox.com/contents/caption/'+id;
 const root='automation/littlefox-backfill/';
 const req=JSON.parse(await fs.readFile(root+'internal-publish-request.json','utf8'));
 if(req.mode!=='historical_supplemental_v2'||typeof req.publish!=='boolean'||!Array.isArray(req.contentIds)||req.contentIds.length!==16||new Set(req.contentIds).size!==16)throw Error('Invalid 16-episode supplemental V2 request');
