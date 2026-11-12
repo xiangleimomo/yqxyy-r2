@@ -1,0 +1,55 @@
+{
+  "contentId": "C0005362",
+  "seriesId": "little-fox-conversation-songs-2-srv01035",
+  "episodeNumber": 36,
+  "requestedPublish": true,
+  "checkedAt": "2026-11-12T10:54:08.912Z",
+  "status": "published_verified",
+  "stages": [
+    {
+      "name": "official_song_player_verified",
+      "title": "What Did You See?",
+      "host": "cdn.littlefox.com"
+    },
+    {
+      "name": "official_lyrics_verified",
+      "paragraphs": 8
+    },
+    {
+      "name": "song_specific_source_policy",
+      "captionXmlStatus": 404,
+      "storybookStatus": 200,
+      "noTimedCaptionsExpected": true
+    },
+    {
+      "name": "song_v2_curriculum_checked",
+      "words": 8,
+      "sections": 2,
+      "quiz": null
+    },
+    {
+      "name": "r2_sequence_checked",
+      "existingEpisodes": 35,
+      "latestEpisode": 35,
+      "nextEpisode": 36
+    },
+    {
+      "name": "r2_song_patch_prepared",
+      "files": 5,
+      "subtitleFiles": 0,
+      "quizFileWritten": false,
+      "storybookField": false
+    },
+    {
+      "name": "r2_backups_written",
+      "objects": 5,
+      "backupId": "historical-song-C0005362-2026-11-12T10-54-17-933Z"
+    },
+    {
+      "name": "r2_written_and_readback",
+      "objects": 5,
+      "episodeNumber": 36,
+      "contentId": "C0005362"
+    }
+  ]
+}
