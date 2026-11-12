@@ -298,7 +298,7 @@ function unwrapBingHref(href){
   let value=decodeHtml(String(href||'')).replace(/&amp;/g,'&');
   try{
     let u=new URL(value);
-    if(/(^|\\.)bing\\.com$/i.test(u.hostname)){
+    if(/(^|\.)bing\.com$/i.test(u.hostname)){
       const token=u.searchParams.get('u')||u.searchParams.get('url')||'';
       if(token.startsWith('a1'))value=Buffer.from(token.slice(2),'base64').toString('utf8');
       else if(token)value=decodeURIComponent(token);
@@ -322,13 +322,13 @@ export async function searchBingOfficialTextId(release,http=fetch){
     const response=await http('https://www.bing.com/search?q='+encodeURIComponent(query),{headers:{'User-Agent':'Mozilla/5.0 (compatible; LittleFoxCourseBot/1.0)'}});
     if(!response.ok){diagnostics.push('HTTP '+response.status);continue;}
     const html=await response.text(),matches=new Map(),hosts=new Set(),foundIds=new Set();
-    const hrefs=[...html.matchAll(/href\\s*=\\s*["']([^"']+)["']/gi)];
+    const hrefs=[...html.matchAll(/href\s*=\s*["']([^"']+)["']/gi)];
     for(const m of hrefs){
       const u=unwrapBingHref(m[1]);
       if(!u)continue;
       hosts.add(u.hostname.toLowerCase());
-      if(!/(^|\\.)littlefox\\.com$/i.test(u.hostname))continue;
-      const id=u.pathname.match(/\\/supplement\\/(?:trans|org)\\/(C\\d{7})(?:\\/|$)/i)?.[1]?.toUpperCase();
+      if(!/(^|\.)littlefox\.com$/i.test(u.hostname))continue;
+      const id=u.pathname.match(/\/supplement\/(?:trans|org)\/(C\d{7})(?:\/|$)/i)?.[1]?.toUpperCase();
       if(!id)continue;
       foundIds.add(id);
       const nearby=html.slice(Math.max(0,m.index-700),Math.min(html.length,m.index+1800));
