@@ -26,19 +26,59 @@ export function decodeHtml(s) {
 export function cleanHtml(html) {return decodeHtml(String(html).replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,' ').replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi,' ').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ')).trim();}
 export function safeUrl(url, allow=OFFICIAL_DOMAINS) {const u=new URL(url);if(u.protocol!=='https:'||!allow.has(u.hostname)||u.username||u.password)throw Error('Unapproved official host: '+u.hostname);return u.href;}
 export function scheduleReleases(html, date, seriesList) {
-  // The schedule is a calendar of <td> cells with a day number, series and title.
-  const cells=[...String(html).matchAll(/<td\b[^>]*>([\s\S]*?)<\/td>/gi)].map(m=>({text:cleanHtml(m[1]),html:m[1]}));
+  // Parse each calendar cell independently. Official markup has varied: the day
+  // may be in a data attribute or visible text, and episode labels may say
+  // "Chapter 14 The Plot Thickens", "14: The Plot Thickens", etc.
+  const source=String(html);
+  const cells=[...source.matchAll(/<td\\b([^>]*)>([\\s\\S]*?)<\\/td>/gi)].map(m=>{
+    const attrs=m[1]||'',inner=m[2]||'';
+    return {attrs,html:inner,text:cleanHtml(inner)};
+  });
   const matches=[];
+  const day=String(Number(date.day));
+  const hasDay=cell=>{
+    const attrDate=(cell.attrs.match(/\\b(?:data-date|datetime|data-day|title)\\s*=\\s*["']([^"']+)["']/i)||[])[1]||'';
+    if(attrDate && new RegExp('(?:^|[^0-9])0?'+day+'(?:[^0-9]|$)').test(attrDate))return true;
+    // Avoid the old first-35-character assumption; match a standalone day
+    // token anywhere in the cell's leading date/header text.
+    const text=cell.text;
+    return new RegExp('(?:^|[^0-9])0?'+day+'(?:[^0-9]|$)').test(text.slice(0,100));
+  };
+  const episodeFromText=(text,seriesTitle)=>{
+    const normalizedText=text.toLowerCase();
+    const titleAt=normalizedText.indexOf(String(seriesTitle).toLowerCase());
+    if(titleAt<0)return null;
+    const tail=text.slice(titleAt+String(seriesTitle).length).trim();
+    const patterns=[
+      /(?:chapter|episode|ep\\.?|#)\\s*0?(\\d+)\\s*[:：.\\-]?\\s*(.+)$/i,
+      /(?:^|[\\s,;])0?(\\d+)\\s*[:：]\\s*(.+)$/
+    ];
+    for(const pattern of patterns){
+      const m=tail.match(pattern);
+      if(m&&m[2]?.trim())return {number:Number(m[1]),title:m[2].trim().replace(/^[-,:：\\s]+/,'')};
+    }
+    return null;
+  };
   for(const cell of cells){
-    if(!new RegExp(`(?:^|\\s)0?${date.day}(?:\\s|$)`).test(cell.text.slice(0,35)))continue;
-    const candidates=(seriesList||[]).filter(s=>s.seriesId && s.title && cell.text.toLowerCase().includes(String(s.title).toLowerCase())).sort((a,b)=>b.title.length-a.title.length);
-    const series=candidates[0];if(!series)continue;
-    const position=cell.text.toLowerCase().indexOf(series.title.toLowerCase());
-    const tail=cell.text.slice(position+series.title.length).trim().replace(/^[-,:\s]+/,'');
-    const match=tail.match(/^(\d+)\s*:\s*(.+)/);
-    if(!match)continue; // non-standard songs/specials require explicit review
-    const directIds=[...cell.html.matchAll(/C\d{7}/g)].map(m=>m[0]);
-    matches.push({seriesId:series.seriesId,seriesTitle:series.title,level:Number(series.level),seriesEpisodeNumber:Number(match[1]),title:match[2].trim(),date:date.date,directId:[...new Set(directIds)].length===1?directIds[0]:null});
+    if(!hasDay(cell))continue;
+    const candidates=(seriesList||[]).filter(s=>{
+      if(!s.seriesId||!s.title)return false;
+      const names=[s.title,...(Array.isArray(s.aliases)?s.aliases:[])];
+      return names.some(name=>name&&cell.text.toLowerCase().includes(String(name).toLowerCase()));
+    }).sort((a,b)=>String(b.title).length-String(a.title).length);
+    for(const series of candidates){
+      const names=[series.title,...(Array.isArray(series.aliases)?series.aliases:[])].sort((a,b)=>String(b).length-String(a).length);
+      let parsed=null;
+      for(const name of names){parsed=episodeFromText(cell.text,name);if(parsed)break;}
+      if(!parsed)continue;
+      const directIds=[...cell.html.matchAll(/C\\d{7}/g)].map(m=>m[0]);
+      matches.push({
+        seriesId:series.seriesId,seriesTitle:series.title,level:Number(series.level),
+        seriesEpisodeNumber:parsed.number,title:parsed.title,date:date.date,
+        directId:[...new Set(directIds)].length===1?directIds[0]:null
+      });
+      break;
+    }
   }
   return matches;
 }
