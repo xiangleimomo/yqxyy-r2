@@ -331,11 +331,11 @@ export async function searchBingOfficialTextId(release,http=fetch){
       const id=u.pathname.match(/\/supplement\/(?:trans|org)\/(C\d{7})(?:\/|$)/i)?.[1]?.toUpperCase();
       if(!id)continue;
       foundIds.add(id);
-      const nearby=html.slice(Math.max(0,m.index-700),Math.min(html.length,m.index+1800));
-      const titleMatch=normalize(cleanHtml(nearby)).includes(normalize(title));
+      const anchorTitle=normalize(cleanHtml(m[2]));
+      const titleMatch=anchorTitle.includes(normalize(title));
       if(titleMatch)matches.set(id,{id,url:u.href});
     }
-    diagnostics.push(`q=${queries.indexOf(query)+1},html=${html.length},hrefs=${hrefs.length},hosts=${[...hosts].slice(0,8).join(',')},officialCids=${[...foundIds].join(',')},titleSeen=${normalize(cleanHtml(html)).includes(normalize(title))}`);
+    diagnostics.push(`q=${queries.indexOf(query)+1},html=${html.length},anchors=${anchors.length},hosts=${[...hosts].slice(0,8).join(',')},officialCids=${[...foundIds].join(',')},titleSeen=${normalize(cleanHtml(html)).includes(normalize(title))}`);
     if(matches.size===1)return [...matches.keys()][0];
     if(matches.size>1)throw Error('Bing returned multiple official Text C-IDs for title: '+[...matches.keys()].join(', '));
   }
