@@ -64,7 +64,7 @@ async function worker(){
  }
 }
 await Promise.all(Array.from({length:4},worker));
-report.series.sort((a,b)=>a.seriesTitle.localeCompare(b.seriesTitle));
+report.series.sort((a,b)=>String(a.title||a.seriesId).localeCompare(String(b.title||b.seriesId)));
 report.missingEpisodes.sort((a,b)=>a.seriesId.localeCompare(b.seriesId)||a.episodeNumber-b.episodeNumber);
 report.conflicts.sort((a,b)=>a.seriesId.localeCompare(b.seriesId)||Number(a.episodeNumber||0)-Number(b.episodeNumber||0));
 report.incompleteExisting.sort((a,b)=>a.seriesId.localeCompare(b.seriesId)||a.episodeNumber-b.episodeNumber);
