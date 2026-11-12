@@ -13,7 +13,7 @@ try{
  const schedule=await(await get(`https://res.littlefox.com/en/forum/publishing_schedule/${d.yearMonth}`)).text();
  const releases=scheduleReleases(schedule,d,series);
  for(const calendarRelease of releases){
-  const item={seriesId:calendarRelease.seriesId,calendarEpisodeNumber:calendarRelease.calendarEpisodeNumber,title:calendarRelease.title,level:calendarRelease.level,status:'checking'};
+  const item={seriesId:calendarRelease.seriesId,calendarEpisodeNumber:calendarRelease.calendarEpisodeNumber,calendarKeyword:calendarRelease.calendarKeyword,title:calendarRelease.title,level:calendarRelease.level,status:'checking'};
   result.items.push(item);
   try{
    // The calendar identifies today's series/chapter/title. The official full-series
@@ -74,7 +74,7 @@ try{
    item.videoStatus='verified';item.status='ready_for_chatgpt';
    // Full source paragraphs are ONLY in the ephemeral GitHub Actions artifact,
    // NEVER added to the public repository or printed into workflow logs.
-   sources.items.push({seriesId:release.seriesId,episodeNumber:release.seriesEpisodeNumber,calendarEpisodeNumber:release.calendarEpisodeNumber,publicationBlockedBySequenceGap:item.publicationBlockedBySequenceGap||false,r2LatestEpisodeNumber:item.r2LatestEpisodeNumber??null,missingEpisodeNumbers:item.missingEpisodeNumbers||[],contentId:id,title:release.title,level:release.level,releaseDate:d.date,officialSourceUrls:{textOriginal:item.textOriginal,caption:item.caption,storybook:item.storybook},paragraphs,captionCues:cues,verification:{playerTitle:metadata?.item?.cont_title||null,captionCueCount:cues.length,paragraphCount:paragraphs.length,textLanguage:'en',storybookHeadStatus:pdf.status},status:'ready_for_chatgpt'});
+   sources.items.push({seriesId:release.seriesId,episodeNumber:release.seriesEpisodeNumber,calendarEpisodeNumber:release.calendarEpisodeNumber,calendarKeyword:release.calendarKeyword,publicationBlockedBySequenceGap:item.publicationBlockedBySequenceGap||false,r2LatestEpisodeNumber:item.r2LatestEpisodeNumber??null,missingEpisodeNumbers:item.missingEpisodeNumbers||[],contentId:id,title:release.title,level:release.level,releaseDate:d.date,officialSourceUrls:{textOriginal:item.textOriginal,caption:item.caption,storybook:item.storybook},paragraphs,captionCues:cues,verification:{playerTitle:metadata?.item?.cont_title||null,captionCueCount:cues.length,paragraphCount:paragraphs.length,textLanguage:'en',storybookHeadStatus:pdf.status},status:'ready_for_chatgpt'});
    item.sourceArtifact=true;
   }catch(e){item.status='blocked';item.error=String(e.message||e).slice(0,1200);}
  }
