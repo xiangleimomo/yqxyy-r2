@@ -41,7 +41,7 @@ function sectionize(sections,paras){
  if(start!==paras.length+1||result.length<2)throw Error('Story sections must cover each official paragraph');
  return result;
 }
-async function process(s){
+async function processLesson(s){
  const line={contentId:s.id,seriesId:s.seriesId,officialEpisodeNumber:s.officialEpisodeNumber,status:'checking',stages:[]};
  const step=(name,values={})=>line.stages.push({name,...values});
  try{
@@ -138,7 +138,7 @@ async function process(s){
  return line;
 }
 for(const id of req.contentIds){
- const result=await process(specs.get(id));report.items.push(result);
+ const result=await processLesson(specs.get(id));report.items.push(result);
  console.log('BACKFILL_ITEM '+JSON.stringify({id,status:result.status,error:result.error||null}));
 }
 report.status=report.summary.blocked?'partial_failure':req.publish?'published_verified':'dry_run_passed';
