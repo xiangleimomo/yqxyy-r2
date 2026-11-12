@@ -1,8 +1,8 @@
 {
   "mode": "reviewed_littlefox_v2",
   "contentId": "C0013574",
-  "publish": true,
+  "publish": false,
   "forceRepublish": false,
   "repairVideo": false,
-  "reason": "Historical backfill: publish already-reviewed Red Magic episode 214 only after episode 213 was independently published_verified. Append to the verified R2 tail; do not overwrite existing lessons or reindex earlier episodes."
+  "reason": "No pending manual publication request. Historical Red Magic episode 214 was already published_verified in run 43203023392; keep the request file non-publishing after completion."
 }
