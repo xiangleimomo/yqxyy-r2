@@ -10,6 +10,14 @@ test('today only; never scan historic 720p assets',()=>{
  const rs=scheduleReleases(html,chinaDate(new Date('2026-11-10T06:00:00Z')),seriesList);
  assert.equal(rs.length,1);assert.equal(rs[0].seriesId,seriesList[1].seriesId);assert.equal(rs[0].title,'A Happy Ending');
 });
+test('monthly calendar resolves full series names and Chapter N labels',()=>{
+ const series=[{seriesId:'red-magic',title:'Red Magic',level:7}];
+ const html='<table><tr><td><span class="day">12</span><div>Red Magic, The New Heroes Chapter 14 The Plot Thickens</div></td></tr></table>';
+ const releases=scheduleReleases(html,{date:'2026-11-12',day:12},series);
+ assert.equal(releases.length,1);
+ assert.equal(releases[0].seriesEpisodeNumber,14);
+ assert.equal(releases[0].title,'The Plot Thickens');
+});
 test('player C ID is parsed only when the official ID matches',()=>{
  assert.deepEqual(playerItem('var contents_info = [{"fc_id":"C0013595","cont_title":"The Secret Lab"}];','C0013595'),{fc_id:'C0013595',cont_title:'The Secret Lab'});
  assert.equal(playerItem('var contents_info = [{"fc_id":"C0013595"}];','C0013596'),null);
