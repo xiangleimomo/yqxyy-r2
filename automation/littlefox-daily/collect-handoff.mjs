@@ -1,6 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import {chinaDate,makeR2,scheduleReleases,identifyCId,readPlayer,isEpisodeMatch,verifyPlaylist,parseCaptions,textParagraphs,textPageShape,ORIGINAL_TEXT} from './core.mjs';
+import {chinaDate,makeR2,scheduleReleases,resolveOfficialSeriesEpisode,identifyCId,readPlayer,isEpisodeMatch,verifyPlaylist,parseCaptions,textParagraphs,textPageShape,ORIGINAL_TEXT} from './core.mjs';
 const d=chinaDate(),out=`automation/littlefox-daily/inbox/${d.date}.json`;
 const privateOut='/tmp/littlefox-source-'+d.date+'.json';
 const result={schemaVersion:2,date:d.date,status:'checking',workflowRunId:process.env.GITHUB_RUN_ID||null,privateArtifactName:'littlefox-source-'+(process.env.GITHUB_RUN_ID||'local'),items:[],errors:[]};
@@ -12,14 +12,31 @@ try{
  const series=JSON.parse(index);
  const schedule=await(await get(`https://res.littlefox.com/en/forum/publishing_schedule/${d.yearMonth}`)).text();
  const releases=scheduleReleases(schedule,d,series);
- for(const release of releases){
-  const item={seriesId:release.seriesId,episodeNumber:release.seriesEpisodeNumber,title:release.title,level:release.level,status:'checking'};
+ for(const calendarRelease of releases){
+  const item={seriesId:calendarRelease.seriesId,calendarEpisodeNumber:calendarRelease.calendarEpisodeNumber,title:calendarRelease.title,level:calendarRelease.level,status:'checking'};
   result.items.push(item);
   try{
+   // The monthly calendar may number a chapter within a sub-series. Resolve the
+   // absolute episode position from the full official series catalog before R2 checks.
+   const official=await resolveOfficialSeriesEpisode(calendarRelease,fetch);
+   const release={...calendarRelease,...official};
+   item.episodeNumber=release.seriesEpisodeNumber;
    const old=await store.get(`data/${release.seriesId}/episodes.json`);if(!old)throw Error('R2 episode index missing');
    const episodes=JSON.parse(old);
-   if(process.env.LF_BLIND_TEST!=='1'&&episodes.some(e=>Number(e.episodeId)===release.seriesEpisodeNumber&&e.video?.hlsUrl&&e.sourceContentId)){item.status='already_published';continue;}
+   const maxEpisode=Math.max(0,...episodes.map(e=>Number(e.episodeId)||0));
+   if(release.seriesEpisodeNumber>maxEpisode+1){
+    item.publicationBlockedBySequenceGap=true;
+    item.r2LatestEpisodeNumber=maxEpisode;
+    item.missingEpisodeNumbers=Array.from({length:release.seriesEpisodeNumber-maxEpisode-1},(_,i)=>maxEpisode+i+1);
+   }
+   const existing=episodes.find(e=>Number(e.episodeId)===release.seriesEpisodeNumber);
+   if(existing){
+    const existingId=existing.sourceContentId||existing.storyBook?.contentId;
+    if(existingId===official.contentId&&existing.video?.hlsUrl){item.contentId=existingId;item.status='already_published';continue;}
+    throw Error(`R2 episode number conflict at ${release.seriesEpisodeNumber}: existing C ID ${existingId||'missing'}, official C ID ${official.contentId}`);
+   }
    const id=await identifyCId(release,episodes,fetch);if(!id)throw Error('C ID unavailable');
+   if(id!==official.contentId)throw Error(`C ID conflict: official catalog ${official.contentId}, verified resolver ${id}`);
    item.contentId=id;
    // Video may be published later than the official Text and C ID.
    // Distinguish a confirmed C ID from release readiness.
@@ -56,7 +73,7 @@ try{
    item.videoStatus='verified';item.status='ready_for_chatgpt';
    // Full source paragraphs are ONLY in the ephemeral GitHub Actions artifact,
    // NEVER added to the public repository or printed into workflow logs.
-   sources.items.push({seriesId:release.seriesId,episodeNumber:release.seriesEpisodeNumber,contentId:id,title:release.title,level:release.level,releaseDate:d.date,officialSourceUrls:{textOriginal:item.textOriginal,caption:item.caption,storybook:item.storybook},paragraphs,captionCues:cues,verification:{playerTitle:metadata?.item?.cont_title||null,captionCueCount:cues.length,paragraphCount:paragraphs.length,textLanguage:'en',storybookHeadStatus:pdf.status},status:'ready_for_chatgpt'});
+   sources.items.push({seriesId:release.seriesId,episodeNumber:release.seriesEpisodeNumber,calendarEpisodeNumber:release.calendarEpisodeNumber,publicationBlockedBySequenceGap:item.publicationBlockedBySequenceGap||false,r2LatestEpisodeNumber:item.r2LatestEpisodeNumber??null,missingEpisodeNumbers:item.missingEpisodeNumbers||[],contentId:id,title:release.title,level:release.level,releaseDate:d.date,officialSourceUrls:{textOriginal:item.textOriginal,caption:item.caption,storybook:item.storybook},paragraphs,captionCues:cues,verification:{playerTitle:metadata?.item?.cont_title||null,captionCueCount:cues.length,paragraphCount:paragraphs.length,textLanguage:'en',storybookHeadStatus:pdf.status},status:'ready_for_chatgpt'});
    item.sourceArtifact=true;
   }catch(e){item.status='blocked';item.error=String(e.message||e).slice(0,1200);}
  }
