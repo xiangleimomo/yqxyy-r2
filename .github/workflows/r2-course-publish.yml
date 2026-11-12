@@ -15,6 +15,8 @@ permissions:
   contents: read
 jobs:
   publish:
+    # PAUSED: Legacy one-off Nero course patch publisher is superseded by the reviewed outbox publisher; retained for audit but paused.
+    if: ${{ false }}
     runs-on: ubuntu-latest
     env:
       R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
