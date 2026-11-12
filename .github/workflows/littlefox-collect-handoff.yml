@@ -1,9 +1,9 @@
 name: Little Fox Collect Handoff for ChatGPT
 # GitHub gathers official sources; ChatGPT writes and reviews educational materials.
-# 15:00 Beijing, before ChatGPT's 15:30 scheduled lesson task.
+# 14:50 Beijing (06:50 UTC), offset from the busy top-of-hour queue and leaving 40 minutes before ChatGPT's 15:30 task.
 on:
   schedule:
-    - cron: '0 7 * * 1-5'
+    - cron: '50 6 * * 1-5'
   workflow_dispatch:
   push:
     paths:
