@@ -1,12 +1,13 @@
 {
   "mode": "read_only_historical_backfill_audit",
   "scope": "all_littlefox_series_in_r2",
-  "compareAgainst": "official_full_series_catalogs",
+  "compareAgainst": "main_and_supplemental_r2_indexes",
   "publish": false,
   "writeToR2": false,
   "createdAt": "2026-11-12",
-  "retry": 6,
+  "retry": 7,
   "updatedAt": "2026-11-12T10:54:57.605Z",
   "comparison": "official_content_id_membership",
-  "postBackfillCheck": true
+  "postBackfillCheck": true,
+  "note": "Verify zero missing official C-IDs after 16/16 supplemental V2 publishes verified by GitHub run 43225892005; no R2 writes"
 }
