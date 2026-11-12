@@ -1,0 +1,58 @@
+{
+  "contentId": "C0013574",
+  "seriesId": "little-fox-red-magic-fs0059",
+  "episodeNumber": 214,
+  "requestedPublish": true,
+  "checkedAt": "2026-11-12T10:44:42.627Z",
+  "status": "published_verified",
+  "stages": [
+    {
+      "name": "r2_real_state_checked",
+      "episodeIndexExists": true,
+      "existingEpisodes": 213,
+      "latestEpisode": {
+        "episodeId": 213,
+        "title": "Racing the Wind",
+        "contentId": "C0013573"
+      },
+      "targetExists": false,
+      "matchingEntries": []
+    },
+    {
+      "name": "target_mode",
+      "mode": "new_publish",
+      "previousEntry": false
+    },
+    {
+      "name": "r2_current_index_checked",
+      "existingEpisodes": 213
+    },
+    {
+      "name": "official_video_verified",
+      "host": "cdn.littlefox.com"
+    },
+    {
+      "name": "official_text_xml_pdf_verified",
+      "paragraphs": 43,
+      "cues": 80,
+      "storybookStatus": 200
+    },
+    {
+      "name": "v2_curriculum_and_quiz_checked",
+      "words": 8,
+      "questions": 5,
+      "sections": 4
+    },
+    {
+      "name": "r2_patch_prepared",
+      "files": 8
+    },
+    {
+      "name": "backups_written"
+    },
+    {
+      "name": "r2_written_and_readback",
+      "objects": 8
+    }
+  ]
+}
