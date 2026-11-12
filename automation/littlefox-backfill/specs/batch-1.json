@@ -1,0 +1,754 @@
+[
+  {
+    "id": "C0002333",
+    "officialEpisodeNumber": 24,
+    "seriesId": "little-fox-around-the-world-in-80-days-fs0037",
+    "title": "The Rescue",
+    "releaseDate": "",
+    "sections": [
+      [
+        16,
+        "A Costly Decision",
+        "昂贵但坚定的决定",
+        "列车遭袭后发现几名乘客失踪，福格决定冒着输掉赌约的风险去救帕斯帕图。"
+      ],
+      [
+        31,
+        "Waiting at Fort Kearney",
+        "车站的等待",
+        "福格与志愿士兵出发，阿乌达坚持留下，列车只能继续前行。"
+      ],
+      [
+        37,
+        "Passepartout Calls for Help",
+        "帕斯帕图求救",
+        "片尾导览视角揭示帕斯帕图仍被俘，他不断高声呼救。"
+      ]
+    ],
+    "words": [
+      "wounded|受伤的",
+      "fortune|财富",
+      "sacrifice|牺牲；放弃",
+      "prisoners|俘虏",
+      "volunteers|志愿者",
+      "courage|勇气",
+      "engineer|工程师；火车司机",
+      "approached|走近",
+      "resolution|决心",
+      "pleaded|恳求"
+    ],
+    "questions": [
+      {
+        "id": "q1",
+        "question": "Who was among the three passengers missing after the attack?",
+        "options": [
+          {
+            "key": "A",
+            "text": "Fix."
+          },
+          {
+            "key": "B",
+            "text": "Passepartout."
+          },
+          {
+            "key": "C",
+            "text": "Aouda."
+          },
+          {
+            "key": "D",
+            "text": "Colonel Proctor."
+          }
+        ],
+        "answer": "B",
+        "explanation": "袭击后失踪者包括帕斯帕图，福格与阿乌达仍在车站。",
+        "evidence": {
+          "paragraphIds": [
+            "p1"
+          ]
+        }
+      },
+      {
+        "id": "q2",
+        "question": "Why did Mr. Fogg decide to risk losing his wager?",
+        "options": [
+          {
+            "key": "A",
+            "text": "He wanted to travel to New York faster."
+          },
+          {
+            "key": "B",
+            "text": "He had forgotten the wager's deadline."
+          },
+          {
+            "key": "C",
+            "text": "He believed rescuing the missing men was his duty."
+          },
+          {
+            "key": "D",
+            "text": "He was looking for another train."
+          }
+        ],
+        "answer": "C",
+        "explanation": "福格明白耽搁一天会错过轮船、输掉赌约，仍认为救人是自己的责任。",
+        "evidence": {
+          "paragraphIds": [
+            "p6"
+          ]
+        }
+      },
+      {
+        "id": "q3",
+        "question": "How did the captain respond when Mr. Fogg insisted on going alone?",
+        "options": [
+          {
+            "key": "A",
+            "text": "He selected thirty volunteers to accompany him."
+          },
+          {
+            "key": "B",
+            "text": "He arrested Mr. Fogg at the fort."
+          },
+          {
+            "key": "C",
+            "text": "He told the train driver to leave at once."
+          },
+          {
+            "key": "D",
+            "text": "He sent Fix to lead fifty soldiers."
+          }
+        ],
+        "answer": "A",
+        "explanation": "军官被福格的勇敢打动，选出三十位志愿士兵协助救援。",
+        "evidence": {
+          "paragraphIds": [
+            "p16"
+          ]
+        }
+      },
+      {
+        "id": "q4",
+        "question": "Why did Aouda ask the engineer to delay the departing train?",
+        "options": [
+          {
+            "key": "A",
+            "text": "She hoped to buy supplies from the fort."
+          },
+          {
+            "key": "B",
+            "text": "She was afraid of traveling in the snow."
+          },
+          {
+            "key": "C",
+            "text": "She needed to repair the train windows herself."
+          },
+          {
+            "key": "D",
+            "text": "She wanted to wait for Mr. Fogg and the missing passengers."
+          }
+        ],
+        "answer": "D",
+        "explanation": "阿乌达希望列车等福格与被救乘客回来，而不是抛下他们。",
+        "evidence": {
+          "paragraphIds": [
+            "p25"
+          ]
+        }
+      },
+      {
+        "id": "q5",
+        "question": "What did Fix promise to do while Mr. Fogg was away?",
+        "options": [
+          {
+            "key": "A",
+            "text": "Search the desert for the next steamer."
+          },
+          {
+            "key": "B",
+            "text": "Stay with Aouda and make sure she remained safe."
+          },
+          {
+            "key": "C",
+            "text": "Return to New York to report the incident."
+          },
+          {
+            "key": "D",
+            "text": "Guide the train across the snowy plain."
+          }
+        ],
+        "answer": "B",
+        "explanation": "福格出发前请费克斯照顾阿乌达，费克斯后来也承诺留下保护她。",
+        "evidence": {
+          "paragraphIds": [
+            "p30"
+          ]
+        }
+      }
+    ],
+    "schemaVersion": 1,
+    "qualityStatus": "manually_authored_from_official_text"
+  },
+  {
+    "id": "C0009130",
+    "officialEpisodeNumber": 32,
+    "seriesId": "little-fox-birthday-fairies-fs0114",
+    "title": "Feather's Idea",
+    "releaseDate": "",
+    "sections": [
+      [
+        15,
+        "A Wishbit Lost in the Clover",
+        "许愿碎片落入草地",
+        "羽毛仙子误会女孩们是猎人，在慌忙躲藏时把许愿碎片落在大片三叶草里。"
+      ],
+      [
+        30,
+        "Finding the Four-Leaf Clover",
+        "找到四叶草",
+        "仙子们终于发现四叶草，但还需要让Emma注意到它。"
+      ],
+      [
+        47,
+        "The Balloon Plan Works",
+        "气球计划成功",
+        "羽毛仙子利用气球和木棍引导Emma发现四叶草，她许愿家人好运。"
+      ]
+    ],
+    "words": [
+      "mistake|错误",
+      "backyard|后院",
+      "clovers|三叶草",
+      "balloon|气球",
+      "stick|木棍",
+      "suddenly|突然",
+      "wishbit|许愿碎片",
+      "lucky|幸运的",
+      "mumbled|嘟囔",
+      "grinned|露齿一笑"
+    ],
+    "questions": [
+      {
+        "id": "q1",
+        "question": "What did Sprite tell Feather about the girls?",
+        "options": [
+          {
+            "key": "A",
+            "text": "They had already found the wishbit."
+          },
+          {
+            "key": "B",
+            "text": "They were not fairy hunters."
+          },
+          {
+            "key": "C",
+            "text": "They knew how to fly."
+          },
+          {
+            "key": "D",
+            "text": "They were looking for a lost pet."
+          }
+        ],
+        "answer": "B",
+        "explanation": "Sprite明确告诉羽毛仙子这些女孩不是仙子猎人，Feather承认自己误会了。",
+        "evidence": {
+          "paragraphIds": [
+            "p3"
+          ]
+        }
+      },
+      {
+        "id": "q2",
+        "question": "Where did Feather accidentally drop the wishbit?",
+        "options": [
+          {
+            "key": "A",
+            "text": "Inside Emma's bedroom."
+          },
+          {
+            "key": "B",
+            "text": "Next to the bicycle tires."
+          },
+          {
+            "key": "C",
+            "text": "Into a large patch of clover."
+          },
+          {
+            "key": "D",
+            "text": "On top of the tree."
+          }
+        ],
+        "answer": "C",
+        "explanation": "羽毛仙子慌张地扔下wishbit，它落在密密麻麻的三叶草里。",
+        "evidence": {
+          "paragraphIds": [
+            "p15"
+          ]
+        }
+      },
+      {
+        "id": "q3",
+        "question": "What did Bumble discover while the fairies searched the grass?",
+        "options": [
+          {
+            "key": "A",
+            "text": "A clover with four leaves."
+          },
+          {
+            "key": "B",
+            "text": "A broken watering can."
+          },
+          {
+            "key": "C",
+            "text": "A missing birthday present."
+          },
+          {
+            "key": "D",
+            "text": "A new fairy hunter."
+          }
+        ],
+        "answer": "A",
+        "explanation": "Bumble发现一株有四片叶子的四叶草，仙子们终于找到目标。",
+        "evidence": {
+          "paragraphIds": [
+            "p25"
+          ]
+        }
+      },
+      {
+        "id": "q4",
+        "question": "How did Feather plan to help Emma notice the clover?",
+        "options": [
+          {
+            "key": "A",
+            "text": "Put a bright lamp over the clover."
+          },
+          {
+            "key": "B",
+            "text": "Ask Hob to write a letter to Emma."
+          },
+          {
+            "key": "C",
+            "text": "Hide the clover inside the watering can."
+          },
+          {
+            "key": "D",
+            "text": "Tie Emma's balloon to a stick in the ground nearby."
+          }
+        ],
+        "answer": "D",
+        "explanation": "Feather拿出Emma的气球，用木棍固定在草地上，吸引Emma走过来。",
+        "evidence": {
+          "paragraphIds": [
+            "p33"
+          ]
+        }
+      },
+      {
+        "id": "q5",
+        "question": "What did Emma hope the four-leaf clover would bring?",
+        "options": [
+          {
+            "key": "A",
+            "text": "A new bicycle for herself."
+          },
+          {
+            "key": "B",
+            "text": "Good luck to her family."
+          },
+          {
+            "key": "C",
+            "text": "A chance to meet the fairies."
+          },
+          {
+            "key": "D",
+            "text": "A bigger balloon."
+          }
+        ],
+        "answer": "B",
+        "explanation": "Emma发现四叶草后，希望它能够给家人带来好运。",
+        "evidence": {
+          "paragraphIds": [
+            "p42"
+          ]
+        }
+      }
+    ],
+    "schemaVersion": 1,
+    "qualityStatus": "manually_authored_from_official_text"
+  },
+  {
+    "id": "C0008548",
+    "officialEpisodeNumber": 103,
+    "seriesId": "little-fox-monster-academy-fs0086",
+    "title": "Cleaning Up",
+    "releaseDate": "",
+    "sections": [
+      [
+        13,
+        "A New Safety Patrol",
+        "新成立的安全巡逻队",
+        "校长给四位志愿者旧安全手册、徽章和橙色肩带，让他们承担巡逻责任。"
+      ],
+      [
+        24,
+        "The Patrol Gets Carried Away",
+        "巡逻越管越多",
+        "巡逻成员到处制止丢垃圾、骑扫帚和流口水，Ben担心他们过于严厉。"
+      ],
+      [
+        39,
+        "An Unsafe Ladder Inspection",
+        "不安全的梯子检查",
+        "Jen检查清洁工作时自己摇晃梯子，险些害Winnie跌落，并把肥皂水撒了一地。"
+      ]
+    ],
+    "words": [
+      "handbook|手册",
+      "out-of-date|过时的",
+      "volunteers|志愿者",
+      "safety|安全",
+      "badge|徽章",
+      "patrolling|巡逻",
+      "hallway|走廊",
+      "ladder|梯子",
+      "unsteady|不稳的",
+      "bucket|水桶"
+    ],
+    "questions": [
+      {
+        "id": "q1",
+        "question": "What did Mr. Freaky give the new safety patrol to explain their duties?",
+        "options": [
+          {
+            "key": "A",
+            "text": "A map of the hidden tunnels."
+          },
+          {
+            "key": "B",
+            "text": "Old safety patrol handbooks."
+          },
+          {
+            "key": "C",
+            "text": "A list of lunch recipes."
+          },
+          {
+            "key": "D",
+            "text": "A new set of broomsticks."
+          }
+        ],
+        "answer": "B",
+        "explanation": "Mr. Freaky拿出多年前的安全手册，让巡逻队员学习其中的规则。",
+        "evidence": {
+          "paragraphIds": [
+            "p3"
+          ]
+        }
+      },
+      {
+        "id": "q2",
+        "question": "What were the patrol members supposed to wear while working?",
+        "options": [
+          {
+            "key": "A",
+            "text": "Red capes and silver helmets."
+          },
+          {
+            "key": "B",
+            "text": "Matching gloves and boots."
+          },
+          {
+            "key": "C",
+            "text": "Badges and bright orange sashes."
+          },
+          {
+            "key": "D",
+            "text": "White coats and goggles."
+          }
+        ],
+        "answer": "C",
+        "explanation": "校长发给每个成员徽章和亮橙色肩带，要求巡逻时佩戴。",
+        "evidence": {
+          "paragraphIds": [
+            "p10"
+          ]
+        }
+      },
+      {
+        "id": "q3",
+        "question": "What happened when Waldo stopped the goblin in the hallway?",
+        "options": [
+          {
+            "key": "A",
+            "text": "The goblin picked up the littered wrapper."
+          },
+          {
+            "key": "B",
+            "text": "The goblin was sent home for the day."
+          },
+          {
+            "key": "C",
+            "text": "The goblin dropped a new bucket of water."
+          },
+          {
+            "key": "D",
+            "text": "The goblin repaired the broken ladder."
+          }
+        ],
+        "answer": "A",
+        "explanation": "Waldo制止乱扔垃圾，哥布林只好捡起地上的包装纸。",
+        "evidence": {
+          "paragraphIds": [
+            "p17"
+          ]
+        }
+      },
+      {
+        "id": "q4",
+        "question": "Why did Jen stop Ben and Winnie from cleaning the windows?",
+        "options": [
+          {
+            "key": "A",
+            "text": "She needed their help catching a goblin."
+          },
+          {
+            "key": "B",
+            "text": "She was looking for her lost handbook."
+          },
+          {
+            "key": "C",
+            "text": "She wanted to wash the windows herself."
+          },
+          {
+            "key": "D",
+            "text": "She wanted to check whether they were following ladder safety rules."
+          }
+        ],
+        "answer": "D",
+        "explanation": "Jen翻手册检查梯子安全规范，特别询问梯子是否牢固。",
+        "evidence": {
+          "paragraphIds": [
+            "p33"
+          ]
+        }
+      },
+      {
+        "id": "q5",
+        "question": "What caused the soapy water to spill all over the hallway?",
+        "options": [
+          {
+            "key": "A",
+            "text": "Ben deliberately threw the bucket downstairs."
+          },
+          {
+            "key": "B",
+            "text": "Jen shook the ladder, making the bucket fall."
+          },
+          {
+            "key": "C",
+            "text": "The zombies kicked the bucket."
+          },
+          {
+            "key": "D",
+            "text": "Waldo flew into the bucket on a broom."
+          }
+        ],
+        "answer": "B",
+        "explanation": "Jen晃动梯子导致Winnie险些跌落，水桶落下并把肥皂水洒满走廊。",
+        "evidence": {
+          "paragraphIds": [
+            "p39"
+          ]
+        }
+      }
+    ],
+    "schemaVersion": 1,
+    "qualityStatus": "manually_authored_from_official_text"
+  },
+  {
+    "id": "C0007147",
+    "officialEpisodeNumber": 131,
+    "seriesId": "little-fox-red-magic-fs0059",
+    "title": "The Journey Begins",
+    "releaseDate": "",
+    "sections": [
+      [
+        15,
+        "Why the Far Frontier Is So Difficult",
+        "遥远的远疆",
+        "大家讨论远疆距离之远，过去Zann父母必须传送、骑龙、步行才能抵达。"
+      ],
+      [
+        35,
+        "Wyssa's Strange Journey Spell",
+        "Wyssa的奇特法术",
+        "Wyssa使用装有龙鳞的装置施法，大家在仿佛极速飞行后到达炙热沙漠。"
+      ],
+      [
+        53,
+        "Two Days and a Surprising Confession",
+        "两天与出人意料的事实",
+        "大家发现旅程实际用了近两天，Wyssa又承认从未来过这里，众人陷入不确定。"
+      ]
+    ],
+    "words": [
+      "frontier|边境地带",
+      "dragon|飞龙",
+      "scales|鳞片",
+      "contraption|奇特装置",
+      "muttered|嘟囔",
+      "panicked|恐慌",
+      "desert|沙漠",
+      "dunes|沙丘",
+      "impatiently|不耐烦地",
+      "shrugged|耸肩"
+    ],
+    "questions": [
+      {
+        "id": "q1",
+        "question": "Why could the group not simply zap straight to the Far Frontier?",
+        "options": [
+          {
+            "key": "A",
+            "text": "The dragons had destroyed every wormhole."
+          },
+          {
+            "key": "B",
+            "text": "It was much too far away for ordinary zapping."
+          },
+          {
+            "key": "C",
+            "text": "Zann had lost his ability to use magic."
+          },
+          {
+            "key": "D",
+            "text": "The trip was forbidden by the palace."
+          }
+        ],
+        "answer": "B",
+        "explanation": "远疆距离First City非常遥远，普通传送无法直接到达。",
+        "evidence": {
+          "paragraphIds": [
+            "p6"
+          ]
+        }
+      },
+      {
+        "id": "q2",
+        "question": "How had Zann's parents completed the last part of their earlier journey?",
+        "options": [
+          {
+            "key": "A",
+            "text": "They sailed across a dark ocean."
+          },
+          {
+            "key": "B",
+            "text": "They took a fast train to the edge."
+          },
+          {
+            "key": "C",
+            "text": "They walked for more than a week after releasing their dragons."
+          },
+          {
+            "key": "D",
+            "text": "They flew all the way on dragons without stopping."
+          }
+        ],
+        "answer": "C",
+        "explanation": "父母传送并骑龙到一定位置后，因魔力不稳定放走飞龙，再步行一个多星期。",
+        "evidence": {
+          "paragraphIds": [
+            "p13"
+          ]
+        }
+      },
+      {
+        "id": "q3",
+        "question": "What did Wyssa put into her strange contraption?",
+        "options": [
+          {
+            "key": "A",
+            "text": "Dragon scales she had collected."
+          },
+          {
+            "key": "B",
+            "text": "A bottle of airberry juice."
+          },
+          {
+            "key": "C",
+            "text": "A four-leaf clover."
+          },
+          {
+            "key": "D",
+            "text": "An old map of the desert."
+          }
+        ],
+        "answer": "A",
+        "explanation": "Wyssa把收集来的龙鳞倒进由枝条、石子等组成的装置。",
+        "evidence": {
+          "paragraphIds": [
+            "p18"
+          ]
+        }
+      },
+      {
+        "id": "q4",
+        "question": "What surprised Gliss about the length of their journey?",
+        "options": [
+          {
+            "key": "A",
+            "text": "It had lasted only a few seconds."
+          },
+          {
+            "key": "B",
+            "text": "The whole trip had taken a month."
+          },
+          {
+            "key": "C",
+            "text": "They had traveled backward in time by a year."
+          },
+          {
+            "key": "D",
+            "text": "It had taken almost two days, not just five minutes."
+          }
+        ],
+        "answer": "D",
+        "explanation": "Gliss以为只花了五分钟，Wyssa却说整个旅行实际持续了近两天。",
+        "evidence": {
+          "paragraphIds": [
+            "p43"
+          ]
+        }
+      },
+      {
+        "id": "q5",
+        "question": "What startling truth did Wyssa reveal at the end?",
+        "options": [
+          {
+            "key": "A",
+            "text": "She was the ruler of the Far Frontier."
+          },
+          {
+            "key": "B",
+            "text": "She had never visited the Far Frontier before."
+          },
+          {
+            "key": "C",
+            "text": "She had secretly followed Zann's parents there."
+          },
+          {
+            "key": "D",
+            "text": "She had already located Morb."
+          }
+        ],
+        "answer": "B",
+        "explanation": "Wyssa最后承认自己此前从没来过远疆，与大家之前的理解不同。",
+        "evidence": {
+          "paragraphIds": [
+            "p53"
+          ]
+        }
+      }
+    ],
+    "schemaVersion": 1,
+    "qualityStatus": "manually_authored_from_official_text"
+  }
+]
