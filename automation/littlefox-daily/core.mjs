@@ -66,7 +66,7 @@ export function scheduleReleases(html, date, seriesList) {
       const directIds=[...cell.html.matchAll(/C\d{7}/g)].map(m=>m[0]);
       matches.push({
         seriesId:series.seriesId,seriesTitle:series.title,level:Number(series.level),
-        seriesEpisodeNumber:parsed.number,title:parsed.title,date:date.date,
+        calendarEpisodeNumber:parsed.number,title:parsed.title,date:date.date,
         directId:[...new Set(directIds)].length===1?directIds[0]:null
       });
       break;
@@ -243,9 +243,20 @@ export function officialCatalogEntries(html) {
     const id=tag.match(/\bdata-fcid\s*=\s*["'](C\d{7})["']/i)?.[1];
     const title=tag.match(/\bdata-contname\s*=\s*["']([^"']+)["']/i)?.[1];
     if(!id||!title||seen.has(id))continue;
-    result.push({id,title:cleanHtml(title)});seen.add(id);
+    result.push({id,title:cleanHtml(title),seriesEpisodeNumber:result.length+1});seen.add(id);
   }
   return result;
+}
+export async function resolveOfficialSeriesEpisode(release,http=fetch){
+  const sid=catalogSeriesId(release.seriesId);
+  if(!sid)throw Error('Official series catalog ID unavailable; cannot resolve absolute episode number');
+  const section=sid.startsWith('SRV')?'songs':'readers';
+  const response=await http(`https://www.littlefox.com/en/${section}/contents_list_v2/${sid}`);
+  if(!response.ok)throw Error('Official series catalog HTTP '+response.status);
+  const entries=officialCatalogEntries(await response.text());
+  const matches=entries.filter(x=>normalize(x.title)===normalize(release.title));
+  if(matches.length!==1)throw Error(matches.length?'Ambiguous official series title':'Title not found in official series catalog; absolute episode number unverified');
+  return {seriesEpisodeNumber:matches[0].seriesEpisodeNumber,contentId:matches[0].id};
 }
 export function catalogSeriesId(seriesId){
   const known={'three-kingdoms':'FS0182','journey-to-the-west':'FS0078'};
