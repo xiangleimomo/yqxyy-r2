@@ -1,0 +1,493 @@
+{
+  "schemaVersion": 1,
+  "status": "ready_for_publish",
+  "reviewStatus": "approved",
+  "seriesId": "little-fox-red-magic-fs0059",
+  "episodeNumber": 14,
+  "contentId": "C0013574",
+  "title": "The Plot Thickens",
+  "level": 7,
+  "releaseDate": "2026-11-12",
+  "officialSourceUrls": {
+    "textOriginal": "https://cn.littlefox.com/cn/supplement/org/C0013574",
+    "caption": "https://cdn.littlefox.com/contents/caption/C0013574.xml",
+    "storybook": "https://res.littlefox.com/en/supplement/load_pdf/C0013574"
+  },
+  "sourceVerification": {
+    "englishText": true,
+    "storybook": true,
+    "storybookMethod": "HEAD HTTP 200 (PDF content not extracted)",
+    "subtitleXml": true,
+    "episodeTitleMatched": true,
+    "workflowRunId": "43184586703",
+    "sourceArtifactName": "littlefox-source-43184586703"
+  },
+  "captionMetadata": {
+    "cueCount": 80,
+    "firstCueStart": 0.051,
+    "lastCueEnd": 397.828
+  },
+  "lesson": {
+    "themeZh": "识别伪装、判断危险与及时求助",
+    "learningObjectivesZh": [
+      "梳理Zella从等待朋友到发现异常信息的推理过程",
+      "解释Festian如何伪装并将Zann一行带到Far Frontier",
+      "理解Panno提供的识别Festian线索，并概括结尾出现的新危机"
+    ],
+    "sections": [
+      {
+        "id": "s1",
+        "title": "Waiting for the Visitors",
+        "titleZh": "迟迟未到的访客",
+        "paragraphIds": [
+          "p1",
+          "p2",
+          "p3",
+          "p4",
+          "p5",
+          "p6",
+          "p7",
+          "p8",
+          "p9",
+          "p10"
+        ],
+        "startSeconds": 0.051,
+        "endSeconds": 77.041,
+        "summaryZh": "Zella发现Zann和Perda迟迟没有抵达。尽管Raff认为他们可能只是耽搁，Zella根据Zann一向会及时告知计划变化的习惯，开始担心他们遇到了麻烦。",
+        "focus": [
+          "人物担忧",
+          "根据已知信息推断"
+        ]
+      },
+      {
+        "id": "s2",
+        "title": "A Message from the Far Frontier",
+        "titleZh": "来自远疆的消息",
+        "paragraphIds": [
+          "p11",
+          "p12",
+          "p13",
+          "p14",
+          "p15",
+          "p16",
+          "p17",
+          "p18",
+          "p19",
+          "p20",
+          "p21"
+        ],
+        "startSeconds": 77.042,
+        "endSeconds": 208.791,
+        "summaryZh": "新的消息飞蛾带来意外消息：Zann一行被带到了Far Frontier。原本被认为是宫廷雇员的车夫其实可能是能变形的Festian；Zella推测对方利用漩涡和虫洞改变路线，并用魔法让众人睡着、控制飞龙。远疆附近没有虫洞，魔法又很弱，他们难以自行返回。",
+        "focus": [
+          "事件因果",
+          "根据线索重建经过",
+          "困境判断"
+        ]
+      },
+      {
+        "id": "s3",
+        "title": "A Strange Change in the Mayor",
+        "titleZh": "镇长的反常表现",
+        "paragraphIds": [
+          "p22",
+          "p23",
+          "p24",
+          "p25",
+          "p26",
+          "p27",
+          "p28",
+          "p29",
+          "p30"
+        ],
+        "startSeconds": 208.792,
+        "endSeconds": 283.207,
+        "summaryZh": "Zella和Raff没能找到Loro，转而来到镇广场。镇长似乎不记得前一天在洞穴里发生的事，这让Zella怀疑眼前的镇长可能也是别人伪装的。",
+        "focus": [
+          "人物行为比较",
+          "发现矛盾线索"
+        ]
+      },
+      {
+        "id": "s4",
+        "title": "The Three-Toed Clue",
+        "titleZh": "三只脚趾的线索与新危机",
+        "paragraphIds": [
+          "p31",
+          "p32",
+          "p33",
+          "p34",
+          "p35",
+          "p36",
+          "p37",
+          "p38",
+          "p39",
+          "p40",
+          "p41",
+          "p42",
+          "p43"
+        ],
+        "startSeconds": 283.208,
+        "endSeconds": 397.828,
+        "summaryZh": "Panno补充了辨认Festian的重要线索：无论变成什么模样，它们都会保留只有三根脚趾的脚。Zella将这一线索与镇长的异常记忆联系起来，随后和Raff前往洞穴寻找Loro，却发现Loro的一条腿正被拉进虫洞，故事在新的危机处结束。",
+        "focus": [
+          "关键细节",
+          "线索应用",
+          "结尾悬念"
+        ]
+      }
+    ]
+  },
+  "sections": [
+    {
+      "id": "s1",
+      "title": "Waiting for the Visitors",
+      "titleZh": "迟迟未到的访客",
+      "paragraphIds": [
+        "p1",
+        "p2",
+        "p3",
+        "p4",
+        "p5",
+        "p6",
+        "p7",
+        "p8",
+        "p9",
+        "p10"
+      ],
+      "startSeconds": 0.051,
+      "endSeconds": 77.041,
+      "summaryZh": "Zella发现Zann和Perda迟迟没有抵达。尽管Raff认为他们可能只是耽搁，Zella根据Zann一向会及时告知计划变化的习惯，开始担心他们遇到了麻烦。",
+      "focus": [
+        "人物担忧",
+        "根据已知信息推断"
+      ]
+    },
+    {
+      "id": "s2",
+      "title": "A Message from the Far Frontier",
+      "titleZh": "来自远疆的消息",
+      "paragraphIds": [
+        "p11",
+        "p12",
+        "p13",
+        "p14",
+        "p15",
+        "p16",
+        "p17",
+        "p18",
+        "p19",
+        "p20",
+        "p21"
+      ],
+      "startSeconds": 77.042,
+      "endSeconds": 208.791,
+      "summaryZh": "新的消息飞蛾带来意外消息：Zann一行被带到了Far Frontier。原本被认为是宫廷雇员的车夫其实可能是能变形的Festian；Zella推测对方利用漩涡和虫洞改变路线，并用魔法让众人睡着、控制飞龙。远疆附近没有虫洞，魔法又很弱，他们难以自行返回。",
+      "focus": [
+        "事件因果",
+        "根据线索重建经过",
+        "困境判断"
+      ]
+    },
+    {
+      "id": "s3",
+      "title": "A Strange Change in the Mayor",
+      "titleZh": "镇长的反常表现",
+      "paragraphIds": [
+        "p22",
+        "p23",
+        "p24",
+        "p25",
+        "p26",
+        "p27",
+        "p28",
+        "p29",
+        "p30"
+      ],
+      "startSeconds": 208.792,
+      "endSeconds": 283.207,
+      "summaryZh": "Zella和Raff没能找到Loro，转而来到镇广场。镇长似乎不记得前一天在洞穴里发生的事，这让Zella怀疑眼前的镇长可能也是别人伪装的。",
+      "focus": [
+        "人物行为比较",
+        "发现矛盾线索"
+      ]
+    },
+    {
+      "id": "s4",
+      "title": "The Three-Toed Clue",
+      "titleZh": "三只脚趾的线索与新危机",
+      "paragraphIds": [
+        "p31",
+        "p32",
+        "p33",
+        "p34",
+        "p35",
+        "p36",
+        "p37",
+        "p38",
+        "p39",
+        "p40",
+        "p41",
+        "p42",
+        "p43"
+      ],
+      "startSeconds": 283.208,
+      "endSeconds": 397.828,
+      "summaryZh": "Panno补充了辨认Festian的重要线索：无论变成什么模样，它们都会保留只有三根脚趾的脚。Zella将这一线索与镇长的异常记忆联系起来，随后和Raff前往洞穴寻找Loro，却发现Loro的一条腿正被拉进虫洞，故事在新的危机处结束。",
+      "focus": [
+        "关键细节",
+        "线索应用",
+        "结尾悬念"
+      ]
+    }
+  ],
+  "vocabulary": [
+    {
+      "word": "delayed",
+      "meaningZh": "耽搁；延误",
+      "example": "The visitors were delayed on their journey.",
+      "exampleZh": "访客们在旅途中耽搁了。",
+      "paragraphIds": [
+        "p3",
+        "p7"
+      ],
+      "sourceContentId": "C0013574"
+    },
+    {
+      "word": "glow ball",
+      "meaningZh": "发光球",
+      "example": "Zella made a glow ball to light the dark path.",
+      "exampleZh": "Zella制造了一个发光球照亮黑暗的道路。",
+      "paragraphIds": [
+        "p5"
+      ],
+      "sourceContentId": "C0013574"
+    },
+    {
+      "word": "glider",
+      "meaningZh": "滑翔器；滑翔者",
+      "example": "Even the slowest cloud gliders should have arrived.",
+      "exampleZh": "即使最慢的云端滑翔器也应该已经抵达。",
+      "paragraphIds": [
+        "p6"
+      ],
+      "sourceContentId": "C0013574"
+    },
+    {
+      "word": "flare",
+      "meaningZh": "突然闪现；迸发",
+      "example": "A flare of hope made Zella catch the message moth quickly.",
+      "exampleZh": "希望突然涌现，Zella赶紧接住了消息飞蛾。",
+      "paragraphIds": [
+        "p12"
+      ],
+      "sourceContentId": "C0013574"
+    },
+    {
+      "word": "vortex",
+      "meaningZh": "漩涡",
+      "example": "The coach may have traveled through a vortex.",
+      "exampleZh": "那辆龙车可能穿过了一个漩涡。",
+      "paragraphIds": [
+        "p17",
+        "p18"
+      ],
+      "sourceContentId": "C0013574"
+    },
+    {
+      "word": "overwhelmed",
+      "meaningZh": "不知所措；难以承受",
+      "example": "Zella felt overwhelmed by the dangerous situation.",
+      "exampleZh": "面对危险的局势，Zella感到不知所措。",
+      "paragraphIds": [
+        "p22"
+      ],
+      "sourceContentId": "C0013574"
+    },
+    {
+      "word": "retain",
+      "meaningZh": "保留；保持",
+      "example": "Festians retain their own feet when they change shape.",
+      "exampleZh": "Festian变换外形时仍会保留自己的脚。",
+      "paragraphIds": [
+        "p34"
+      ],
+      "sourceContentId": "C0013574"
+    },
+    {
+      "word": "recognize",
+      "meaningZh": "认出；识别",
+      "example": "The three toes can help people recognize a Festian.",
+      "exampleZh": "三根脚趾可以帮助人们认出Festian。",
+      "paragraphIds": [
+        "p34"
+      ],
+      "sourceContentId": "C0013574"
+    }
+  ],
+  "quiz": {
+    "questions": [
+      {
+        "id": "q1",
+        "type": "single-choice",
+        "category": "reading",
+        "question": "Why did Zella become worried when Zann and Perda did not arrive?",
+        "options": [
+          {
+            "key": "A",
+            "text": "She knew they had decided to stay in First City."
+          },
+          {
+            "key": "B",
+            "text": "She believed Zann would have told them if the plan had changed."
+          },
+          {
+            "key": "C",
+            "text": "She thought Raff had sent them to the wrong town."
+          },
+          {
+            "key": "D",
+            "text": "She had heard that the town square was closed."
+          }
+        ],
+        "answer": "B",
+        "explanation": "Zella认为Zann如果改变行程，一定会提前告诉他们。正因为没有收到这样的消息，她才觉得这次迟到可能意味着出了意外。",
+        "evidence": {
+          "paragraphIds": [
+            "p8"
+          ],
+          "sourceContentId": "C0013574"
+        }
+      },
+      {
+        "id": "q2",
+        "type": "single-choice",
+        "category": "reading",
+        "question": "What did Zann's new message reveal about the person driving the dragon coach?",
+        "options": [
+          {
+            "key": "A",
+            "text": "The driver was Loro in disguise."
+          },
+          {
+            "key": "B",
+            "text": "The driver was a dragon who had escaped."
+          },
+          {
+            "key": "C",
+            "text": "The driver was a Festian pretending to be a trusted palace employee."
+          },
+          {
+            "key": "D",
+            "text": "The driver was Mayor Ruxton's relative."
+          }
+        ],
+        "answer": "C",
+        "explanation": "消息称他们原以为车夫是可信任的宫廷雇员，后来却怀疑那其实是一个Festian，可能通过变形伪装成他们认识的人。",
+        "evidence": {
+          "paragraphIds": [
+            "p15"
+          ],
+          "sourceContentId": "C0013574"
+        }
+      },
+      {
+        "id": "q3",
+        "type": "single-choice",
+        "category": "reading",
+        "question": "How did Zella think the Festian got the dragon coach to the Far Frontier so quickly?",
+        "options": [
+          {
+            "key": "A",
+            "text": "He made the dragons fly through a storm."
+          },
+          {
+            "key": "B",
+            "text": "He asked another group of travelers to carry the coach."
+          },
+          {
+            "key": "C",
+            "text": "He took the coach through a vortex and came out near the Far Frontier."
+          },
+          {
+            "key": "D",
+            "text": "He used a map to find a shorter road across the mountains."
+          }
+        ],
+        "answer": "C",
+        "explanation": "Zella根据Zann的推测解释：Festian可能把整辆龙车带入漩涡，再从靠近Far Frontier的虫洞出来，最后继续飞行。",
+        "evidence": {
+          "paragraphIds": [
+            "p17"
+          ],
+          "sourceContentId": "C0013574"
+        }
+      },
+      {
+        "id": "q4",
+        "type": "single-choice",
+        "category": "reading",
+        "question": "What physical clue did Panno say could identify a Festian, even when it changed shape?",
+        "options": [
+          {
+            "key": "A",
+            "text": "It always kept its own feet, which had three toes."
+          },
+          {
+            "key": "B",
+            "text": "It always had silver eyes."
+          },
+          {
+            "key": "C",
+            "text": "It could never speak like a human."
+          },
+          {
+            "key": "D",
+            "text": "It always left glowing footprints."
+          }
+        ],
+        "answer": "A",
+        "explanation": "Panno指出Festian无论变成什么形态，都会保留自己的脚，而它们的脚只有三根脚趾，这是可靠的辨认方法。",
+        "evidence": {
+          "paragraphIds": [
+            "p34"
+          ],
+          "sourceContentId": "C0013574"
+        }
+      },
+      {
+        "id": "q5",
+        "type": "single-choice",
+        "category": "reading",
+        "question": "What danger does Zella discover at the very end of the episode?",
+        "options": [
+          {
+            "key": "A",
+            "text": "Raff has disappeared into the town square."
+          },
+          {
+            "key": "B",
+            "text": "The mayor has taken the message moth."
+          },
+          {
+            "key": "C",
+            "text": "The dragon coach has returned without its riders."
+          },
+          {
+            "key": "D",
+            "text": "Loro is being pulled into a wormhole."
+          }
+        ],
+        "answer": "D",
+        "explanation": "结尾Zella听到身后的动静，转身发现Loro的一条腿正被拉进虫洞，故事以这一突发危险收尾。",
+        "evidence": {
+          "paragraphIds": [
+            "p43"
+          ],
+          "sourceContentId": "C0013574"
+        }
+      }
+    ]
+  },
+  "reviewNotes": "基于 GitHub Actions Run 43184586703 的真实官方素材：43段英文Text、80条字幕时间轴，Storybook HEAD HTTP 200；官方播放器标题与 Red Magic, The New Heroes 第14集 The Plot Thickens 匹配。4个教学分段按本集段落及字幕时间轴划分。5道原创英文剧情理解题分别定位 p8、p15、p17、p34、p43，覆盖开端担忧、伪装与绑架经过、识别线索及结尾危机；逐题核对本集证据、四个不重复选项、唯一答案和中文解析。未使用其他集或原著剧情。"
+}
