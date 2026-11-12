@@ -1,0 +1,446 @@
+{
+  "schemaVersion": 1,
+  "status": "ready_for_publish",
+  "reviewStatus": "approved",
+  "seriesId": "little-fox-daisy-dolittle-fs0175",
+  "episodeNumber": 37,
+  "contentId": "C0013549",
+  "title": "A Spilled Secret",
+  "level": 5,
+  "releaseDate": "2026-11-06",
+  "officialSourceUrls": {
+    "textOriginal": "https://cn.littlefox.com/cn/supplement/org/C0013549",
+    "caption": "https://cdn.littlefox.com/contents/caption/C0013549.xml",
+    "storybook": "https://res.littlefox.com/en/supplement/load_pdf/C0013549"
+  },
+  "sourceVerification": {
+    "englishText": true,
+    "storybook": true,
+    "storybookMethod": "HEAD HTTP 200 (PDF content not extracted)",
+    "subtitleXml": true,
+    "episodeTitleMatched": true,
+    "workflowRunId": "43201460328",
+    "sourceArtifactName": "littlefox-historical-sources-43201460328"
+  },
+  "captionMetadata": {
+    "cueCount": 52,
+    "firstCueStart": 0.078,
+    "lastCueEnd": 253.984
+  },
+  "lesson": {
+    "themeZh": "诚实、信任与友谊中的秘密",
+    "learningObjectivesZh": [
+      "梳理Daisy向Grace透露秘密后与Beatrice之间出现的矛盾",
+      "理解Daisy选择坦白的原因，以及Grace如何回应",
+      "根据运动日开端的情节判断Daisy与Parker对活动的不同态度"
+    ],
+    "sections": [
+      {
+        "id": "s1",
+        "title": "A Secret and a Beach Invitation",
+        "titleZh": "秘密与海滩邀请",
+        "paragraphIds": [
+          "p1",
+          "p2",
+          "p3",
+          "p4",
+          "p5",
+          "p6",
+          "p7",
+          "p8",
+          "p9"
+        ],
+        "startSeconds": 0.078,
+        "endSeconds": 69.791,
+        "summaryZh": "Daisy担心Beatrice是否听到了她向Grace透露的秘密。Kaleem邀请Grace一起去海滩，Beatrice则提醒Daisy：如果Grace在场，Daisy就无法自在地与新遇到的动物交谈。",
+        "focus": [
+          "人物关系",
+          "冲突起点"
+        ]
+      },
+      {
+        "id": "s2",
+        "title": "Telling Beatrice the Truth",
+        "titleZh": "向Beatrice说出真相",
+        "paragraphIds": [
+          "p10",
+          "p11",
+          "p12",
+          "p13",
+          "p14",
+          "p15",
+          "p16",
+          "p17",
+          "p18",
+          "p19",
+          "p20",
+          "p21",
+          "p22"
+        ],
+        "startSeconds": 69.792,
+        "endSeconds": 166.707,
+        "summaryZh": "Daisy没有继续隐瞒，而是坦白Grace已经知道她能与动物交谈。Beatrice对此很生气；Grace却礼貌地认识了Beatrice，并承诺替Daisy保守秘密。",
+        "focus": [
+          "诚实与信任",
+          "人物反应",
+          "结果"
+        ]
+      },
+      {
+        "id": "s3",
+        "title": "A Quiet Bee and Field Day",
+        "titleZh": "沉默的蜜蜂与校园运动日",
+        "paragraphIds": [
+          "p23",
+          "p24",
+          "p25",
+          "p26",
+          "p27",
+          "p28",
+          "p29",
+          "p30",
+          "p31"
+        ],
+        "startSeconds": 166.708,
+        "endSeconds": 253.984,
+        "summaryZh": "接下来的几天，Beatrice一直躲着Daisy。Daisy相信Grace值得信任。到了学校运动日，Parker却只想着赢得比赛和奖品，Daisy认为他忘了活动本来应该带来的乐趣。",
+        "focus": [
+          "持续的关系变化",
+          "新情境",
+          "结尾人物态度"
+        ]
+      }
+    ]
+  },
+  "sections": [
+    {
+      "id": "s1",
+      "title": "A Secret and a Beach Invitation",
+      "titleZh": "秘密与海滩邀请",
+      "paragraphIds": [
+        "p1",
+        "p2",
+        "p3",
+        "p4",
+        "p5",
+        "p6",
+        "p7",
+        "p8",
+        "p9"
+      ],
+      "startSeconds": 0.078,
+      "endSeconds": 69.791,
+      "summaryZh": "Daisy担心Beatrice是否听到了她向Grace透露的秘密。Kaleem邀请Grace一起去海滩，Beatrice则提醒Daisy：如果Grace在场，Daisy就无法自在地与新遇到的动物交谈。",
+      "focus": [
+        "人物关系",
+        "冲突起点"
+      ]
+    },
+    {
+      "id": "s2",
+      "title": "Telling Beatrice the Truth",
+      "titleZh": "向Beatrice说出真相",
+      "paragraphIds": [
+        "p10",
+        "p11",
+        "p12",
+        "p13",
+        "p14",
+        "p15",
+        "p16",
+        "p17",
+        "p18",
+        "p19",
+        "p20",
+        "p21",
+        "p22"
+      ],
+      "startSeconds": 69.792,
+      "endSeconds": 166.707,
+      "summaryZh": "Daisy没有继续隐瞒，而是坦白Grace已经知道她能与动物交谈。Beatrice对此很生气；Grace却礼貌地认识了Beatrice，并承诺替Daisy保守秘密。",
+      "focus": [
+        "诚实与信任",
+        "人物反应",
+        "结果"
+      ]
+    },
+    {
+      "id": "s3",
+      "title": "A Quiet Bee and Field Day",
+      "titleZh": "沉默的蜜蜂与校园运动日",
+      "paragraphIds": [
+        "p23",
+        "p24",
+        "p25",
+        "p26",
+        "p27",
+        "p28",
+        "p29",
+        "p30",
+        "p31"
+      ],
+      "startSeconds": 166.708,
+      "endSeconds": 253.984,
+      "summaryZh": "接下来的几天，Beatrice一直躲着Daisy。Daisy相信Grace值得信任。到了学校运动日，Parker却只想着赢得比赛和奖品，Daisy认为他忘了活动本来应该带来的乐趣。",
+      "focus": [
+        "持续的关系变化",
+        "新情境",
+        "结尾人物态度"
+      ]
+    }
+  ],
+  "vocabulary": [
+    {
+      "word": "nervously",
+      "meaningZh": "紧张地；不安地",
+      "example": "She nervously waited for the teacher's reply.",
+      "exampleZh": "她紧张地等待老师的答复。",
+      "paragraphIds": [
+        "p2"
+      ],
+      "sourceContentId": "C0013549"
+    },
+    {
+      "word": "upcoming",
+      "meaningZh": "即将到来的",
+      "example": "The class is excited about the upcoming trip.",
+      "exampleZh": "全班都对即将到来的旅行感到兴奋。",
+      "paragraphIds": [
+        "p4"
+      ],
+      "sourceContentId": "C0013549"
+    },
+    {
+      "word": "tagging along",
+      "meaningZh": "跟着一起去；随行",
+      "example": "My younger cousin is tagging along with us.",
+      "exampleZh": "我的小表弟要跟我们一起去。",
+      "paragraphIds": [
+        "p8"
+      ],
+      "sourceContentId": "C0013549"
+    },
+    {
+      "word": "sputtered",
+      "meaningZh": "惊讶或激动得结结巴巴地说",
+      "example": "He sputtered when he heard the surprising news.",
+      "exampleZh": "听到这个令人惊讶的消息时，他结结巴巴地说不出话来。",
+      "paragraphIds": [
+        "p12"
+      ],
+      "sourceContentId": "C0013549"
+    },
+    {
+      "word": "politely",
+      "meaningZh": "有礼貌地",
+      "example": "She politely greeted the new neighbor.",
+      "exampleZh": "她有礼貌地向新邻居打招呼。",
+      "paragraphIds": [
+        "p17"
+      ],
+      "sourceContentId": "C0013549"
+    },
+    {
+      "word": "avoiding",
+      "meaningZh": "躲避；避开",
+      "example": "The puppy kept avoiding the loud vacuum cleaner.",
+      "exampleZh": "小狗一直躲着那台很吵的吸尘器。",
+      "paragraphIds": [
+        "p23"
+      ],
+      "sourceContentId": "C0013549"
+    },
+    {
+      "word": "convince",
+      "meaningZh": "说服；使相信",
+      "example": "I tried to convince my friend to join the game.",
+      "exampleZh": "我试着说服朋友加入游戏。",
+      "paragraphIds": [
+        "p24"
+      ],
+      "sourceContentId": "C0013549"
+    },
+    {
+      "word": "bragging",
+      "meaningZh": "吹嘘；夸耀",
+      "example": "He was bragging about winning the race.",
+      "exampleZh": "他一直在吹嘘自己赢得了比赛。",
+      "paragraphIds": [
+        "p30"
+      ],
+      "sourceContentId": "C0013549"
+    }
+  ],
+  "quiz": {
+    "episodeId": 37,
+    "title": "A Spilled Secret",
+    "styleReference": "yqxyy-v2-story-comprehension",
+    "revision": "2026-11-12",
+    "questions": [
+      {
+        "id": "q1",
+        "type": "single-choice",
+        "category": "reading",
+        "question": "What secret had Daisy just shared with Grace?",
+        "options": [
+          {
+            "key": "A",
+            "text": "She could understand every language."
+          },
+          {
+            "key": "B",
+            "text": "She could talk to animals."
+          },
+          {
+            "key": "C",
+            "text": "She was planning to leave the farm."
+          },
+          {
+            "key": "D",
+            "text": "She was afraid of the beach."
+          }
+        ],
+        "answer": "B",
+        "explanation": "Daisy刚告诉Grace，自己能够和动物交谈。她担心Beatrice会因为Grace知道这个秘密而生气。",
+        "evidence": {
+          "paragraphIds": [
+            "p3"
+          ],
+          "sourceContentId": "C0013549"
+        }
+      },
+      {
+        "id": "q2",
+        "type": "single-choice",
+        "category": "reading",
+        "question": "Why did Beatrice object to Grace joining the beach trip?",
+        "options": [
+          {
+            "key": "A",
+            "text": "Grace did not know how to swim."
+          },
+          {
+            "key": "B",
+            "text": "The beach was too far away."
+          },
+          {
+            "key": "C",
+            "text": "Daisy would not be able to talk freely to the animals with Grace listening."
+          },
+          {
+            "key": "D",
+            "text": "Beatrice wanted Daisy to stay at home."
+          }
+        ],
+        "answer": "C",
+        "explanation": "Beatrice担心Daisy到了海滩会遇见许多新动物，但如果Grace在旁边听着，Daisy就不能和它们交谈。",
+        "evidence": {
+          "paragraphIds": [
+            "p8"
+          ],
+          "sourceContentId": "C0013549"
+        }
+      },
+      {
+        "id": "q3",
+        "type": "single-choice",
+        "category": "reading",
+        "question": "What did Daisy decide after thinking about hiding the truth from Beatrice?",
+        "options": [
+          {
+            "key": "A",
+            "text": "She took a deep breath and told Beatrice that Grace knew her secret."
+          },
+          {
+            "key": "B",
+            "text": "She asked Grace to pretend she knew nothing."
+          },
+          {
+            "key": "C",
+            "text": "She blamed Kaleem for telling Beatrice."
+          },
+          {
+            "key": "D",
+            "text": "She decided not to go to the beach."
+          }
+        ],
+        "answer": "A",
+        "explanation": "Daisy认为继续隐瞒是不对的，于是深吸一口气，直接告诉Beatrice：她已经把自己能和动物交谈的事告诉了Grace。",
+        "evidence": {
+          "paragraphIds": [
+            "p10",
+            "p11"
+          ],
+          "sourceContentId": "C0013549"
+        }
+      },
+      {
+        "id": "q4",
+        "type": "single-choice",
+        "category": "reading",
+        "question": "What did Grace promise Daisy after meeting Beatrice?",
+        "options": [
+          {
+            "key": "A",
+            "text": "She would ask Beatrice to leave."
+          },
+          {
+            "key": "B",
+            "text": "She would tell the whole class about Daisy's power."
+          },
+          {
+            "key": "C",
+            "text": "She would never visit the farm again."
+          },
+          {
+            "key": "D",
+            "text": "She would keep Daisy's secret."
+          }
+        ],
+        "answer": "D",
+        "explanation": "Grace先礼貌地向Beatrice打招呼，随后明确答应Daisy会保守秘密，这让Daisy相信Grace值得信任。",
+        "evidence": {
+          "paragraphIds": [
+            "p17",
+            "p22"
+          ],
+          "sourceContentId": "C0013549"
+        }
+      },
+      {
+        "id": "q5",
+        "type": "single-choice",
+        "category": "reading",
+        "question": "What bothered Daisy about Parker as Field Day began?",
+        "options": [
+          {
+            "key": "A",
+            "text": "He refused to take part in any outdoor games."
+          },
+          {
+            "key": "B",
+            "text": "He cared more about winning and getting prizes than enjoying the day."
+          },
+          {
+            "key": "C",
+            "text": "He wanted to cancel the races."
+          },
+          {
+            "key": "D",
+            "text": "He was worried that he would arrive late."
+          }
+        ],
+        "answer": "B",
+        "explanation": "Parker在教室里大声吹嘘自己会赢得所有比赛并拿走奖品。Daisy觉得运动日应该重在参与和快乐，而不是只想着获胜。",
+        "evidence": {
+          "paragraphIds": [
+            "p30",
+            "p31"
+          ],
+          "sourceContentId": "C0013549"
+        }
+      }
+    ]
+  },
+  "reviewNotes": "基于 GitHub Actions Run 43201460328 的真实官方素材：31段英文Text、52条字幕时间轴，Storybook HEAD HTTP 200；官方播放器标题为 Daisy Dolittle, The Disappearing Bird 1: A Spilled Secret，与本集标题 A Spilled Secret 匹配。3个教学分段按本集段落及字幕时间轴划分。5道原创英文剧情理解题分别定位 p3、p8、p10–p11、p17/p22、p30–p31，覆盖秘密引发的担忧、Beatrice反对的原因、Daisy坦白、Grace的承诺及Field Day开端。逐题核对四个不重复选项、唯一答案和具体中文解析；未使用其他集或原著剧情。"
+}
