@@ -122,7 +122,7 @@ test('Bing C-ID discovery rejects nonofficial links, mismatched titles and ambig
  const release={seriesTitle:'Red Magic',calendarEpisodeNumber:13,calendarKeyword:'Red Magic, The New Heroes 13: Racing the Wind',title:'Racing the Wind'};
  const bad=async()=>({ok:true,text:async()=>'<a href="https://evil.example/supplement/trans/C0013574">The Plot Thickens</a><a href="https://cn.littlefox.com/cn/supplement/trans/C0013575">A Different Story</a>'});
  await assert.rejects(searchBingOfficialTextId(release,bad),/Bing found no unique official/);
- const ambiguous=async()=>({ok:true,text:async()=>'<a href="https://cn.littlefox.com/cn/supplement/trans/C0013574">The Plot Thickens</a><a href="https://cn.littlefox.com/cn/supplement/org/C0013575">The Plot Thickens</a>'});
+ const ambiguous=async()=>({ok:true,text:async()=>'<a href="https://cn.littlefox.com/cn/supplement/trans/C0013573">Racing the Wind</a><a href="https://cn.littlefox.com/cn/supplement/org/C0013574">Racing the Wind</a>'});
  await assert.rejects(searchBingOfficialTextId(release,ambiguous),/multiple official Text C-IDs/);
 });
 
