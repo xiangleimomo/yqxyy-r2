@@ -1,0 +1,143 @@
+{
+  "schemaVersion": 1,
+  "status": "ready_for_song_publish",
+  "reviewStatus": "approved",
+  "seriesId": "little-fox-conversation-songs-2-srv01035",
+  "episodeNumber": 36,
+  "contentId": "C0005362",
+  "title": "What Did You See?",
+  "level": 0,
+  "releaseDate": "",
+  "officialSourceUrls": {
+    "textOriginal": "https://cn.littlefox.com/cn/supplement/org/C0005362",
+    "video": "https://cdn.littlefox.com/contents_5/hls/720/c514abf3d1/sce40aa028/afda38fc6e732d1ca92d25128ebf9cfb.m3u8?1210112814"
+  },
+  "sourceVerification": {
+    "englishText": true,
+    "officialPlayerTitle": true,
+    "videoHls": true,
+    "captionXml": false,
+    "captionAbsenceExpected": true,
+    "storybookPdfAvailable": true,
+    "sourceArtifactRunId": "43203576626"
+  },
+  "lesson": {
+    "themeZh": "用简单过去时谈论昨天看到、去过、买过和做过的事情",
+    "learningObjectivesZh": [
+      "听懂并跟读歌曲中的What did you…?提问句型",
+      "理解see、go、buy、do等动词的过去式在简单问答中的用法",
+      "根据歌词内容对应提问与回答，练习描述过去的经历"
+    ],
+    "sections": [
+      {
+        "id": "s1",
+        "title": "What Did You See and Where Did You Go?",
+        "titleZh": "你看到了什么？去了哪里？",
+        "paragraphIds": [
+          "p1",
+          "p2",
+          "p3",
+          "p4"
+        ],
+        "summaryZh": "歌曲先询问昨天看到了什么、去了哪里，并用苹果和去商店的回答示范简单过去时问答。"
+      },
+      {
+        "id": "s2",
+        "title": "What Did You Buy and What Did You Do?",
+        "titleZh": "你买了什么？做了什么？",
+        "paragraphIds": [
+          "p5",
+          "p6",
+          "p7",
+          "p8"
+        ],
+        "summaryZh": "歌曲继续询问买了什么、做了什么，并以买苹果和把苹果吃完作为回答，形成重复易记的问答结构。"
+      }
+    ]
+  },
+  "vocabulary": [
+    {
+      "word": "see",
+      "meaningZh": "看见；看到",
+      "example": "Did you see the rainbow after the rain?",
+      "exampleZh": "雨后你看到彩虹了吗？",
+      "paragraphIds": [
+        "p1"
+      ],
+      "sourceContentId": "C0005362"
+    },
+    {
+      "word": "apples",
+      "meaningZh": "苹果（复数）",
+      "example": "She put two apples in her bag.",
+      "exampleZh": "她把两个苹果放进包里。",
+      "paragraphIds": [
+        "p2",
+        "p6"
+      ],
+      "sourceContentId": "C0005362"
+    },
+    {
+      "word": "where",
+      "meaningZh": "哪里；在哪里",
+      "example": "Where did you go after school?",
+      "exampleZh": "放学后你去了哪里？",
+      "paragraphIds": [
+        "p3"
+      ],
+      "sourceContentId": "C0005362"
+    },
+    {
+      "word": "went",
+      "meaningZh": "go的过去式；去了",
+      "example": "We went to the library yesterday.",
+      "exampleZh": "我们昨天去了图书馆。",
+      "paragraphIds": [
+        "p4"
+      ],
+      "sourceContentId": "C0005362"
+    },
+    {
+      "word": "store",
+      "meaningZh": "商店",
+      "example": "My mother went to the store.",
+      "exampleZh": "我妈妈去了商店。",
+      "paragraphIds": [
+        "p4"
+      ],
+      "sourceContentId": "C0005362"
+    },
+    {
+      "word": "buy",
+      "meaningZh": "买；购买",
+      "example": "What did you buy at the market?",
+      "exampleZh": "你在市场买了什么？",
+      "paragraphIds": [
+        "p5"
+      ],
+      "sourceContentId": "C0005362"
+    },
+    {
+      "word": "bought",
+      "meaningZh": "buy的过去式；买了",
+      "example": "He bought a new pencil yesterday.",
+      "exampleZh": "他昨天买了一支新铅笔。",
+      "paragraphIds": [
+        "p6"
+      ],
+      "sourceContentId": "C0005362"
+    },
+    {
+      "word": "ate",
+      "meaningZh": "eat的过去式；吃了",
+      "example": "We ate lunch together.",
+      "exampleZh": "我们一起吃了午饭。",
+      "paragraphIds": [
+        "p8"
+      ],
+      "sourceContentId": "C0005362"
+    }
+  ],
+  "quiz": null,
+  "reviewNotes": "这是Conversation Songs 2第36首/集，按Level 0歌曲课程处理，不制作剧情理解Quiz。GitHub Actions Run 43203576626取得官方英文Text 8个歌词段落，官方播放器标题What Did You See?匹配，HLS播放列表已验证；Storybook PDF HEAD HTTP 200。官方字幕XML端点HTTP 404，且该系列现有第33–35集的R2结构均没有storyBook字段或字幕文件，因此本课沿用该系列既有结构：HLS视频、歌词阅读、词汇，无Quiz、无虚构字幕时间轴。两段教学内容依据8个真实歌词段落组织。"
+}
