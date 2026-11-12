@@ -104,27 +104,30 @@ test('bilingual text parser accepts verified English and Chinese in the same par
  assert.deepEqual(bilingualTextParagraphs(original,trans).map(x=>x.translation),zh);
 });
 
-test('official catalog C IDs are discovered without scanning historic video resolution variants',async()=>{
- const {officialCatalogEntries,catalogSeriesId,identifyCId}=await import('./core.mjs');
- const page='<span data-contname="New%20Beginning" data-fcid="C0013596"></span><li data-fcid="C0013597" data-contname="A Big Day"></li><li data-fcid="C0013597" data-contname="A Big Day"></li>';
- const parsed=officialCatalogEntries(page);
- assert.equal(parsed.length,2);
- assert.equal(parsed[1].id,'C0013597');
- assert.equal(parsed[0].seriesEpisodeNumber,1);
- assert.equal(parsed[1].seriesEpisodeNumber,2);
- assert.equal(catalogSeriesId('three-kingdoms'),'FS0182');
- const http=async url=>({ok:true,text:async()=>url.includes('contents_list_v2')?'<div data-contname="A Big Day" data-fcid="C0013597"></div>':'var contents_info = [{"fc_id":"C0013597","cont_title":"A Big Day","video_url":"https://cdn.littlefox.com/stream.m3u8"}];'});
- const id=await identifyCId({seriesId:'little-fox-example-fs0183',seriesEpisodeNumber:1,title:'A Big Day'},[],http);
- assert.equal(id,'C0013597');
+test('Bing official Text URL is the sole C-ID discovery source; no arithmetic fallback',async()=>{
+ const {searchBingOfficialTextId,identifyCId}=await import('./core.mjs');
+ const release={seriesId:'little-fox-red-magic-fs0059',seriesTitle:'Red Magic, The New Heroes',calendarEpisodeNumber:14,title:'The Plot Thickens'};
+ const bing='<li class="b_algo"><h2><a href="https://cn.littlefox.com/cn/supplement/trans/C0013574">Red Magic, The New Heroes 14: The Plot Thickens | Little Fox</a></h2></li>';
+ const calls=[];
+ const http=async url=>{
+  calls.push(url);
+  if(url.includes('bing.com/search'))return {ok:true,text:async()=>bing};
+  if(url.includes('/player_h5/view'))return {ok:true,text:async()=>'<script>var contents_info = [{"fc_id":"C0013574","cont_title":"The Plot Thickens","video_url":"https://cdn.littlefox.com/a.m3u8"}];</script>'};
+  throw Error('Unexpected URL '+url);
+ };
+ assert.equal(await searchBingOfficialTextId(release,http),'C0013574');
+ assert.equal(await identifyCId(release,[{episodeId:213,sourceContentId:'C0013573'}],http),'C0013574');
+ assert.ok(calls.some(url=>url.includes('bing.com/search')));
+ assert.ok(!calls.some(url=>url.includes('contents_list_v2')));
 });
 
-test('absolute series episode number comes from official catalog order, not monthly chapter number',async()=>{
- const {resolveOfficialSeriesEpisode}=await import('./core.mjs');
- const page=Array.from({length:213},(_,i)=>`<li data-fcid="C${String(13361+i).padStart(7,'0')}" data-contname="Episode ${i+1}"></li>`).join('')+
-  '<li data-fcid="C0013574" data-contname="The Plot Thickens"></li>';
- const http=async()=>({ok:true,text:async()=>page});
- const result=await resolveOfficialSeriesEpisode({seriesId:'little-fox-red-magic-fs0059',calendarEpisodeNumber:14,title:'The Plot Thickens'},http);
- assert.deepEqual(result,{seriesEpisodeNumber:214,contentId:'C0013574'});
+test('Bing C-ID discovery rejects nonofficial links, mismatched titles and ambiguous results',async()=>{
+ const {searchBingOfficialTextId}=await import('./core.mjs');
+ const release={seriesTitle:'Red Magic',calendarEpisodeNumber:14,title:'The Plot Thickens'};
+ const bad=async()=>({ok:true,text:async()=>'<a href="https://evil.example/supplement/trans/C0013574">The Plot Thickens</a><a href="https://cn.littlefox.com/cn/supplement/trans/C0013575">A Different Story</a>'});
+ await assert.rejects(searchBingOfficialTextId(release,bad),/No exact official/);
+ const ambiguous=async()=>({ok:true,text:async()=>'<a href="https://cn.littlefox.com/cn/supplement/trans/C0013574">The Plot Thickens</a><a href="https://cn.littlefox.com/cn/supplement/org/C0013575">The Plot Thickens</a>'});
+ await assert.rejects(searchBingOfficialTextId(release,ambiguous),/multiple matching/);
 });
 
 test('official Text parser supports legacy original_cont_box div.talk > span and bilingual translation section',async()=>{
