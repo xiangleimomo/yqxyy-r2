@@ -1,4 +1,5 @@
 {
   "mode": "run_core_regression_tests",
-  "requestedAt": "2026-11-12"
+  "requestedAt": "2026-11-12",
+  "retry": 1
 }
