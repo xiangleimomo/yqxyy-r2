@@ -2,8 +2,8 @@
   "schemaVersion": 2,
   "date": "2026-11-12",
   "status": "checked",
-  "workflowRunId": "43194922005",
-  "privateArtifactName": "littlefox-source-43194922005",
+  "workflowRunId": "43195168103",
+  "privateArtifactName": "littlefox-source-43195168103",
   "items": [
     {
       "seriesId": "little-fox-red-magic-fs0059",
@@ -12,7 +12,7 @@
       "level": 7,
       "status": "blocked",
       "episodeNumber": 213,
-      "error": "No exact official Little Fox Text URL found in Bing results"
+      "error": "Bing found no unique official Text C-ID. q=1,html=115387,hrefs=163,hosts=,www.crazygames.com,poki.com,www.msn.com,www.racing.com,www.nascar.com,www.racingpost.com,www.espn.com,officialCids=,titleSeen=true | q=2,html=125429,hrefs=161,hosts=,www.crazygames.com,poki.com,www.msn.com,www.racing.com,www.nascar.com,www.racingpost.com,www.espn.com,officialCids=,titleSeen=true | q=3,html=125489,hrefs=167,hosts=,www.reddit.com,en.m.wikipedia.org,m.imdb.com,m.youtube.com,www.merriam-webster.com,www.starfall.com,www.britannica.com,officialCids=,titleSeen=true"
     }
   ],
   "errors": []
