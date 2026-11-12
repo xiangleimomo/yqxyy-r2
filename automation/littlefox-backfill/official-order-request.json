@@ -1,0 +1,17 @@
+{
+  "mode": "preserve_ids_add_official_order",
+  "publish": false,
+  "seriesIds": [
+    "little-fox-red-magic-fs0059",
+    "little-fox-bird-and-kip-fs0064",
+    "little-fox-the-lemonade-detectives-fs0055",
+    "little-fox-birthday-fairies-fs0114",
+    "little-fox-monster-academy-fs0086",
+    "little-fox-way-out-west-fs0173",
+    "little-fox-space-patrol-fs0104",
+    "little-fox-nursery-rhymes-2-srv01027",
+    "little-fox-around-the-world-in-80-days-fs0037",
+    "little-fox-all-time-favorites-srv01014"
+  ],
+  "reason": "Read-only dry run: add officialEpisodeNumber metadata, preserve existing episodeId, routes and progress."
+}
