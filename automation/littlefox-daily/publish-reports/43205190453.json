@@ -1,0 +1,32 @@
+{
+  "contentId": "C0013574",
+  "seriesId": "little-fox-red-magic-fs0059",
+  "episodeNumber": 214,
+  "requestedPublish": false,
+  "checkedAt": "2026-11-12T10:59:42.320Z",
+  "status": "already_published",
+  "stages": [
+    {
+      "name": "r2_real_state_checked",
+      "episodeIndexExists": true,
+      "existingEpisodes": 214,
+      "latestEpisode": {
+        "episodeId": 214,
+        "title": "The Plot Thickens",
+        "contentId": "C0013574"
+      },
+      "targetExists": true,
+      "matchingEntries": [
+        {
+          "episodeId": 214,
+          "title": "The Plot Thickens",
+          "contentId": "C0013574"
+        }
+      ]
+    },
+    {
+      "name": "duplicate_existing",
+      "reason": "R2 already holds target episode or C ID"
+    }
+  ]
+}
