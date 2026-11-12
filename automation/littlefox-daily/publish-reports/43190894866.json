@@ -1,0 +1,31 @@
+{
+  "contentId": "C0013574",
+  "seriesId": "little-fox-red-magic-fs0059",
+  "episodeNumber": 214,
+  "requestedPublish": false,
+  "checkedAt": "2026-11-12T09:22:37.810Z",
+  "status": "blocked_sequence_gap",
+  "stages": [
+    {
+      "name": "r2_real_state_checked",
+      "episodeIndexExists": true,
+      "existingEpisodes": 212,
+      "latestEpisode": {
+        "episodeId": 212,
+        "title": "Panno's Story",
+        "contentId": "C0013572"
+      },
+      "targetExists": false,
+      "matchingEntries": []
+    },
+    {
+      "name": "r2_sequence_gap",
+      "latestR2Episode": 212,
+      "nextExpectedEpisode": 213,
+      "targetEpisode": 214,
+      "missingEpisodeNumbers": [
+        213
+      ]
+    }
+  ]
+}
