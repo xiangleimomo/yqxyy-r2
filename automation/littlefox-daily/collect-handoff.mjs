@@ -33,14 +33,14 @@ try{
     item.r2LatestEpisodeNumber=maxEpisode;
     item.missingEpisodeNumbers=Array.from({length:release.seriesEpisodeNumber-maxEpisode-1},(_,i)=>maxEpisode+i+1);
    }
+   const id=await identifyCId(release,episodes,fetch);if(!id)throw Error('C ID unavailable');
+   item.contentId=id;
    const existing=episodes.find(e=>Number(e.episodeId)===release.seriesEpisodeNumber);
    if(existing){
     const existingId=existing.sourceContentId||existing.storyBook?.contentId;
-    if(existingId===official.contentId&&existing.video?.hlsUrl){item.contentId=existingId;item.status='already_published';continue;}
-    throw Error(`R2 episode number conflict at ${release.seriesEpisodeNumber}: existing C ID ${existingId||'missing'}, official C ID ${official.contentId}`);
+    if(existingId===id&&existing.video?.hlsUrl){item.status='already_published';continue;}
+    throw Error(`R2 episode number conflict at ${release.seriesEpisodeNumber}: existing C ID ${existingId||'missing'}, Bing official Text C ID ${id}`);
    }
-   const id=await identifyCId(release,episodes,fetch);if(!id)throw Error('C ID unavailable');
-   item.contentId=id;
    // Video may be published later than the official Text and C ID.
    // Distinguish a confirmed C ID from release readiness.
    let metadata=null, pendingVideoReason=null;
