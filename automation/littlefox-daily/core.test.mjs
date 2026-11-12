@@ -111,7 +111,7 @@ test('official catalog C IDs are discovered without scanning historic video reso
  assert.equal(parsed[1].id,'C0013597');
  assert.equal(catalogSeriesId('three-kingdoms'),'FS0182');
  const http=async url=>({ok:true,text:async()=>url.includes('contents_list_v2')?'<div data-contname="A Big Day" data-fcid="C0013597"></div>':'var contents_info = [{"fc_id":"C0013597","cont_title":"A Big Day","video_url":"https://cdn.littlefox.com/stream.m3u8"}];'});
- const id=await identifyCId({seriesId:'little-fox-example-fs0183',title:'A Big Day'},[],http);
+ const id=await identifyCId({seriesId:'little-fox-example-fs0183',seriesEpisodeNumber:1,title:'A Big Day'},[],http);
  assert.equal(id,'C0013597');
 });
 
