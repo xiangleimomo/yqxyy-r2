@@ -102,16 +102,16 @@ test('bilingual text parser accepts verified English and Chinese in the same par
 test('Bing official Text URL is the sole C-ID discovery source; no arithmetic fallback',async()=>{
  const {searchBingOfficialTextId,identifyCId}=await import('./core.mjs');
  const release={seriesId:'little-fox-red-magic-fs0059',seriesTitle:'Red Magic',calendarEpisodeNumber:13,calendarKeyword:'Red Magic, The New Heroes 13: Racing the Wind',title:'Racing the Wind'};
- const bing='<li class="b_algo"><h2><a href="https://cn.littlefox.com/cn/supplement/trans/C0013574">Red Magic, The New Heroes 13: Racing the Wind | Little Fox</a></h2></li>';
+ const bing='<li class="b_algo"><h2><a href="https://cn.littlefox.com/cn/supplement/trans/C0013573">Red Magic, The New Heroes 13: Racing the Wind | Little Fox</a></h2></li>';
  const calls=[];
  const http=async url=>{
   calls.push(url);
   if(url.includes('bing.com/search'))return {ok:true,text:async()=>bing};
-  if(url.includes('/player_h5/view'))return {ok:true,text:async()=>'<script>var contents_info = [{"fc_id":"C0013574","cont_title":"Racing the Wind","video_url":"https://cdn.littlefox.com/a.m3u8"}];</script>'};
+  if(url.includes('/player_h5/view'))return {ok:true,text:async()=>'<script>var contents_info = [{"fc_id":"C0013573","cont_title":"Racing the Wind","video_url":"https://cdn.littlefox.com/a.m3u8"}];</script>'};
   throw Error('Unexpected URL '+url);
  };
- assert.equal(await searchBingOfficialTextId(release,http),'C0013574');
- assert.equal(await identifyCId(release,[{episodeId:213,sourceContentId:'C0013573'}],http),'C0013574');
+ assert.equal(await searchBingOfficialTextId(release,http),'C0013573');
+ assert.equal(await identifyCId(release,[{episodeId:212,sourceContentId:'C0013572'}],http),'C0013573');
  assert.ok(calls.some(url=>url.includes('bing.com/search')));
  assert.ok(!calls.some(url=>url.includes('contents_list_v2')));
 });
