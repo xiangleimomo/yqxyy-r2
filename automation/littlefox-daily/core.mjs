@@ -313,9 +313,9 @@ export async function searchBingOfficialTextId(release,http=fetch){
   const title=String(release.title||'').trim();
   if(!title)throw Error('Missing title for Bing C-ID search');
   const queries=[
-    \`site:cn.littlefox.com/cn/supplement/trans "\${title}" "\${series}"\`,
-    \`site:www.littlefox.com/en/supplement/org "\${title}" "\${series}"\`,
-    \`"\${series}" "\${title}" Little Fox\`
+    'site:cn.littlefox.com/cn/supplement/trans "'+title+'" "'+series+'"',
+    'site:www.littlefox.com/en/supplement/org "'+title+'" "'+series+'"',
+    '"'+series+'" "'+title+'" Little Fox'
   ];
   const diagnostics=[];
   for(let qi=0;qi<queries.length;qi++){
@@ -334,7 +334,7 @@ export async function searchBingOfficialTextId(release,http=fetch){
       const anchorTitle=normalize(cleanHtml(m[2]));
       if(anchorTitle.includes(normalize(title)))matches.set(id,{id,url:u.href});
     }
-    diagnostics.push(\`q=\${qi+1},html=\${html.length},anchors=\${anchors.length},hosts=\${[...hosts].slice(0,8).join(',')},officialCids=\${[...foundIds].join(',')},titleSeen=\${normalize(cleanHtml(html)).includes(normalize(title))}\`);
+    diagnostics.push('q='+(qi+1)+',html='+html.length+',anchors='+anchors.length+',hosts='+[...hosts].slice(0,8).join(',')+',officialCids='+[...foundIds].join(',')+',titleSeen='+normalize(cleanHtml(html)).includes(normalize(title)));
     if(matches.size===1)return [...matches.keys()][0];
     if(matches.size>1)throw Error('Bing returned multiple official Text C-IDs for title: '+[...matches.keys()].join(', '));
   }
