@@ -1,0 +1,125 @@
+[
+  {
+    "id": "C0006501",
+    "officialEpisodeNumber": 63,
+    "seriesId": "little-fox-bird-and-kip-fs0064",
+    "title": "Kip's Note",
+    "schemaVersion": 1,
+    "sections": [
+      [
+        8,
+        "Bird Writes Back",
+        "Bird写回信",
+        "Bird读到公园里树上的来信，觉得对方的经历和自己很像，于是写下自己与chipmunk朋友的事情。"
+      ],
+      [
+        17,
+        "Kip Answers the Note",
+        "Kip回复留言",
+        "Kip也发现纸条与自己十分相似，写下自己是chipmunk、好友是bird。"
+      ],
+      [
+        23,
+        "Bird Reveals the Answer",
+        "Bird揭晓答案",
+        "最后Kip收到Bird写给他的署名留言，两位朋友意识到彼此一直在通信。"
+      ]
+    ],
+    "words": [
+      "note|便条",
+      "park|公园",
+      "tree|树",
+      "bird|鸟",
+      "friend|朋友",
+      "chipmunk|花栗鼠",
+      "wonder|好奇；想知道",
+      "found|发现了",
+      "wrote|写了",
+      "read|阅读"
+    ],
+    "questions": [],
+    "qualityStatus": "manually_authored_from_official_text"
+  },
+  {
+    "id": "C0010157",
+    "officialEpisodeNumber": 83,
+    "seriesId": "little-fox-space-patrol-fs0104",
+    "title": "Where's Lucy?",
+    "schemaVersion": 1,
+    "sections": [
+      [
+        13,
+        "Lucy Is Missing",
+        "Lucy不见了",
+        "Ringo返回自行车旁发现Lucy失踪，机器人发现巨大的新脚印。"
+      ],
+      [
+        24,
+        "A Giant Spider in the Cave",
+        "洞里的巨型蜘蛛",
+        "队员沿脚印来到山洞，发现Lucy和双胞胎被困在蜘蛛网的茧里；PJ用激光将其割开。"
+      ],
+      [
+        32,
+        "The Spider Wakes Up",
+        "蜘蛛醒了",
+        "大家准备悄悄离开，却发现地面摇晃，巨型蜘蛛已经醒来。"
+      ]
+    ],
+    "words": [
+      "robots|机器人",
+      "tracks|足迹",
+      "woods|树林",
+      "cave|山洞",
+      "spider|蜘蛛",
+      "cocoons|茧",
+      "laser|激光",
+      "sneak|悄悄走",
+      "shaking|摇晃",
+      "awake|醒着的"
+    ],
+    "questions": [],
+    "qualityStatus": "manually_authored_from_official_text"
+  },
+  {
+    "id": "C0010158",
+    "officialEpisodeNumber": 84,
+    "seriesId": "little-fox-space-patrol-fs0104",
+    "title": "The Chase",
+    "schemaVersion": 1,
+    "sections": [
+      [
+        11,
+        "The Spider Gives Chase",
+        "蜘蛛追来了",
+        "蜘蛛射出黏黏的网并追赶队员，Ringo想到让Lucy唱歌。"
+      ],
+      [
+        22,
+        "A Very Loud Rescue",
+        "用歌声脱险",
+        "Lucy的大嗓门让蜘蛛受不了而逃跑，大家终于带着双胞胎回到营地。"
+      ],
+      [
+        31,
+        "Lucy's Big Singing Plan",
+        "Lucy的歌唱计划",
+        "Lucy误以为自己的歌喉很厉害，还想参加银河最佳嗓音比赛，大家只好逃开。"
+      ]
+    ],
+    "words": [
+      "sticky|黏的",
+      "webs|蜘蛛网",
+      "chase|追赶",
+      "sing|唱歌",
+      "louder|更大声地",
+      "spider|蜘蛛",
+      "campground|营地",
+      "stun|使昏迷；震住",
+      "judges|评委",
+      "galaxy|银河"
+    ],
+    "questions": [],
+    "qualityStatus": "manually_authored_from_official_text"
+  }
+]
