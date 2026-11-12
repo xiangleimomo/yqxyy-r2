@@ -1,6 +1,6 @@
 {
   "mode": "historical_supplemental_v2",
-  "publish": false,
+  "publish": true,
   "contentIds": [
     "C0002333",
     "C0006501",
@@ -19,7 +19,7 @@
     "C0006047",
     "C0013312"
   ],
-  "reason": "First dry-run all 16 manually authored course specs; no R2 writes. Existing daily episodes.json and Supabase progress remain untouched.",
+  "reason": "Authorized historical repair: all sixteen V2 drafts passed dry run in GitHub Run 43225654247; publish as separate supplemental index keyed by 100000+officialEpisodeNumber, preserve every original R2 episodes.json and existing progress ID, backup and read back every changed R2 object.",
   "retry": 2,
   "sourceArtifactRunId": 43221955132
 }
