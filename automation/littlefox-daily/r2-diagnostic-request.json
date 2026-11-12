@@ -1,6 +1,0 @@
-{
-  "seriesId": "little-fox-red-magic-fs0059",
-  "contentId": "C0013574",
-  "expectedEpisodeNumber": 214,
-  "reason": "Retry parser tests after syntax fix and read R2 index; read-only."
-}
