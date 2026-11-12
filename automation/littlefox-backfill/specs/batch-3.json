@@ -1,0 +1,937 @@
+[
+  {
+    "id": "C0005550",
+    "officialEpisodeNumber": 39,
+    "seriesId": "little-fox-the-lemonade-detectives-fs0055",
+    "title": "The Final Clue",
+    "sections": [
+      [
+        17,
+        "Another Strange Theft",
+        "又一件奇怪的失窃案",
+        "Maggie的一只凉鞋不见了，Henry排除部分嫌疑人并准备调查。"
+      ],
+      [
+        31,
+        "Questioning Eleanor and Jill",
+        "询问Eleanor和Jill",
+        "两位女孩解释了各自在马厩的活动，侦探暂时未找到突破口。"
+      ],
+      [
+        46,
+        "A Dog, a Cat, and a New Trap",
+        "狗、猫与新陷阱",
+        "Henry看到Little Spot追着猫舔后想到线索，拿走猫玩具准备新的陷阱。"
+      ]
+    ],
+    "words": [
+      "sandals|凉鞋",
+      "thief|小偷",
+      "suspects|嫌疑人",
+      "tissue|纸巾",
+      "stall|马厩隔间",
+      "glove|手套",
+      "furry|毛茸茸的",
+      "licked|舔了",
+      "trap|陷阱",
+      "doubtful|怀疑的"
+    ],
+    "questions": [
+      {
+        "id": "q1",
+        "question": "What newly disappeared from Maggie's bag?",
+        "options": [
+          {
+            "key": "A",
+            "text": "A gold watch."
+          },
+          {
+            "key": "B",
+            "text": "Her detective notebook."
+          },
+          {
+            "key": "C",
+            "text": "One of her sandals."
+          },
+          {
+            "key": "D",
+            "text": "Both of her riding gloves."
+          }
+        ],
+        "answer": "C",
+        "explanation": "Maggie包中两只凉鞋只剩下一只，成为新的失窃线索。",
+        "evidence": {
+          "paragraphIds": [
+            "p1"
+          ]
+        }
+      },
+      {
+        "id": "q2",
+        "question": "Why did Cole believe Zach could not have stolen the sandal?",
+        "options": [
+          {
+            "key": "A",
+            "text": "He had been in the riding ring when it went missing."
+          },
+          {
+            "key": "B",
+            "text": "He was on a school trip that day."
+          },
+          {
+            "key": "C",
+            "text": "He had already left town."
+          },
+          {
+            "key": "D",
+            "text": "He was helping the police outside the barn."
+          }
+        ],
+        "answer": "A",
+        "explanation": "失窃时Zach一直在骑马场，因而可以排除他的嫌疑。",
+        "evidence": {
+          "paragraphIds": [
+            "p11"
+          ]
+        }
+      },
+      {
+        "id": "q3",
+        "question": "What did Eleanor say she did after going into the barn?",
+        "options": [
+          {
+            "key": "A",
+            "text": "She cleaned Maggie's missing sandal."
+          },
+          {
+            "key": "B",
+            "text": "She hid inside the tack room."
+          },
+          {
+            "key": "C",
+            "text": "She repaired the riding ring fence."
+          },
+          {
+            "key": "D",
+            "text": "She got a tissue and gave Little Spot some water."
+          }
+        ],
+        "answer": "D",
+        "explanation": "Eleanor解释自己取纸巾后还给又热又渴的Little Spot喂了水。",
+        "evidence": {
+          "paragraphIds": [
+            "p22"
+          ]
+        }
+      },
+      {
+        "id": "q4",
+        "question": "What surprising thing did Little Spot do when he caught the barn cat?",
+        "options": [
+          {
+            "key": "A",
+            "text": "He carried the cat outside in a basket."
+          },
+          {
+            "key": "B",
+            "text": "He licked the cat instead of biting her."
+          },
+          {
+            "key": "C",
+            "text": "He gave the cat a stolen sandal."
+          },
+          {
+            "key": "D",
+            "text": "He ran away when the cat hissed."
+          }
+        ],
+        "answer": "B",
+        "explanation": "Little Spot追到猫之后没有咬它，而是不停舔它，让Henry注意到动物的行为。",
+        "evidence": {
+          "paragraphIds": [
+            "p37"
+          ]
+        }
+      },
+      {
+        "id": "q5",
+        "question": "What did Henry take from Maggie's bag to test a new theory?",
+        "options": [
+          {
+            "key": "A",
+            "text": "A map of the barn."
+          },
+          {
+            "key": "B",
+            "text": "A blue lollipop."
+          },
+          {
+            "key": "C",
+            "text": "A cat toy."
+          },
+          {
+            "key": "D",
+            "text": "A saddle pad."
+          }
+        ],
+        "answer": "C",
+        "explanation": "Henry决定用Maggie包中的猫玩具设下新的陷阱，验证自己的推断。",
+        "evidence": {
+          "paragraphIds": [
+            "p44"
+          ]
+        }
+      }
+    ],
+    "schemaVersion": 1,
+    "qualityStatus": "manually_authored_from_official_text"
+  },
+  {
+    "id": "C0005746",
+    "officialEpisodeNumber": 55,
+    "seriesId": "little-fox-the-lemonade-detectives-fs0055",
+    "title": "Who Did It?",
+    "sections": [
+      [
+        19,
+        "A Pirate Clue and Two Possible Places",
+        "海盗线索与两个地点",
+        "孩子们发现画着海盗旗的船的线索，猜测宝物在码头或形似海盗船的岩石。"
+      ],
+      [
+        30,
+        "The Detectives Compare Suspects",
+        "侦探讨论嫌疑人",
+        "Henry故意分队，和Cole、Maggie私下分析失踪电影票与Roger的嫌疑。"
+      ],
+      [
+        42,
+        "A New Suspicion and a Stranger",
+        "新的怀疑与陌生人",
+        "三人把怀疑转向Luke与Nathan，却突然遇到从巨石后出现的神秘人物。"
+      ]
+    ],
+    "words": [
+      "tickets|票",
+      "pirate|海盗",
+      "treasure|宝藏",
+      "drawing|绘画；线索图",
+      "marina|游艇码头",
+      "suspects|嫌疑人",
+      "ulterior|隐藏的；别有用心的",
+      "motive|动机",
+      "opportunity|机会",
+      "gruff|粗哑的"
+    ],
+    "questions": [
+      {
+        "id": "q1",
+        "question": "Whom did Nathan suggest questioning first about the missing tickets?",
+        "options": [
+          {
+            "key": "A",
+            "text": "The beach lifeguard."
+          },
+          {
+            "key": "B",
+            "text": "Henry's father."
+          },
+          {
+            "key": "C",
+            "text": "Roger Redbeard."
+          },
+          {
+            "key": "D",
+            "text": "The movie theater manager."
+          }
+        ],
+        "answer": "C",
+        "explanation": "Nathan认为海盗导游Roger Redbeard可能拿了电影票，建议先找他。",
+        "evidence": {
+          "paragraphIds": [
+            "p3"
+          ]
+        }
+      },
+      {
+        "id": "q2",
+        "question": "What was the 'Pirate Ship' on the island?",
+        "options": [
+          {
+            "key": "A",
+            "text": "A large rock shaped like a ship."
+          },
+          {
+            "key": "B",
+            "text": "A real boat anchored in the marina."
+          },
+          {
+            "key": "C",
+            "text": "A newly built museum."
+          },
+          {
+            "key": "D",
+            "text": "A toy ship on William's desk."
+          }
+        ],
+        "answer": "A",
+        "explanation": "Luke解释Pirate Ship并不是真船，而是岛北部外形像船的大石头。",
+        "evidence": {
+          "paragraphIds": [
+            "p16"
+          ]
+        }
+      },
+      {
+        "id": "q3",
+        "question": "Why did Henry suggest splitting the treasure-hunt group?",
+        "options": [
+          {
+            "key": "A",
+            "text": "He was worried that the beach was too crowded."
+          },
+          {
+            "key": "B",
+            "text": "He wanted to visit the marina alone."
+          },
+          {
+            "key": "C",
+            "text": "He was trying to avoid the next clue."
+          },
+          {
+            "key": "D",
+            "text": "He wanted to speak privately with Cole and Maggie about the case."
+          }
+        ],
+        "answer": "D",
+        "explanation": "Henry承认分组有隐藏目的：让侦探三人单独讨论电影票失踪的谜案。",
+        "evidence": {
+          "paragraphIds": [
+            "p24"
+          ]
+        }
+      },
+      {
+        "id": "q4",
+        "question": "Why did Luke become a possible suspect?",
+        "options": [
+          {
+            "key": "A",
+            "text": "He had admitted taking all the hats."
+          },
+          {
+            "key": "B",
+            "text": "He might have been alone with the booty long enough to take the tickets."
+          },
+          {
+            "key": "C",
+            "text": "He worked for Roger Redbeard."
+          },
+          {
+            "key": "D",
+            "text": "He refused to watch pirate movies."
+          }
+        ],
+        "answer": "B",
+        "explanation": "三人想到Luke曾短暂独自看管宝箱，可能趁Nathan离开时拿走票。",
+        "evidence": {
+          "paragraphIds": [
+            "p33"
+          ]
+        }
+      },
+      {
+        "id": "q5",
+        "question": "What happened as the detectives reached the Pirate Ship rock?",
+        "options": [
+          {
+            "key": "A",
+            "text": "The missing tickets floated out of the sea."
+          },
+          {
+            "key": "B",
+            "text": "A real pirate ship arrived at the beach."
+          },
+          {
+            "key": "C",
+            "text": "A gruff-voiced person stepped out and challenged them."
+          },
+          {
+            "key": "D",
+            "text": "William's parents canceled the treasure hunt."
+          }
+        ],
+        "answer": "C",
+        "explanation": "接近海盗船形巨石时，有人突然从后面出现，用粗声质问他们在做什么。",
+        "evidence": {
+          "paragraphIds": [
+            "p42"
+          ]
+        }
+      }
+    ],
+    "schemaVersion": 1,
+    "qualityStatus": "manually_authored_from_official_text"
+  },
+  {
+    "id": "C0006036",
+    "officialEpisodeNumber": 78,
+    "seriesId": "little-fox-the-lemonade-detectives-fs0055",
+    "title": "Maggie's Theory",
+    "sections": [
+      [
+        14,
+        "Maggie's Unexpected Suspect",
+        "Maggie提出意外的嫌疑",
+        "Maggie提出Daisy可能为博取同情故意弄脏自己的衬衫，Henry对此存疑。"
+      ],
+      [
+        33,
+        "A Lemonade Stand Test",
+        "柠檬水摊的试探",
+        "Maggie用免费棒棒糖试探Rebecca，得知她因糖尿病不能吃糖。"
+      ],
+      [
+        42,
+        "Cole's Surprising Confession",
+        "Cole的惊人坦白",
+        "Henry重新评估蓝色污渍的证据，Cole承认是自己把蓝色棒棒糖放进Daisy口袋。"
+      ]
+    ],
+    "words": [
+      "sympathy|同情",
+      "ribbon|奖带",
+      "stain|污渍",
+      "culprit|元凶",
+      "investigate|调查",
+      "suspect|嫌疑人",
+      "lollipop|棒棒糖",
+      "lemonade|柠檬水",
+      "diabetes|糖尿病",
+      "confess|承认"
+    ],
+    "questions": [
+      {
+        "id": "q1",
+        "question": "Why did Maggie think Daisy might have ruined her own shirt?",
+        "options": [
+          {
+            "key": "A",
+            "text": "To avoid spending time at the stable."
+          },
+          {
+            "key": "B",
+            "text": "To hide a note from her riding teacher."
+          },
+          {
+            "key": "C",
+            "text": "To gain sympathy and improve her chances of winning a blue ribbon."
+          },
+          {
+            "key": "D",
+            "text": "To help Rebecca sell lemonade."
+          }
+        ],
+        "answer": "C",
+        "explanation": "Maggie猜测Daisy故意弄坏衬衫，想博得评委同情并争取蓝色奖带。",
+        "evidence": {
+          "paragraphIds": [
+            "p2"
+          ]
+        }
+      },
+      {
+        "id": "q2",
+        "question": "How did Maggie explain the blue stain on the shirt?",
+        "options": [
+          {
+            "key": "A",
+            "text": "She thought Daisy might have used a lollipop to stain it."
+          },
+          {
+            "key": "B",
+            "text": "She believed rain had washed blue paint onto it."
+          },
+          {
+            "key": "C",
+            "text": "She thought the pony had stepped on it."
+          },
+          {
+            "key": "D",
+            "text": "She said the judge had spilled blueberry juice."
+          }
+        ],
+        "answer": "A",
+        "explanation": "Maggie进一步猜测Daisy先用棒棒糖染色，后来又把衬衫扔进水槽。",
+        "evidence": {
+          "paragraphIds": [
+            "p4"
+          ]
+        }
+      },
+      {
+        "id": "q3",
+        "question": "What was Maggie trying to learn by offering Rebecca a free lollipop?",
+        "options": [
+          {
+            "key": "A",
+            "text": "Whether Rebecca planned to enter the next riding class."
+          },
+          {
+            "key": "B",
+            "text": "Whether Rebecca had a cat at home."
+          },
+          {
+            "key": "C",
+            "text": "Whether Rebecca wanted to buy a new shirt."
+          },
+          {
+            "key": "D",
+            "text": "Whether Rebecca liked blueberry-flavored candy."
+          }
+        ],
+        "answer": "D",
+        "explanation": "Maggie假装促销，实际上想探听Rebecca是否偏爱蓝莓味棒棒糖。",
+        "evidence": {
+          "paragraphIds": [
+            "p26"
+          ]
+        }
+      },
+      {
+        "id": "q4",
+        "question": "Why did Rebecca refuse both the candy and lemonade?",
+        "options": [
+          {
+            "key": "A",
+            "text": "She said she was allergic to horses."
+          },
+          {
+            "key": "B",
+            "text": "She said she had diabetes and could not eat sugar."
+          },
+          {
+            "key": "C",
+            "text": "She disliked the color of the lemonade stand."
+          },
+          {
+            "key": "D",
+            "text": "She had already bought too many lollipops."
+          }
+        ],
+        "answer": "B",
+        "explanation": "Rebecca说明自己有糖尿病，不能摄入糖，因此拒绝甜食和柠檬水。",
+        "evidence": {
+          "paragraphIds": [
+            "p27"
+          ]
+        }
+      },
+      {
+        "id": "q5",
+        "question": "What did Cole finally admit to Henry?",
+        "options": [
+          {
+            "key": "A",
+            "text": "He had stolen Daisy's shirt from the barn."
+          },
+          {
+            "key": "B",
+            "text": "He had hidden Rebecca's riding boots."
+          },
+          {
+            "key": "C",
+            "text": "He had put the blue lollipop in Daisy's shirt pocket."
+          },
+          {
+            "key": "D",
+            "text": "He had bribed the competition judge."
+          }
+        ],
+        "answer": "C",
+        "explanation": "Cole最后坦白，是他把蓝色棒棒糖放进Daisy的衬衫口袋；这改变了侦探对污渍证据的判断。",
+        "evidence": {
+          "paragraphIds": [
+            "p42"
+          ]
+        }
+      }
+    ],
+    "schemaVersion": 1,
+    "qualityStatus": "manually_authored_from_official_text"
+  },
+  {
+    "id": "C0006047",
+    "officialEpisodeNumber": 89,
+    "seriesId": "little-fox-the-lemonade-detectives-fs0055",
+    "title": "Breaking News",
+    "sections": [
+      [
+        23,
+        "A False Alarm at the Tree",
+        "树上的虚惊",
+        "侦探赶到所谓突发新闻现场，发现消防员在救被困树上的Tiny和他的猫。"
+      ],
+      [
+        41,
+        "Red Herrings Before the Parade",
+        "游行前的误导线索",
+        "Mrs. Sweet找到了原以为被偷的糖果，侦探们怀疑多条线索只是误会。"
+      ],
+      [
+        47,
+        "A New Problem for the Mayor",
+        "市长车子的突发状况",
+        "游行开始后，侦探花车十分受欢迎，但市长的车突然熄火，谜团重现。"
+      ]
+    ],
+    "words": [
+      "urgent|紧急的",
+      "breaking|突发的",
+      "sabotage|蓄意破坏",
+      "firefighter|消防员",
+      "ladder|梯子",
+      "parade|游行",
+      "float|花车",
+      "culprit|元凶",
+      "red herring|误导线索",
+      "sputtered|突突作响"
+    ],
+    "questions": [
+      {
+        "id": "q1",
+        "question": "What was Jackson's urgent breaking news actually about?",
+        "options": [
+          {
+            "key": "A",
+            "text": "The detectives' float had caught fire."
+          },
+          {
+            "key": "B",
+            "text": "The parade had been canceled."
+          },
+          {
+            "key": "C",
+            "text": "Tiny and his cat had become stuck in a tree."
+          },
+          {
+            "key": "D",
+            "text": "Someone had stolen the mayor's car."
+          }
+        ],
+        "answer": "C",
+        "explanation": "所谓突发新闻其实是Tiny上树救猫后自己也下不来，消防员前来救援。",
+        "evidence": {
+          "paragraphIds": [
+            "p12"
+          ]
+        }
+      },
+      {
+        "id": "q2",
+        "question": "How did Jackson react to the rescue at Tiny's house?",
+        "options": [
+          {
+            "key": "A",
+            "text": "He wanted to photograph Tiny for a newspaper story."
+          },
+          {
+            "key": "B",
+            "text": "He tried to stop the firefighters from helping."
+          },
+          {
+            "key": "C",
+            "text": "He asked the detectives to cancel the parade."
+          },
+          {
+            "key": "D",
+            "text": "He admitted sabotaging a float."
+          }
+        ],
+        "answer": "A",
+        "explanation": "Jackson认为这一幕很适合做新闻报道，还想拍摄Tiny的照片。",
+        "evidence": {
+          "paragraphIds": [
+            "p17"
+          ]
+        }
+      },
+      {
+        "id": "q3",
+        "question": "Where did Mrs. Sweet find the candy she thought had been stolen?",
+        "options": [
+          {
+            "key": "A",
+            "text": "Under her garden shed."
+          },
+          {
+            "key": "B",
+            "text": "Inside the mayor's float."
+          },
+          {
+            "key": "C",
+            "text": "In Jackson's camera bag."
+          },
+          {
+            "key": "D",
+            "text": "In the trunk of her own car."
+          }
+        ],
+        "answer": "D",
+        "explanation": "Mrs. Sweet承认糖果其实一直放在自己汽车的后备箱，失窃只是误会。",
+        "evidence": {
+          "paragraphIds": [
+            "p36"
+          ]
+        }
+      },
+      {
+        "id": "q4",
+        "question": "Where was the detectives' float positioned when the parade began?",
+        "options": [
+          {
+            "key": "A",
+            "text": "At the very end of the parade."
+          },
+          {
+            "key": "B",
+            "text": "Directly behind the mayor's car."
+          },
+          {
+            "key": "C",
+            "text": "Ahead of all the police cars."
+          },
+          {
+            "key": "D",
+            "text": "Beside the soccer team's float."
+          }
+        ],
+        "answer": "B",
+        "explanation": "游行开始时侦探们的花车就在市长汽车后面。",
+        "evidence": {
+          "paragraphIds": [
+            "p42"
+          ]
+        }
+      },
+      {
+        "id": "q5",
+        "question": "What unexpected event ended the episode?",
+        "options": [
+          {
+            "key": "A",
+            "text": "The crowd discovered a missing cat."
+          },
+          {
+            "key": "B",
+            "text": "Mrs. Sweet's candy floated away."
+          },
+          {
+            "key": "C",
+            "text": "The mayor's car suddenly stopped working."
+          },
+          {
+            "key": "D",
+            "text": "Henry's bicycle was stolen."
+          }
+        ],
+        "answer": "C",
+        "explanation": "结尾市长的车突然熄火，让原本看似结束的破坏谜案出现新的线索。",
+        "evidence": {
+          "paragraphIds": [
+            "p47"
+          ]
+        }
+      }
+    ],
+    "schemaVersion": 1,
+    "qualityStatus": "manually_authored_from_official_text"
+  },
+  {
+    "id": "C0013312",
+    "officialEpisodeNumber": 27,
+    "seriesId": "little-fox-way-out-west-fs0173",
+    "title": "All Tied Up",
+    "sections": [
+      [
+        14,
+        "Roscoe Visits Miss Annie",
+        "Roscoe探望老师",
+        "警长给生病的Miss Annie送汤，却因胡椒太多让她不停咳嗽，随后准备陪她打牌。"
+      ],
+      [
+        22,
+        "Trouble in the Schoolhouse",
+        "学校发生意外",
+        "Oswald报告代课的Cleo被套索捆住，Annie担心她没有教授正经课程。"
+      ],
+      [
+        26,
+        "The Sheriff Heads to the Rescue",
+        "警长赶去救援",
+        "Roscoe虽然对Cleo搅乱行程很生气，仍离开Annie赶往学校。"
+      ]
+    ],
+    "words": [
+      "boardinghouse|寄宿公寓",
+      "soup|汤",
+      "thoughtful|体贴的",
+      "peppery|胡椒味很重的",
+      "handkerchief|手帕",
+      "lasso|套索",
+      "deputy|副警长",
+      "untie|解开",
+      "rescue|营救",
+      "schoolhouse|校舍"
+    ],
+    "questions": [
+      {
+        "id": "q1",
+        "question": "Why did Sheriff Roscoe bring soup to Miss Annie?",
+        "options": [
+          {
+            "key": "A",
+            "text": "He wanted to win a cooking contest."
+          },
+          {
+            "key": "B",
+            "text": "He had been assigned to feed the students."
+          },
+          {
+            "key": "C",
+            "text": "He had heard she was feeling unwell."
+          },
+          {
+            "key": "D",
+            "text": "He was delivering lunch to Cleo."
+          }
+        ],
+        "answer": "C",
+        "explanation": "Roscoe听说Annie身体不舒服，特意带自制汤前来探望。",
+        "evidence": {
+          "paragraphIds": [
+            "p2"
+          ]
+        }
+      },
+      {
+        "id": "q2",
+        "question": "Why did Miss Annie cough after tasting the soup?",
+        "options": [
+          {
+            "key": "A",
+            "text": "The soup was extremely peppery."
+          },
+          {
+            "key": "B",
+            "text": "The soup was ice-cold."
+          },
+          {
+            "key": "C",
+            "text": "There was a fly in the soup."
+          },
+          {
+            "key": "D",
+            "text": "She accidentally spilled soup on herself."
+          }
+        ],
+        "answer": "A",
+        "explanation": "汤放了太多胡椒，Annie喝了一口就咳嗽起来。",
+        "evidence": {
+          "paragraphIds": [
+            "p7"
+          ]
+        }
+      },
+      {
+        "id": "q3",
+        "question": "What activity did Miss Annie suggest they could do together?",
+        "options": [
+          {
+            "key": "A",
+            "text": "Go horseback riding."
+          },
+          {
+            "key": "B",
+            "text": "Visit the schoolhouse."
+          },
+          {
+            "key": "C",
+            "text": "Practice throwing a lasso."
+          },
+          {
+            "key": "D",
+            "text": "Play a game of cards."
+          }
+        ],
+        "answer": "D",
+        "explanation": "Annie说自己愿意和Roscoe玩纸牌，两人正准备找一副牌。",
+        "evidence": {
+          "paragraphIds": [
+            "p12"
+          ]
+        }
+      },
+      {
+        "id": "q4",
+        "question": "What problem did Oswald report to the sheriff?",
+        "options": [
+          {
+            "key": "A",
+            "text": "Miss Annie's favorite horse had escaped."
+          },
+          {
+            "key": "B",
+            "text": "Deputy Cleo had become tied up with a lasso."
+          },
+          {
+            "key": "C",
+            "text": "The schoolhouse roof had collapsed."
+          },
+          {
+            "key": "D",
+            "text": "The students had gone to the railway station."
+          }
+        ],
+        "answer": "B",
+        "explanation": "Oswald跑来求助，报告代课的Cleo被套索缠住，大家解不开。",
+        "evidence": {
+          "paragraphIds": [
+            "p17"
+          ]
+        }
+      },
+      {
+        "id": "q5",
+        "question": "Why did Miss Annie think letting Cleo teach for a day was a bad idea?",
+        "options": [
+          {
+            "key": "A",
+            "text": "Cleo had refused to let students go outside."
+          },
+          {
+            "key": "B",
+            "text": "Cleo could not find the classroom keys."
+          },
+          {
+            "key": "C",
+            "text": "Cleo had focused on lassoing and deputy stories instead of regular school subjects."
+          },
+          {
+            "key": "D",
+            "text": "Cleo had canceled the students' lunch break."
+          }
+        ],
+        "answer": "C",
+        "explanation": "Annie得知Cleo讲套索和副警长故事，而没有正常教授数学、阅读和拼写，感到后悔。",
+        "evidence": {
+          "paragraphIds": [
+            "p22"
+          ]
+        }
+      }
+    ],
+    "schemaVersion": 1,
+    "qualityStatus": "manually_authored_from_official_text"
+  }
+]
