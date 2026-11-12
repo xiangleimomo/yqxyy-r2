@@ -49,7 +49,7 @@ export function scheduleReleases(html, date, seriesList) {
     const numbered=tail.match(/(?:^|[\s,;])0?(\d+)\s*[:：]\s*(.+)$/);
     const m=labeled||numbered;
     if(!m||!m[2]?.trim())return null;
-    return {number:Number(m[1]),title:m[2].trim().replace(/^[-,:：\s]+/,''),keyword:(String(seriesTitle)+' '+tail).replace(/\s+/g,' ').trim()};
+    return {number:Number(m[1]),title:m[2].trim().replace(/^[-,:：\s]+/,''),keyword:(String(seriesTitle)+tail).replace(/\s+/g,' ').trim()};
   };
   for(const cell of cells){
     if(!hasDay(cell))continue;
