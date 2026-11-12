@@ -297,7 +297,7 @@ async function verifiesOfficialEpisode(id,release,http,exactOfficialCatalogMatch
 function unwrapBingHref(href){
   let value=decodeHtml(String(href||'')).replace(/&amp;/g,'&');
   try{
-    let u=new URL(value);
+    let u=new URL(value,'https://www.bing.com');
     if(/(^|\.)bing\.com$/i.test(u.hostname)){
       const token=u.searchParams.get('u')||u.searchParams.get('url')||'';
       if(token.startsWith('a1'))value=Buffer.from(token.slice(2),'base64').toString('utf8');
