@@ -260,7 +260,7 @@ async renderSeries(seriesId){
   const {series, episodes} = bundle;
   // A duplicated old C-ID remains directly addressable for progress/history,
   // but must not appear twice in the public official chapter list.
-  const shownEpisodes=shownEpisodes.filter(e=>!e.legacyDuplicateOf);
+  const shownEpisodes=episodes.filter(e=>!e.legacyDuplicateOf);
     if(this.movieCourseUnavailable(series))return;
   if(this.isGuestRestrictedLevel(series.level)){
     this.el().innerHTML=this.guestLevelGate();
