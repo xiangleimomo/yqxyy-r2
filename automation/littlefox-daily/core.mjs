@@ -328,13 +328,13 @@ export async function searchBingOfficialTextId(release,http=fetch){
     const response=await http('https://www.bing.com/search?q='+encodeURIComponent(queries[qi]),{headers:{'User-Agent':'Mozilla/5.0 (compatible; LittleFoxCourseBot/1.0)'}});
     if(!response.ok){diagnostics.push('HTTP '+response.status);continue;}
     const html=await response.text(),matches=new Map(),hosts=new Set(),foundIds=new Set();
-    const anchors=[...html.matchAll(/<a\\b[^>]*href\\s*=\\s*["']([^"']+)["'][^>]*>([\\s\\S]*?)<\\/a>/gi)];
+    const anchors=[...html.matchAll(/<a\b[^>]*href\s*=\s*["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi)];
     for(const m of anchors){
       const u=unwrapBingHref(m[1]);
       if(!u)continue;
       hosts.add(u.hostname.toLowerCase());
-      if(!/(^|\\.)littlefox\\.com$/i.test(u.hostname))continue;
-      const id=u.pathname.match(/\\/supplement\\/(?:trans|org)\\/(C\\d{7})(?:\\/|$)/i)?.[1]?.toUpperCase();
+      if(!/(^|\.)littlefox\.com$/i.test(u.hostname))continue;
+      const id=u.pathname.match(/\/supplement\/(?:trans|org)\/(C\d{7})(?:\/|$)/i)?.[1]?.toUpperCase();
       if(!id)continue;
       foundIds.add(id);
       const anchorTitle=normalize(cleanHtml(m[2]));
