@@ -1,9 +1,27 @@
 {
   "schemaVersion": 2,
   "date": "2026-11-12",
-  "status": "no_release_detected",
-  "workflowRunId": "43180150568",
-  "privateArtifactName": "littlefox-source-43180150568",
-  "items": [],
+  "status": "checked",
+  "workflowRunId": "43184407913",
+  "privateArtifactName": "littlefox-source-43184407913",
+  "items": [
+    {
+      "seriesId": "little-fox-red-magic-fs0059",
+      "episodeNumber": 14,
+      "title": "The Plot Thickens",
+      "level": 7,
+      "status": "ready_for_chatgpt",
+      "contentId": "C0013574",
+      "contentIdVerified": true,
+      "video": "https://cdn.littlefox.com/contents_5/hls/1080/b8c5eef3af/1794288928181cf41ce37cf9128e1d95896661c5c9/stream.m3u8?_=1794288935",
+      "storybook": "https://res.littlefox.com/en/supplement/load_pdf/C0013574",
+      "caption": "https://cdn.littlefox.com/contents/caption/C0013574.xml",
+      "captionCueCount": 80,
+      "textOriginal": "https://cn.littlefox.com/cn/supplement/org/C0013574",
+      "paragraphCount": 43,
+      "videoStatus": "verified",
+      "sourceArtifact": true
+    }
+  ],
   "errors": []
 }
