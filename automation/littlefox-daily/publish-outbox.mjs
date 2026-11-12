@@ -17,8 +17,10 @@ if(process.env.GITHUB_EVENT_NAME==='push'){
     });
   const touched=changed.filter(x=>/^automation\/littlefox-daily\/outbox\/C\d{7}\.json$/.test(x.path));
   if(touched.length){
-    if(touched.length!==1||touched[0].change!=='A')throw Error('Only one newly added C-ID outbox is eligible for auto publication');
-    req={mode:'reviewed_littlefox_v2',contentId:touched[0].path.match(/(C\d{7})\.json$/)[1],publish:true};
+    if(touched.length!==1)throw Error('Only one C-ID outbox may change per run');
+    if(touched[0].change==='A')req={mode:'reviewed_littlefox_v2',contentId:touched[0].path.match(/(C\\d{7})\\.json$/)[1],publish:true};
+    else if(touched[0].change==='M')req={mode:'reviewed_littlefox_v2',contentId:touched[0].path.match(/(C\\d{7})\\.json$/)[1],publish:false};
+    else throw Error('Outbox deletions are never publish requests');
   }
 }
 req=req||JSON.parse(await fs.readFile(checkedPath,'utf8'));
