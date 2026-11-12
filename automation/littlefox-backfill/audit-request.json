@@ -4,5 +4,7 @@
   "compareAgainst": "official_full_series_catalogs",
   "publish": false,
   "writeToR2": false,
-  "createdAt": "2026-11-12"
+  "createdAt": "2026-11-12",
+  "retry": 1,
+  "updatedAt": "2026-11-12T10:17:54.606Z"
 }
