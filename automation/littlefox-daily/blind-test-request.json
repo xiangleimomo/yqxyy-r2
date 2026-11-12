@@ -1,13 +1,12 @@
 {
-  "mode": "calendar_indexed_episode_test",
-  "date": "2026-11-12",
+  "mode": "manual_episode_test",
   "target": {
-    "series": "Red Magic, The New Heroes",
-    "episodeNumber": 14,
-    "title": "The Plot Thickens",
+    "seriesId": "little-fox-red-magic-fs0059",
+    "seriesTitle": "Red Magic, The New Heroes",
+    "calendarEpisodeNumber": 13,
+    "episodeNumber": 213,
+    "title": "Racing the Wind",
     "level": 7
   },
-  "rules": "One-time regression test of GitHub-owned discovery steps 1-5: read today's official monthly calendar; search Bing using series + chapter + exact title; extract the Little Fox official Text URL C ID; verify it against the full-series catalog absolute episode position and official player/Text; collect verified English Text, caption XML and Storybook metadata into the private one-day artifact and inbox. Do not publish to R2. If any source cannot be verified, mark blocked; never invent IDs or source content.",
-  "r2Publishing": false,
-  "reason": "Trigger GitHub collector after adding Bing official Text URL C-ID discovery; expected Red Magic Chapter 14 = absolute series episode 214 = C0013574; safe collection-only regression, no R2 writes."
+  "purpose": "One-time collection-only regression test for the missing Red Magic series episode 213. Discover C-ID exclusively from Bing's official Little Fox Text URL; then collect actual official English Text, caption XML, Storybook and video metadata into the private one-day Actions artifact. Do not publish to R2."
 }
