@@ -2,5 +2,5 @@
   "seriesId": "little-fox-red-magic-fs0059",
   "contentId": "C0013574",
   "expectedEpisodeNumber": 214,
-  "reason": "Read-only R2 index verification plus regression tests for absolute episode numbering; no R2 writes."
+  "reason": "Retry parser tests after syntax fix and read R2 index; read-only."
 }
