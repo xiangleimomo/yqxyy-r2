@@ -2,8 +2,8 @@
   "schemaVersion": 2,
   "date": "2026-11-12",
   "status": "checked",
-  "workflowRunId": "43195168103",
-  "privateArtifactName": "littlefox-source-43195168103",
+  "workflowRunId": "43195535190",
+  "privateArtifactName": "littlefox-source-43195535190",
   "items": [
     {
       "seriesId": "little-fox-red-magic-fs0059",
@@ -12,7 +12,7 @@
       "level": 7,
       "status": "blocked",
       "episodeNumber": 213,
-      "error": "Bing found no unique official Text C-ID. q=1,html=115387,hrefs=163,hosts=,www.crazygames.com,poki.com,www.msn.com,www.racing.com,www.nascar.com,www.racingpost.com,www.espn.com,officialCids=,titleSeen=true | q=2,html=125429,hrefs=161,hosts=,www.crazygames.com,poki.com,www.msn.com,www.racing.com,www.nascar.com,www.racingpost.com,www.espn.com,officialCids=,titleSeen=true | q=3,html=125489,hrefs=167,hosts=,www.reddit.com,en.m.wikipedia.org,m.imdb.com,m.youtube.com,www.merriam-webster.com,www.starfall.com,www.britannica.com,officialCids=,titleSeen=true"
+      "error": "Bing found no unique official Little Fox Text C-ID. q=1,html=128521,anchors=55,hosts=,www.crazygames.com,poki.com,www.racingpost.com,www.racing.com,www.msn.com,www.nascar.com,www.espn.com,officialCids=,titleSeen=true | q=2,html=127424,anchors=55,hosts=,www.crazygames.com,poki.com,www.racingpost.com,www.racing.com,www.msn.com,www.nascar.com,www.espn.com,officialCids=,titleSeen=true | q=3,html=126111,anchors=55,hosts=,www.reddit.com,en.m.wikipedia.org,m.imdb.com,www.britannica.com,red.org,m.youtube.com,www.merriam-webster.com,officialCids=,titleSeen=true"
     }
   ],
   "errors": []
