@@ -26,5 +26,10 @@ jobs:
           node --check automation/littlefox-daily/collect-handoff.mjs
           node --check automation/littlefox-backfill/audit.mjs
           node --check automation/littlefox-backfill/collect.mjs
+          node --check automation/littlefox-backfill/publish-internal.mjs
+          node --check automation/littlefox-backfill/apply-official-order.mjs
+          node --check js/app.js
+      - name: Compile static website for new historical episode interface
+        run: npm run build
       - name: Run Little Fox core regression tests
         run: node --test automation/littlefox-daily/core.test.mjs
