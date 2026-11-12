@@ -117,15 +117,11 @@ test('official catalog C IDs are discovered without scanning historic video reso
 
 test('absolute series episode number comes from official catalog order, not monthly chapter number',async()=>{
  const {resolveOfficialSeriesEpisode}=await import('./core.mjs');
- const page=[
-  '<li data-fcid="C0013361" data-contname="An Urgent Message"></li>',
-  '<li data-fcid="C0013362" data-contname="Danger for Reds"></li>',
-  '<li data-fcid="C0013573" data-contname="Racing the Wind"></li>',
-  '<li data-fcid="C0013574" data-contname="The Plot Thickens"></li>'
- ].join('');
+ const page=Array.from({length:213},(_,i)=>`<li data-fcid="C${String(13361+i).padStart(7,'0')}" data-contname="Episode ${i+1}"></li>`).join('')+
+  '<li data-fcid="C0013574" data-contname="The Plot Thickens"></li>';
  const http=async()=>({ok:true,text:async()=>page});
  const result=await resolveOfficialSeriesEpisode({seriesId:'little-fox-red-magic-fs0059',calendarEpisodeNumber:14,title:'The Plot Thickens'},http);
- assert.deepEqual(result,{seriesEpisodeNumber:4,contentId:'C0013574'});
+ assert.deepEqual(result,{seriesEpisodeNumber:214,contentId:'C0013574'});
 });
 
 test('official Text parser supports legacy original_cont_box div.talk > span and bilingual translation section',async()=>{
