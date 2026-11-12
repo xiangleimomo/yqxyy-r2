@@ -1,0 +1,42 @@
+name: Little Fox Historical Backfill Audit (Read Only)
+on:
+  push:
+    paths:
+      - 'automation/littlefox-backfill/audit-request.json'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: littlefox-historical-backfill-audit
+  cancel-in-progress: false
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      TZ: Asia/Shanghai
+      R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+      R2_BUCKET: ${{ secrets.R2_BUCKET }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --omit=dev
+      - name: Validate audit script
+        run: node --check automation/littlefox-backfill/audit.mjs
+      - name: Compare R2 episodes with official Little Fox series catalogs (read only)
+        run: node automation/littlefox-backfill/audit.mjs
+      - name: Retain audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: littlefox-historical-backfill-audit-${{ github.run_id }}
+          path: |
+            /tmp/littlefox-backfill-audit.json
+            /tmp/littlefox-backfill-missing.csv
+          if-no-files-found: warn
+          retention-days: 7
