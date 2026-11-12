@@ -482,14 +482,24 @@ export async function daily({env=process.env,http=fetch,store,now=new Date(),log
     const html=await response.text();const releases=scheduleReleases(html,date,seriesList);
     if(!releases.length){report.status='no_release_detected';report.warnings=['No new calendar entries matched existing series; verify the publishing schedule if official episodes were released today.'];return report;}
     // A shared catalog may change during a multi-episode run. Reload before each publish.
-    for(const release of releases){const item={seriesId:release.seriesId,title:release.title,status:'checking',stage:'load_episode_index'};report.items.push(item);
+    for(const calendarRelease of releases){const item={seriesId:calendarRelease.seriesId,title:calendarRelease.title,calendarEpisodeNumber:calendarRelease.calendarEpisodeNumber,status:'checking',stage:'resolve_official_series_episode'};report.items.push(item);
       try{
+        const official=await resolveOfficialSeriesEpisode(calendarRelease,http);
+        const release={...calendarRelease,...official};
+        item.episodeNumber=release.seriesEpisodeNumber;
         const base=`data/${release.seriesId}/`;
         const [episodes,readings,vocabularies,quizzes,series]=await Promise.all(['episodes.json','reading-lessons.json','vocabulary.json','quiz.json','series.json'].map(x=>readJson(base+x)));
+        const maxEpisode=Math.max(0,...episodes.map(e=>Number(e.episodeId)||0));
+        if(release.seriesEpisodeNumber>maxEpisode+1){item.status='blocked_sequence_gap';item.r2LatestEpisodeNumber=maxEpisode;item.missingEpisodeNumbers=Array.from({length:release.seriesEpisodeNumber-maxEpisode-1},(_,i)=>maxEpisode+i+1);continue;}
         const existing=episodes.find(e=>Number(e.episodeId)===release.seriesEpisodeNumber);
-        if(existing){item.contentId=existing.sourceContentId||existing.storyBook?.contentId;item.status='already_published';continue;}
+        if(existing){
+          const existingId=existing.sourceContentId||existing.storyBook?.contentId;
+          if(existingId===official.contentId){item.contentId=existingId;item.status='already_published';continue;}
+          throw Error(`R2 episode number conflict at ${release.seriesEpisodeNumber}: existing C ID ${existingId||'missing'}, official C ID ${official.contentId}`);
+        }
         item.stage='identify_official_cid';
         const id=await identifyCId(release,episodes,http);item.contentId=id||null;
+        if(id!==official.contentId)throw Error(`C ID conflict: official catalog ${official.contentId}, verified resolver ${id}`);
         if(!id)throw Error('No official C ID and no verifiable next-ID candidate; refusing to guess');
         item.stage='verify_player';
         const player=await readPlayer(id,http);
