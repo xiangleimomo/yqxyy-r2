@@ -1,0 +1,23 @@
+{
+  "mode": "historical_supplemental_v2",
+  "publish": false,
+  "contentIds": [
+    "C0002333",
+    "C0006501",
+    "C0009130",
+    "C0008548",
+    "C0007147",
+    "C0010172",
+    "C0010198",
+    "C0010200",
+    "C0010205",
+    "C0010157",
+    "C0010158",
+    "C0005550",
+    "C0005746",
+    "C0006036",
+    "C0006047",
+    "C0013312"
+  ],
+  "reason": "First dry-run all 16 manually authored course specs; no R2 writes. Existing daily episodes.json and Supabase progress remain untouched."
+}
