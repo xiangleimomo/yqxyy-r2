@@ -1,11 +1,11 @@
 # 一起学英语 Android APP
 
-Android WebView app around the existing yqxyy-r2 website and its responsive mobile UI.
+Android WebView app around the existing yqxyy-r2 website and its responsive mobile UI.\nVersion 1.1 adds the in-video PC-style control bar, website-rendered subtitles and landscape fullscreen for installed Android devices.
 Site data, Supabase accounts, Cloudflare R2 media and GitHub workflows stay unchanged.
 
 - Default website: https://yqxyy-r2.netlify.app/
 - Application ID: com.yqxyy.english
-- Minimum Android: 7.0 (API 24)
+- Minimum Android: 7.0 (API 24)\n- Test version: 1.1.0; returning from fullscreen restores portrait orientation.\n- The Android Back button closes HTML fullscreen before navigating.
 - Build: JDK 17; Gradle 8.9; Android Gradle plugin 8.7.3
 - Build command: `cd android && gradle assembleDebug`
 - APK location: `android/app/build/outputs/apk/debug/app-debug.apk`
@@ -22,6 +22,6 @@ picking, HTTPS downloads and microphone permissions for the app's own origin.
 External websites open in the phone's browser.
 
 IMPORTANT: This APK uses an Android debug signature for private phone testing.
-It has not yet been verified on a physical Android device. HLS playback and subtitle
+It has not yet been verified on a physical Android device.\nBecause GitHub test builds are debug-signed on fresh CI runners, an older APK may have a different signature: uninstall the old test app before installing version 1.1. Cloud learning records remain in Supabase; local WebView login cookies will be reset. HLS playback and subtitle
 behavior should be checked on the phone. Production distribution requires a stable
 private signing key, versionCode updates, and upgrade testing.
