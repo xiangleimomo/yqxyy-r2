@@ -145,7 +145,7 @@ public class MainActivity extends Activity {
         settings.setJavaScriptEnabled(true);
         // A feature marker, not an authentication token. Used by website CSS and
         // the safe fullscreen helper to enable app-only Android behavior.
-        settings.setUserAgentString(settings.getUserAgentString() + " YQXYYAndroid/1.1");
+        settings.setUserAgentString(settings.getUserAgentString() + " YQXYYAndroid/1.2");
         settings.setDomStorageEnabled(true);
         settings.setDatabaseEnabled(true);
         settings.setMediaPlaybackRequiresUserGesture(false);
