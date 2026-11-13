@@ -1,5 +1,5 @@
 window.MovieLibrary={
-  categories:{animated:'动画大电影',documentary:'纪录片',animation:'动画故事'},
+  categories:{animated:'动画大电影',documentary:'纪录片',animation:'动画故事',kids:'儿童动画'},
   cache:null,
   e(app,value){return app.escapeHtml(String(value??''));},
   admin(){return !!window.SFCloud?.isAdmin?.()&&!!window.SFCloud?.client;},
