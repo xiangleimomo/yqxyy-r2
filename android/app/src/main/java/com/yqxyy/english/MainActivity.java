@@ -15,6 +15,7 @@ import android.os.Environment;
 import android.view.Gravity;
 import android.view.View;
 import android.webkit.CookieManager;
+import android.webkit.JavascriptInterface;
 import android.webkit.PermissionRequest;
 import android.webkit.URLUtil;
 import android.webkit.WebChromeClient;
@@ -33,6 +34,20 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
     private static final int PICK_FILE = 1201;
+    private static final String UPDATE_URL =
+        "https://github.com/xiangleimomo/yqxyy-r2/releases/tag/android-app-latest";
+
+    public class UpdateBridge {
+        @JavascriptInterface public String getVersionName() {
+            return BuildConfig.VERSION_NAME;
+        }
+        @JavascriptInterface public String getBuildSha() {
+            return BuildConfig.APP_BUILD_SHA;
+        }
+        @JavascriptInterface public void openUpdatePage() {
+            runOnUiThread(() -> openExternally(Uri.parse(UPDATE_URL)));
+        }
+    }
     private static final int ASK_MIC = 1202;
     private WebView browser;
     private FrameLayout root;
@@ -143,6 +158,8 @@ public class MainActivity extends Activity {
 
         WebSettings settings = browser.getSettings();
         settings.setJavaScriptEnabled(true);
+        // Read-only version metadata and one fixed, trusted update URL.
+        browser.addJavascriptInterface(new UpdateBridge(), "YQXYYAndroidApp");
         // A feature marker, not an authentication token. Used by website CSS and
         // the safe fullscreen helper to enable app-only Android behavior.
         settings.setUserAgentString(settings.getUserAgentString() + " YQXYYAndroid/1.2");
