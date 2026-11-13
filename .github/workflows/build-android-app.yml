@@ -23,6 +23,18 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
+      - name: Set up Node.js for GitHub website snapshot
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Bundle latest website from this GitHub commit into APK
+        run: |
+          npm run build
+          mkdir -p android/app/src/main/assets/site
+          cp -a dist/. android/app/src/main/assets/site/
+          test -f android/app/src/main/assets/site/index.html
+          test -f android/app/src/main/assets/site/js/mobile-caption-fullscreen.js
+          test -f android/app/src/main/assets/site/css/unified-player.css
       - name: Verify Android player and fullscreen bridge
         run: |
           node --check js/mobile-caption-fullscreen.js
