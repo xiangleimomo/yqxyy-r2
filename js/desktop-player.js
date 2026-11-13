@@ -62,7 +62,7 @@ window.SFDesktopPlayer = {
       get('speed').textContent = player.playbackRate + 'x';
       const {start,end} = bounds();
       bar.querySelector('output').textContent = `${time(player.currentTime-start)} / ${time(Number.isFinite(end)?end-start:0)}`;
-      for(const action of ['prev','next'])get(action).disabled = proxy(action)?proxy(action).disabled:!neighbor(action);
+      for(const action of ['prev','next'])get(action).disabled = panel._sfMovieNav ? !panel._sfMovieNav[action] : (proxy(action)?proxy(action).disabled:!neighbor(action));
       get('quiz').hidden=!isMovie&&!lesson?.ep?.modules?.quiz;
       get('captions').setAttribute('aria-pressed', String(stage.querySelector('.video-caption')?.dataset.subtitleVisible !== 'false'));
       const duration=Number.isFinite(end)?Math.max(0,end-start):0;
@@ -83,6 +83,9 @@ window.SFDesktopPlayer = {
     seek.addEventListener('pointerup',()=>{seek.blur();hideControlsLater();});
     seek.addEventListener('focusout',hideControlsLater);
     for(const action of ['prev','next','speed','quiz','fullscreen'])get(action).onclick = () => {
+      if(panel._sfMovieNav&&['prev','next'].includes(action)){
+        panel._sfMovieNav[action]?.();return;
+      }
       const target=proxy(action);
       if(target){target.click();return;}
       if(action==='fullscreen'){stage.querySelector('.video-fullscreen-trigger')?.click();return;}
