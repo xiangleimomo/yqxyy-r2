@@ -10,10 +10,6 @@ on:
     - cron: '23 15 * * 1-5'
       timezone: 'Asia/Shanghai'
   workflow_dispatch:
-  # Temporary recovery trigger; remove after the handoff commit completes.
-  push:
-    paths:
-      - '.github/workflows/littlefox-collect-handoff.yml'
 permissions:
   contents: write
 concurrency:
