@@ -189,6 +189,8 @@ window.MovieLibrary={
       const raw=field('tv_episode_urls').value.trim();
       const multiple=tv&&(end>start||raw.includes('\n')||raw.length>0);
       form.querySelector('.movie-source-editor').hidden=multiple;
+      // Hidden, legacy manual-source inputs must not block a TV bulk submit.
+      form.querySelectorAll('.movie-source-entry input,.movie-source-entry select').forEach(input=>{input.disabled=multiple;});
       const preview=form.querySelector('.movie-tv-preview');
       if(tv){
         try{
