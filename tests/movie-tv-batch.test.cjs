@@ -55,6 +55,13 @@ test('one poster for each TV series, one card per episode inside it',()=>{
   assert.equal(groups[0].films[2][2],'第1季 · 第3集');
   assert.equal(library.adminListHtml(rows,{escapeHtml:s=>String(s)}).match(/movie-tv-admin-group/g).length,1);
 });
+test('existing TV episode keeps its ID when reclassified into kids animation',()=>{
+  const existing={...base,id:'tmdb-tv-5678',category:'animated',episode_number:1,
+    playback_sources:library.validateSources(base,[])};
+  const moved=library.tvBatchRows({...base,category:'kids'},library.planTvEpisodes(base,1,''),[existing]);
+  assert.equal(moved[0].id,'tmdb-tv-5678');
+  assert.equal(moved[0].category,'kids');
+});
 test('existing standalone film remains an individual entry',()=>{
   const movies=library.asGroups([{...base,id:'tmdb-movie-80',media_type:'movie',tmdb_id:80}]);
   assert.equal(movies[0].dynamicCategory,'animated');
