@@ -11,6 +11,15 @@
   };
   const coarsePointer = () => !!((window.matchMedia && window.matchMedia('(pointer: coarse)').matches) ||
     (window.navigator && window.navigator.maxTouchPoints > 0));
+  // Only the installed Android WebView receives the orientation bridge.
+  // Ordinary Android browsers keep their existing CSS-fullscreen behavior.
+  const installedAndroidApp = /YQXYYAndroid\\//.test(String(window.navigator?.userAgent || ''));
+  if (installedAndroidApp) document.documentElement.classList.add('sf-android-app');
+  const rotateInstalledApp = enter => {
+    if (!installedAndroidApp) return;
+    // Android intercepts this main-frame custom scheme without navigating.
+    window.location.href = 'yqxyy-app://fullscreen/' + (enter ? 'enter' : 'exit');
+  };
   const mobileEnvironment = () => {
     // Some Android browsers report zero touch points in "desktop site" mode.
     const agent = String(window.navigator?.userAgent || '');
@@ -56,6 +65,7 @@
       // Captions stay in the shared video overlay on touch devices.
       document.documentElement.classList.remove('sf-caption-screen-locked');
       document.body.classList.remove('sf-caption-screen-locked');
+      rotateInstalledApp(false);
       if (placeholder && placeholder.isConnected) placeholder.replaceWith(stage);
       else stage.remove(); // The lesson was closed while mobile fullscreen was active.
       placeholder = null;
@@ -71,6 +81,7 @@
       stage.classList.add('subtitle-page-fullscreen');
       document.documentElement.classList.add('sf-caption-screen-locked');
       document.body.classList.add('sf-caption-screen-locked');
+      rotateInstalledApp(true);
       updateButton();
       showControls?.();
     };
@@ -108,6 +119,8 @@
       if (event.key === 'Escape' && pseudo) { event.preventDefault(); restore(); }
     });
     window.addEventListener('hashchange', () => { if (pseudo) restore(); });
+    // The phone's system Back button must close landscape fullscreen first.
+    window.addEventListener('sf-android-back', () => { if (pseudo) restore(); });
     // Some iOS browsers force <video> fullscreen even with playsinline.
     // Inline custom controls avoid offering the native fullscreen button.
     player.setAttribute('playsinline', '');
