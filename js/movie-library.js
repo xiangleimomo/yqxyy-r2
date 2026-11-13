@@ -17,7 +17,39 @@ window.MovieLibrary={
   },
   invalidate(){this.cache=null;},
   asGroups(rows){
-    return Object.keys(this.categories).map(category=>({id:'library-'+category,title:this.categories[category],titleZh:this.categories[category],level:'',rating:0,genre:'动态影视',dynamicCategory:category,films:rows.filter(row=>row.category===category).map(row=>[row.id,row.title,row.title_zh,row.year])})).filter(group=>group.films.length);
+    // A television show is one shelf cover with separate playable episodes.
+    // Existing single-episode TV rows and new batch rows share this layout.
+    const movieGroups=Object.keys(this.categories).map(category=>({
+      id:'library-'+category,title:this.categories[category],titleZh:this.categories[category],
+      level:'',rating:0,genre:'动态影视',dynamicCategory:category,
+      films:rows.filter(row=>row.category===category&&row.media_type!=='tv')
+        .map(row=>[row.id,row.title,row.title_zh,row.year])
+    })).filter(group=>group.films.length);
+    const shows=new Map();
+    for(const row of rows.filter(item=>item.media_type==='tv')){
+      const id=Number(row.tmdb_id),key=String(id)+'|'+String(row.category);
+      if(!Number.isSafeInteger(id)||id<1)continue;
+      if(!shows.has(key))shows.set(key,{
+        id:'library-tv-'+id+'-'+row.category,
+        title:row.title,titleZh:row.title_zh||row.title,
+        cover:row.poster_url||'',level:'',rating:0,genre:'电视剧',
+        dynamicTv:true,libraryCategory:row.category,films:[],_episodes:[]
+      });
+      const show=shows.get(key);
+      show._episodes.push(row);
+      if(!show.cover&&row.poster_url)show.cover=row.poster_url;
+    }
+    for(const group of shows.values()){
+      group._episodes.sort((a,b)=>Number(a.season_number||1)-Number(b.season_number||1)||Number(a.episode_number||1)-Number(b.episode_number||1));
+      group.films=group._episodes.map(row=>[
+        row.id,
+        'Season '+(row.season_number||1)+' Episode '+(row.episode_number||1),
+        '第'+(row.season_number||1)+'季 · 第'+(row.episode_number||1)+'集',
+        row.year
+      ]);
+      delete group._episodes;
+    }
+    return [...movieGroups,...shows.values()];
   },
   info(rows){return new Map(rows.map(row=>[row.id,row]));},
   automaticSource(row){
