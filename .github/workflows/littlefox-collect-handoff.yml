@@ -1,9 +1,10 @@
 name: Little Fox Collect Handoff for ChatGPT
 # GitHub gathers official sources; ChatGPT writes and reviews educational materials.
-# 14:50 Beijing (06:50 UTC), offset from the busy top-of-hour queue and leaving 40 minutes before ChatGPT's 15:30 task.
+# Beijing 14:50 primary / 15:05 backup (UTC 06:50 / 07:05). Backup skips if today's inbox exists.
 on:
   schedule:
     - cron: '50 6 * * 1-5'
+    - cron: '5 7 * * 1-5'
   workflow_dispatch:
 permissions:
   contents: write
@@ -20,9 +21,22 @@ jobs:
         with:
           node-version: '22'
           cache: npm
-      - run: npm ci --omit=dev
+      - name: Check today's handoff before collecting
+        id: handoff
+        shell: bash
+        run: |
+          today=$(TZ=Asia/Shanghai date +%F)
+          if [ "${{ github.event.schedule }}" = "5 7 * * 1-5" ] && [ -f "automation/littlefox-daily/inbox/${today}.json" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "Backup skipped: today's inbox already exists." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+      - if: steps.handoff.outputs.skip != 'true'
+        run: npm ci --omit=dev
       - name: Verify official releases and prepare metadata
         id: collect
+        if: steps.handoff.outputs.skip != 'true'
         continue-on-error: true
         env:
           R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
@@ -31,10 +45,10 @@ jobs:
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
         run: node automation/littlefox-daily/collect-handoff.mjs
       - name: Check official parser regression tests (blocking)
-        if: always()
+        if: always() && steps.handoff.outputs.skip != 'true'
         run: node --test automation/littlefox-daily/core.test.mjs
       - name: Upload short-lived verified source package for ChatGPT
-        if: always()
+        if: always() && steps.handoff.outputs.skip != 'true'
         uses: actions/upload-artifact@v4
         with:
           name: littlefox-source-${{ github.run_id }}
