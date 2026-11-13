@@ -34,6 +34,8 @@ jobs:
           node-version: '22'
       - name: Generate public-only TV config
         run: node android-tv/tools/prepare-config.cjs
+      - name: Smoke-test public TV catalogue
+        run: node android-tv/tools/check-catalog.cjs
       - name: Install Android SDK
         run: |
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-35" "build-tools;35.0.0"

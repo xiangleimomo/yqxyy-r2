@@ -177,7 +177,9 @@ public final class PlayerActivity extends Activity {
         try{
           automatic.put("kind","auto");
           automatic.put("label","自动播放源");
-          automatic.put("url","https://api.obj2.top/hls/tv/"+tmdb+"/"+season+"/"+number+"/master.m3u8");
+          String mediaPath="movie".equals(ep.optString("mediaType","tv"))
+            ? "movie/"+tmdb : "tv/"+tmdb+"/"+season+"/"+number;
+          automatic.put("url","https://api.obj2.top/hls/"+mediaPath+"/master.m3u8");
           playableSources.add(automatic);
         }catch(Exception ignored){}
       }
@@ -301,17 +303,19 @@ public final class PlayerActivity extends Activity {
     controls.setVisibility(View.VISIBLE);
     title.setVisibility(View.VISIBLE);
     handler.postDelayed(()->{
-      boolean dialogOpen=false;
-      // Do not hide while remote has focus in the control bar.
-      if(!controls.hasFocus()&&!dialogOpen){
+      // Return focus to the video so the overlay can disappear after inactivity.
+      // A subsequent D-pad press makes all controls visible again.
+      if(controls!=null&&controls.getVisibility()==View.VISIBLE){
+        video.requestFocus();
         Object box=controls.getTag();
         if(box instanceof View)((View)box).setVisibility(View.GONE);
         hide.run();
       }
-    },8500);
+    },6500);
   }
 
   @Override public boolean onKeyDown(int keyCode,KeyEvent event){
+    if(keyCode==KeyEvent.KEYCODE_CAPTIONS){chooseCaptions();return true;}
     if(keyCode==KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE||keyCode==KeyEvent.KEYCODE_HEADSETHOOK){
       toggle();return true;
     }

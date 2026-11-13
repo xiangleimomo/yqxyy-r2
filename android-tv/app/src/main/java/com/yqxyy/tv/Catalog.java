@@ -32,11 +32,13 @@ final class Catalog {
   static final class Episode {
     final String id;
     final int season, number, tmdbId;
+    final String mediaType;
     final JSONArray sources;
     Episode(JSONObject obj) {
       id=obj.optString("id","");
       season=Math.max(1,obj.optInt("season_number",1));
       number=Math.max(1,obj.optInt("episode_number",1));
+      mediaType=obj.optString("media_type","tv");
       tmdbId=obj.optInt("tmdb_id",0);
       sources=obj.optJSONArray("playback_sources") == null ? new JSONArray() : obj.optJSONArray("playback_sources");
     }
@@ -47,6 +49,7 @@ final class Catalog {
         item.put("season",season);
         item.put("number",number);
         item.put("tmdbId",tmdbId);
+        item.put("mediaType",mediaType);
         item.put("sources",sources);
       } catch(Exception ignored){}
       return item;
