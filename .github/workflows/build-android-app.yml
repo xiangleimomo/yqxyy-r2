@@ -1,0 +1,56 @@
+name: Build YQXYY Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'android/**'
+      - '.github/workflows/build-android-app.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+      - name: Set up Gradle 8.9
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+      - name: Build APK
+        working-directory: android
+        run: gradle --no-daemon --stacktrace assembleDebug
+      - name: Prepare APK
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk YQXYY-Android.apk
+      - name: Upload test APK as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: YQXYY-Android-APK
+          path: YQXYY-Android.apk
+          retention-days: 30
+      - name: Publish direct download
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          TAG=android-app-latest
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" "YQXYY-Android.apk" --clobber
+          else
+            gh release create "$TAG" "YQXYY-Android.apk" \
+              --title "一起学英语 Android APP" \
+              --notes "需要联网的安卓测试版，网站、Supabase 账号与 R2 课程内容保持不变。安装包使用 Android Debug 签名。" \
+              --prerelease
+          fi
