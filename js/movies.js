@@ -91,7 +91,8 @@ window.MovieClassroom = {
       const savedSources=Array.isArray(metadata.playback_sources)?metadata.playback_sources:[];
       const providerSources=apiUrl?providers.map(provider=>this.providerSource(provider,{tmdb,mediaType:tv?'tv':'movie',season,episode})).filter(Boolean):[];
       movie.embeddedSources=[...savedSources.filter(source=>source.kind==='embed'),...providerSources].filter((source,index,all)=>{try{const url=new URL(source.url);return url.protocol==='https:'&&!url.username&&!url.password&&source.url!==movie.embedUrl&&all.findIndex(item=>item.url===source.url)===index;}catch{return false;}});
-      const candidates=[{url:apiUrl,label:'直链播放'},...savedSources.filter(source=>source.kind==='direct'),{url:source.fullHlsUrl||source.hlsUrl,label:'原有备用直链'},...(source.backupSources||[]),{url:source.backupHlsUrl,label:'备用直链'}];
+      const preferredTvSource=tv?savedSources.filter(source=>source.kind==='direct'&&source.label==='本集播放地址'):[];
+      const candidates=[...preferredTvSource,{url:apiUrl,label:'直链播放'},...savedSources.filter(source=>source.kind==='direct'&&!preferredTvSource.includes(source)),{url:source.fullHlsUrl||source.hlsUrl,label:'原有备用直链'},...(source.backupSources||[]),{url:source.backupHlsUrl,label:'备用直链'}];
       movie.directSources=candidates.filter((item,index)=>{
         try{const url=new URL(item.url);return /^https?:$/.test(url.protocol)&&!url.username&&!url.password&&/\.(m3u8|mp4)$/i.test(url.pathname)&&candidates.findIndex(other=>other.url===item.url)===index;}catch{return false;}
       }).map((item,index)=>({...item,label:item.label||`备用直链 ${index}`}));
@@ -336,6 +337,13 @@ window.MovieClassroom = {
     const button=act=>bar.querySelector(`[data-act="${act}"]`);
     const films=group.films,index=films.findIndex(([id])=>id===movie.id);
     for(const [act,delta] of [['prev',-1],['next',1]]){const target=films[index+delta];button(act).disabled=!target;button(act).onclick=()=>{if(target){this.cleanup();location.hash='#/movie/'+target[0];}};}
+    if(group.dynamicTv){
+      panel.classList.add('sf-tv-player');
+      panel._sfMovieNav={
+        prev:!button('prev').disabled?()=>button('prev').click():null,
+        next:!button('next').disabled?()=>button('next').click():null
+      };
+    }
     button('play').onclick=()=>player.paused?player.play().catch(()=>{}):player.pause();
     const update=()=>{button('play').querySelector('span').textContent=player.paused?'▶':'⏸';button('play').querySelector('small').textContent=player.paused?'播放':'暂停';button('speed').querySelector('small').textContent=player.playbackRate+'x';button('mute').querySelector('span').textContent=player.muted?'🔇':'🔊';};
     for(const event of ['play','pause','ratechange','volumechange'])player.addEventListener(event,update);
