@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 2,
+  "date": "2026-11-13",
+  "status": "checked",
+  "workflowRunId": "43397504802",
+  "privateArtifactName": "littlefox-source-43397504802",
+  "items": [
+    {
+      "seriesId": "three-kingdoms",
+      "calendarEpisodeNumber": 13,
+      "calendarKeyword": "Romance of the Three Kingdoms13: Cruel and Heartless",
+      "title": "Cruel and Heartless",
+      "level": 5,
+      "status": "blocked",
+      "episodeNumber": 13,
+      "error": "Bing found no unique official Little Fox Text C-ID for Romance of the Three Kingdoms13: Cruel and Heartless. q=1,keyword=Romance of the Three Kingdoms13: Cruel and Heartless,anchors=40,hosts=,en.wikipedia.org,www.netflix.com,www.merriam-webster.com,www.youtube.com,www.imdb.com,www.goodreads.com,go.microsoft.com,officialCids= | q=2,keyword=Romance of the Three Kingdoms13: Cruel and Heartless,anchors=47,hosts=,en.wikipedia.org,www.netflix.com,www.merriam-webster.com,www.youtube.com,www.imdb.com,www.goodreads.com,go.microsoft.com,officialCids= | q=3,keyword=Romance of the Three Kingdoms13: Cruel and Heartless,anchors=40,hosts=,en.wikipedia.org,www.netflix.com,www.merriam-webster.com,www.youtube.com,www.imdb.com,www.goodreads.com,go.microsoft.com,officialCids="
+    },
+    {
+      "seriesId": "little-fox-red-magic-fs0059",
+      "calendarEpisodeNumber": 13,
+      "calendarKeyword": "Red Magic, The New Heroes 13: Racing the Wind",
+      "title": "Racing the Wind",
+      "level": 7,
+      "status": "blocked",
+      "episodeNumber": 213,
+      "error": "Bing found no unique official Little Fox Text C-ID for Red Magic, The New Heroes 13: Racing the Wind. q=1,keyword=Red Magic, The New Heroes 13: Racing the Wind,anchors=46,hosts=,www.reddit.com,en.wikipedia.org,www.redfishbistro.com,www.imdb.com,www.youtube.com,www.merriam-webster.com,www.britannica.com,officialCids= | q=2,keyword=Red Magic, The New Heroes 13: Racing the Wind,anchors=51,hosts=,www.reddit.com,en.wikipedia.org,www.redfishbistro.com,www.imdb.com,www.youtube.com,www.merriam-webster.com,www.britannica.com,officialCids= | q=3,keyword=Red Magic, The New Heroes 13: Racing the Wind,anchors=47,hosts=,www.reddit.com,en.wikipedia.org,www.redfishbistro.com,www.imdb.com,www.youtube.com,www.merriam-webster.com,www.britannica.com,officialCids="
+    },
+    {
+      "seriesId": "little-fox-daisy-dolittle-fs0175",
+      "calendarEpisodeNumber": 2,
+      "calendarKeyword": "Daisy Dolittle, The Disappearing Bird 2: Field Day",
+      "title": "Field Day",
+      "level": 5,
+      "status": "blocked",
+      "episodeNumber": 38,
+      "error": "Bing found no unique official Little Fox Text C-ID for Daisy Dolittle, The Disappearing Bird 2: Field Day. q=1,keyword=Daisy Dolittle, The Disappearing Bird 2: Field Day,anchors=54,hosts=,daisy.com,www.thespruce.com,en.m.wikipedia.org,daisyco.com,m.youtube.com,www.britannica.com,www.daisyfoundation.org,officialCids= | q=2,keyword=Daisy Dolittle, The Disappearing Bird 2: Field Day,anchors=53,hosts=,daisy.com,www.thespruce.com,en.m.wikipedia.org,daisyco.com,m.youtube.com,www.britannica.com,www.daisyfoundation.org,officialCids= | q=3,keyword=Daisy Dolittle, The Disappearing Bird 2: Field Day,anchors=53,hosts=,daisy.com,www.thespruce.com,en.m.wikipedia.org,daisyco.com,m.youtube.com,www.britannica.com,www.daisyfoundation.org,officialCids="
+    }
+  ],
+  "errors": [],
+  "privateArtifactId": "14023223305",
+  "privateArtifactUploaded": true,
+  "sourceReadyCount": 0,
+  "retryableItemCount": 3
+}
