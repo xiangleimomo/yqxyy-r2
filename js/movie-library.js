@@ -97,7 +97,7 @@ window.MovieLibrary={
   },
   tvBatchRows(row,plans,existing=[]){
     return plans.map((part,index)=>{
-      const prior=existing.find(item=>item.media_type==='tv'&&item.category===row.category&&Number(item.tmdb_id)===row.tmdb_id&&
+      const prior=existing.find(item=>item.media_type==='tv'&&Number(item.tmdb_id)===row.tmdb_id&&
         Number(item.season_number||1)===part.season&&Number(item.episode_number||1)===part.episode);
       const entry={...row,
         id:prior?.id||`tmdb-tv-${row.tmdb_id}-s${part.season}-e${part.episode}`,
