@@ -163,7 +163,7 @@ public class MainActivity extends Activity {
         browser.addJavascriptInterface(new UpdateBridge(), "YQXYYAndroidApp");
         // A feature marker, not an authentication token. Used by website CSS and
         // the safe fullscreen helper to enable app-only Android behavior.
-        settings.setUserAgentString(settings.getUserAgentString() + " YQXYYAndroid/1.2");
+        settings.setUserAgentString(settings.getUserAgentString() + " YQXYYAndroid/1.5");
         settings.setDomStorageEnabled(true);
         settings.setDatabaseEnabled(true);
         settings.setMediaPlaybackRequiresUserGesture(false);
