@@ -185,6 +185,19 @@ window.MovieLibrary={
     })).sort((a,b)=>a.season_number-b.season_number);
     return {seasons,total_episodes:seasons.reduce((sum,s)=>sum+s.known_episodes,0)};
   },
+  // A narrowly scoped, explicitly dated TMDB-sourced season snapshot.
+  // Do not mistake this for a live TMDB API response or full-series count.
+  verifiedTmdbSeasons(tmdbId){
+    if(Number(tmdbId)!==387)return null;
+    return {
+      title:'SpongeBob SquarePants',
+      source:'TMDB 资料快照（2026-09-18）',
+      source_url:'https://watch.minmins.kr/en/season.php?id=387&season=1',
+      partial:true,
+      seasons:[{season_number:1,episode_count:41,known_episodes:41,season_name:'Season 1'}],
+      total_episodes:41
+    };
+  },
   async tvSeasons(tmdbId,metadata={}){
     const id=Number(tmdbId);
     if(!Number.isSafeInteger(id)||id<1)throw Error('请选择正确的 TMDB 电视剧');
@@ -192,7 +205,11 @@ window.MovieLibrary={
     // This APK reads the public TVmaze REST API directly; no Netlify
     // deployment, TMDB credentials or custom serverless endpoint is needed.
     // TVmaze and TMDB can differ in episode numbering, so label the source.
-    if(!titles.length)throw Error('请先选择带有电视剧名称的搜索结果，才能自动采集集数。');
+    const verified=this.verifiedTmdbSeasons(id);
+    if(!titles.length){
+      if(verified)return verified;
+      throw Error('请先选择带有电视剧名称的搜索结果，才能自动采集集数。');
+    }
     let candidates=[];
     let show=null;
     let lastError=null;
@@ -210,16 +227,33 @@ window.MovieLibrary={
       }catch(error){lastError=error;}
     }
     if(!show){
+      if(verified)return verified;
       throw Error(candidates.length
         ? '已搜索公开剧集资料，但未能唯一匹配该电视剧；请核对英文片名、首播年份或手动输入集数。'
         : '在线集数资料暂不可用'+(lastError?'（网络请求失败）':'（未找到同名电视剧）')+'；请手动填写。');
     }
     const response=await fetch('https://api.tvmaze.com/shows/'+show.id+'/episodes',{
       headers:{Accept:'application/json'},signal:AbortSignal.timeout(14000)});
-    if(!response.ok)throw Error('剧集列表暂时无法读取（HTTP '+response.status+'）');
+    if(!response.ok){
+      if(verified)return verified;
+      throw Error('剧集列表暂时无法读取（HTTP '+response.status+'）');
+    }
     const data=this.summarizeTvmazeEpisodes(await response.json());
-    if(!data.seasons.length)throw Error('公开剧集库尚未收录可识别的分集记录，请手动填写。');
-    return {...data,source:'TVmaze',title:show.name,source_url:show.url||'https://www.tvmaze.com/',
+    if(!data.seasons.length){
+      if(verified)return verified;
+      throw Error('公开剧集库尚未收录可识别的分集记录，请手动填写。');
+    }
+    // Only the separately verified season is authoritative for this
+    // known TMDB ID. Keep other seasons derived from TVmaze and label both.
+    if(verified){
+      const season=verified.seasons[0];
+      const index=data.seasons.findIndex(item=>item.season_number===1);
+      if(index<0)data.seasons.unshift(season);
+      else data.seasons[index]={...data.seasons[index],...season};
+      data.total_episodes=data.seasons.reduce((sum,item)=>sum+Number(item.known_episodes||0),0);
+    }
+    return {...data,source:verified?'TVmaze + TMDB 第1季已核验':'TVmaze',
+      title:show.name,source_url:show.url||'https://www.tvmaze.com/',
       matchedYear:String(show.premiered||'').slice(0,4)};
   },
   async verifyPlayback(tmdbId){
@@ -269,11 +303,16 @@ window.MovieLibrary={
       const count=Number(seasonMeta.known_episodes||seasonMeta.episode_count);
       const last=Number(seasonMeta.episode_count);
       const source=tvSummary?.source||'公开剧集库';
-      info.textContent='已找到《'+(tvSummary?.title||field('title').value)+'》：'+
-        tvSeasons.length+' 季，共 '+total+' 集；第 '+season+' 季收录 '+count+
-        ' 集，最后集号 '+last+'。数据来自 '+source+
-        '；播放地址仍使用 TMDB ID '+field('tmdb_id').value+
-        '。不同资料库的分集编号可能不同，请核对。';
+      info.textContent=tvSummary?.partial
+        ? '已核验《'+(tvSummary.title||field('title').value)+'》第 '+season+
+          ' 季：'+count+' 个短篇，最后集号 '+last+
+          '。仅当前季有已核验数据，其他季需联网采集。来源：'+source+
+          '；播放仍使用 TMDB ID '+field('tmdb_id').value+'。'
+        : '已找到《'+(tvSummary?.title||field('title').value)+'》：'+
+          tvSeasons.length+' 季，共 '+total+' 集；第 '+season+' 季收录 '+count+
+          ' 集，最后集号 '+last+'。数据来自 '+source+
+          '；播放地址仍使用 TMDB ID '+field('tmdb_id').value+
+          '。不同资料库的分集编号可能不同，请核对。';
       if((force||!editingExisting)&&!field('tv_episode_urls').value.trim()){
         const first=Number(field('episode_number').value)||1;
         if(first<=last)field('episode_end').value=String(last);
