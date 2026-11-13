@@ -2,8 +2,8 @@
   "schemaVersion": 2,
   "date": "2026-11-13",
   "status": "checked",
-  "workflowRunId": "43398215516",
-  "privateArtifactName": "littlefox-source-43398215516",
+  "workflowRunId": "43398340832",
+  "privateArtifactName": "littlefox-source-43398340832",
   "items": [
     {
       "seriesId": "little-fox-daisy-dolittle-fs0175",
@@ -11,14 +11,23 @@
       "calendarKeyword": "Daisy Dolittle, The Disappearing Bird 2: Field Day",
       "title": "Field Day",
       "level": 5,
-      "status": "blocked",
+      "status": "ready_for_chatgpt",
       "episodeNumber": 38,
-      "error": "Official series catalog did not return a valid C-ID for the exact episode title"
+      "contentId": "C0013550",
+      "contentIdVerified": true,
+      "video": "https://cdn.littlefox.com/contents_5/hls/1080/088bb2a6cc/17942101121dec69fd432365f7affe596a50965e29/stream.m3u8?_=1794210117",
+      "storybook": "https://res.littlefox.com/en/supplement/load_pdf/C0013550",
+      "caption": "https://cdn.littlefox.com/contents/caption/C0013550.xml",
+      "captionCueCount": 53,
+      "textOriginal": "https://cn.littlefox.com/cn/supplement/org/C0013550",
+      "paragraphCount": 31,
+      "videoStatus": "verified",
+      "sourceArtifact": true
     }
   ],
   "errors": [],
-  "privateArtifactId": "14023726824",
+  "privateArtifactId": "14024230353",
   "privateArtifactUploaded": true,
-  "sourceReadyCount": 0,
-  "retryableItemCount": 1
+  "sourceReadyCount": 1,
+  "retryableItemCount": 0
 }
