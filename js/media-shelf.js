@@ -3,7 +3,7 @@ window.MediaShelf = {
   e(app,value){return app.escapeHtml(String(value??''));},
   nav(scope,mode='all'){
     const base=scope==='movies'?'movies':'home';
-    const tabs=scope==='movies'?[['animated','动画大电影'],['documentary','纪录片'],['episodes','分集学习'],['favorites','我的收藏'],['recent','观看记录']]:[['all','全部动画'],['direct','直接观看'],['favorites','我的收藏'],['recent','观看记录']];
+    const tabs=scope==='movies'?[['animated','动画大电影'],['kids','儿童动画'],['documentary','纪录片'],['episodes','分集学习'],['favorites','我的收藏'],['recent','观看记录']]:[['all','全部动画'],['direct','直接观看'],['favorites','我的收藏'],['recent','观看记录']];
     return `<nav class="book-reading-tabs" aria-label="${scope==='movies'?'光影课堂':'动画故事'}书架">${tabs.map(([key,title])=>`<a href="#/${base}/${key}"${mode===key?' aria-current="page"':''}>${title}</a>`).join('')}${scope==='animation'?`<a href="#/wordbank"${mode==='wordbank'?' aria-current="page"':''}>单词表</a><a href="#/writing"${mode==='writing'?' aria-current="page"':''}>英文写作</a>`:''}${scope==='movies'&&window.SFCloud?.isAdmin?.()?'<a class="book-admin-entry" href="#/movie-admin">影视资源管理</a>':''}</nav>`;
   },
   animation(series){const englishTitles={'journey-to-the-west':'Journey to the West','three-kingdoms':'Romance of the Three Kingdoms'};return {key:'anim-'+series.seriesId,scope:'animation',id:series.seriesId,title:englishTitles[series.seriesId]||series.titleZh||series.title,cover:series.cover,href:'#/series/'+series.seriesId,level:Number(series.level||0),disabled:['coming','locked'].includes(series.status),landscape:true,totalEpisodes:Number(series.episodeCount||series.readyEpisodes||0)};},
@@ -65,6 +65,7 @@ window.MediaShelf = {
         const tvShows=series.filter(group=>group.dynamicTv&&group.libraryCategory==='animated').map(group=>this.movieSeries(group));
         items=[...originalCollections,...publishedFilms,...tvShows];
       }
+      if(mode==='kids')items=[...series.filter(group=>group.dynamicCategory==='kids').flatMap(group=>group.films.map(film=>this.movieFilm(group,film,playableById))),...series.filter(group=>group.dynamicTv&&group.libraryCategory==='kids').map(group=>this.movieSeries(group))];
       if(mode==='documentary')items=[...series.filter(group=>group.dynamicCategory==='documentary').flatMap(group=>group.films.map(film=>this.movieFilm(group,film,playableById))),...series.filter(group=>group.dynamicTv&&group.libraryCategory==='documentary').map(group=>this.movieSeries(group))];
       if(mode==='episodes'){
         const courseIds=[...new Set(series.flatMap(group=>group.films.map(([filmId])=>playableById.get(filmId)?.studyCourse?.seriesId).filter(Boolean)))];
@@ -82,7 +83,7 @@ window.MediaShelf = {
     }
     // A personal bookmarks query failure must never blank the public documentary catalogue.
     let states=new Map();
-    if(!['all','episodes','animated','documentary'].includes(mode)){
+    if(!['all','episodes','animated','kids','documentary'].includes(mode)){
       try{states=await this.states(app);}catch(error){console.warn('Media personal state unavailable',error);states=new Map(Object.entries(this.local()));}
     }
     if(location.hash!==route||window.SFCloud?.user?.id!==uid)return;
