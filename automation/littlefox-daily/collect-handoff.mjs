@@ -1,6 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import {chinaDate,makeR2,scheduleReleases,resolveOfficialSeriesEpisode,identifyCId,readPlayer,isEpisodeMatch,verifyPlaylist,parseCaptions,textParagraphs,textPageShape,ORIGINAL_TEXT} from './core.mjs';
+import {chinaDate,makeR2,scheduleReleases,resolveOfficialSeriesEpisode,readPlayer,isEpisodeMatch,verifyPlaylist,parseCaptions,textParagraphs,textPageShape,ORIGINAL_TEXT} from './core.mjs';
 const d=chinaDate(),out=`automation/littlefox-daily/inbox/${d.date}.json`;
 const privateOut='/tmp/littlefox-source-'+d.date+'.json';
 const result={schemaVersion:2,date:d.date,status:'checking',workflowRunId:process.env.GITHUB_RUN_ID||null,privateArtifactName:'littlefox-source-'+(process.env.GITHUB_RUN_ID||'local'),items:[],errors:[]};
