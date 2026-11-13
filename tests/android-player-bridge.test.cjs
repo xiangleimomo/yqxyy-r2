@@ -75,3 +75,17 @@ test('Android native handler validates main-frame scheme and trusted origin',()=
   assert.match(css,/sf-android-app[\s\S]*sf-desktop-player-controls/);
   assert.match(css,/sf-android-app[\s\S]*video-caption/);
 });
+
+test('Android release serves packaged GitHub frontend while API and R2 stay remote',()=>{
+  const java=fs.readFileSync('android/app/src/main/java/com/yqxyy/english/MainActivity.java','utf8');
+  const workflow=fs.readFileSync('.github/workflows/build-android-app.yml','utf8');
+  assert.ok(java.includes('shouldInterceptRequest'));
+  assert.ok(java.includes('bundledWebsiteFile(request)'));
+  assert.ok(java.includes('site/'));
+  for(const route of ['/js/','/css/','/assets/','/arcade/','/source-lab/']){
+    assert.ok(java.includes('route.startsWith("'+route+'")'), 'expected local route '+route);
+  }
+  assert.ok(!java.includes('route.startsWith("/data/")'), 'R2 data must remain live');
+  assert.ok(workflow.includes('npm run build'));
+  assert.ok(workflow.includes('cp -a dist/. android/app/src/main/assets/site/'));
+});
