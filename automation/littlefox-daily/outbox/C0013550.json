@@ -1,0 +1,495 @@
+{
+  "schemaVersion": 1,
+  "status": "ready_for_publish",
+  "reviewStatus": "approved",
+  "seriesId": "little-fox-daisy-dolittle-fs0175",
+  "episodeNumber": 38,
+  "contentId": "C0013550",
+  "title": "Field Day",
+  "level": 5,
+  "releaseDate": "2026-11-13",
+  "calendarEpisodeNumber": 2,
+  "officialSourceUrls": {
+    "textOriginal": "https://cn.littlefox.com/cn/supplement/org/C0013550",
+    "caption": "https://cdn.littlefox.com/contents/caption/C0013550.xml",
+    "storybook": "https://res.littlefox.com/en/supplement/load_pdf/C0013550"
+  },
+  "sourceVerification": {
+    "englishText": true,
+    "storybook": true,
+    "storybookMethod": "HEAD HTTP 200 (PDF content not extracted)",
+    "subtitleXml": true,
+    "episodeTitleMatched": true,
+    "workflowRunId": "43398340832",
+    "sourceArtifactName": "littlefox-source-43398340832"
+  },
+  "captionMetadata": {
+    "cueCount": 53,
+    "firstCueStart": 0.069,
+    "lastCueEnd": 286.282
+  },
+  "lesson": {
+    "themeZh": "同理心、责任感，以及在竞赛中做出正确选择",
+    "learningObjectivesZh": [
+      "梳理三脚赛跑的路线、人物配合方式及比赛中的关键变化",
+      "理解Daisy和Grace如何通过稳定配合超过Parker和Tim",
+      "说明受伤小鸟如何改变比赛，并解释Daisy最后的选择"
+    ],
+    "sections": [
+      {
+        "id": "s1",
+        "title": "Getting Ready for the Three-Legged Race",
+        "titleZh": "准备三脚赛跑",
+        "paragraphIds": [
+          "p1",
+          "p2",
+          "p3",
+          "p4",
+          "p5",
+          "p6",
+          "p7",
+          "p8"
+        ],
+        "startSeconds": 0.069,
+        "endSeconds": 62.58,
+        "summaryZh": "Daisy和Grace练习三脚赛跑，逐渐找到配合的节奏。另一边，Parker指挥Tim行动；Grace指出Tim是班里跑得最快的学生。Daisy因此期待她们也许能赢过男生。",
+        "focus": [
+          "人物关系",
+          "比赛准备",
+          "合作方式"
+        ]
+      },
+      {
+        "id": "s2",
+        "title": "The Race Turns Downhill",
+        "titleZh": "比赛中的转折",
+        "paragraphIds": [
+          "p9",
+          "p10",
+          "p11",
+          "p12",
+          "p13",
+          "p14",
+          "p15",
+          "p16"
+        ],
+        "startSeconds": 62.58,
+        "endSeconds": 141.17,
+        "summaryZh": "赛道从平坦的足球场转向下坡小路。Parker不听Tim的提醒，急着向前冲并绊了一跤；Daisy和Grace则保持稳定，按照练习时的节奏配合，追上并超过了男生。",
+        "focus": [
+          "路线与规则",
+          "人物行动",
+          "结果变化"
+        ]
+      },
+      {
+        "id": "s3",
+        "title": "The Injured Bird Changes Everything",
+        "titleZh": "受伤的小鸟改变了比赛",
+        "paragraphIds": [
+          "p17",
+          "p18",
+          "p19",
+          "p20",
+          "p21",
+          "p22",
+          "p23",
+          "p24",
+          "p25",
+          "p26",
+          "p27",
+          "p28",
+          "p29",
+          "p30",
+          "p31"
+        ],
+        "startSeconds": 141.17,
+        "endSeconds": 286.282,
+        "summaryZh": "Daisy听见小鸟求救，发现它似乎受了伤，于是叫停比赛。小鸟随后消失，Mr. Neal建议不要惊扰它；但Daisy不愿置之不理，决定即使错过比赛也要寻找它，最后趁没人注意时返回草地。",
+        "focus": [
+          "突发事件",
+          "人物选择",
+          "结尾悬念"
+        ]
+      }
+    ]
+  },
+  "sections": [
+    {
+      "id": "s1",
+      "title": "Getting Ready for the Three-Legged Race",
+      "titleZh": "准备三脚赛跑",
+      "paragraphIds": [
+        "p1",
+        "p2",
+        "p3",
+        "p4",
+        "p5",
+        "p6",
+        "p7",
+        "p8"
+      ],
+      "startSeconds": 0.069,
+      "endSeconds": 62.58,
+      "summaryZh": "Daisy和Grace练习三脚赛跑，逐渐找到配合的节奏。另一边，Parker指挥Tim行动；Grace指出Tim是班里跑得最快的学生。Daisy因此期待她们也许能赢过男生。",
+      "focus": [
+        "人物关系",
+        "比赛准备",
+        "合作方式"
+      ]
+    },
+    {
+      "id": "s2",
+      "title": "The Race Turns Downhill",
+      "titleZh": "比赛中的转折",
+      "paragraphIds": [
+        "p9",
+        "p10",
+        "p11",
+        "p12",
+        "p13",
+        "p14",
+        "p15",
+        "p16"
+      ],
+      "startSeconds": 62.58,
+      "endSeconds": 141.17,
+      "summaryZh": "赛道从平坦的足球场转向下坡小路。Parker不听Tim的提醒，急着向前冲并绊了一跤；Daisy和Grace则保持稳定，按照练习时的节奏配合，追上并超过了男生。",
+      "focus": [
+        "路线与规则",
+        "人物行动",
+        "结果变化"
+      ]
+    },
+    {
+      "id": "s3",
+      "title": "The Injured Bird Changes Everything",
+      "titleZh": "受伤的小鸟改变了比赛",
+      "paragraphIds": [
+        "p17",
+        "p18",
+        "p19",
+        "p20",
+        "p21",
+        "p22",
+        "p23",
+        "p24",
+        "p25",
+        "p26",
+        "p27",
+        "p28",
+        "p29",
+        "p30",
+        "p31"
+      ],
+      "startSeconds": 141.17,
+      "endSeconds": 286.282,
+      "summaryZh": "Daisy听见小鸟求救，发现它似乎受了伤，于是叫停比赛。小鸟随后消失，Mr. Neal建议不要惊扰它；但Daisy不愿置之不理，决定即使错过比赛也要寻找它，最后趁没人注意时返回草地。",
+      "focus": [
+        "突发事件",
+        "人物选择",
+        "结尾悬念"
+      ]
+    }
+  ],
+  "vocabulary": [
+    {
+      "word": "practicing",
+      "meaningZh": "练习；训练（practice的现在分词）",
+      "example": "The team is practicing together before the game.",
+      "exampleZh": "队伍正在比赛前一起练习。",
+      "paragraphIds": [
+        "p2"
+      ],
+      "sourceContentId": "C0013550"
+    },
+    {
+      "word": "tricky",
+      "meaningZh": "棘手的；不容易做到的",
+      "example": "The puzzle looks tricky, but we can solve it.",
+      "exampleZh": "这道谜题看起来有些棘手，但我们能解出来。",
+      "paragraphIds": [
+        "p2"
+      ],
+      "sourceContentId": "C0013550"
+    },
+    {
+      "word": "three-legged race",
+      "meaningZh": "三脚赛跑（两人将相邻的腿绑在一起比赛）",
+      "example": "Our class will have a three-legged race on Field Day.",
+      "exampleZh": "运动日那天，我们班将举行三脚赛跑。",
+      "paragraphIds": [
+        "p2"
+      ],
+      "sourceContentId": "C0013550"
+    },
+    {
+      "word": "bullied",
+      "meaningZh": "欺负；胁迫（bully的过去式）",
+      "example": "He bullied his teammate into following his plan.",
+      "exampleZh": "他胁迫队友按照自己的计划行事。",
+      "paragraphIds": [
+        "p6"
+      ],
+      "sourceContentId": "C0013550"
+    },
+    {
+      "word": "winding",
+      "meaningZh": "蜿蜒的；弯弯曲曲的",
+      "example": "A winding path led us through the woods.",
+      "exampleZh": "一条蜿蜒的小路带我们穿过树林。",
+      "paragraphIds": [
+        "p9"
+      ],
+      "sourceContentId": "C0013550"
+    },
+    {
+      "word": "lunged",
+      "meaningZh": "猛冲；向前扑（lunge的过去式）",
+      "example": "The dog lunged toward the ball.",
+      "exampleZh": "那只狗猛地扑向球。",
+      "paragraphIds": [
+        "p12"
+      ],
+      "sourceContentId": "C0013550"
+    },
+    {
+      "word": "stumbled",
+      "meaningZh": "绊了一下；踉跄（stumble的过去式）",
+      "example": "He stumbled over a stone but kept walking.",
+      "exampleZh": "他被一块石头绊了一下，但继续往前走。",
+      "paragraphIds": [
+        "p13"
+      ],
+      "sourceContentId": "C0013550"
+    },
+    {
+      "word": "steady",
+      "meaningZh": "平稳的；稳定的",
+      "example": "Keep a steady pace when you run.",
+      "exampleZh": "跑步时要保持稳定的速度。",
+      "paragraphIds": [
+        "p14"
+      ],
+      "sourceContentId": "C0013550"
+    },
+    {
+      "word": "zoomed",
+      "meaningZh": "飞快地移动；迅速冲过（zoom的过去式）",
+      "example": "The bicycle zoomed past us.",
+      "exampleZh": "自行车从我们身边飞快地冲了过去。",
+      "paragraphIds": [
+        "p16"
+      ],
+      "sourceContentId": "C0013550"
+    },
+    {
+      "word": "injured",
+      "meaningZh": "受伤的",
+      "example": "The injured bird rested in a quiet place.",
+      "exampleZh": "那只受伤的小鸟在安静的地方休息。",
+      "paragraphIds": [
+        "p20"
+      ],
+      "sourceContentId": "C0013550"
+    },
+    {
+      "word": "hiding spot",
+      "meaningZh": "藏身处；躲藏的地方",
+      "example": "The rabbit found a hiding spot under the bushes.",
+      "exampleZh": "兔子在灌木丛下找到了一个藏身处。",
+      "paragraphIds": [
+        "p27"
+      ],
+      "sourceContentId": "C0013550"
+    },
+    {
+      "word": "dashed",
+      "meaningZh": "猛冲；飞奔（dash的过去式）",
+      "example": "She dashed across the field to catch the bus.",
+      "exampleZh": "她飞快地跑过草地去赶公交车。",
+      "paragraphIds": [
+        "p31"
+      ],
+      "sourceContentId": "C0013550"
+    }
+  ],
+  "quiz": {
+    "episodeId": 38,
+    "title": "Field Day Quiz",
+    "styleReference": "yqxyy-v2-story-comprehension",
+    "revision": "2026-11-13",
+    "questions": [
+      {
+        "id": "q1",
+        "type": "single-choice",
+        "category": "reading",
+        "question": "What did Grace say about Tim while watching him practice with Parker?",
+        "options": [
+          {
+            "key": "A",
+            "text": "He was the fastest runner in their class."
+          },
+          {
+            "key": "B",
+            "text": "He was the best at choosing the race route."
+          },
+          {
+            "key": "C",
+            "text": "He had never run with a partner before."
+          },
+          {
+            "key": "D",
+            "text": "He had asked Parker to be his partner."
+          }
+        ],
+        "answer": "A",
+        "explanation": "Grace明确指出Tim是班里跑得最快的学生。她还说Parker是通过欺负Tim才让他做自己的搭档，并不是Tim主动选择了Parker。",
+        "evidence": {
+          "paragraphIds": [
+            "p6"
+          ],
+          "sourceContentId": "C0013550"
+        }
+      },
+      {
+        "id": "q2",
+        "type": "single-choice",
+        "category": "reading",
+        "question": "Why did Tim warn Parker to slow down during the race?",
+        "options": [
+          {
+            "key": "A",
+            "text": "The soccer field was too crowded."
+          },
+          {
+            "key": "B",
+            "text": "The race had already ended."
+          },
+          {
+            "key": "C",
+            "text": "The downhill section would be harder to manage."
+          },
+          {
+            "key": "D",
+            "text": "Daisy and Grace had already reached the finish line."
+          }
+        ],
+        "answer": "C",
+        "explanation": "Tim提醒Parker，下坡路段会更难跑，因此应该放慢速度。Parker却认为慢下来很软弱，仍然向前猛冲，结果绊倒了。",
+        "evidence": {
+          "paragraphIds": [
+            "p11",
+            "p12",
+            "p13"
+          ],
+          "sourceContentId": "C0013550"
+        }
+      },
+      {
+        "id": "q3",
+        "type": "single-choice",
+        "category": "reading",
+        "question": "What helped Daisy and Grace move ahead of Parker and Tim?",
+        "options": [
+          {
+            "key": "A",
+            "text": "They changed partners halfway through the race."
+          },
+          {
+            "key": "B",
+            "text": "They stayed steady and counted together as they had practiced."
+          },
+          {
+            "key": "C",
+            "text": "They took a shortcut through the trees."
+          },
+          {
+            "key": "D",
+            "text": "They stopped running while the boys argued."
+          }
+        ],
+        "answer": "B",
+        "explanation": "Daisy和Grace保持稳定，没有像Parker和Tim那样争吵。Daisy按照练习时的节奏数拍，两人配合默契，逐渐追上并超过了男生。",
+        "evidence": {
+          "paragraphIds": [
+            "p14",
+            "p15",
+            "p16"
+          ],
+          "sourceContentId": "C0013550"
+        }
+      },
+      {
+        "id": "q4",
+        "type": "single-choice",
+        "category": "reading",
+        "question": "Why did Daisy call for everyone to stop the race?",
+        "options": [
+          {
+            "key": "A",
+            "text": "Parker had fallen and needed help."
+          },
+          {
+            "key": "B",
+            "text": "Miss Chan had asked the teams to return to the classroom."
+          },
+          {
+            "key": "C",
+            "text": "The teams had already reached the finish line."
+          },
+          {
+            "key": "D",
+            "text": "She heard a bird cry for help and say its wing was broken."
+          }
+        ],
+        "answer": "D",
+        "explanation": "Daisy听到一个声音求救，并说自己的翅膀受伤了。她随后看见一只棕色小鸟，于是立即叫大家停下，避免继续比赛伤害或惊吓它。",
+        "evidence": {
+          "paragraphIds": [
+            "p17",
+            "p18",
+            "p19",
+            "p20"
+          ],
+          "sourceContentId": "C0013550"
+        }
+      },
+      {
+        "id": "q5",
+        "type": "single-choice",
+        "category": "reading",
+        "question": "Why did Daisy secretly return to the meadow at the end?",
+        "options": [
+          {
+            "key": "A",
+            "text": "She wanted to look for the frightened bird, even if she missed the race."
+          },
+          {
+            "key": "B",
+            "text": "She wanted to avoid going back to class."
+          },
+          {
+            "key": "C",
+            "text": "She had forgotten something beside the biggest tree."
+          },
+          {
+            "key": "D",
+            "text": "She wanted to race Parker without the other teams."
+          }
+        ],
+        "answer": "A",
+        "explanation": "Daisy认为那只小鸟仍然可能躲在附近，而且听起来非常害怕。她告诉Grace，即使因此错过比赛也要去寻找小鸟，最后借口去洗手间，趁没人注意时返回草地。",
+        "evidence": {
+          "paragraphIds": [
+            "p28",
+            "p29",
+            "p31"
+          ],
+          "sourceContentId": "C0013550"
+        }
+      }
+    ]
+  },
+  "reviewNotes": "依据 GitHub Actions Run 43398340832 取得的真实官方素材：31段英文Text、53条字幕时间轴；官方播放器标题 Daisy Dolittle, The Disappearing Bird 2: Field Day 与本集标题匹配，Storybook HEAD HTTP 200，官方M3U8已验证。按段落及字幕时间轴划分3个教学部分，覆盖赛前准备、比赛发展和受伤小鸟引发的结尾行动。12个词汇均能在本集英文原文定位，中文释义与例句为原创辅助内容。5道原创英文剧情理解题分别定位p6、p11–p13、p14–p16、p17–p20、p28–p31；逐题核对剧情事实、唯一答案、四个不重复选项及中文解析，覆盖开端、发展、突发冲突和结尾。未使用其他集或原著剧情；未向公开仓库写入全文、字幕全文或长篇逐字引用。"
+}
