@@ -146,17 +146,96 @@ window.MovieLibrary={
     const response=await fetch('/.netlify/functions/movie-library-metadata?q='+encodeURIComponent(query),{cache:'no-store',signal:AbortSignal.timeout(15000)});
     const body=await response.json().catch(()=>({}));if(!response.ok)throw Error(body.error||'搜索失败');return body.results||[];
   },
-  async tvSeasons(tmdbId){
+  // Search by exact programme name when the site's TMDB Functions endpoint
+  // has not yet been deployed. TVmaze's public API supports CORS without keys.
+  normalizeSeriesTitle(value){
+    return String(value||'').normalize('NFKC').toLowerCase()
+      .replace(/&/g,'and').replace(/[^\\p{L}\\p{N}]+/gu,'').trim();
+  },
+  matchTvmazeShows(results,titles,year){
+    const names=[...new Set(titles.map(t=>this.normalizeSeriesTitle(t)).filter(Boolean))];
+    const exact=(Array.isArray(results)?results:[])
+      .map(item=>item?.show).filter(show=>Number.isSafeInteger(show?.id)&&show.id>0)
+      .filter(show=>names.includes(this.normalizeSeriesTitle(show.name)));
+    if(!exact.length)return null;
+    const published=Number(year);
+    const candidates=(published>=1888&&published<=2200)
+      ? exact.filter(show=>{
+          const y=Number(String(show.premiered||'').slice(0,4));
+          return Number.isInteger(y)&&Math.abs(y-published)<=2;
+        }):exact;
+    const unique=(candidates.length?candidates:exact).filter((show,index,array)=>array.findIndex(other=>other.id===show.id)===index);
+    if(unique.length!==1)return null;
+    return unique[0];
+  },
+  summarizeTvmazeEpisodes(episodes){
+    if(!Array.isArray(episodes))throw Error('剧集数据暂时无效');
+    const groups=new Map();
+    for(const ep of episodes){
+      const season=Number(ep?.season),number=Number(ep?.number);
+      if(!Number.isSafeInteger(season)||season<1||!Number.isSafeInteger(number)||number<1)continue;
+      if(!groups.has(season))groups.set(season,new Set());
+      groups.get(season).add(number);
+    }
+    const seasons=[...groups].map(([season,all])=>({
+      season_number:season,episode_count:Math.max(...all),
+      known_episodes:all.size,season_name:'Season '+season
+    })).sort((a,b)=>a.season_number-b.season_number);
+    return {seasons,total_episodes:seasons.reduce((sum,s)=>sum+s.known_episodes,0)};
+  },
+  async tvSeasons(tmdbId,metadata={}){
     const id=Number(tmdbId);
     if(!Number.isSafeInteger(id)||id<1)throw Error('请选择正确的 TMDB 电视剧');
-    const response=await fetch('/.netlify/functions/movie-tv-seasons?id='+id,{
-      cache:'no-store',signal:AbortSignal.timeout(14000)
-    });
-    const body=await response.json().catch(()=>({}));
-    if(!response.ok)throw Error(body.error||'暂时无法读取 TMDB 季数');
-    if(Number(body.id)!==id||!Array.isArray(body.seasons))throw Error('TMDB 集数数据格式不正确');
-    return body.seasons.filter(item=>Number.isInteger(item.season_number)&&item.season_number>=1&&
-      Number.isInteger(item.episode_count)&&item.episode_count>0);
+    const titles=[metadata.title,metadata.title_zh].filter(value=>String(value||'').trim());
+    // TMDB is exact by ID, but this endpoint may be missing on a site that
+    // still serves an older Netlify deploy. Check both JSON type and schema.
+    try{
+      const response=await fetch('/.netlify/functions/movie-tv-seasons?id='+id,{
+        cache:'no-store',signal:AbortSignal.timeout(6000)
+      });
+      const type=String(response.headers?.get?.('content-type')||'');
+      if(type.includes('application/json')){
+        const body=await response.json();
+        if(response.ok&&Number(body.id)===id&&Array.isArray(body.seasons)){
+          const seasons=body.seasons.filter(item=>Number.isInteger(item.season_number)&&item.season_number>=1&&
+            Number.isInteger(item.episode_count)&&item.episode_count>0);
+          if(seasons.length)return {seasons,source:'TMDB',title:body.title||titles[0]||'',
+            total_episodes:seasons.reduce((sum,item)=>sum+item.episode_count,0),
+            source_url:'https://www.themoviedb.org/tv/'+id};
+        }
+      }
+    }catch(error){
+      console.info('TMDB metadata endpoint unavailable; using public TVmaze fallback',String(error.message||error));
+    }
+    if(!titles.length)throw Error('请先选择带有电视剧名称的搜索结果，才能自动采集集数。');
+    let candidates=[];
+    let show=null;
+    let lastError=null;
+    for(const title of [...new Set(titles)]){
+      if(!title.trim())continue;
+      try{
+        const url='https://api.tvmaze.com/search/shows?q='+encodeURIComponent(title);
+        const response=await fetch(url,{headers:{Accept:'application/json'},
+          signal:AbortSignal.timeout(10000)});
+        if(!response.ok)throw Error('HTTP '+response.status);
+        const data=await response.json();
+        candidates.push(...(Array.isArray(data)?data:[]));
+        show=this.matchTvmazeShows(candidates,titles,metadata.year);
+        if(show)break;
+      }catch(error){lastError=error;}
+    }
+    if(!show){
+      throw Error(candidates.length
+        ? '已搜索公开剧集资料，但未能唯一匹配该电视剧；请核对英文片名、首播年份或手动输入集数。'
+        : '在线集数资料暂不可用'+(lastError?'（网络请求失败）':'（未找到同名电视剧）')+'；请手动填写。');
+    }
+    const response=await fetch('https://api.tvmaze.com/shows/'+show.id+'/episodes',{
+      headers:{Accept:'application/json'},signal:AbortSignal.timeout(14000)});
+    if(!response.ok)throw Error('剧集列表暂时无法读取（HTTP '+response.status+'）');
+    const data=this.summarizeTvmazeEpisodes(await response.json());
+    if(!data.seasons.length)throw Error('公开剧集库尚未收录可识别的分集记录，请手动填写。');
+    return {...data,source:'TVmaze',title:show.name,source_url:show.url||'https://www.tvmaze.com/',
+      matchedYear:String(show.premiered||'').slice(0,4)};
   },
   async verifyPlayback(tmdbId){
     const response=await fetch('/.netlify/functions/movie-library-metadata?verify='+encodeURIComponent(tmdbId),{cache:'no-store',signal:AbortSignal.timeout(15000)});
