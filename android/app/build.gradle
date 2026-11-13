@@ -11,8 +11,8 @@ android {
     applicationId 'com.yqxyy.english'
     minSdk 24
     targetSdk 34
-    versionCode 6
-    versionName '1.5.0'
+    versionCode 7
+    versionName '1.5.1'
     buildConfigField 'String', 'APP_URL', '"' + websiteUrl + '"'
     buildConfigField 'String', 'APP_BUILD_SHA', '"' + buildSha + '"'
   }
