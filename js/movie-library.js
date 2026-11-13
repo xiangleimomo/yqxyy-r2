@@ -146,6 +146,18 @@ window.MovieLibrary={
     const response=await fetch('/.netlify/functions/movie-library-metadata?q='+encodeURIComponent(query),{cache:'no-store',signal:AbortSignal.timeout(15000)});
     const body=await response.json().catch(()=>({}));if(!response.ok)throw Error(body.error||'搜索失败');return body.results||[];
   },
+  async tvSeasons(tmdbId){
+    const id=Number(tmdbId);
+    if(!Number.isSafeInteger(id)||id<1)throw Error('请选择正确的 TMDB 电视剧');
+    const response=await fetch('/.netlify/functions/movie-tv-seasons?id='+id,{
+      cache:'no-store',signal:AbortSignal.timeout(14000)
+    });
+    const body=await response.json().catch(()=>({}));
+    if(!response.ok)throw Error(body.error||'暂时无法读取 TMDB 季数');
+    if(Number(body.id)!==id||!Array.isArray(body.seasons))throw Error('TMDB 集数数据格式不正确');
+    return body.seasons.filter(item=>Number.isInteger(item.season_number)&&item.season_number>=1&&
+      Number.isInteger(item.episode_count)&&item.episode_count>0);
+  },
   async verifyPlayback(tmdbId){
     const response=await fetch('/.netlify/functions/movie-library-metadata?verify='+encodeURIComponent(tmdbId),{cache:'no-store',signal:AbortSignal.timeout(15000)});
     const body=await response.json().catch(()=>({}));if(!response.ok||!body.playbackAvailable)throw Error(body.error||'现有播放架构暂未匹配到本片。');
@@ -177,9 +189,37 @@ window.MovieLibrary={
   },
   async renderAdmin(app){
     if(!this.admin()){app.el().innerHTML='<section class="empty"><h2>仅管理员可管理影视资源</h2><a href="#/movies">返回光影课堂</a></section>';return;}
-    const e=value=>this.e(app,value);let rows=await this.rows(true),selected=null,cover='';
-    const formHtml=()=>`<section class="book-admin movie-library-admin"><header><h1>影视资源管理</h1><p>先选择电影或电视剧。电影为一张海报对应一个播放地址；电视剧为一张海报对应多集，可按 TMDB 规律生成或一次粘贴整季播放链接。</p></header><div class="movie-admin-search"><input id="movieMetaSearch" maxlength="80" placeholder="输入中英文影片名称"><button class="btn" id="movieMetaSearchButton">搜索影片</button></div><div id="movieMetaResults" class="movie-meta-results"></div><form id="movieLibraryForm"><input name="id" type="hidden"><div class="book-admin-columns"><div><label>发布栏目<select name="category">${Object.entries(this.categories).map(([key,label])=>`<option value="${key}">${label}</option>`).join('')}</select></label><label>影片名称<input name="title" required maxlength="220"></label><label>中文名称<input name="title_zh" maxlength="220"></label><label>上映年份<input name="year" type="number" min="1888" max="2200"></label><label>TMDB ID<input name="tmdb_id" type="number" min="1" required readonly></label><label>影片类型<select name="media_type"><option value="movie">电影</option><option value="tv">电视剧</option></select></label><div class="movie-tv-fields" hidden><label>第几季<input name="season_number" type="number" min="1" value="1"></label><label>起始集<input name="episode_number" type="number" min="1" value="1"></label><label>终止集（使用规律链接时填写）<input name="episode_end" type="number" min="1" max="9999" value="1"></label><label>批量播放链接（每行一集，可留空自动生成）<textarea name="tv_episode_urls" rows="6" placeholder="https://example.com/episode1.m3u8&#10;https://example.com/episode2.m3u8&#10;或 S2E1|https://example.com/episode1.m3u8"></textarea></label><p class="muted">按顺序粘贴网址会从起始集连续编号；也支持 S1E1|网址、S2E1|网址，跨季一次导入。留空则按 TMDB 编号和起止集数生成，每批最多 200 集。</p><div class="movie-tv-preview" role="status"></div></div><label>影片简介<textarea name="overview" maxlength="4000"></textarea></label><label>封面地址<input name="poster_url" type="url" maxlength="2048"></label><label>手动上传封面<input name="cover_file" type="file" accept="image/jpeg,image/png,image/webp"></label><label>排序<input name="sort_order" type="number" value="0"></label><label><input name="published" type="checkbox" checked> 立即发布</label></div><aside><h2>封面预览</h2><div id="movieLibraryPreview"></div></aside></div><p id="movieLibraryStatus" role="status" aria-live="polite"></p><button class="btn" type="submit">发布影片</button> <button class="btn secondary" type="button" id="movieLibraryReset">新建</button></form></section><section class="book-admin movie-library-admin"><h2>已发布资源</h2><div class="movie-admin-list">${this.adminListHtml(rows,app)}</div></section>`;
+    const e=value=>this.e(app,value);let rows=await this.rows(true),selected=null,cover='',tvSeasons=[],tvRequest=0,editingExisting=false;
+    const formHtml=()=>`<section class="book-admin movie-library-admin"><header><h1>影视资源管理</h1><p>先选择电影或电视剧。电影为一张海报对应一个播放地址；电视剧为一张海报对应多集，可按 TMDB 规律生成或一次粘贴整季播放链接。</p></header><div class="movie-admin-search"><input id="movieMetaSearch" maxlength="80" placeholder="输入中英文影片名称"><button class="btn" id="movieMetaSearchButton">搜索影片</button></div><div id="movieMetaResults" class="movie-meta-results"></div><form id="movieLibraryForm"><input name="id" type="hidden"><div class="book-admin-columns"><div><label>发布栏目<select name="category">${Object.entries(this.categories).map(([key,label])=>`<option value="${key}">${label}</option>`).join('')}</select></label><label>影片名称<input name="title" required maxlength="220"></label><label>中文名称<input name="title_zh" maxlength="220"></label><label>上映年份<input name="year" type="number" min="1888" max="2200"></label><label>TMDB ID<input name="tmdb_id" type="number" min="1" required readonly></label><label>影片类型<select name="media_type"><option value="movie">电影</option><option value="tv">电视剧</option></select></label><div class="movie-tv-fields" hidden><label>第几季<input name="season_number" type="number" min="1" value="1"></label><label>起始集<input name="episode_number" type="number" min="1" value="1"></label><label>终止集（自动读取 TMDB，可修改）<input name="episode_end" type="number" min="1" max="9999" value="1"></label><button type="button" class="btn secondary" id="movieTvLoadCount">读取 TMDB 本季集数</button><p class="movie-tv-auto-info" role="status">选择电视剧后自动查询本季集数。</p><label>批量播放链接（每行一集，可留空自动生成）<textarea name="tv_episode_urls" rows="6" placeholder="https://example.com/episode1.m3u8&#10;https://example.com/episode2.m3u8&#10;或 S2E1|https://example.com/episode1.m3u8"></textarea></label><p class="muted">按顺序粘贴网址会从起始集连续编号；也支持 S1E1|网址、S2E1|网址，跨季一次导入。留空则按 TMDB 编号和起止集数生成，每批最多 200 集。</p><div class="movie-tv-preview" role="status"></div></div><label>影片简介<textarea name="overview" maxlength="4000"></textarea></label><label>封面地址<input name="poster_url" type="url" maxlength="2048"></label><label>手动上传封面<input name="cover_file" type="file" accept="image/jpeg,image/png,image/webp"></label><label>排序<input name="sort_order" type="number" value="0"></label><label><input name="published" type="checkbox" checked> 立即发布</label></div><aside><h2>封面预览</h2><div id="movieLibraryPreview"></div></aside></div><p id="movieLibraryStatus" role="status" aria-live="polite"></p><button class="btn" type="submit">发布影片</button> <button class="btn secondary" type="button" id="movieLibraryReset">新建</button></form></section><section class="book-admin movie-library-admin"><h2>已发布资源</h2><div class="movie-admin-list">${this.adminListHtml(rows,app)}</div></section>`;
     app.el().innerHTML=formHtml();const form=app.el().querySelector('#movieLibraryForm'),field=name=>form.elements.namedItem(name),status=form.querySelector('#movieLibraryStatus'),publishButton=form.querySelector('button[type="submit"]');form.noValidate=true;const show=(message,kind='')=>{status.textContent=message;status.className='movie-library-status '+kind;};
+    const applyTvCount=(force=false)=>{
+      const season=Number(field('season_number').value)||1;
+      const seasonMeta=tvSeasons.find(item=>Number(item.season_number)===season);
+      const info=form.querySelector('.movie-tv-auto-info');
+      if(!seasonMeta){if(tvSeasons.length)info.textContent='TMDB 未返回第 '+season+' 季的集数，请人工核实。';return;}
+      info.textContent='TMDB · 第 '+season+' 季共 '+seasonMeta.episode_count+' 集（不保证对应播放源已上线）';
+      if((force||!editingExisting)&&!field('tv_episode_urls').value.trim()){
+        const start=Number(field('episode_number').value)||1;
+        if(start<=seasonMeta.episode_count)field('episode_end').value=String(seasonMeta.episode_count);
+        else info.textContent+='；起始集超过 TMDB 集数，请检查';
+      }
+    };
+    const loadTvSeasons=async(force=false)=>{
+      const tmdbId=Number(field('tmdb_id').value);
+      if(field('media_type').value!=='tv'||!Number.isSafeInteger(tmdbId)||tmdbId<1)return;
+      const req=++tvRequest;
+      const info=form.querySelector('.movie-tv-auto-info');info.textContent='正在读取 TMDB 季数与集数…';
+      try{
+        const data=await this.tvSeasons(tmdbId);
+        if(req!==tvRequest||Number(field('tmdb_id').value)!==tmdbId)return;
+        tvSeasons=data;
+        applyTvCount(force);syncType();
+        if(!data.length)info.textContent='TMDB 暂无可用的常规季集数，请自行填写。';
+      }catch(error){
+        if(req!==tvRequest)return;
+        tvSeasons=[];info.textContent=error.message+'（终止集仍可手动填写）';
+      }
+    };
     const syncType=()=>{
       const tv=field('media_type').value==='tv';
       const tvFields=form.querySelector('.movie-tv-fields');
@@ -207,10 +247,12 @@ window.MovieLibrary={
     const preview=()=>{const url=field('poster_url').value.trim()||cover;app.el().querySelector('#movieLibraryPreview').innerHTML=url?`<img src="${e(url)}" alt="封面预览" referrerpolicy="no-referrer">`:'<p class="muted">选择影片或上传封面后显示预览。</p>';};
     this.sourceEditor(form);
     syncType();
-    const fill=row=>{selected=row;cover=row.posterUrl||row.poster_url||'';field('id').value=row.id||`tmdb-${row.mediaType||row.media_type}-${row.tmdbId||row.tmdb_id}`;field('category').value=row.category||'animated';field('title').value=row.title||'';field('title_zh').value=row.titleZh||row.title_zh||'';field('year').value=row.year||'';field('tmdb_id').value=row.tmdbId||row.tmdb_id||'';field('media_type').value=row.mediaType||row.media_type||'movie';field('season_number').value=row.seasonNumber||row.season_number||1;field('episode_number').value=row.episodeNumber||row.episode_number||1;field('episode_end').value=row.episodeNumber||row.episode_number||1;field('tv_episode_urls').value='';field('overview').value=row.overview||'';field('poster_url').value=cover;field('sort_order').value=row.sort_order||0;field('published').checked=row.published!==false;this.sourceEditor(form,row.playback_sources||[]);syncType();preview();};
-    const reset=()=>{form.reset();selected=null;cover='';field('id').value='';field('published').checked=true;this.sourceEditor(form);syncType();preview();};
+    const fill=row=>{selected=row;editingExisting=rows.some(item=>item.id===row.id);tvSeasons=[];tvRequest++;cover=row.posterUrl||row.poster_url||'';field('id').value=row.id||`tmdb-${row.mediaType||row.media_type}-${row.tmdbId||row.tmdb_id}`;field('category').value=row.category||'animated';field('title').value=row.title||'';field('title_zh').value=row.titleZh||row.title_zh||'';field('year').value=row.year||'';field('tmdb_id').value=row.tmdbId||row.tmdb_id||'';field('media_type').value=row.mediaType||row.media_type||'movie';field('season_number').value=row.seasonNumber||row.season_number||1;field('episode_number').value=row.episodeNumber||row.episode_number||1;field('episode_end').value=row.episodeNumber||row.episode_number||1;field('tv_episode_urls').value='';field('overview').value=row.overview||'';field('poster_url').value=cover;field('sort_order').value=row.sort_order||0;field('published').checked=row.published!==false;this.sourceEditor(form,row.playback_sources||[]);syncType();preview();if(field('media_type').value==='tv')void loadTvSeasons();};
+    const reset=()=>{form.reset();selected=null;editingExisting=false;tvSeasons=[];tvRequest++;cover='';field('id').value='';field('published').checked=true;this.sourceEditor(form);syncType();preview();};
     app.el().querySelector('#movieLibraryReset').onclick=reset;form.oninput=()=>{preview();form.querySelector('.movie-source-editor')?._update?.();syncType();};
-    field('media_type').addEventListener('change',syncType);
+    field('media_type').addEventListener('change',()=>{syncType();if(field('media_type').value==='tv')void loadTvSeasons();});
+    field('season_number').addEventListener('change',()=>{applyTvCount();syncType();});
+    form.querySelector('#movieTvLoadCount').addEventListener('click',()=>{if(tvSeasons.length){applyTvCount(true);syncType();}else void loadTvSeasons(true);});
     field('cover_file').onchange=async()=>{try{cover=await this.uploadCover(field('cover_file').files[0],status);field('poster_url').value=cover;status.textContent='封面已上传，可继续发布。';preview();}catch(error){status.textContent=error.message;}};
     const drawResults=list=>{const box=app.el().querySelector('#movieMetaResults');box.innerHTML=list.map((row,index)=>`<button type="button" class="movie-meta-result" data-index="${index}">${row.posterUrl?`<img src="${e(row.posterUrl)}" alt="" referrerpolicy="no-referrer">`:''}<span><strong>${e(row.title)}</strong><small>${e(row.mediaType==='tv'?'电视剧':'电影')} · ${e(row.year||'年份未知')} · TMDB ${e(row.tmdbId)}</small></span></button>`).join('')||'<p class="muted">没有找到可用影片资料。</p>';box.querySelectorAll('[data-index]').forEach(button=>button.onclick=()=>fill(list[Number(button.dataset.index)]));};
     const search=async()=>{const query=app.el().querySelector('#movieMetaSearch').value.trim();if(!query)return;status.textContent='正在搜索影片资料…';try{const list=await this.search(query);drawResults(list);status.textContent=`找到 ${list.length} 条结果，请选择正确影片。`;}catch(error){status.textContent=error.message;}};app.el().querySelector('#movieMetaSearchButton').onclick=search;app.el().querySelector('#movieMetaSearch').onkeydown=event=>{if(event.key==='Enter'){event.preventDefault();search();}};
