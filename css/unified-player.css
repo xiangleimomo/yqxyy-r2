@@ -54,7 +54,7 @@ html.sf-android-app .direct-video-panel .sf-desktop-seek:focus-within{
 }
 html.sf-android-app .direct-video-panel .sf-desktop-player-title{display:block}
 html.sf-android-app .direct-video-panel .subtitle-video-wrap .video-caption{
-  position:absolute!important;top:min(var(--caption-y,84%),calc(100% - 90px))!important;
+  position:absolute!important;top:var(--caption-y,88%)!important;
   z-index:22!important;max-width:94%;white-space:normal;
   visibility:visible;line-height:1.35;pointer-events:auto;
   text-shadow:0 2px 5px #000,0 0 4px #000;
@@ -91,7 +91,7 @@ html.sf-android-app .subtitle-video-wrap.subtitle-page-fullscreen{
   html.sf-android-app .direct-video-panel .sf-desktop-player-controls svg{width:23px;height:23px}
   html.sf-android-app .direct-video-panel .sf-desktop-clock{font-size:12px}
   html.sf-android-app .direct-video-panel .sf-desktop-seek{bottom:51px!important;left:24px!important;right:24px!important}
-  html.sf-android-app .direct-video-panel .subtitle-video-wrap .video-caption{top:min(var(--caption-y,84%),calc(100% - 104px))!important}
+  html.sf-android-app .direct-video-panel .subtitle-video-wrap .video-caption{top:var(--caption-y,88%)!important}
 }
 
 
@@ -113,9 +113,24 @@ html.sf-android-app .subtitle-video-wrap.subtitle-page-fullscreen .sf-desktop-se
   opacity:1!important;visibility:visible!important;pointer-events:auto!important;
 }
 html.sf-android-app .subtitle-video-wrap.subtitle-page-fullscreen .video-caption{
-  position:absolute!important;top:min(var(--caption-y,84%),calc(100% - 104px))!important;
+  position:absolute!important;top:var(--caption-y,88%)!important;
   z-index:22!important;pointer-events:auto;visibility:visible;
 }
 html.sf-android-app .subtitle-video-wrap.subtitle-page-fullscreen .video-caption[hidden]{display:none!important}
 html.sf-android-app .subtitle-video-wrap.subtitle-page-fullscreen .sf-desktop-player-title{display:block!important}
 html.sf-android-app .subtitle-video-wrap.subtitle-page-fullscreen .subtitle-settings-dock{z-index:46!important}
+
+/* Caption height and 0.5s sync controls are shared by movies and Little Fox.
+   Prefer the saved percentage over the old Android hardcoded bottom clamp. */
+.subtitle-controls .subtitle-position{width:96px;min-width:62px;accent-color:#81bf44;touch-action:pan-x}
+.subtitle-controls .subtitle-timing-setting{min-height:46px;white-space:normal}
+.subtitle-controls .sf-offset-buttons{display:flex;align-items:center;justify-content:flex-end;gap:4px;min-width:0}
+.subtitle-controls .sf-offset-buttons button{min-width:35px;min-height:32px;padding:3px 5px;border:1px solid #ffffff44;border-radius:6px;background:#ffffff13;color:#fff;font-size:12px;cursor:pointer;touch-action:manipulation}
+.subtitle-controls .sf-offset-buttons button:focus-visible{outline:2px solid #81bf44}
+.subtitle-controls .sf-offset-buttons .sf-offset-label{font-size:12px;min-width:40px;color:#fff}
+.sf-movie-custom-caption .video-caption{touch-action:none;cursor:grab}
+.sf-movie-custom-caption .video-caption.caption-dragging{cursor:grabbing}
+@media(max-height:450px) and (orientation:landscape){
+  .subtitle-video-wrap .subtitle-controls-overlay{max-height:calc(100dvh - 22px)!important;overflow-y:auto!important}
+  .subtitle-controls .subtitle-setting-row{min-height:34px}
+}
