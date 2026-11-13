@@ -17,3 +17,79 @@
   .direct-video-panel .subtitle-settings-trigger,.direct-video-panel .video-fullscreen-trigger{display:none!important}
   .direct-video-panel .sf-movie-timeline{display:none!important}
 }
+
+
+/* Installed Android APK: PC-style controls stay inside the video, with captions
+   in the same HTML layer. This intentionally does not change mobile browsers. */
+html.sf-android-app .direct-video-panel:has(.sf-desktop-player-controls) > :is(.sf-lesson-toolbar,.sf-mobile-captions-outside,.sf-subtitle-offset){display:none!important}
+html.sf-android-app .direct-video-panel .video-wrap:has(.sf-desktop-player-controls){
+  position:relative!important;background:#000!important;overflow:hidden;
+}
+html.sf-android-app .direct-video-panel .sf-desktop-player-controls{
+  position:absolute!important;z-index:35!important;inset:auto 0 0!important;
+  display:flex!important;align-items:center;gap:2px;height:46px;
+  padding:0 7px;overflow:visible;box-sizing:border-box;
+  background:linear-gradient(transparent,rgba(0,0,0,.9));color:#fff;
+  opacity:0;visibility:hidden;pointer-events:none;
+}
+html.sf-android-app .direct-video-panel .sf-desktop-player-controls button{
+  display:grid;place-items:center;flex:0 0 auto;min-width:26px;
+  width:26px;height:40px;padding:3px;border:0;border-radius:5px;
+  background:transparent;color:#fff;touch-action:manipulation;
+}
+html.sf-android-app .direct-video-panel .sf-desktop-player-controls svg{width:20px;height:20px}
+html.sf-android-app .direct-video-panel .sf-desktop-clock{font-size:10px;white-space:nowrap}
+html.sf-android-app .direct-video-panel .sf-desktop-control-spacer{flex:1 1 0;min-width:0}
+html.sf-android-app .direct-video-panel .sf-desktop-volume input{display:none!important}
+html.sf-android-app .direct-video-panel .sf-desktop-seek{
+  position:absolute!important;z-index:35!important;left:12px!important;
+  right:12px!important;bottom:43px!important;display:flex!important;
+  opacity:0;visibility:hidden;pointer-events:none;
+}
+html.sf-android-app .direct-video-panel .subtitle-settings-visible .sf-desktop-player-controls,
+html.sf-android-app .direct-video-panel .subtitle-settings-visible .sf-desktop-seek,
+html.sf-android-app .direct-video-panel .sf-desktop-player-controls:focus-within,
+html.sf-android-app .direct-video-panel .sf-desktop-seek:focus-within{
+  opacity:1!important;visibility:visible!important;pointer-events:auto!important;
+}
+html.sf-android-app .direct-video-panel .sf-desktop-player-title{display:block}
+html.sf-android-app .direct-video-panel .subtitle-video-wrap .video-caption{
+  position:absolute!important;top:min(var(--caption-y,84%),calc(100% - 90px))!important;
+  z-index:22!important;max-width:94%;white-space:normal;
+  visibility:visible;line-height:1.35;pointer-events:auto;
+  text-shadow:0 2px 5px #000,0 0 4px #000;
+}
+html.sf-android-app .direct-video-panel .subtitle-video-wrap .video-caption[hidden]{display:none!important}
+html.sf-android-app .direct-video-panel .subtitle-settings-dock{z-index:46!important}
+html.sf-android-app .direct-video-panel .subtitle-controls-overlay{
+  max-height:min(74dvh,calc(100% - 60px))!important;overflow-y:auto!important;
+}
+html.sf-android-app .direct-video-panel .subtitle-settings-trigger,
+html.sf-android-app .direct-video-panel .video-fullscreen-trigger{display:none!important}
+html.sf-android-app .direct-video-panel.subtitle-page-fullscreen{
+  position:fixed!important;inset:0!important;z-index:2147483000!important;
+  width:100vw!important;height:100dvh!important;border-radius:0!important;
+}
+html.sf-android-app .direct-video-panel.subtitle-page-fullscreen>.video-wrap{
+  position:absolute!important;inset:0!important;display:block!important;
+  width:100%!important;height:100%!important;min-height:0!important;
+  margin:0!important;padding:0!important;aspect-ratio:auto!important;
+}
+html.sf-android-app .subtitle-video-wrap.subtitle-page-fullscreen{
+  width:100vw!important;height:100dvh!important;aspect-ratio:auto!important;
+}
+@media(max-width:480px) and (orientation:portrait){
+  html.sf-android-app .direct-video-panel .sf-desktop-volume,
+  html.sf-android-app .direct-video-panel:not(.sf-full-movie-player) .sf-desktop-player-controls [data-desktop-act="prev"],
+  html.sf-android-app .direct-video-panel:not(.sf-full-movie-player) .sf-desktop-player-controls [data-desktop-act="next"]{display:none!important}
+  html.sf-android-app .direct-video-panel .sf-desktop-player-controls{gap:1px;padding:0 5px}
+  html.sf-android-app .direct-video-panel .sf-desktop-player-controls button{min-width:25px;width:25px}
+}
+@media(orientation:landscape){
+  html.sf-android-app .direct-video-panel .sf-desktop-player-controls{height:54px;gap:8px;padding:0 max(18px,env(safe-area-inset-left,0px)) 0 max(18px,env(safe-area-inset-right,0px))}
+  html.sf-android-app .direct-video-panel .sf-desktop-player-controls button{width:32px;min-width:32px;height:44px}
+  html.sf-android-app .direct-video-panel .sf-desktop-player-controls svg{width:23px;height:23px}
+  html.sf-android-app .direct-video-panel .sf-desktop-clock{font-size:12px}
+  html.sf-android-app .direct-video-panel .sf-desktop-seek{bottom:51px!important;left:24px!important;right:24px!important}
+  html.sf-android-app .direct-video-panel .subtitle-video-wrap .video-caption{top:min(var(--caption-y,84%),calc(100% - 104px))!important}
+}
