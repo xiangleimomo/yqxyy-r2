@@ -30,11 +30,11 @@ test('auto-fetches per-season episode counts while video URLs retain TMDB IDs',a
   };
   const lib=library(mock);
   const seasons=await lib.tvSeasons(387,{title:'SpongeBob SquarePants',title_zh:'海绵宝宝',year:1999});
-  assert.equal(seasons.source,'TVmaze');
+  assert.equal(seasons.source,'TVmaze + TMDB 第1季已核验');
   assert.deepEqual(seasons.seasons.map(x=>[x.season_number,x.episode_count,x.known_episodes]),[
-    [1,2,2],[2,3,3]
+    [1,41,41],[2,3,3]
   ]);
-  assert.equal(seasons.total_episodes,5);
+  assert.equal(seasons.total_episodes,44);
   assert.equal(requests.length,2);
   // TVmaze ID 99 is only for metadata. The player must use TMDB ID 387.
   assert.equal(lib.automaticSource({
@@ -57,8 +57,17 @@ test('does not substitute a different program with an inaccurate debut year',asy
   ]}));
   await assert.rejects(()=>lib.tvSeasons(82728,{title:'Bluey',year:2018}),/未能唯一匹配/);
 });
-test('no network or show-match failures never invent episode counts',async()=>{
+test('an offline verified TMDB season snapshot still prefills SpongeBob S1E41',async()=>{
   const lib=library(async()=>{throw Error('offline')});
-  await assert.rejects(()=>lib.tvSeasons(387,{title:'SpongeBob SquarePants'}),/网络请求失败/);
-  await assert.rejects(()=>lib.tvSeasons(387,{}),/电视剧名称/);
+  const fallback=await lib.tvSeasons(387,{title:'SpongeBob SquarePants',year:1999});
+  assert.equal(fallback.partial,true);
+  assert.equal(fallback.seasons.length,1);
+  assert.equal(fallback.seasons[0].episode_count,41);
+  assert.equal(fallback.seasons[0].season_number,1);
+  assert.equal(lib.automaticSource({tmdb_id:387,media_type:'tv',
+    season_number:1,episode_number:41}).url,
+    'https://api.obj2.top/hls/tv/387/1/41/master.m3u8');
+  const noTitle=await lib.tvSeasons(387,{});
+  assert.equal(noTitle.seasons[0].episode_count,41);
+  await assert.rejects(()=>lib.tvSeasons(82728,{title:'Bluey'}),/网络请求失败/);
 });
