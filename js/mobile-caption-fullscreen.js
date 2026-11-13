@@ -13,7 +13,7 @@
     (window.navigator && window.navigator.maxTouchPoints > 0));
   // Only the installed Android WebView receives the orientation bridge.
   // Ordinary Android browsers keep their existing CSS-fullscreen behavior.
-  const installedAndroidApp = /YQXYYAndroid\\//.test(String(window.navigator?.userAgent || ''));
+  const installedAndroidApp = String(window.navigator?.userAgent || '').includes('YQXYYAndroid/');
   if (installedAndroidApp) document.documentElement.classList.add('sf-android-app');
   const rotateInstalledApp = enter => {
     if (!installedAndroidApp) return;
