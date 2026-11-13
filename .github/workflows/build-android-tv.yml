@@ -1,0 +1,68 @@
+name: Build YQXYY Android TV APK
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'android-tv/**'
+      - 'js/supabase-config.js'
+      - '.github/workflows/build-android-tv.yml'
+
+concurrency:
+  group: yqxyy-tv-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  tv:
+    name: Build independent TV APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Generate public-only TV config
+        run: node android-tv/tools/prepare-config.cjs
+      - name: Install Android SDK
+        run: |
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-35" "build-tools;35.0.0"
+      - name: Gradle 8.9
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+      - name: Compile TV APK
+        working-directory: android-tv
+        run: gradle --no-daemon --stacktrace :app:assembleDebug
+      - name: Package
+        run: cp android-tv/app/build/outputs/apk/debug/app-debug.apk YQXYY-TV.apk
+      - name: Upload TV APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: YQXYY-TV-APK
+          path: YQXYY-TV.apk
+          retention-days: 30
+      - name: Update TV-only release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          TAG=android-tv-latest
+          VERSION=$(sed -n "s/.*versionName '\([^']*\)'.*/\1/p" android-tv/app/build.gradle | head -1)
+          NOTES=$(printf 'YQXYY TV preview v%s\nCommit: %s\n\nIndependent Android TV APK with native Media3 video and subtitle selection. Does not update Netlify or phone APK. Debug-signed test release.' "$VERSION" "$GITHUB_SHA")
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" YQXYY-TV.apk --clobber
+            gh release edit "$TAG" --title "一起学英语 TV v$VERSION" --notes "$NOTES"
+          else
+            gh release create "$TAG" YQXYY-TV.apk --title "一起学英语 TV v$VERSION" --notes "$NOTES" --prerelease
+          fi
