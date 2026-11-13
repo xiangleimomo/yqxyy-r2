@@ -20,6 +20,12 @@ async function main(){
           const ext=(u.match(/\\.([a-zA-Z0-9]+)$/)||[])[1]||'none';
           extensionCounts[ext]=(extensionCounts[ext]||0)+1;}
         console.log('LEGACY cover extensions',JSON.stringify(extensionCounts));
+        console.log('LEGACY covers sample',data.slice(0,5).map(item=>({
+          id:item.seriesId,
+          coverType:typeof item.cover,
+          cover:String(item.cover||'').split('?')[0].slice(0,155)
+        })));
+        console.log('LEGACY nonempty cover count',data.filter(item=>typeof item.cover==='string'&&item.cover.trim()).length);
         const series=data.find(x=>String(x.seriesId).includes('three-kingdoms'))||data[0];
         if(series?.seriesId)try {
           const eps=await read('data/'+encodeURIComponent(series.seriesId)+'/episodes.json');
@@ -29,6 +35,11 @@ async function main(){
             'sampleVideoHosts=',Object.keys(sampleEp.video||{}).filter(k=>/url/i.test(k)).map(k=>{
                 try{return k+':'+new URL(sampleEp.video[k],base).host}catch{return k+':relative'}}));
         }catch(e){console.log('LEGACY episodes error:',e.message);}
+      }
+      if(path==='data/movie-posters.json'&&data){
+        console.log('LEGACY poster sample',Object.entries(data).slice(0,3).map(([id,cover])=>({
+          id,coverType:typeof cover,url:typeof cover==='string'?cover.split('?')[0].slice(0,155):Object.keys(cover||{})
+        })));
       }
       if(path==='data/movie-series.json'&&Array.isArray(data)){
         const group=data[0];
