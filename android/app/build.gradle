@@ -1,0 +1,22 @@
+plugins {
+  id 'com.android.application'
+}
+def websiteUrl = (project.findProperty('websiteUrl') ?: 'https://yqxyy-r2.netlify.app/').toString()
+if (!websiteUrl.startsWith('https://')) throw new GradleException('The website URL must use HTTPS')
+android {
+  namespace 'com.yqxyy.english'
+  compileSdk 35
+  defaultConfig {
+    applicationId 'com.yqxyy.english'
+    minSdk 24
+    targetSdk 34
+    versionCode 1
+    versionName '1.0.0'
+    buildConfigField 'String', 'APP_URL', '"' + websiteUrl + '"'
+  }
+  buildFeatures { buildConfig true }
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_17
+    targetCompatibility JavaVersion.VERSION_17
+  }
+}
