@@ -560,12 +560,14 @@ async renderLesson(seriesId, episodeId){
     return `<section class="direct-video-panel${unifiedPlayer?' sf-movie-lesson-player':''}"><div class="video-wrap${hasSubtitle?' subtitle-video-wrap':''}">${sourceSelector}<video class="hls-video-player" data-series="${this.escapeHtml(d.seriesId)}" data-episode="${Number(d.ep.episodeId)}" data-episode-count="${Number(d.series?.totalEpisodes)||0}" playsinline webkit-playsinline x5-playsinline="true" x5-video-player-type="h5" controlslist="nofullscreen noremoteplayback" disablepictureinpicture preload="metadata" data-clip-start="${Number.isFinite(Number(d.ep.video?.clipStart))?Number(d.ep.video.clipStart):''}" data-clip-end="${Number.isFinite(Number(d.ep.video?.clipEnd))?Number(d.ep.video.clipEnd):''}" data-hls-src="${this.escapeHtml(url)}" data-hls-fallback-srcs="${this.escapeHtml(JSON.stringify(fallbacks))}" data-fallback-src="${this.escapeHtml(fallback)}"></video><div class="sf-mobile-caption-area"><div class="video-caption" aria-live="polite" hidden></div><span class="sf-mobile-caption-message" role="status" hidden></span></div>${hasSubtitle?this.subtitleControls(d):''}</div>${unifiedPlayer?'<div class="sf-lesson-toolbar" role="toolbar" aria-label="分集播放操作"><button type="button" data-act="prev"><span>⏮</span><small>上一集</small></button><button type="button" data-act="play"><span>▶</span><small>播放</small></button><button type="button" data-act="next"><span>⏭</span><small>下一集</small></button><button type="button" data-act="speed"><span>⚡</span><small>1x</small></button><button type="button" data-act="quiz"><span>📝</span><small>测验</small></button><button type="button" data-act="captions"><span>⚙</span><small>字幕设置</small></button><button type="button" data-act="mute"><span>🔊</span><small>声音</small></button><button type="button" data-act="fullscreen"><span>⛶</span><small>全屏</small></button></div>':''}<div class="sf-mobile-captions-outside" role="region" aria-label="手机英文逐词字幕"><div class="sf-mobile-caption-line" aria-live="off">字幕准备中…</div><div class="sf-mobile-caption-hint" role="status">字幕即将加载</div><button type="button" class="sf-mobile-caption-enable" hidden>开启英文字幕</button></div><div class="sf-subtitle-offset" style="display:flex;align-items:center;justify-content:center;gap:12px;padding:12px;flex-wrap:wrap"><button type="button" class="sf-offset-minus" aria-label="字幕提前0.5秒">−</button><span class="sf-offset-label" aria-live="polite">0.0s</span><button type="button" class="sf-offset-plus" aria-label="字幕延后0.5秒">+</button><button type="button" class="sf-offset-reset">重置</button><span>字幕偏移设置</span></div></section>${unifiedPlayer?'':this.completeButton(d,completionModule)}`;
   },
   subtitlePreferences(){
-    const defaults={visible:true,wordHighlight:true,size:20,color:'#ffffff',captionX:50,captionY:84,opacity:72};
+    const defaults={visible:true,wordHighlight:true,size:20,color:'#ffffff',captionX:50,captionY:88,opacity:72};
     try{
       const saved=JSON.parse(localStorage.getItem('storyfox-subtitle-preferences')||'{}') || {};
       const legacyY={top:16,middle:50,bottom:84}[saved.position];
       const prefs={...defaults,...saved,...(!Number.isFinite(saved.captionY) && legacyY!==undefined?{captionY:legacyY}:{} )};
       prefs.size=Math.max(14,Math.min(64,Number(prefs.size)||20));
+      prefs.captionY=Math.max(8,Math.min(94,Number(prefs.captionY)||88));
+      prefs.captionX=Math.max(7,Math.min(93,Number(prefs.captionX)||50));
       prefs.color=/^#[0-9a-f]{6}$/i.test(prefs.color)?prefs.color:defaults.color;
       return prefs;
     }catch{return defaults;}
@@ -581,7 +583,9 @@ async renderLesson(seriesId, episodeId){
         <div class="subtitle-setting-row"><span>显示字幕</span><button type="button" class="btn secondary small subtitle-toggle" aria-pressed="${prefs.visible}">${prefs.visible?'已开启':'已关闭'}</button></div>
         ${d?.ep?.subtitleTracks?.englishChinese?"<label class=\"subtitle-setting-row\"><span>字幕语言</span><select class=\"subtitle-language-select\" aria-label=\"字幕语言\"><option value=\"en\">English</option><option value=\"bilingual\">English + 中文</option></select></label>":""}
         <div class="subtitle-setting-row"><span>逐词高亮</span><button type="button" class="btn secondary small subtitle-word-toggle" aria-pressed="${prefs.wordHighlight}">${prefs.wordHighlight?'已开启':'已关闭'}</button></div>
-        <div class="subtitle-setting-row"><span>字幕位置</span><span class="subtitle-drag-tip">直接拖动字幕</span></div>
+        <label class="subtitle-setting-row"><span>字幕高度</span><input class="subtitle-position" type="range" min="8" max="94" step="1" value="${prefs.captionY}" aria-label="字幕垂直位置"><output>${prefs.captionY}%</output></label>
+        <div class="subtitle-setting-row"><span>字幕位置</span><span class="subtitle-drag-tip">拖动字幕或使用上方滑块</span></div>
+        <div class="subtitle-timing-setting subtitle-setting-row"><span>字幕偏移</span><div class="sf-offset-buttons"><button type="button" class="sf-offset-minus" aria-label="字幕提前0.5秒">−0.5</button><output class="sf-offset-label">0.0s</output><button type="button" class="sf-offset-plus" aria-label="字幕延后0.5秒">+0.5</button><button type="button" class="sf-offset-reset" aria-label="重置字幕偏移">归零</button></div></div>
         <label class="subtitle-setting-row"><span>字幕颜色</span><input class="subtitle-color" type="color" value="${prefs.color}"></label>
         <label class="subtitle-setting-row"><span>字幕大小</span><input class="subtitle-size" type="range" min="14" max="64" step="1" value="${prefs.size}"><output>${prefs.size}px</output></label>
         <label class="subtitle-setting-row"><span>背景透明度</span><input class="subtitle-opacity" type="range" min="0" max="95" step="5" value="${prefs.opacity}"><output>${prefs.opacity}%</output></label>
@@ -742,18 +746,20 @@ async renderLesson(seriesId, episodeId){
     toggle.addEventListener('click',()=>{const prefs=save({visible:!this.subtitlePreferences().visible});toggle.textContent=prefs.visible?'已开启':'已关闭';toggle.setAttribute('aria-pressed',String(prefs.visible));syncCC();refreshCaption();});
     const wordToggle=controls.querySelector('.subtitle-word-toggle');
     wordToggle?.addEventListener('click',()=>{const prefs=save({wordHighlight:!this.subtitlePreferences().wordHighlight});wordToggle.textContent=prefs.wordHighlight?'已开启':'已关闭';wordToggle.setAttribute('aria-pressed',String(prefs.wordHighlight));refreshCaption();});
-    [['.subtitle-size','size','px'],['.subtitle-opacity','opacity','%']].forEach(([selector,key,suffix])=>{
+    [['.subtitle-size','size','px'],['.subtitle-opacity','opacity','%'],['.subtitle-position','captionY','%']].forEach(([selector,key,suffix])=>{
       const input=controls.querySelector(selector);input.addEventListener('input',()=>{input.nextElementSibling.textContent=`${input.value}${suffix}`;save({[key]:Number(input.value)});});
     });
     const changeColor=event=>save({color:event.target.value});
     controls.querySelector('.subtitle-color').addEventListener('input',changeColor);
     controls.querySelector('.subtitle-color').addEventListener('change',changeColor);
     controls.querySelector('.subtitle-reset-position').addEventListener('click',()=>{
-      const prefs=save({visible:true,wordHighlight:true,size:20,color:'#ffffff',captionX:50,captionY:84,opacity:72});
+      const prefs=save({visible:true,wordHighlight:true,size:20,color:'#ffffff',captionX:50,captionY:88,opacity:72});
       toggle.textContent='已开启';
       toggle.setAttribute('aria-pressed','true');
       syncCC();
       if(wordToggle){wordToggle.textContent='已开启';wordToggle.setAttribute('aria-pressed','true');}
+      controls.querySelector('.subtitle-position').value=prefs.captionY;
+      controls.querySelector('.subtitle-position').nextElementSibling.textContent=`${prefs.captionY}%`;
       controls.querySelector('.subtitle-size').value=prefs.size;
       controls.querySelector('.subtitle-size').nextElementSibling.textContent=`${prefs.size}px`;
       controls.querySelector('.subtitle-color').value=prefs.color;
@@ -849,12 +855,12 @@ async renderLesson(seriesId, episodeId){
     let bilingualCues=null;
     setMessage('等待对白开始…');
     const offsetHost=panel?.querySelector('.sf-subtitle-offset');
-    const offsetKey='storyfox-subtitle-offset:'+String(d.seriesId||'');
+    const offsetKey='storyfox-subtitle-offset:'+String(d.seriesId||'')+':'+String(d.ep?.episodeId||d.episodeId||'');
     const clampOffset=value=>Math.max(-30,Math.min(30,Math.round(value*2)/2));
     let offsetSeconds=0;
     try{offsetSeconds=clampOffset(Number(localStorage.getItem(offsetKey))||0);}catch{}
-    const offsetLabel=offsetHost?.querySelector('.sf-offset-label');
-    const showOffset=()=>{if(offsetLabel)offsetLabel.textContent=(offsetSeconds>0?'+':'')+offsetSeconds.toFixed(1)+'s';};
+    const offsetControls=panel?.querySelectorAll('.sf-offset-minus,.sf-offset-plus,.sf-offset-reset');
+    const showOffset=()=>{panel?.querySelectorAll('.sf-offset-label').forEach(label=>label.textContent=(offsetSeconds>0?'+':'')+offsetSeconds.toFixed(1)+'s');};
     const changeOffset=value=>{
       offsetSeconds=clampOffset(value);
       try{localStorage.setItem(offsetKey,String(offsetSeconds));}catch{}
@@ -862,9 +868,7 @@ async renderLesson(seriesId, episodeId){
       active=-1;
       update();
     };
-    offsetHost?.querySelector('.sf-offset-minus')?.addEventListener('click',()=>changeOffset(offsetSeconds-0.5));
-    offsetHost?.querySelector('.sf-offset-plus')?.addEventListener('click',()=>changeOffset(offsetSeconds+0.5));
-    offsetHost?.querySelector('.sf-offset-reset')?.addEventListener('click',()=>changeOffset(0));
+    offsetControls?.forEach(button=>button.addEventListener('click',()=>changeOffset(button.classList.contains('sf-offset-minus')?offsetSeconds-0.5:button.classList.contains('sf-offset-plus')?offsetSeconds+0.5:0)));
     showOffset();
     let nativeTrack=null;
     try{
@@ -994,7 +998,9 @@ async renderLesson(seriesId, episodeId){
       const updatePosition=moveEvent=>{
         const rect=stage.getBoundingClientRect();
         const x=Math.min(93,Math.max(7,((moveEvent.clientX-rect.left)/rect.width)*100));
-        const y=Math.min(86,Math.max(8,((moveEvent.clientY-rect.top)/rect.height)*100));
+        const y=Math.min(94,Math.max(8,((moveEvent.clientY-rect.top)/rect.height)*100));
+        const positionSlider=stage.querySelector('.subtitle-position');
+        if(positionSlider){positionSlider.value=String(Math.round(y));positionSlider.nextElementSibling.textContent=Math.round(y)+'%';}
         const next={...this.subtitlePreferences(),captionX:Math.round(x),captionY:Math.round(y)};
         localStorage.setItem('storyfox-subtitle-preferences',JSON.stringify(next));
         this.applySubtitlePreferences(stage);
