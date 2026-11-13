@@ -25,3 +25,23 @@ IMPORTANT: This APK uses an Android debug signature for private phone testing.
 It has not yet been verified on a physical Android device.\nBecause GitHub test builds are debug-signed on fresh CI runners, an older APK may have a different signature: uninstall the old test app before installing version 1.1. Cloud learning records remain in Supabase; local WebView login cookies will be reset. HLS playback and subtitle
 behavior should be checked on the phone. Production distribution requires a stable
 private signing key, versionCode updates, and upgrade testing.
+
+## GitHub-first Android frontend (1.2)
+
+The release GitHub Action runs `npm run build`, then copies `dist/` into
+`android/app/src/main/assets/site/` before Gradle compiles the APK.
+Android WebView serves **only the public static frontend routes**
+(`/`, `/index.html`, `/js/`, `/css/`, `/assets/`, `/arcade/`,
+and `/source-lab/`) from this snapshot using the existing HTTPS
+website origin. All `/data/*` content, Netlify Functions and
+Supabase requests remain online and are not intercepted.
+
+This deliberately works even if the Netlify static frontend is stale.
+Each new APK is a fixed snapshot of the GitHub commit that built it;
+new GitHub frontend edits require a new APK build, but R2 learning
+content continues to update live without rebuilding. Netlify and
+its backend must remain available until the Cloudflare migration
+is verified. Do not shut off Netlify early.
+
+The production Android build is debug-signed for personal testing;
+uninstall a previous install if its debug signature differs.
