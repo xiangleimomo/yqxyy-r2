@@ -104,7 +104,7 @@ jobs:
           TAG=android-app-latest
           VERSION=$(sed -n "s/.*versionName '\\([^']*\\)'.*/\\1/p" android/app/build.gradle | head -1)
           test -n "$VERSION"
-          NOTES=$(printf 'Version: v%s\\nCommit: %s\\n\\n安卓测试版；基于 GitHub 最新代码构建，课程资料仍从 R2 获取。\\n安装包采用测试签名，跨次构建如提示签名不符需卸载旧测试版。' "$VERSION" "$GITHUB_SHA")
+          NOTES=$(printf 'Version: v%s\nCommit: %s\n\n安卓测试版；基于 GitHub 最新代码构建，课程资料仍从 R2 获取。\n安装包采用测试签名，跨次构建如提示签名不符需卸载旧测试版。' "$VERSION" "$GITHUB_SHA")
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release upload "$TAG" "YQXYY-Android.apk" --clobber
             gh release edit "$TAG" --title "一起学英语 Android APP v$VERSION" --notes "$NOTES"
