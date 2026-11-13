@@ -187,26 +187,9 @@ window.MovieLibrary={
     const id=Number(tmdbId);
     if(!Number.isSafeInteger(id)||id<1)throw Error('请选择正确的 TMDB 电视剧');
     const titles=[metadata.title,metadata.title_zh].filter(value=>String(value||'').trim());
-    // TMDB is exact by ID, but this endpoint may be missing on a site that
-    // still serves an older Netlify deploy. Check both JSON type and schema.
-    try{
-      const response=await fetch('/.netlify/functions/movie-tv-seasons?id='+id,{
-        cache:'no-store',signal:AbortSignal.timeout(6000)
-      });
-      const type=String(response.headers?.get?.('content-type')||'');
-      if(type.includes('application/json')){
-        const body=await response.json();
-        if(response.ok&&Number(body.id)===id&&Array.isArray(body.seasons)){
-          const seasons=body.seasons.filter(item=>Number.isInteger(item.season_number)&&item.season_number>=1&&
-            Number.isInteger(item.episode_count)&&item.episode_count>0);
-          if(seasons.length)return {seasons,source:'TMDB',title:body.title||titles[0]||'',
-            total_episodes:seasons.reduce((sum,item)=>sum+item.episode_count,0),
-            source_url:'https://www.themoviedb.org/tv/'+id};
-        }
-      }
-    }catch(error){
-      console.info('TMDB metadata endpoint unavailable; using public TVmaze fallback',String(error.message||error));
-    }
+    // This APK reads the public TVmaze REST API directly; no Netlify
+    // deployment, TMDB credentials or custom serverless endpoint is needed.
+    // TVmaze and TMDB can differ in episode numbering, so label the source.
     if(!titles.length)throw Error('请先选择带有电视剧名称的搜索结果，才能自动采集集数。');
     let candidates=[];
     let show=null;
