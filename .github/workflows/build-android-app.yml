@@ -23,6 +23,11 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
+      - name: Verify Android player and fullscreen bridge
+        run: |
+          node --check js/mobile-caption-fullscreen.js
+          node --check js/desktop-player.js
+          node --test tests/android-player-bridge.test.cjs
       - name: Install required Android platform
         run: |
           echo "ANDROID_HOME=$ANDROID_HOME"
