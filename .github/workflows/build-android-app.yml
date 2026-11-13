@@ -8,6 +8,13 @@ on:
       - 'index.html'
       - 'js/mobile-caption-fullscreen.js'
       - 'js/desktop-player.js'
+      - 'js/app.js'
+      - 'js/movie-library.js'
+      - 'js/movie-subtitles.js'
+      - 'js/movies.js'
+      - 'js/media-shelf.js'
+      - 'tests/movie-tv-batch.test.cjs'
+      - 'tests/subtitle-position-offset.test.cjs'
       - 'css/unified-player.css'
       - '.github/workflows/build-android-app.yml'
 
@@ -47,7 +54,18 @@ jobs:
         run: |
           node --check js/mobile-caption-fullscreen.js
           node --check js/desktop-player.js
-          node --test tests/android-player-bridge.test.cjs
+          node --check js/app.js
+          node --check js/movie-subtitles.js
+          node --check js/movie-library.js
+          node --check js/movies.js
+          node --check js/media-shelf.js
+          node --test tests/android-player-bridge.test.cjs tests/movie-tv-batch.test.cjs tests/subtitle-position-offset.test.cjs
+      - name: Install website test dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Browser-check movie editor and in-video subtitles
+        run: |
+          node tests/movie-source-editor.browser.cjs
+          node tests/movie-player-layout.browser.cjs
       - name: Install required Android platform
         run: |
           echo "ANDROID_HOME=$ANDROID_HOME"
