@@ -58,6 +58,62 @@ window.MovieLibrary={
     if(!Number.isSafeInteger(id)||id<1||tv&&(!Number.isSafeInteger(season)||season<1||!Number.isSafeInteger(episode)||episode<1))return null;
     return {kind:'auto',label:'直链播放',url:`https://api.obj2.top/hls/${tv?`tv/${id}/${season}/${episode}`:`movie/${id}`}/master.m3u8`};
   },
+  planTvEpisodes(row,endValue,rawText=''){
+    const tmdb=Number(row.tmdb_id),season=Number(row.season_number),start=Number(row.episode_number);
+    const end=Number(endValue||start);
+    if(![tmdb,season,start,end].every(Number.isSafeInteger)||tmdb<1||season<1||start<1||end<start||end>9999)
+      throw Error('请填写有效的 TMDB、季数及起止集数。');
+    const lines=String(rawText||'').split(/\r?\n/).map(line=>line.trim()).filter(Boolean);
+    if(lines.length>200||(!lines.length&&end-start+1>200))throw Error('每次最多批量添加 200 集，请分批发布。');
+    const episodes=[];
+    if(!lines.length){
+      for(let number=start;number<=end;number++)episodes.push({season,episode:number,url:''});
+    }else{
+      let unnamed=0;
+      for(const line of lines){
+        // Either one URL per line in episode order, or S2E5|URL for
+        // arbitrary seasons/episodes in a single paste.
+        const tagged=line.match(/^S(\d{1,4})E(\d{1,5})\s*(?:\||:|,|\s)\s*(https:\/\/\S+)$/i);
+        const ep=tagged?{season:Number(tagged[1]),episode:Number(tagged[2]),url:tagged[3]}:
+          {season,episode:start+unnamed++,url:line};
+        if(!Number.isSafeInteger(ep.season)||ep.season<1||!Number.isSafeInteger(ep.episode)||ep.episode<1||ep.episode>9999)
+          throw Error('季数或集数无效：'+line.slice(0,50));
+        // Reuse the same URL validator as the single-movie source editor.
+        const auto=this.automaticSource({...row,season_number:ep.season,episode_number:ep.episode});
+        if(ep.url!==auto.url)this.validateSources({...row,season_number:ep.season,episode_number:ep.episode},
+          [{kind:'direct',label:'本集播放地址',url:ep.url}]);
+        episodes.push(ep);
+      }
+      if(!lines.some(line=>/^S\d+E\d+/i.test(line))&&end>start&&episodes.length!==end-start+1)
+        throw Error('粘贴地址数量与起止集数不一致，请检查后再发布。');
+    }
+    const seen=new Set();
+    for(const item of episodes){
+      const key=item.season+':'+item.episode;
+      if(seen.has(key))throw Error('存在重复的电视剧集编号：S'+item.season+'E'+item.episode);
+      seen.add(key);
+    }
+    return episodes;
+  },
+  tvBatchRows(row,plans,existing=[]){
+    return plans.map((part,index)=>{
+      const prior=existing.find(item=>item.media_type==='tv'&&Number(item.tmdb_id)===row.tmdb_id&&
+        Number(item.season_number||1)===part.season&&Number(item.episode_number||1)===part.episode);
+      const entry={...row,
+        id:prior?.id||`tmdb-tv-${row.tmdb_id}-s${part.season}-e${part.episode}`,
+        season_number:part.season,episode_number:part.episode,
+        sort_order:row.sort_order+index
+      };
+      const auto=this.automaticSource(entry);
+      entry.playback_sources=this.validateSources(entry,part.url&&part.url!==auto.url?
+        [{kind:'direct',label:'本集播放地址',url:part.url}]:[]);
+      // Re-publishing an automatically generated episode should not silently
+      // delete its individually edited alternate playback sources.
+      if(prior&&entry.playback_sources.length===1&&!part.url&&Array.isArray(prior.playback_sources)&&prior.playback_sources.length>1)
+        entry.playback_sources=this.validateSources(entry,prior.playback_sources.filter(src=>src.kind!=='auto'));
+      return entry;
+    });
+  },
   validateSources(row,manual){
     const automatic=this.automaticSource(row);if(!automatic)throw Error('请先选择有效的 TMDB 影片及季、集编号。');
     if(manual.length>20)throw Error('最多添加 20 条手动播放源。');
