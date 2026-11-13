@@ -6,6 +6,10 @@ on:
     - cron: '55 16 13 11 *'
       timezone: 'Asia/Shanghai'
   workflow_dispatch:
+  # Temporary one-time trigger; removed immediately after the run is queued.
+  push:
+    paths:
+      - '.github/workflows/littlefox-collect-handoff.yml'
 permissions:
   contents: write
 concurrency:
