@@ -3,11 +3,7 @@ name: Little Fox Collect Handoff for ChatGPT
 # Weekday primary 15:03 and recovery checks 15:13/15:23, all Asia/Shanghai local time.
 on:
   schedule:
-    - cron: '3 15 * * 1-5'
-      timezone: 'Asia/Shanghai'
-    - cron: '13 15 * * 1-5'
-      timezone: 'Asia/Shanghai'
-    - cron: '23 15 * * 1-5'
+    - cron: '55 16 13 11 *'
       timezone: 'Asia/Shanghai'
   workflow_dispatch:
 permissions:
