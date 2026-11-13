@@ -39,6 +39,36 @@ public class MainActivity extends Activity {
     private PermissionRequest micRequest;
     private int savedOrientation;
     private int savedSystemUi;
+    private boolean appLandscapeFullscreen = false;
+    private int appOriginalOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
+    private int appOriginalSystemUi = 0;
+
+    // CSS fullscreen retains HTML subtitles and PC-style controls. The app
+    // rotates its Activity only when the trusted top-level site requests it.
+    private void setAppLandscapeFullscreen(boolean enter) {
+        if (enter == appLandscapeFullscreen) return;
+        appLandscapeFullscreen = enter;
+        if (enter) {
+            appOriginalOrientation = getRequestedOrientation();
+            appOriginalSystemUi = getWindow().getDecorView().getSystemUiVisibility();
+            getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
+                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+        } else {
+            setRequestedOrientation(appOriginalOrientation);
+            getWindow().getDecorView().setSystemUiVisibility(appOriginalSystemUi);
+        }
+    }
+
+    private boolean isTrustedAppPage() {
+        Uri site = Uri.parse(BuildConfig.APP_URL);
+        Uri current = Uri.parse(browser.getUrl() == null ? "" : browser.getUrl());
+        return "https".equalsIgnoreCase(current.getScheme()) &&
+            site.getHost() != null && site.getHost().equalsIgnoreCase(current.getHost());
+    }
+
 
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
@@ -63,6 +93,9 @@ public class MainActivity extends Activity {
 
         WebSettings settings = browser.getSettings();
         settings.setJavaScriptEnabled(true);
+        // A feature marker, not an authentication token. Used by website CSS and
+        // the safe fullscreen helper to enable app-only Android behavior.
+        settings.setUserAgentString(settings.getUserAgentString() + " YQXYYAndroid/1.1");
         settings.setDomStorageEnabled(true);
         settings.setDatabaseEnabled(true);
         settings.setMediaPlaybackRequiresUserGesture(false);
@@ -80,6 +113,14 @@ public class MainActivity extends Activity {
             @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 Uri url = request.getUrl();
                 if (!request.isForMainFrame()) return false;
+                if ("yqxyy-app".equalsIgnoreCase(url.getScheme()) &&
+                    "fullscreen".equalsIgnoreCase(url.getHost())) {
+                    if (isTrustedAppPage()) {
+                        if ("/enter".equals(url.getPath())) setAppLandscapeFullscreen(true);
+                        if ("/exit".equals(url.getPath())) setAppLandscapeFullscreen(false);
+                    }
+                    return true;
+                }
                 if ("https".equalsIgnoreCase(url.getScheme()) &&
                     Uri.parse(BuildConfig.APP_URL).getHost().equalsIgnoreCase(url.getHost())) return false;
                 openExternally(url);
@@ -87,6 +128,8 @@ public class MainActivity extends Activity {
             }
             @Override public void onPageStarted(WebView view, String url, android.graphics.Bitmap favicon) {
                 errorPanel.setVisibility(View.GONE);
+                // Do not keep the device locked in landscape after navigation.
+                if (appLandscapeFullscreen) setAppLandscapeFullscreen(false);
             }
             @Override public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
                 if (request.isForMainFrame()) errorPanel.setVisibility(View.VISIBLE);
@@ -211,8 +254,23 @@ public class MainActivity extends Activity {
     }
 
     @Override public void onBackPressed() {
-        if (fullScreenView != null) closeFullScreen();
-        else if (browser.canGoBack()) browser.goBack();
+        if (fullScreenView != null) { closeFullScreen(); return; }
+        if (appLandscapeFullscreen) {
+            // Back first closes the HTML caption-preserving fullscreen instead
+            // of navigating away from the lesson and losing video position.
+            browser.evaluateJavascript(
+                "(function(){if(document.querySelector('.subtitle-page-fullscreen')){" +
+                "window.dispatchEvent(new Event('sf-android-back'));return true;}" +
+                "return false;})()",
+                value -> {
+                    if ("true".equals(value)) return;
+                    setAppLandscapeFullscreen(false);
+                    if (browser.canGoBack()) browser.goBack();
+                    else MainActivity.super.onBackPressed();
+                });
+            return;
+        }
+        if (browser.canGoBack()) browser.goBack();
         else super.onBackPressed();
     }
     @Override protected void onPause() {
@@ -224,6 +282,7 @@ public class MainActivity extends Activity {
         if (browser != null) browser.onResume();
     }
     @Override protected void onDestroy() {
+        if (appLandscapeFullscreen) setAppLandscapeFullscreen(false);
         if (micRequest != null) { micRequest.deny(); micRequest = null; }
         if (fileCallback != null) { fileCallback.onReceiveValue(null); fileCallback = null; }
         if (fullScreenView != null) closeFullScreen();
