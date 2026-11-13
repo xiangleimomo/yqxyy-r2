@@ -10,6 +10,10 @@ on:
     - cron: '23 15 * * 1-5'
       timezone: 'Asia/Shanghai'
   workflow_dispatch:
+  # Temporary one-off trigger for the requested Daisy Dolittle lesson only.
+  push:
+    paths:
+      - '.github/workflows/littlefox-collect-handoff.yml'
 permissions:
   contents: write
 concurrency:
@@ -17,6 +21,8 @@ concurrency:
   cancel-in-progress: false
 jobs:
   collect:
+    env:
+      LF_ONLY_SERIES: little-fox-daisy-dolittle-fs0175
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
