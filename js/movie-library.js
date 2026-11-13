@@ -195,7 +195,66 @@ window.MovieLibrary={
     field('cover_file').onchange=async()=>{try{cover=await this.uploadCover(field('cover_file').files[0],status);field('poster_url').value=cover;status.textContent='封面已上传，可继续发布。';preview();}catch(error){status.textContent=error.message;}};
     const drawResults=list=>{const box=app.el().querySelector('#movieMetaResults');box.innerHTML=list.map((row,index)=>`<button type="button" class="movie-meta-result" data-index="${index}">${row.posterUrl?`<img src="${e(row.posterUrl)}" alt="" referrerpolicy="no-referrer">`:''}<span><strong>${e(row.title)}</strong><small>${e(row.mediaType==='tv'?'电视剧':'电影')} · ${e(row.year||'年份未知')} · TMDB ${e(row.tmdbId)}</small></span></button>`).join('')||'<p class="muted">没有找到可用影片资料。</p>';box.querySelectorAll('[data-index]').forEach(button=>button.onclick=()=>fill(list[Number(button.dataset.index)]));};
     const search=async()=>{const query=app.el().querySelector('#movieMetaSearch').value.trim();if(!query)return;status.textContent='正在搜索影片资料…';try{const list=await this.search(query);drawResults(list);status.textContent=`找到 ${list.length} 条结果，请选择正确影片。`;}catch(error){status.textContent=error.message;}};app.el().querySelector('#movieMetaSearchButton').onclick=search;app.el().querySelector('#movieMetaSearch').onkeydown=event=>{if(event.key==='Enter'){event.preventDefault();search();}};
-    form.onsubmit=async event=>{event.preventDefault();if(!this.admin()){show('管理员登录状态已失效，请重新登录。','error');return;}if(!form.checkValidity()){show('请先填写标记为必填的影片资料。','error');form.reportValidity();return;}const type=field('media_type').value;const tmdb=Number(field('tmdb_id').value);if(!Number.isSafeInteger(tmdb)||tmdb<1){show('请从搜索结果中选择有效影片。','error');return;}const row={id:field('id').value||`tmdb-${type}-${tmdb}`,category:field('category').value,media_type:type,tmdb_id:tmdb,title:field('title').value.trim(),title_zh:field('title_zh').value.trim(),year:Number(field('year').value)||null,season_number:type==='tv'?Math.max(1,Number(field('season_number').value)||1):1,episode_number:type==='tv'?Math.max(1,Number(field('episode_number').value)||1):1,poster_url:field('poster_url').value.trim(),overview:field('overview').value.trim(),sort_order:Number(field('sort_order').value)||0,published:field('published').checked,created_by:window.SFCloud.user.id,updated_at:new Date().toISOString()};if(!row.title){show('请填写影片名称。','error');return;}publishButton.disabled=true;try{row.playback_sources=this.editorSources(form,row);show('正在发布影片，请稍候…','loading');await this.verifyPlayback(tmdb);show('正在写入影片资料…','loading');const {data,error}=await window.SFCloud.client.from('movie_library').upsert(row,{onConflict:'id'}).select('id,published,playback_sources').single();if(error)throw error;if(!data?.id||(!Array.isArray(data.playback_sources)||data.playback_sources.length!==row.playback_sources.length||data.playback_sources.some((source,i)=>['kind','url','label'].some(key=>source[key]!==row.playback_sources[i][key]))))throw Error('后台未确认播放源保存，请重试。');this.invalidate();show('保存成功，正在更新资源列表…','success');rows=await this.rows(true);app.el().innerHTML='';await this.renderAdmin(app);}catch(error){show('发布失败：'+error.message,'error');}finally{publishButton.disabled=false;}};
+    form.onsubmit=async event=>{
+      event.preventDefault();
+      if(!this.admin()){show('管理员登录状态已失效，请重新登录。','error');return;}
+      if(!form.checkValidity()){show('请先填写必填资料。','error');form.reportValidity();return;}
+      const type=field('media_type').value,tmdb=Number(field('tmdb_id').value);
+      if(!Number.isSafeInteger(tmdb)||tmdb<1){show('请从搜索结果中选择有效影片。','error');return;}
+      const row={
+        id:selected?.media_type===type?field('id').value:`tmdb-${type}-${tmdb}`,
+        category:field('category').value,media_type:type,tmdb_id:tmdb,
+        title:field('title').value.trim(),title_zh:field('title_zh').value.trim(),
+        year:Number(field('year').value)||null,
+        season_number:type==='tv'?Number(field('season_number').value)||1:1,
+        episode_number:type==='tv'?Number(field('episode_number').value)||1:1,
+        poster_url:field('poster_url').value.trim(),overview:field('overview').value.trim(),
+        sort_order:Number(field('sort_order').value)||0,published:field('published').checked,
+        created_by:window.SFCloud.user.id,updated_at:new Date().toISOString()
+      };
+      if(!row.title){show('请填写影片名称。','error');return;}
+      publishButton.disabled=true;
+      try{
+        const directEditor=Array.from(form.querySelectorAll('.movie-source-entry'));
+        let payload;
+        if(type==='tv'){
+          const plans=this.planTvEpisodes(row,field('episode_end').value,field('tv_episode_urls').value);
+          if(plans.length>1&&directEditor.length&&!form.querySelector('.movie-source-editor').hidden)
+            throw Error('电视剧批量播放地址请填写在「批量播放链接」中。');
+          payload=this.tvBatchRows(row,plans,rows);
+          // Editing one historical TV episode still supports manually saved
+          // direct and iframe alternate playback sources.
+          if(plans.length===1&&!field('tv_episode_urls').value.trim())
+            payload[0].playback_sources=this.editorSources(form,payload[0]);
+        }else{
+          row.id=row.id||`tmdb-movie-${tmdb}`;
+          row.playback_sources=this.editorSources(form,row);
+          payload=[row];
+        }
+        show('准备发布 '+payload.length+' 项，正在检查并保存…','loading');
+        await this.verifyPlayback(tmdb);
+        const table=window.SFCloud.client.from('movie_library');
+        const query=table.upsert(payload.length===1?payload[0]:payload,{onConflict:'id'})
+          .select('id,published,playback_sources');
+        const {data,error}=payload.length===1?await query.single():await query;
+        if(error)throw error;
+        const saved=Array.isArray(data)?data:[data];
+        if(saved.length!==payload.length)throw Error('后台返回的条目数量不完整，请核对后重试。');
+        for(const expected of payload){
+          const actual=saved.find(item=>item?.id===expected.id);
+          if(!actual||!Array.isArray(actual.playback_sources)||
+             actual.playback_sources.length!==expected.playback_sources.length||
+             actual.playback_sources.some((source,i)=>
+               ['kind','url','label'].some(key=>source[key]!==expected.playback_sources[i][key])))
+            throw Error('后台未确认保存：'+expected.id);
+        }
+        this.invalidate();
+        show('已保存 '+payload.length+' 项，正在刷新资源列表…','success');
+        rows=await this.rows(true);
+        await this.renderAdmin(app);
+      }catch(error){show('发布失败：'+error.message,'error');}
+      finally{publishButton.disabled=false;}
+    };
     app.el().querySelectorAll('.movie-edit').forEach(button=>button.onclick=()=>fill(rows.find(row=>row.id===button.closest('[data-id]').dataset.id)));app.el().querySelectorAll('.movie-delete').forEach(button=>button.onclick=async()=>{const id=button.closest('[data-id]').dataset.id,row=rows.find(item=>item.id===id);if(!window.confirm(`确认删除《${row.title_zh||row.title}》吗？删除后前台将不再显示。`))return;const {error}=await window.SFCloud.client.from('movie_library').delete().eq('id',id);if(error){status.textContent='删除失败：'+error.message;return;}this.invalidate();await this.renderAdmin(app);});preview();
   }
 };
