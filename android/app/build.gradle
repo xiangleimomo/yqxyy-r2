@@ -1,6 +1,7 @@
 plugins {
   id 'com.android.application'
 }
+def buildSha = (project.findProperty('buildSha') ?: 'unknown').toString().replaceAll('[^0-9a-f]', '')
 def websiteUrl = (project.findProperty('websiteUrl') ?: 'https://yqxyy-r2.netlify.app/').toString()
 if (!websiteUrl.startsWith('https://')) throw new GradleException('The website URL must use HTTPS')
 android {
@@ -10,9 +11,10 @@ android {
     applicationId 'com.yqxyy.english'
     minSdk 24
     targetSdk 34
-    versionCode 4
-    versionName '1.3.0'
+    versionCode 5
+    versionName '1.4.0'
     buildConfigField 'String', 'APP_URL', '"' + websiteUrl + '"'
+    buildConfigField 'String', 'APP_BUILD_SHA', '"' + buildSha + '"'
   }
   buildFeatures { buildConfig true }
   compileOptions {
