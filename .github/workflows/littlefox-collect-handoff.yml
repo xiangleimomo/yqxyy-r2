@@ -10,27 +10,13 @@ on:
     - cron: '23 15 * * 1-5'
       timezone: 'Asia/Shanghai'
   workflow_dispatch:
-  # Temporary, diagnostic-only trigger: editing this workflow must prove it is enabled.
-  push:
-    paths:
-      - '.github/workflows/littlefox-collect-handoff.yml'
 permissions:
   contents: write
 concurrency:
   group: littlefox-collect-handoff
   cancel-in-progress: false
 jobs:
-  trigger-diagnostic:
-    if: github.event_name == 'push'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Confirm workflow is enabled (diagnostic only)
-        run: |
-          echo "The collector workflow accepted a push trigger."
-          echo "This diagnostic run intentionally does not fetch or publish any source material."
-          echo "event=$GITHUB_EVENT_NAME actor=$GITHUB_ACTOR run_id=$GITHUB_RUN_ID"
   collect:
-    if: github.event_name != 'push'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
