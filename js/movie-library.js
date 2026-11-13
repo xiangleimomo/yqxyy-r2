@@ -150,7 +150,7 @@ window.MovieLibrary={
   // has not yet been deployed. TVmaze's public API supports CORS without keys.
   normalizeSeriesTitle(value){
     return String(value||'').normalize('NFKC').toLowerCase()
-      .replace(/&/g,'and').replace(/[^\\p{L}\\p{N}]+/gu,'').trim();
+      .replace(/&/g,'and').replace(/[^\p{L}\p{N}]+/gu,'').trim();
   },
   matchTvmazeShows(results,titles,year){
     const names=[...new Set(titles.map(t=>this.normalizeSeriesTitle(t)).filter(Boolean))];
@@ -164,7 +164,9 @@ window.MovieLibrary={
           const y=Number(String(show.premiered||'').slice(0,4));
           return Number.isInteger(y)&&Math.abs(y-published)<=2;
         }):exact;
-    const unique=(candidates.length?candidates:exact).filter((show,index,array)=>array.findIndex(other=>other.id===show.id)===index);
+    // Never pick another production with the same title if its original
+    // broadcast year disagrees with the TMDB year provided by the user.
+    const unique=candidates.filter((show,index,array)=>array.findIndex(other=>other.id===show.id)===index);
     if(unique.length!==1)return null;
     return unique[0];
   },
