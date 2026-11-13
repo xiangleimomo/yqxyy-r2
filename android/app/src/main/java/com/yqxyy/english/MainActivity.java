@@ -24,6 +24,7 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ByteArrayInputStream;
 import java.util.Collections;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -168,6 +169,8 @@ public class MainActivity extends Activity {
         settings.setMediaPlaybackRequiresUserGesture(false);
         settings.setJavaScriptCanOpenWindowsAutomatically(false);
         settings.setSupportMultipleWindows(false);
+        // Enable Android Safe Browsing on Android 8.0+.
+        if (android.os.Build.VERSION.SDK_INT >= 26) settings.setSafeBrowsingEnabled(true);
         settings.setLoadWithOverviewMode(true);
         settings.setUseWideViewPort(true);
         settings.setAllowFileAccess(false);
@@ -179,10 +182,17 @@ public class MainActivity extends Activity {
         browser.setWebViewClient(new WebViewClient() {
             @Override public WebResourceResponse shouldInterceptRequest(
                     WebView view, WebResourceRequest request) {
+                // Only known advertising hosts are filtered; do not interfere
+                // with player HTML, scripts, HLS manifests, or media CDNs.
+                if (PlayerAdGuard.isKnownAdHost(request.getUrl().getHost())) {
+                    return new WebResourceResponse("text/plain", "UTF-8",
+                        new ByteArrayInputStream(new byte[0]));
+                }
                 return bundledWebsiteFile(request);
             }
             @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 Uri url = request.getUrl();
+                if (PlayerAdGuard.isKnownAdHost(url.getHost())) return true;
                 if (!request.isForMainFrame()) return false;
                 if ("yqxyy-app".equalsIgnoreCase(url.getScheme()) &&
                     "fullscreen".equalsIgnoreCase(url.getHost())) {
@@ -192,8 +202,17 @@ public class MainActivity extends Activity {
                     }
                     return true;
                 }
+                String appHost = Uri.parse(BuildConfig.APP_URL).getHost();
                 if ("https".equalsIgnoreCase(url.getScheme()) &&
-                    Uri.parse(BuildConfig.APP_URL).getHost().equalsIgnoreCase(url.getHost())) return false;
+                    appHost != null && appHost.equalsIgnoreCase(url.getHost())) return false;
+                // Redirects from a third-party iframe must never launch an
+                // advertising tab or replace the trusted player page.
+                // A deliberate update download uses the trusted native bridge.
+                if (PlayerAdGuard.isPlayerPage(view.getUrl())) {
+                    Toast.makeText(MainActivity.this, "已阻止第三方播放器跳转", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+                if (!PlayerAdGuard.canOpenExternalScheme(url.getScheme())) return true;
                 openExternally(url);
                 return true;
             }
@@ -207,6 +226,11 @@ public class MainActivity extends Activity {
             }
         });
         browser.setWebChromeClient(new WebChromeClient() {
+            @Override public boolean onCreateWindow(WebView view, boolean isDialog,
+                    boolean isUserGesture, android.os.Message resultMsg) {
+                // Third-party players sometimes use target=_blank / popup ads.
+                return false;
+            }
             @Override public void onShowCustomView(View view, CustomViewCallback callback) {
                 if (fullScreenView != null) { callback.onCustomViewHidden(); return; }
                 savedSystemUi = getWindow().getDecorView().getSystemUiVisibility();
@@ -260,6 +284,12 @@ public class MainActivity extends Activity {
         browser.setDownloadListener((url, userAgent, contentDisposition, mimetype, contentLength) -> {
             try {
                 Uri uri = Uri.parse(url);
+                if (PlayerAdGuard.isKnownAdHost(uri.getHost()) ||
+                    (PlayerAdGuard.isPlayerPage(browser.getUrl()) &&
+                     !Uri.parse(BuildConfig.APP_URL).getHost().equalsIgnoreCase(uri.getHost()))) {
+                    Toast.makeText(this, "已阻止播放器下载或广告跳转", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 if (!"https".equalsIgnoreCase(uri.getScheme()) || android.os.Build.VERSION.SDK_INT < 29) {
                     openExternally(uri);
                     return;
