@@ -232,13 +232,17 @@ window.MovieLibrary={
         ? '已搜索公开剧集资料，但未能唯一匹配该电视剧；请核对英文片名、首播年份或手动输入集数。'
         : '在线集数资料暂不可用'+(lastError?'（网络请求失败）':'（未找到同名电视剧）')+'；请手动填写。');
     }
-    const response=await fetch('https://api.tvmaze.com/shows/'+show.id+'/episodes',{
-      headers:{Accept:'application/json'},signal:AbortSignal.timeout(14000)});
-    if(!response.ok){
+    let episodeList;
+    try{
+      const response=await fetch('https://api.tvmaze.com/shows/'+show.id+'/episodes',{
+        headers:{Accept:'application/json'},signal:AbortSignal.timeout(14000)});
+      if(!response.ok)throw Error('HTTP '+response.status);
+      episodeList=await response.json();
+    }catch(error){
       if(verified)return verified;
-      throw Error('剧集列表暂时无法读取（HTTP '+response.status+'）');
+      throw Error('剧集列表暂时无法读取，请检查网络或手动填写。');
     }
-    const data=this.summarizeTvmazeEpisodes(await response.json());
+    const data=this.summarizeTvmazeEpisodes(episodeList);
     if(!data.seasons.length){
       if(verified)return verified;
       throw Error('公开剧集库尚未收录可识别的分集记录，请手动填写。');
