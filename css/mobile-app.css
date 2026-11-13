@@ -99,3 +99,19 @@ html.sf-mobile-app.series-fixed-page,body.sf-mobile-app.series-fixed-page{height
   .sf-mobile-app .app-shell.series-page-shell .episode-workspace>.module-grid{margin-top:0}
 }
 
+
+
+/* New kids cartoons shelf and footer version/update controls. */
+.sf-app-kids-placeholders{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.sf-app-kids-placeholder{min-width:0;display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 6px;border-radius:13px;background:#f4f0ff;text-align:center}
+.sf-app-kids-symbol{display:grid;place-items:center;width:66px;height:66px;background:#fff;border-radius:16px;font-size:34px}
+.sf-app-kids-placeholder strong{font-size:13px;color:#2d3250}
+.sf-app-kids-placeholder small{font-size:10px;color:#8292a5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+.sf-app-kids-placeholder span{font-size:10px;color:#9da4b4}
+.sf-app-update-panel{display:flex;flex-direction:column;gap:10px;padding:20px 18px 16px;border-radius:20px;background:#fff;border:1px solid #e4ecf4}
+.sf-app-update-top{display:flex;align-items:center;justify-content:space-between;gap:10px;color:#334a62;font-size:13px}
+.sf-app-update-top span{color:#8a9daf;font-size:12px}
+.sf-app-update-panel p{margin:0;font-size:12px;color:#7d90a2;line-height:1.5}
+.sf-app-update-panel button{align-self:flex-start;padding:9px 15px;border:1px solid #c7e0f8;border-radius:10px;background:#eaf5ff;color:#1974b2;font-size:13px;font-weight:700;cursor:pointer}
+.sf-app-update-panel button:disabled{cursor:default;opacity:.55}
+@media(min-width:680px){.sf-app-kids-placeholders{grid-template-columns:repeat(4,minmax(0,1fr))}}
