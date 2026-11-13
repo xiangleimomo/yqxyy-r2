@@ -12,6 +12,8 @@ window.MovieSubtitles = {
     const results = panel.querySelector('.movie-subtitle-results');
     field('query').value = movie.title || movie.titleZh;
     field('year').value = movie.year || '';
+    const movieOffsetKey='storyfox-movie-subtitle-offset:'+String(movie.id||movie.tmdbId||movie.title||'');
+    try{field('offset').value=String(Math.max(-30,Math.min(30,Number(localStorage.getItem(movieOffsetKey))||0)));}catch{}
     const abort = new AbortController(), blobs = [], tracks = [];
     let disposed = false, request = 0, download = 0, hlsBound, userSelectedTrack=false;
     const nativeIds=new WeakMap(),nativeTracks=new Map(),cueTracks=new Map(),cueListeners=new Map(),hlsListeners=[];
@@ -56,21 +58,33 @@ window.MovieSubtitles = {
       settings=frame.querySelector('.subtitle-controls');
       const trackRow=document.createElement('label');trackRow.className='subtitle-setting-row';trackRow.innerHTML='<span>字幕轨道</span><select aria-label="选择字幕轨道"></select>';settings.append(trackRow);settingsTrack=trackRow.querySelector('select');
       settingsTrack.onchange=()=>{field('track').value=settingsTrack.value;choose();};
-      const offsetRow=document.createElement('label');offsetRow.className='subtitle-setting-row';offsetRow.innerHTML='<span>字幕偏移（秒）</span>';offsetRow.append(field('offset'));settings.append(offsetRow);panel.remove();
+      // The unified toolbar owns the shift buttons and vertical-position slider.
+      // Keep the original numeric input in the DOM for subtitle rendering.
+      field('offset').type='hidden';
+      settings.querySelectorAll('.sf-offset-minus,.sf-offset-plus,.sf-offset-reset').forEach(button=>button.addEventListener('click',()=>{
+        const delta=button.classList.contains('sf-offset-minus')?-0.5:button.classList.contains('sf-offset-plus')?0.5:null;
+        const current=Number(field('offset').value)||0;
+        field('offset').value=String(Math.max(-30,Math.min(30,Math.round((delta===null?0:current+delta)*2)/2)));
+        field('offset').dispatchEvent(new Event('input',{bubbles:true}));
+        updateOffsetLabels();
+      }));
+      panel.remove();
       caption=document.createElement('div');caption.className='video-caption';caption.hidden=true;frame.append(caption);
       frame.classList.add('subtitle-video-wrap','sf-movie-custom-caption');
       const trigger=frame.querySelector('.subtitle-settings-trigger');
       trigger.onclick=()=>{const open=frame.classList.toggle('subtitle-settings-open');frame.classList.add('subtitle-settings-visible');trigger.setAttribute('aria-expanded',String(open));if(open){const menu=frame.querySelector('.movie-source-menu');if(menu)menu.hidden=true;frame.closest('.sf-full-movie-player')?.querySelectorAll('.movie-source-trigger').forEach(button=>button.setAttribute('aria-expanded','false'));}};
       const save=patch=>{localStorage.setItem('storyfox-subtitle-preferences',JSON.stringify({...app.subtitlePreferences(),...patch}));app.applySubtitlePreferences(frame);paintCaption();video.dispatchEvent(new Event('sfcaptionchange'));};
+      const position=settings.querySelector('.subtitle-position');
+      position.oninput=()=>{position.nextElementSibling.textContent=position.value+'%';save({captionY:Number(position.value)});};
       const visible=settings.querySelector('.subtitle-toggle');visible.onclick=()=>{const on=app.subtitlePreferences().visible===false;save({visible:on});visible.textContent=on?'已开启':'已关闭';visible.setAttribute('aria-pressed',String(on));};
       const word=settings.querySelector('.subtitle-word-toggle');word.disabled=true;word.title='整部电影字幕不含逐词时间信息';word.textContent='无逐词时间轴';
       for(const [selector,key,suffix] of [['.subtitle-size','size','px'],['.subtitle-opacity','opacity','%']]){const input=settings.querySelector(selector);input.oninput=()=>{input.nextElementSibling.textContent=input.value+suffix;save({[key]:Number(input.value)});};}
       settings.querySelector('.subtitle-color').oninput=e=>save({color:e.target.value});
-      settings.querySelector('.subtitle-reset-position').onclick=()=>{save({visible:true,size:20,color:'#ffffff',captionX:50,captionY:84,opacity:72});for(const [selector,value,suffix] of [['.subtitle-size',20,'px'],['.subtitle-opacity',72,'%']]){const input=settings.querySelector(selector);input.value=value;input.nextElementSibling.textContent=value+suffix;}settings.querySelector('.subtitle-color').value='#ffffff';visible.textContent='已开启';visible.setAttribute('aria-pressed','true');};
+      settings.querySelector('.subtitle-reset-position').onclick=()=>{save({visible:true,size:20,color:'#ffffff',captionX:50,captionY:88,opacity:72});for(const [selector,value,suffix] of [['.subtitle-size',20,'px'],['.subtitle-opacity',72,'%']]){const input=settings.querySelector(selector);input.value=value;input.nextElementSibling.textContent=value+suffix;}settings.querySelector('.subtitle-color').value='#ffffff';position.value='88';position.nextElementSibling.textContent='88%';visible.textContent='已开启';visible.setAttribute('aria-pressed','true');};
       let dragging=false;
-      caption.addEventListener('pointerdown',e=>{if(matchMedia('(max-width:1100px), (pointer:coarse)').matches)return;dragging=true;caption.setPointerCapture(e.pointerId);e.preventDefault();});
-      caption.addEventListener('pointermove',e=>{if(!dragging)return;const r=frame.getBoundingClientRect();save({captionX:Math.max(0,Math.min(100,(e.clientX-r.left)/r.width*100)),captionY:Math.max(0,Math.min(100,(e.clientY-r.top)/r.height*100))});});
-      for(const event of ['pointerup','pointercancel','lostpointercapture'])caption.addEventListener(event,()=>{dragging=false;});
+      caption.addEventListener('pointerdown',e=>{if(e.button!==undefined&&e.button!==0)return;dragging=true;caption.setPointerCapture?.(e.pointerId);caption.classList.add('caption-dragging');e.preventDefault();});
+      caption.addEventListener('pointermove',e=>{if(!dragging)return;const r=frame.getBoundingClientRect();const y=Math.round(Math.max(8,Math.min(94,(e.clientY-r.top)/r.height*100)));position.value=String(y);position.nextElementSibling.textContent=y+'%';save({captionX:Math.round(Math.max(7,Math.min(93,(e.clientX-r.left)/r.width*100))),captionY:y});});
+      for(const event of ['pointerup','pointercancel','lostpointercapture'])caption.addEventListener(event,()=>{dragging=false;caption.classList.remove('caption-dragging');});
       video.addEventListener('timeupdate',paintCaption);video.addEventListener('seeked',paintCaption);
       app.applySubtitlePreferences(frame);
     }
@@ -96,7 +110,7 @@ window.MovieSubtitles = {
 
         frame._captionLayout?.();
         const half=caption.getBoundingClientRect().height/2+4,height=frame.clientHeight;
-        caption.style.top=`${Math.max(Math.min(half,height/2),Math.min(height-half,height*Number(prefs.captionY)/100))}px`;
+        caption.style.top=`${Math.max(half,Math.min(height-half,height*Number(prefs.captionY)/100))}px`;
       }
     }
     let ccButton = null, ccMenu = null;
@@ -227,7 +241,10 @@ window.MovieSubtitles = {
       syncCCMenu();
       paintCaption();
     }
+    function updateOffsetLabels(){frame?.querySelectorAll('.sf-offset-label').forEach(label=>label.textContent=(Number(field('offset').value)>0?'+':'')+(Number(field('offset').value)||0).toFixed(1)+'s');}
     function offset() {
+      try{localStorage.setItem(movieOffsetKey,String(Number(field('offset').value)||0));}catch{}
+      updateOffsetLabels();
       if(caption){paintCaption();return;}
       const seconds = Number(field('offset').value) || 0;
       for (const element of tracks) for (const cue of Array.from(element.track.cues || [])) {
@@ -287,6 +304,7 @@ window.MovieSubtitles = {
     panel.querySelector('form').onsubmit = search;
     field('track').onchange = choose;
     field('offset').oninput = offset;
+    updateOffsetLabels();
     field('file').onchange = async event => {
       const file = event.target.files[0]; if (!file) return;
       const selection = ++download;
