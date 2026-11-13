@@ -37,7 +37,7 @@ try{
    // The official full-series catalog already returns the exact title's data-fcid.
    // Use that authoritative C-ID; do not discard it and depend on third-party search.
    const id=position.contentId;
-   if(!/^C\\d{7}$/.test(String(id||'')))throw Error('Official series catalog did not return a valid C-ID for the exact episode title');
+   if(!/^C\d{7}$/.test(String(id||'')))throw Error('Official series catalog did not return a valid C-ID for the exact episode title');
    item.contentId=id;
    const existing=episodes.find(e=>Number(e.episodeId)===release.seriesEpisodeNumber);
    if(existing){
