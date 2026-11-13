@@ -131,7 +131,12 @@
     player.setAttribute('disablepictureinpicture', '');
     let mobileFullscreenButton = null;
     const movieToolbar = !!player.closest('.sf-movie-lesson-player')?.querySelector('.sf-lesson-toolbar');
-    if (!isMobile) {
+    if (isMobile) {
+      // Android WebView must show only our HTML control surface. The system
+      // video control strip would cover captions and cannot rotate this stage.
+      player.controls = false;
+      player.removeAttribute('controls');
+    } else {
       // Movie lessons already have desktop cinema controls. Re-enabling
       // browser controls here adds a second bar, especially while paused.
       player.controls = !movieToolbar;
