@@ -1,17 +1,36 @@
 name: Little Fox Collect Handoff for ChatGPT
 # GitHub gathers official sources; ChatGPT writes and reviews educational materials.
-# TEMPORARY schedule test: Beijing 16:25 (UTC 08:25) on weekdays. Restore normal schedule after verification.
+# Weekday primary 15:03 and recovery checks 15:13/15:23, all Asia/Shanghai local time.
 on:
   schedule:
-    - cron: '25 8 * * 1-5'
+    - cron: '3 15 * * 1-5'
+      timezone: 'Asia/Shanghai'
+    - cron: '13 15 * * 1-5'
+      timezone: 'Asia/Shanghai'
+    - cron: '23 15 * * 1-5'
+      timezone: 'Asia/Shanghai'
   workflow_dispatch:
+  # Temporary, diagnostic-only trigger: editing this workflow must prove it is enabled.
+  push:
+    paths:
+      - '.github/workflows/littlefox-collect-handoff.yml'
 permissions:
   contents: write
 concurrency:
   group: littlefox-collect-handoff
   cancel-in-progress: false
 jobs:
+  trigger-diagnostic:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Confirm workflow is enabled (diagnostic only)
+        run: |
+          echo "The collector workflow accepted a push trigger."
+          echo "This diagnostic run intentionally does not fetch or publish any source material."
+          echo "event=$GITHUB_EVENT_NAME actor=$GITHUB_ACTOR run_id=$GITHUB_RUN_ID"
   collect:
+    if: github.event_name != 'push'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -20,20 +39,53 @@ jobs:
         with:
           node-version: '22'
           cache: npm
-      - name: Check today's handoff before collecting
+      - name: Record trigger diagnostics
+        env:
+          SCHEDULE_CRON: ${{ github.event.schedule || '' }}
+        run: |
+          {
+            echo "### Little Fox collector trigger"
+            echo "- Event: $GITHUB_EVENT_NAME"
+            echo "- Schedule: ${SCHEDULE_CRON:-manual}"
+            echo "- Actor: $GITHUB_ACTOR"
+            echo "- Run ID: $GITHUB_RUN_ID"
+            echo "- China time: $(TZ=Asia/Shanghai date '+%Y-%m-%d %H:%M:%S %Z')"
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Skip only when today's handoff is complete
         id: handoff
+        if: github.event_name == 'schedule'
         shell: bash
         run: |
-          today=$(TZ=Asia/Shanghai date +%F)
-          if [ "${{ github.event.schedule }}" = "5 7 * * 1-5" ] && [ -f "automation/littlefox-daily/inbox/${today}.json" ]; then
-            echo "skip=true" >> "$GITHUB_OUTPUT"
-            echo "Backup skipped: today's inbox already exists." >> "$GITHUB_STEP_SUMMARY"
-          else
-            echo "skip=false" >> "$GITHUB_OUTPUT"
-          fi
-      - if: steps.handoff.outputs.skip != 'true'
+          node <<'NODE'
+          const fs = require('node:fs');
+          const parts = new Intl.DateTimeFormat('en-CA', {
+            timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit'
+          }).formatToParts(new Date());
+          const part = (type) => parts.find(x => x.type === type)?.value;
+          const date = `${part('year')}-${part('month')}-${part('day')}`;
+          const file = `automation/littlefox-daily/inbox/${date}.json`;
+          let skip = false;
+          if (fs.existsSync(file)) {
+            try {
+              const data = JSON.parse(fs.readFileSync(file, 'utf8'));
+              const items = Array.isArray(data.items) ? data.items : [];
+              const retryable = items.some(x => ['blocked', 'awaiting_video'].includes(x.status));
+              const statusesComplete = items.length > 0 && items.every(x => ['ready_for_chatgpt', 'already_published'].includes(x.status));
+              const artifactUploaded = data.privateArtifactUploaded === true && Boolean(data.privateArtifactId) && Boolean(data.privateArtifactName);
+              const noRelease = data.status === 'no_release_detected' && artifactUploaded;
+              const complete = data.status === 'checked' && !retryable && statusesComplete && artifactUploaded;
+              skip = noRelease || complete;
+              console.log(JSON.stringify({date, file, status: data.status, retryable, statusesComplete, artifactUploaded, skip}));
+            } catch (error) {
+              console.log(`Existing inbox is unreadable; retrying collection: ${error.message}`);
+            }
+          }
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `skip=${skip}\n`);
+          NODE
+      - name: Install dependencies
+        if: steps.handoff.outputs.skip != 'true'
         run: npm ci --omit=dev
-      - name: Verify official releases and prepare metadata
+      - name: Verify official releases and prepare metadata (retry transient failures)
         id: collect
         if: steps.handoff.outputs.skip != 'true'
         continue-on-error: true
@@ -42,11 +94,25 @@ jobs:
           R2_BUCKET: ${{ secrets.R2_BUCKET }}
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-        run: node automation/littlefox-daily/collect-handoff.mjs
+        shell: bash
+        run: |
+          rc=1
+          for attempt in 1 2 3; do
+            echo "Collector attempt ${attempt}/3"
+            if node automation/littlefox-daily/collect-handoff.mjs; then
+              exit 0
+            else
+              rc=$?
+              echo "Collector attempt ${attempt} failed with exit code ${rc}"
+            fi
+            if [ "$attempt" -lt 3 ]; then sleep $((attempt * 15)); fi
+          done
+          exit "$rc"
       - name: Check official parser regression tests (blocking)
         if: always() && steps.handoff.outputs.skip != 'true'
         run: node --test automation/littlefox-daily/core.test.mjs
-      - name: Upload short-lived verified source package for ChatGPT
+      - name: Upload short-lived source package
+        id: source_artifact
         if: always() && steps.handoff.outputs.skip != 'true'
         uses: actions/upload-artifact@v4
         with:
@@ -54,18 +120,41 @@ jobs:
           path: /tmp/littlefox-source-*.json
           if-no-files-found: warn
           retention-days: 1
-      - name: Commit small metadata inbox (no full texts)
-        if: always() && steps.collect.outcome == 'success'
+      - name: Commit inbox only after source artifact upload succeeds
+        if: always() && steps.collect.outcome == 'success' && steps.source_artifact.outcome == 'success' && steps.source_artifact.outputs.artifact-id != ''
+        env:
+          ARTIFACT_ID: ${{ steps.source_artifact.outputs.artifact-id }}
+          ARTIFACT_NAME: littlefox-source-${{ github.run_id }}
+          RUN_ID: ${{ github.run_id }}
+        shell: bash
         run: |
+          inbox="automation/littlefox-daily/inbox/$(TZ=Asia/Shanghai date +%F).json"
+          node - "$inbox" <<'NODE'
+          const fs = require('node:fs');
+          const file = process.argv[2];
+          if (!fs.existsSync(file)) throw new Error(`Expected inbox file missing: ${file}`);
+          const data = JSON.parse(fs.readFileSync(file, 'utf8'));
+          const items = Array.isArray(data.items) ? data.items : [];
+          data.privateArtifactId = process.env.ARTIFACT_ID;
+          data.privateArtifactName = process.env.ARTIFACT_NAME;
+          data.privateArtifactUploaded = true;
+          data.sourceReadyCount = items.filter(x => x.status === 'ready_for_chatgpt' && x.sourceArtifact === true).length;
+          data.retryableItemCount = items.filter(x => ['blocked', 'awaiting_video'].includes(x.status)).length;
+          fs.writeFileSync(file, JSON.stringify(data, null, 2) + '\n');
+          console.log(JSON.stringify({date: data.date, runId: process.env.RUN_ID, artifactId: data.privateArtifactId, sourceReadyCount: data.sourceReadyCount, retryableItemCount: data.retryableItemCount}));
+          NODE
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add automation/littlefox-daily/inbox/*.json
+          git add "$inbox"
           if ! git diff --cached --quiet; then
-            git commit -m "data(littlefox): update official handoff metadata"
+            git commit -m "data(littlefox): update verified official handoff metadata"
             git push origin HEAD:main
           fi
       - name: Surface collector errors
         if: steps.collect.outcome == 'failure'
         run: |
-          echo 'Collector blocked; no course published.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Collector blocked after three attempts; no course published.' >> "$GITHUB_STEP_SUMMARY"
           exit 1
+      - name: Report skipped duplicate handoff
+        if: steps.handoff.outputs.skip == 'true'
+        run: echo 'A complete handoff and one-day source artifact already exist for today; duplicate collection skipped.' >> "$GITHUB_STEP_SUMMARY"
