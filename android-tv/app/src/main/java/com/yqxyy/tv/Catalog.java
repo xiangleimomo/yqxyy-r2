@@ -57,7 +57,9 @@ final class Catalog {
   }
   static final class Show {
     final String key, category, mediaType, title, originalTitle, poster, overview;
-    final int tmdbId, year;
+    final int tmdbId, year, declaredCount;
+    final String legacySeriesId, legacyFilmId, legacyCollectionId;
+    boolean episodesLoaded;
     final TreeMap<Integer,List<Episode>> seasons = new TreeMap<>();
     Show(JSONObject obj) {
       category=obj.optString("category","kids");
@@ -70,6 +72,11 @@ final class Catalog {
       poster=obj.optString("poster_url","");
       overview=obj.optString("overview","");
       year=obj.optInt("year",0);
+      legacySeriesId=obj.optString("_legacy_series_id","");
+      legacyFilmId=obj.optString("_legacy_film_id","");
+      legacyCollectionId=obj.optString("_legacy_collection_id","");
+      declaredCount=Math.max(0,obj.optInt("_declared_count",0));
+      episodesLoaded=legacySeriesId.isEmpty()&&legacyFilmId.isEmpty();
     }
     void add(JSONObject obj) {
       Episode e=new Episode(obj);
@@ -82,7 +89,11 @@ final class Catalog {
       for(List<Episode> episodes:seasons.values())
         Collections.sort(episodes,Comparator.comparingInt(e->e.number));
     }
-    int episodeCount(){int n=0;for(List<Episode> es:seasons.values())n+=es.size();return n;}
+    int episodeCount(){
+      int n=0;for(List<Episode> es:seasons.values())n+=es.size();
+      return episodesLoaded?n:Math.max(n,declaredCount);
+    }
+    boolean needsLegacyEpisodes(){return !episodesLoaded&&(!legacySeriesId.isEmpty()||!legacyFilmId.isEmpty());}
     JSONArray playlist(int season){
       JSONArray result=new JSONArray();
       List<Episode> episodes=seasons.get(season);
@@ -159,6 +170,9 @@ final class Catalog {
       }
       if(batch.length()<pageSize)break;
     }
+    // The original website serves existing film and animation-course catalogues
+    // from R2 through its public /data proxy; they are NOT in movie_library.
+    LegacyCatalog.appendPublicCatalogues(map);
     List<Show> result=new ArrayList<>(map.values());
     for(Show show:result)show.sort();
     Collections.sort(result,(a,b)->{

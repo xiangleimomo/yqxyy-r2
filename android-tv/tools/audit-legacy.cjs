@@ -15,6 +15,11 @@ async function main(){
       const values=Array.isArray(data)?data.length:(data?.films?.length||Object.keys(data||{}).length);
       console.log('LEGACY',path,'items=',values,'sampleKeys=',Object.keys(sample||{}).slice(0,24).join(','));
       if(path==='data/series-list.json'&&Array.isArray(data)){
+        const extensionCounts={};
+        for(const item of data){const u=String(item.cover||'').split('?')[0];
+          const ext=(u.match(/\\.([a-zA-Z0-9]+)$/)||[])[1]||'none';
+          extensionCounts[ext]=(extensionCounts[ext]||0)+1;}
+        console.log('LEGACY cover extensions',JSON.stringify(extensionCounts));
         const series=data.find(x=>String(x.seriesId).includes('three-kingdoms'))||data[0];
         if(series?.seriesId)try {
           const eps=await read('data/'+encodeURIComponent(series.seriesId)+'/episodes.json');
