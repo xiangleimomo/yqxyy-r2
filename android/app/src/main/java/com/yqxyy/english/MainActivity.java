@@ -20,6 +20,10 @@ import android.webkit.URLUtil;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collections;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -70,6 +74,52 @@ public class MainActivity extends Activity {
     }
 
 
+    // Serve the GitHub main snapshot bundled at build time. Netlify continues
+    // handling /data/* (R2), Supabase and API/function requests; only public
+    // static website assets are packaged. This avoids depending on a stale
+    // Netlify frontend deployment while testing the Android-specific player.
+    private WebResourceResponse bundledWebsiteFile(WebResourceRequest request) {
+        Uri url = request.getUrl();
+        Uri home = Uri.parse(BuildConfig.APP_URL);
+        if (!"GET".equalsIgnoreCase(request.getMethod()) ||
+            !"https".equalsIgnoreCase(url.getScheme()) ||
+            home.getHost() == null || !home.getHost().equalsIgnoreCase(url.getHost())) return null;
+
+        String route = url.getPath();
+        if (route == null || route.contains("..") || route.contains("\\")) return null;
+        String file = null;
+        if (route.equals("/") || route.equals("/index.html")) file = "index.html";
+        else if (route.startsWith("/js/") || route.startsWith("/css/") ||
+                 route.startsWith("/assets/") || route.startsWith("/arcade/") ||
+                 route.startsWith("/source-lab/")) file = route.substring(1);
+        if (file == null) return null;
+        try {
+            InputStream stream = getAssets().open("site/" + file);
+            String mime = "application/octet-stream";
+            if (file.endsWith(".html")) mime = "text/html";
+            else if (file.endsWith(".js") || file.endsWith(".mjs")) mime = "text/javascript";
+            else if (file.endsWith(".css")) mime = "text/css";
+            else if (file.endsWith(".json")) mime = "application/json";
+            else if (file.endsWith(".svg")) mime = "image/svg+xml";
+            else if (file.endsWith(".png")) mime = "image/png";
+            else if (file.endsWith(".jpg") || file.endsWith(".jpeg")) mime = "image/jpeg";
+            else if (file.endsWith(".webp")) mime = "image/webp";
+            else if (file.endsWith(".gif")) mime = "image/gif";
+            else if (file.endsWith(".woff2")) mime = "font/woff2";
+            else if (file.endsWith(".woff")) mime = "font/woff";
+            else if (file.endsWith(".ttf")) mime = "font/ttf";
+            else if (file.endsWith(".mp3")) mime = "audio/mpeg";
+            else if (file.endsWith(".mp4")) mime = "video/mp4";
+            WebResourceResponse response = new WebResourceResponse(mime,
+                mime.startsWith("text/") || mime.equals("application/json") ? "UTF-8" : null, stream);
+            response.setResponseHeaders(Collections.singletonMap("Cache-Control", "no-store"));
+            return response;
+        } catch (IOException missing) {
+            // Missing local asset: let the website handle the request normally.
+            return null;
+        }
+    }
+
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
         getWindow().setStatusBarColor(Color.WHITE);
@@ -110,6 +160,10 @@ public class MainActivity extends Activity {
         CookieManager.getInstance().setAcceptThirdPartyCookies(browser, true);
 
         browser.setWebViewClient(new WebViewClient() {
+            @Override public WebResourceResponse shouldInterceptRequest(
+                    WebView view, WebResourceRequest request) {
+                return bundledWebsiteFile(request);
+            }
             @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 Uri url = request.getUrl();
                 if (!request.isForMainFrame()) return false;
