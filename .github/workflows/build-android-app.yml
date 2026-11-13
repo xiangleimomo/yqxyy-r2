@@ -5,7 +5,15 @@ on:
   push:
     paths:
       - 'android/**'
+      - 'index.html'
+      - 'js/mobile-caption-fullscreen.js'
+      - 'js/desktop-player.js'
+      - 'css/unified-player.css'
       - '.github/workflows/build-android-app.yml'
+
+concurrency:
+  group: yqxyy-android-app-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: write
