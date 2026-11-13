@@ -312,7 +312,7 @@ public final class PlayerActivity extends Activity {
   }
 
   @Override public boolean onKeyDown(int keyCode,KeyEvent event){
-    if(keyCode==KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE||keyCode==KeyEvent.KEYCODE_HEADSETPHOOK){
+    if(keyCode==KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE||keyCode==KeyEvent.KEYCODE_HEADSETHOOK){
       toggle();return true;
     }
     if(keyCode==KeyEvent.KEYCODE_DPAD_CENTER||keyCode==KeyEvent.KEYCODE_DPAD_UP||
