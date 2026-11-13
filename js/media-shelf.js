@@ -62,9 +62,10 @@ window.MediaShelf = {
         // Every movie is a standalone card; personal favourites/categories replace series shelves.
         const originalCollections=allItems.filter(row=>row.key.startsWith('film-')&&!row.key.startsWith('film-series-')&&!row.id.startsWith('tmdb-'));
         const publishedFilms=allItems.filter(row=>row.id.startsWith('tmdb-')&&series.find(group=>group.films.some(([id])=>id===row.id))?.dynamicCategory==='animated');
-        items=[...originalCollections,...publishedFilms];
+        const tvShows=series.filter(group=>group.dynamicTv&&group.libraryCategory==='animated').map(group=>this.movieSeries(group));
+        items=[...originalCollections,...publishedFilms,...tvShows];
       }
-      if(mode==='documentary')items=series.filter(group=>group.dynamicCategory==='documentary').flatMap(group=>group.films.map(film=>this.movieFilm(group,film,playableById)));
+      if(mode==='documentary')items=[...series.filter(group=>group.dynamicCategory==='documentary').flatMap(group=>group.films.map(film=>this.movieFilm(group,film,playableById))),...series.filter(group=>group.dynamicTv&&group.libraryCategory==='documentary').map(group=>this.movieSeries(group))];
       if(mode==='episodes'){
         const courseIds=[...new Set(series.flatMap(group=>group.films.map(([filmId])=>playableById.get(filmId)?.studyCourse?.seriesId).filter(Boolean)))];
         const courses=await Promise.all(courseIds.map(async seriesId=>{
