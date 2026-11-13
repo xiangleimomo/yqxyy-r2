@@ -11,7 +11,10 @@ try{
  const index=await store.get('data/series-list.json');if(!index)throw Error('Missing R2 series-list.json');
  const series=JSON.parse(index);
  const schedule=await(await get(`https://res.littlefox.com/en/forum/publishing_schedule/${d.yearMonth}`)).text();
- const releases=scheduleReleases(schedule,d,series);
+ const allReleases=scheduleReleases(schedule,d,series);
+ const onlySeries=String(process.env.LF_ONLY_SERIES||'').trim();
+ const releases=onlySeries?allReleases.filter(x=>x.seriesId===onlySeries):allReleases;
+ if(onlySeries&&releases.length!==1)throw Error(`LF_ONLY_SERIES=${onlySeries} expected exactly one calendar release; found ${releases.length}`);
  for(const calendarRelease of releases){
   const item={seriesId:calendarRelease.seriesId,calendarEpisodeNumber:calendarRelease.calendarEpisodeNumber,calendarKeyword:calendarRelease.calendarKeyword,title:calendarRelease.title,level:calendarRelease.level,status:'checking'};
   result.items.push(item);
@@ -31,7 +34,10 @@ try{
     item.r2LatestEpisodeNumber=maxEpisode;
     item.missingEpisodeNumbers=Array.from({length:release.seriesEpisodeNumber-maxEpisode-1},(_,i)=>maxEpisode+i+1);
    }
-   const id=await identifyCId(release,episodes,fetch);if(!id)throw Error('C ID unavailable');
+   // The official full-series catalog already returns the exact title's data-fcid.
+   // Use that authoritative C-ID; do not discard it and depend on third-party search.
+   const id=position.contentId;
+   if(!/^C\\d{7}$/.test(String(id||'')))throw Error('Official series catalog did not return a valid C-ID for the exact episode title');
    item.contentId=id;
    const existing=episodes.find(e=>Number(e.episodeId)===release.seriesEpisodeNumber);
    if(existing){
