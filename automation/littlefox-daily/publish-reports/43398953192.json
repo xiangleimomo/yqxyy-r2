@@ -1,0 +1,58 @@
+{
+  "contentId": "C0013550",
+  "seriesId": "little-fox-daisy-dolittle-fs0175",
+  "episodeNumber": 38,
+  "requestedPublish": true,
+  "checkedAt": "2026-11-13T09:09:37.416Z",
+  "status": "published_verified",
+  "stages": [
+    {
+      "name": "r2_real_state_checked",
+      "episodeIndexExists": true,
+      "existingEpisodes": 37,
+      "latestEpisode": {
+        "episodeId": 37,
+        "title": "A Spilled Secret",
+        "contentId": "C0013549"
+      },
+      "targetExists": false,
+      "matchingEntries": []
+    },
+    {
+      "name": "target_mode",
+      "mode": "new_publish",
+      "previousEntry": false
+    },
+    {
+      "name": "r2_current_index_checked",
+      "existingEpisodes": 37
+    },
+    {
+      "name": "official_video_verified",
+      "host": "cdn.littlefox.com"
+    },
+    {
+      "name": "official_text_xml_pdf_verified",
+      "paragraphs": 31,
+      "cues": 53,
+      "storybookStatus": 200
+    },
+    {
+      "name": "v2_curriculum_and_quiz_checked",
+      "words": 12,
+      "questions": 5,
+      "sections": 3
+    },
+    {
+      "name": "r2_patch_prepared",
+      "files": 8
+    },
+    {
+      "name": "backups_written"
+    },
+    {
+      "name": "r2_written_and_readback",
+      "objects": 8
+    }
+  ]
+}
