@@ -134,3 +134,16 @@ html.sf-android-app .subtitle-video-wrap.subtitle-page-fullscreen .subtitle-sett
   .subtitle-video-wrap .subtitle-controls-overlay{max-height:calc(100dvh - 22px)!important;overflow-y:auto!important}
   .subtitle-controls .subtitle-setting-row{min-height:34px}
 }
+
+
+/* TV programmes have real episodes: show previous/next inside the same
+   movie player. Standalone films keep these buttons hidden. */
+.sf-full-movie-player.sf-tv-player .sf-desktop-player-controls [data-desktop-act="prev"],
+.sf-full-movie-player.sf-tv-player .sf-desktop-player-controls [data-desktop-act="next"]{
+  display:grid!important;
+}
+.movie-tv-fields[hidden],.movie-source-editor[hidden]{display:none!important}
+.movie-tv-fields{display:grid;gap:10px;margin:10px 0;padding:12px;border:1px solid #d9e5f4;border-radius:10px;background:#f7faff}
+.movie-tv-fields>label{display:flex;flex-direction:column;gap:5px}
+.movie-tv-fields textarea{width:100%;box-sizing:border-box;min-height:112px;resize:vertical;font:12px/1.5 ui-monospace,monospace}
+.movie-tv-preview{padding:8px 10px;border-radius:8px;color:#215c42;background:#eaf9f0;font-size:12px}
