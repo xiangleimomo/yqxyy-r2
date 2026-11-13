@@ -14,6 +14,7 @@ on:
   push:
     paths:
       - '.github/workflows/littlefox-collect-handoff.yml'
+      - 'automation/littlefox-daily/collect-handoff.mjs'
 permissions:
   contents: write
 concurrency:
