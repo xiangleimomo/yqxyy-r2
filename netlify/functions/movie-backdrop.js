@@ -5,10 +5,10 @@
 // accepting a result ONLY if its TMDB ID and media type match exactly.
 // The Android app needs no key, no manual per-film mapping and no R2 copy.
 const SEARCH='https://streamjuju.cyou/api/search';
-const asId=value=>/^[1-9]\\d{0,9}$/.test(String(value||''))?Number(value):null;
+const asId=value=>/^[1-9]\d{0,9}$/.test(String(value||''))?Number(value):null;
 const pathToImage=value=>{
   const path=String(value||'');
-  return /^\\/[A-Za-z0-9_-]+\\.(?:jpg|jpeg|png|webp)$/i.test(path)
+  return /^\/[A-Za-z0-9_-]+\.(?:jpg|jpeg|png|webp)$/i.test(path)
     ? 'https://image.tmdb.org/t/p/w1280'+path : null;
 };
 const respond=(statusCode,data)=>({
@@ -57,7 +57,7 @@ exports.handler=async event=>{
   const id=asId(event.queryStringParameters?.id);
   const type=String(event.queryStringParameters?.type||'movie');
   const title=String(event.queryStringParameters?.title||'').trim();
-  if(!id||!['movie','tv'].includes(type)||title.length>160||/[\\x00-\\x1f]/.test(title))
+  if(!id||!['movie','tv'].includes(type)||title.length>160||/[\x00-\x1f]/.test(title))
     return respond(400,{error:'Invalid TMDB reference or title'});
   let url=null,source=null;
   try{
