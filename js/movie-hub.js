@@ -17,7 +17,8 @@ window.MovieHub={
   },
   async render(app,id='',query=''){
     this.cleanup();const generation=this.generation;
-    const [catalog,providers,library]=await Promise.all([app.getJSON('data/movie-hub-catalog.json'),app.getJSON('data/movie-hub-providers.json'),window.MovieClassroom.getLibrary(app)]);
+    const [catalog,configuredProviders,library,managedProviders]=await Promise.all([app.getJSON('data/movie-hub-catalog.json'),app.getJSON('data/movie-hub-providers.json'),window.MovieClassroom.getLibrary(app),window.MovieSourceAdmin?.providers?.()||Promise.resolve([])]);
+    const providers=[...managedProviders,...configuredProviders.filter(item=>!managedProviders.some(added=>added.name===item.name||added.movieUrl===item.movieUrl))];
     if(generation!==this.generation)return;
     const e=value=>app.escapeHtml(String(value||''));
     const groups=new Map(library.series.map(s=>[s.id,s]));
