@@ -25,7 +25,7 @@ jobs:
         run: node scripts/audit-android-netlify.mjs > android-netlify-audit.json
       - name: Summarize reachability (without printing credentials)
         run: |
-          node -e "const x=require('./android-netlify-audit.json'); console.log(x.preliminaryVerdict); console.log(x.remoteTests.map(r=>r.key+' status='+r.getStatus+' cors='+r.cors+' range='+r.range).join('\\n'))"
+          node -e "const x=require('./android-netlify-audit.json'); console.log(x.preliminaryVerdict); console.log('books=', JSON.stringify(x.bookCatalogue)); console.log(x.remoteTests.map(r=>r.key+' status='+r.getStatus+' cors='+r.cors+' range='+r.range).join('\\n'))"
       - uses: actions/upload-artifact@v4
         with:
           name: android-netlify-dependency-audit
