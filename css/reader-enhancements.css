@@ -272,4 +272,6 @@ body.flipbook-active .pdf-flipbook-reader.pdf-mobile-landscape .pdf-pageflip{
     var(--pdf-fit-y,0px),0
   ) scale(var(--pdf-fit-scale,.86))!important;
   transform-origin:center center!important;
+  /* Avoid measuring animated intermediate sizes while computing fit. */
+  transition:none!important;
 }
