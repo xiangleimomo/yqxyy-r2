@@ -3,7 +3,7 @@ const root=path.resolve(__dirname,'..'),baseline=process.env.BOOK_READER_BASELIN
 const {samplePdf}=require('./helpers/pdf-fixture.cjs');
 // Optional real-file benchmark; the default six-page fixture is self-contained.
 const externalPdf=process.env.PDF_PERF_FILE;
-(async()=>{const browser=await chromium.launch({channel:'msedge',headless:true});try{
+(async()=>{const browser=await chromium.launch({channel:'chrome',headless:true});try{
  const page=await browser.newPage({viewport:{width:390,height:844},deviceScaleFactor:2,isMobile:true,hasTouch:true}),errors=[],components=[];
  page.on('pageerror',e=>errors.push(e.message));
  page.on('request',r=>{if(/\/(pdf\.min\.js|pdf\.worker\.min\.js|page-flip\.browser\.js)(\?|$)/.test(r.url()))components.push(r.url());});
