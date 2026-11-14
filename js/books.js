@@ -38,6 +38,9 @@ window.BookReader = {
     if (this.readerContextHandler && this.readerContextHost) this.readerContextHost.removeEventListener('contextmenu', this.readerContextHandler);
     if (this.fullscreenHandler) document.removeEventListener('fullscreenchange', this.fullscreenHandler);
     if (this.viewportResizeHandler) window.removeEventListener('resize', this.viewportResizeHandler);
+    if (this.pdfFitFrame) cancelAnimationFrame(this.pdfFitFrame);
+    this.pdfFitFrame = null;
+    this.schedulePdfFit = null;
     this.resizeObserver?.disconnect();
     try { this.pageFlip?.destroy(); } catch (_) {}
     this.pdfObjectUrls.forEach(url => URL.revokeObjectURL(url));
@@ -380,7 +383,14 @@ window.BookReader = {
       reader.classList.add('pdf-mobile-landscape');
       this.viewportResizeHandler = () => {
         if (!reader.isConnected || !this.pageFlip) return;
+        // Recalculate from unshifted geometry after any viewport/orientation
+        // change. Fixed scale .86 could still crop tall book pages on phones.
+        const root = reader.querySelector('#pdfFlipbook');
+        root?.style.setProperty('--pdf-fit-scale', '.86');
+        root?.style.setProperty('--pdf-fit-x', '0px');
+        root?.style.setProperty('--pdf-fit-y', '0px');
         this.pageFlip.update();
+        this.schedulePdfFit?.();
       };
       window.addEventListener('resize', this.viewportResizeHandler);
     }
@@ -596,14 +606,61 @@ window.BookReader = {
         const page = flip.getCurrentPageIndex();
         const singleCover = flip.getOrientation() === 'landscape';
         const offset = !animating && singleCover ? (page === pageCount - 1 ? bounds.pageWidth / 2 : page === 0 ? -bounds.pageWidth / 2 : 0) : 0;
-        root.style.setProperty('--cover-offset', `${offset * (this.pdfPhoneLandscape ? 0.86 : 1)}px`);
+        const scale=this.pdfPhoneLandscape ? (Number.parseFloat(root.style.getPropertyValue('--pdf-fit-scale'))||.86) : 1;
+        root.style.setProperty('--cover-offset', `${offset * scale}px`);
+      };
+
+      // PageFlip's inner spread can extend beyond a rotated phone viewport
+      // even when the outer surface is width:100%. Measure the ACTUAL spread
+      // rectangle in screen coordinates and shrink/recenter it until it fits.
+      // Works with portrait-emulated landscape and with physical rotation.
+      const fitPdfSpread = (pass=0) => {
+        if (!this.pdfPhoneLandscape || this.pdfSession !== session || !root.isConnected || !this.pageFlip) return;
+        const surface=reader.querySelector('.pdf-flipbook-surface');
+        const spread=root.querySelector('.stf__parent');
+        if (!surface || !spread) return;
+        const frame=surface.getBoundingClientRect();
+        const book=spread.getBoundingClientRect();
+        if (!(frame.width>0 && frame.height>0 && book.width>0 && book.height>0)) return;
+        const target={
+          left:Math.max(frame.left,0)+18,right:Math.min(frame.right,innerWidth)-18,
+          top:Math.max(frame.top,0)+18,bottom:Math.min(frame.bottom,innerHeight)-18
+        };
+        const availableW=target.right-target.left,availableH=target.bottom-target.top;
+        if (availableW<=0 || availableH<=0) return;
+        const currentScale=Number.parseFloat(root.style.getPropertyValue('--pdf-fit-scale'))||.86;
+        const ratio=Math.min(1, availableW/book.width, availableH/book.height);
+        if (ratio<.995 && pass<5) {
+          root.style.setProperty('--pdf-fit-scale',String(Math.max(.08,currentScale*ratio*.985)));
+          centerBook();
+          requestAnimationFrame(()=>fitPdfSpread(pass+1));
+          return;
+        }
+        const dx=(target.left+target.right-book.left-book.right)/2;
+        const dy=(target.top+target.bottom-book.top-book.bottom)/2;
+        const rotated=matchMedia('(orientation:portrait)').matches;
+        const localX=rotated?dy:dx,localY=rotated?-dx:dy;
+        const prevX=Number.parseFloat(root.style.getPropertyValue('--pdf-fit-x'))||0;
+        const prevY=Number.parseFloat(root.style.getPropertyValue('--pdf-fit-y'))||0;
+        if(Math.abs(dx)>.75 || Math.abs(dy)>.75){
+          root.style.setProperty('--pdf-fit-x',`${prevX+localX}px`);
+          root.style.setProperty('--pdf-fit-y',`${prevY+localY}px`);
+        }
+      };
+      this.schedulePdfFit=()=>{
+        if(!this.pdfPhoneLandscape || this.pdfSession!==session || !root.isConnected)return;
+        if(this.pdfFitFrame)cancelAnimationFrame(this.pdfFitFrame);
+        this.pdfFitFrame=requestAnimationFrame(()=>{
+          this.pdfFitFrame=null;
+          requestAnimationFrame(()=>fitPdfSpread());
+        });
       };
       this.pageFlip.on('init', () => centerBook());
-      this.pageFlip.on('flip', () => centerBook());
-      this.pageFlip.on('changeOrientation', () => centerBook());
+      this.pageFlip.on('flip', () => { centerBook(); this.schedulePdfFit?.(); });
+      this.pageFlip.on('changeOrientation', () => { centerBook(); this.schedulePdfFit?.(); });
       this.pageFlip.on('changeState', event => {
         if (event.data === 'flipping' || event.data === 'user_fold') centerBook(true);
-        else if (event.data === 'read') centerBook();
+        else if (event.data === 'read') { centerBook(); this.schedulePdfFit?.(); }
       });
       requestAnimationFrame(() => centerBook());
       this.pageFlip.on('init', positionSpine);
@@ -611,10 +668,11 @@ window.BookReader = {
       this.pageFlip.on('changeOrientation', positionSpine);
       this.resizeObserver = new ResizeObserver(() => requestAnimationFrame(() => {
         if (this.pdfSession !== session) return;
-        this.pageFlip?.update(); centerBook(); positionSpine();
+        this.pageFlip?.update(); centerBook(); positionSpine(); this.schedulePdfFit?.();
       }));
       this.resizeObserver.observe(root);
       requestAnimationFrame(positionSpine);
+      this.schedulePdfFit?.();
       document.getElementById('bookStagePrev').onclick = () => this.pageFlip?.flipPrev();
       document.getElementById('bookStageNext').onclick = () => this.pageFlip?.flipNext();
       progress.oninput = () => this.pageFlip?.turnToPage(Number(progress.value));
