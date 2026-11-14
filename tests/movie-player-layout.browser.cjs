@@ -3,6 +3,9 @@ const {chromium}=require('playwright');
 const fs=require('fs'),assert=require('assert');
 (async()=>{const browser=await chromium.launch({channel:'chrome',headless:true});try{
  const page=await browser.newPage();await page.route('https://example.test/**',r=>r.fulfill({body:''}));
+ const pixel=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScdnyAAAAABJRU5ErkJggg==','base64');
+ await page.route('https://example.test/backdrop.jpg',r=>r.fulfill({contentType:'image/png',body:pixel}));
+ await page.route('https://image.tmdb.org/**',r=>r.fulfill({contentType:'image/png',body:pixel}));
  await page.route('http://fixture.test/**',r=>r.fulfill({body:'<main id="app"></main>'}));await page.goto('http://fixture.test/');
  await page.setContent('<main id="app"></main>');
  const indexHtml=fs.readFileSync('index.html','utf8');
@@ -26,6 +29,37 @@ const fs=require('fs'),assert=require('assert');
  assert.equal(await page.locator('video').getAttribute('poster'),'https://example.test/backdrop.jpg');
  await page.locator('video').dispatchEvent('play');
  assert.equal(await page.locator('.movie-start-poster').count(),0,'Artwork leaves after playback starts');
+
+ // A newly added film, absent from any hard-coded mapping, must resolve by
+ // numeric TMDB ID and English title and reuse its saved landscape backdrop.
+ await page.evaluate(()=>{
+  window.backdropRequestsMade=0;
+  const realFetch=window.fetch;
+  window.fetch=(url,options)=>{
+    if(String(url).startsWith('/.netlify/functions/movie-backdrop?')){
+      window.backdropRequestsMade++;
+      window.lastBackdropRequest=String(url);
+      return Promise.resolve({ok:true,json:async()=>({url:'https://image.tmdb.org/t/p/w1280/new-movie.jpg'})});
+    }
+    return realFetch(url,options);
+  };
+  MovieClassroom.attachDirectPoster(document.querySelector('video'),{
+    tmdbId:987654,mediaType:'movie',tmdbTitle:'Fresh Movie',titleZh:'新电影'
+  });
+ });
+ await page.waitForSelector('.movie-start-artwork[src="https://image.tmdb.org/t/p/w1280/new-movie.jpg"]');
+ assert.equal(await page.evaluate(()=>backdropRequestsMade),1);
+ assert.match(await page.evaluate(()=>lastBackdropRequest),/id=987654/);
+ assert.match(await page.evaluate(()=>lastBackdropRequest),/title=Fresh\+Movie/);
+ await page.locator('video').dispatchEvent('play');
+ assert.equal(await page.locator('.movie-start-poster').count(),0);
+ await page.evaluate(()=>MovieClassroom.attachDirectPoster(document.querySelector('video'),{
+  tmdbId:987654,mediaType:'movie',tmdbTitle:'Fresh Movie'
+ }));
+ await page.waitForSelector('.movie-start-poster');
+ assert.equal(await page.evaluate(()=>backdropRequestsMade),1,'Cached backdrop must not requery metadata for same TMDB ID');
+ await page.locator('video').dispatchEvent('play');
+
 
  assert.equal(await page.locator('.sf-desktop-player-controls').count(),1);
  assert.equal(await page.locator('.sf-lesson-toolbar').count(),0);

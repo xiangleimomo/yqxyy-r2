@@ -1,6 +1,8 @@
 /* Movie catalogue supports media URLs and explicitly embedded player pages. */
 window.MovieClassroom = {
   player: null, frame: null, hls: null, libraryPromise: null, generation: 0,
+  // Backdrops are discovered automatically by TMDB ID; share requests across episodes.
+  backdropRequests:new Map(), backdropMemory:new Map(),
   seriesCovers: {
     'harry-potter':'https://media.themoviedb.org/t/p/w500/wuMc08IPKEatf9rnMNXvIDxqP4W.jpg',
     'fantastic-beasts':'https://media.themoviedb.org/t/p/w500/h6NYfVUyM6CDURtZSnBpz647Ldd.jpg',
@@ -117,6 +119,7 @@ window.MovieClassroom = {
       const providerSources=apiUrl?providers.map(provider=>this.providerSource(provider,{tmdb,mediaType:tv?'tv':'movie',season,episode})).filter(Boolean):[];
       movie.tmdbId=tmdb;
       movie.mediaType=tv?'tv':'movie';
+      movie.tmdbTitle=String(metadata.title||source.title||movie.title||'').trim();
       movie.backdropUrl=metadata.backdropUrl||metadata.backdrop_url||source.backdropUrl||source.backdrop_url||this.tmdbBackdrops[tmdb]||'';
       movie.embeddedSources=[...savedSources.filter(source=>source.kind==='embed'),...providerSources].filter((source,index,all)=>{try{const url=new URL(source.url);return url.protocol==='https:'&&!url.username&&!url.password&&source.url!==movie.embedUrl&&all.findIndex(item=>item.url===source.url)===index;}catch{return false;}});
       const preferredTvSource=tv?savedSources.filter(source=>source.kind==='direct'&&source.label==='本集播放地址'):[];
@@ -394,6 +397,7 @@ window.MovieClassroom = {
       const overlay=document.createElement('div');overlay.className='movie-start-poster';
       const image=document.createElement('img');image.className='movie-start-artwork';
       image.src=url.href;image.alt='';image.decoding='async';
+      image.onerror=()=>{overlay.remove();player.removeAttribute('poster');};
       const shade=document.createElement('div');shade.className='movie-start-shade';
       const title=document.createElement('strong');title.className='movie-start-title';
       title.textContent=movie.titleZh||movie.title||'';
@@ -407,17 +411,42 @@ window.MovieClassroom = {
       player.addEventListener('playing',hide,{once:true});
     };
     // Never stretch a vertical catalogue poster into a 16:9 video frame.
-    const known=movie.backdropUrl||movie.backdrop_url||this.tmdbBackdrops[movie.tmdbId];
-    if(known){showArtwork(known);return;}
+    // Explicit editorial background takes precedence. The old fixed image
+    // mappings are only fallback artwork; ALL TMDB titles are auto-looked-up.
+    const explicit=movie.backdropUrl||movie.backdrop_url;
+    if(explicit){showArtwork(explicit);return;}
+    const fallback=this.tmdbBackdrops[movie.tmdbId]||'';
     const id=Number(movie.tmdbId),type=movie.mediaType==='tv'?'tv':'movie';
-    if(!Number.isSafeInteger(id)||id<1)return;
-    // Read the official TMDB backdrop through a server-side metadata endpoint.
-    // It never exposes the TMDB API credential to Android or the website.
-    fetch('/.netlify/functions/movie-backdrop?id='+encodeURIComponent(id)+'&type='+type,{
-      cache:'force-cache',signal:AbortSignal.timeout(8000)
-    }).then(response=>response.ok?response.json():null)
-      .then(data=>{if(data?.url)showArtwork(data.url);})
-      .catch(()=>{}); // No verified backdrop: leave the plain player, never use a portrait poster.
+    if(!Number.isSafeInteger(id)||id<1){if(fallback)showArtwork(fallback);return;}
+    const key=type+':'+id;
+    const cacheKey='sf-movie-backdrop-v1-'+key;
+    const cached=this.backdropMemory.get(key);
+    if(cached?.url && cached.expires>Date.now()){showArtwork(cached.url);return;}
+    try{
+      const saved=JSON.parse(localStorage.getItem(cacheKey)||'null');
+      if(saved?.expires>Date.now() && /^https:\/\/image\.tmdb\.org\/t\/p\/w1280\/[A-Za-z0-9_-]+\.(?:jpg|jpeg|png|webp)$/.test(saved.url||'')){
+        this.backdropMemory.set(key,saved);showArtwork(saved.url);return;
+      }
+    }catch{}
+    // Avoid a blank first view while refreshing legacy backgrounds.
+    if(fallback)showArtwork(fallback);
+    const title=String(movie.tmdbTitle||movie.title||'').trim().slice(0,160);
+    const existing=this.backdropRequests.get(key);
+    const request=existing||fetch('/.netlify/functions/movie-backdrop?'+new URLSearchParams({
+      id:String(id),type,title
+    }),{cache:'force-cache',signal:AbortSignal.timeout(10000)})
+      .then(response=>response.ok?response.json():null)
+      .then(data=>{
+        // Accept only the TMDB image CDN, never an arbitrary remote image host.
+        const value=String(data?.url||'');
+        if(!/^https:\/\/image\.tmdb\.org\/t\/p\/w1280\/[A-Za-z0-9_-]+\.(?:jpg|jpeg|png|webp)$/.test(value))return null;
+        const entry={url:value,expires:Date.now()+14*24*60*60*1000};
+        this.backdropMemory.set(key,entry);
+        try{localStorage.setItem(cacheKey,JSON.stringify(entry));}catch{}
+        return value;
+      }).catch(()=>null).finally(()=>this.backdropRequests.delete(key));
+    if(!existing)this.backdropRequests.set(key,request);
+    request.then(url=>{if(url)showArtwork(url);});
   },
   attachMovieControls(app,player,movie,group){
     const stage=player.closest('.movie-watch-frame');
