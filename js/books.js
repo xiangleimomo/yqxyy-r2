@@ -617,10 +617,23 @@ window.BookReader = {
       const fitPdfSpread = (pass=0) => {
         if (!this.pdfPhoneLandscape || this.pdfSession !== session || !root.isConnected || !this.pageFlip) return;
         const surface=reader.querySelector('.pdf-flipbook-surface');
-        const spread=root.querySelector('.stf__parent');
-        if (!surface || !spread) return;
+        if (!surface) return;
         const frame=surface.getBoundingClientRect();
-        const book=spread.getBoundingClientRect();
+        // The PageFlip parent can report a small box while its actual pages
+        // overflow it. Fit the visible page images, not just the parent frame.
+        const index=this.pageFlip.getCurrentPageIndex();
+        const numbers=(index===0||index>=pageCount-1)?[index+1]:[index+1,index+2];
+        const rects=numbers.map(number=>root.querySelector('img[data-pdf-page="'+number+'"]'))
+          .filter(image=>image&&image.getBoundingClientRect().width>0)
+          .map(image=>image.getBoundingClientRect());
+        if(!rects.length)return;
+        const book={
+          left:Math.min(...rects.map(r=>r.left)),
+          right:Math.max(...rects.map(r=>r.right)),
+          top:Math.min(...rects.map(r=>r.top)),
+          bottom:Math.max(...rects.map(r=>r.bottom))
+        };
+        book.width=book.right-book.left;book.height=book.bottom-book.top;
         if (!(frame.width>0 && frame.height>0 && book.width>0 && book.height>0)) return;
         const target={
           left:Math.max(frame.left,0)+18,right:Math.min(frame.right,innerWidth)-18,
