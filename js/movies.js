@@ -64,7 +64,8 @@ window.MovieClassroom = {
       {id:'android-vidlink',name:'VidLink',mode:'embed',movieUrl:'https://vidlink.pro/movie/{tmdbId}',tvUrl:'https://vidlink.pro/tv/{tmdbId}/{seasonNumber}/{episodeNumber}'},
       {id:'android-vidsrc',name:'VidSrc',mode:'embed',movieUrl:'https://vidsrc.sh/embed/movie/{tmdbId}',tvUrl:'https://vidsrc.sh/embed/tv/{tmdbId}/{seasonNumber}/{episodeNumber}'},
       {id:'android-vidcore',name:'VidCore',mode:'embed',movieUrl:'https://vidcore.org/embed/movie/{tmdbId}',tvUrl:'https://vidcore.org/embed/tv/{tmdbId}/{seasonNumber}/{episodeNumber}'},
-      {id:'android-vidrock',name:'VidRock',mode:'embed',movieUrl:'https://vidrock.net/movie/{tmdbId}',tvUrl:'https://vidrock.net/tv/{tmdbId}/{seasonNumber}/{episodeNumber}'}
+      {id:'android-vidrock',name:'VidRock',mode:'embed',movieUrl:'https://vidrock.net/movie/{tmdbId}',tvUrl:'https://vidrock.net/tv/{tmdbId}/{seasonNumber}/{episodeNumber}'},
+      {id:'android-2embed',name:'2Embed',mode:'embed',movieUrl:'https://www.2embed.cc/embed/{tmdbId}',tvUrl:'https://www.2embed.cc/embedtv/{tmdbId}&s={seasonNumber}&e={episodeNumber}'}
     ];
   },
   providerSource(provider,metadata,automatic=false){
