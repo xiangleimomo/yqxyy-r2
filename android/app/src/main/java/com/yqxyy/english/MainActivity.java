@@ -193,6 +193,11 @@ public class MainActivity extends Activity {
                 WebResourceResponse directR2 = R2PublicDataProxy.intercept(
                     request, Uri.parse(BuildConfig.APP_URL).getHost());
                 if (directR2 != null) return directR2;
+                // Download books from their validated original PDF sources.
+                // The original Netlify /book-download Edge function is bypassed.
+                WebResourceResponse nativePdf = BookPdfResolver.intercept(
+                    request, Uri.parse(BuildConfig.APP_URL).getHost());
+                if (nativePdf != null) return nativePdf;
                 // TMDB landscape backdrop metadata is resolved by the APK,
                 // not by Netlify, while retaining the webpage's same-origin
                 // request URL and avoiding browser CORS restrictions.
