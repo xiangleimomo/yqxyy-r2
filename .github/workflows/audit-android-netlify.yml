@@ -1,0 +1,33 @@
+name: Audit Android independence from Netlify
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'scripts/audit-android-netlify.mjs'
+      - '.github/workflows/audit-android-netlify.yml'
+      - 'docs/android-netlify-exit-audit.md'
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    name: Read-only origin and R2 connectivity audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Inventory Android Netlify dependencies and probe R2
+        run: node scripts/audit-android-netlify.mjs > android-netlify-audit.json
+      - name: Summarize reachability (without printing credentials)
+        run: |
+          node -e "const x=require('./android-netlify-audit.json'); console.log(x.preliminaryVerdict); console.log(x.remoteTests.map(r=>r.key+' status='+r.getStatus+' cors='+r.cors+' range='+r.range).join('\\n'))"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-netlify-dependency-audit
+          path: android-netlify-audit.json
+          retention-days: 14
