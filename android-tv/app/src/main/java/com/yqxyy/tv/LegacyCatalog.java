@@ -136,9 +136,15 @@ final class LegacyCatalog {
   }
 
   private static void appendMovies(Map<String,Catalog.Show> map,Context ctx) throws Exception {
-    JSONObject hub=obj(getIndex(ctx,"movie-hub-catalog.json"));
+    Object rawHub=getIndex(ctx,"movie-hub-catalog.json");
+    JSONArray movies=rawHub instanceof JSONArray?(JSONArray)rawHub:obj(rawHub).optJSONArray("films");
     JSONObject posters=obj(getIndex(ctx,"movie-posters.json"));
-    JSONArray movies=hub.optJSONArray("films");
+    JSONArray groups=arr(getIndex(ctx,"movie-series.json"));
+    java.util.HashMap<String,String> genres=new java.util.HashMap<>();
+    for(int i=0;i<groups.length();i++){
+      JSONObject group=groups.optJSONObject(i);
+      if(group!=null)genres.put(group.optString("id",""),group.optString("genre",""));
+    }
     if(movies==null)return;
     Set<Integer> dynamicMovies=new HashSet<>();
     for(Catalog.Show show:map.values())if(show.category.equals("animated")&&show.mediaType.equals("movie")&&show.tmdbId>0)
@@ -157,6 +163,11 @@ final class LegacyCatalog {
       else if(rawPoster instanceof JSONObject)poster=resolve(((JSONObject)rawPoster).optString("url",""));
       String collection=string(m,"seriesId");
       if(collection.isEmpty())continue;
+      String genre=(genres.getOrDefault(collection,"")+" "+string(m,"genre")).toLowerCase(java.util.Locale.ROOT);
+      String grouping=collection.toLowerCase(java.util.Locale.ROOT);
+      boolean animated=genre.contains("animat")||genre.contains("动画")||
+        grouping.matches(".*(toy-story|dragon|kung-fu-panda|zootopia|wreck-it|inside-out|frozen|moana|shrek|pixar|disney|despicable|minions|ice-age|madagascar|coco|cars|finding-nemo).*");
+      if(!animated)continue;
       Catalog.Show show=new Catalog.Show(makeShow("animated","movie",tmdb>0?tmdb:syntheticId(id),
         name,chinese,poster,"",1,"",id,collection));
       JSONObject row=new JSONObject();

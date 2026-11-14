@@ -3,7 +3,7 @@ const fs=require('node:fs');
 const path=require('node:path');
 const url='https://yqxyy-r2.netlify.app/data/';
 (async()=>{
-  const names=['movie-hub-catalog.json','movie-posters.json','series-list.json','movie-hub-providers.json'];
+  const names=['movie-hub-catalog.json','movie-posters.json','movie-series.json','series-list.json','movie-hub-providers.json'];
   const packed={};
   for(const filename of names){
     let last;
@@ -20,9 +20,11 @@ const url='https://yqxyy-r2.netlify.app/data/';
       throw last;
     }
   }
-  const films=packed['movie-hub-catalog.json']?.films||[];
+  const movieCatalog=packed['movie-hub-catalog.json'];
+  const films=Array.isArray(movieCatalog)?movieCatalog:(movieCatalog?.films||[]);
   const series=packed['series-list.json'];
-  if(!Array.isArray(films)||films.length<50||!Array.isArray(series)||series.length<40)
+  const groups=packed['movie-series.json'];
+  if(!Array.isArray(films)||films.length<50||!Array.isArray(series)||series.length<40||!Array.isArray(groups)||groups.length<15)
     throw Error('Legacy TV catalogue unexpectedly empty; preserving previous release');
   const dest=path.join(__dirname,'../app/src/main/assets/tv-legacy.json');
   fs.mkdirSync(path.dirname(dest),{recursive:true});
