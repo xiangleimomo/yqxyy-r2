@@ -643,10 +643,12 @@ window.BookReader = {
         if (availableW<=0 || availableH<=0) return;
         const currentScale=Number.parseFloat(root.style.getPropertyValue('--pdf-fit-scale'))||.86;
         const ratio=Math.min(1, availableW/book.width, availableH/book.height);
-        if (ratio<.995 && pass<5) {
-          root.style.setProperty('--pdf-fit-scale',String(Math.max(.08,currentScale*ratio*.985)));
+        if (ratio<.995 && pass===0) {
+          // One measured shrink per layout. Repeatedly shrinking while
+          // the transform transition is in flight causes runaway zoom.
+          root.style.setProperty('--pdf-fit-scale',String(Math.max(.08,currentScale*ratio*.98)));
           centerBook();
-          requestAnimationFrame(()=>fitPdfSpread(pass+1));
+          requestAnimationFrame(()=>requestAnimationFrame(()=>fitPdfSpread(1)));
           return;
         }
         const dx=(target.left+target.right-book.left-book.right)/2;
