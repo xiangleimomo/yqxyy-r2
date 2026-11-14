@@ -188,6 +188,12 @@ public class MainActivity extends Activity {
                     return new WebResourceResponse("text/plain", "UTF-8",
                         new ByteArrayInputStream(new byte[0]));
                 }
+                // TMDB landscape backdrop metadata is resolved by the APK,
+                // not by Netlify, while retaining the webpage's same-origin
+                // request URL and avoiding browser CORS restrictions.
+                WebResourceResponse nativeBackdrop = MovieBackdropResolver.intercept(
+                    request, Uri.parse(BuildConfig.APP_URL).getHost());
+                if (nativeBackdrop != null) return nativeBackdrop;
                 return bundledWebsiteFile(request);
             }
             @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
