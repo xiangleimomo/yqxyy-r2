@@ -53,6 +53,20 @@ window.MovieClassroom = {
     if (this.frame) { this.frame.src = 'about:blank'; this.frame.remove(); this.frame = null; }
     if (this.player) { this.player.pause(); this.player.removeAttribute('src'); this.player.load(); this.player = null; }
   },
+  // These public provider endpoints use a TMDB numeric ID, never a scraped
+  // filename or a fabricated .m3u8 URL. Keep this fallback list APK-only so
+  // the deployed web site and R2 provider catalogue remain unchanged.
+  androidTmdbProviders(){
+    if(!/YQXYYAndroid\//i.test(navigator.userAgent||''))return [];
+    return [
+      {id:'android-111movies',name:'111Movies',mode:'embed',movieUrl:'https://111movies.net/movie/{tmdbId}',tvUrl:'https://111movies.net/tv/{tmdbId}/{seasonNumber}/{episodeNumber}'},
+      {id:'android-vidfast',name:'VidFast',mode:'embed',movieUrl:'https://vidfast.vc/movie/{tmdbId}?autoPlay=false&sub=en',tvUrl:'https://vidfast.vc/tv/{tmdbId}/{seasonNumber}/{episodeNumber}?autoPlay=false&sub=en'},
+      {id:'android-vidlink',name:'VidLink',mode:'embed',movieUrl:'https://vidlink.pro/movie/{tmdbId}',tvUrl:'https://vidlink.pro/tv/{tmdbId}/{seasonNumber}/{episodeNumber}'},
+      {id:'android-vidsrc',name:'VidSrc',mode:'embed',movieUrl:'https://vidsrc.sh/embed/movie/{tmdbId}',tvUrl:'https://vidsrc.sh/embed/tv/{tmdbId}/{seasonNumber}/{episodeNumber}'},
+      {id:'android-vidcore',name:'VidCore',mode:'embed',movieUrl:'https://vidcore.org/embed/movie/{tmdbId}',tvUrl:'https://vidcore.org/embed/tv/{tmdbId}/{seasonNumber}/{episodeNumber}'},
+      {id:'android-vidrock',name:'VidRock',mode:'embed',movieUrl:'https://vidrock.net/movie/{tmdbId}',tvUrl:'https://vidrock.net/tv/{tmdbId}/{seasonNumber}/{episodeNumber}'}
+    ];
+  },
   providerSource(provider,metadata,automatic=false){
     const tmdb=Number(metadata.tmdb),tv=metadata.mediaType==='tv';
     if(!Number.isSafeInteger(tmdb)||tmdb<1)return null;
@@ -65,12 +79,14 @@ window.MovieClassroom = {
     }catch{return null;}
   },
   async getLibrary(app) {
-    const [catalog,settings,hub,providers,posters,dynamicRows]=await Promise.all([app.getJSON('data/movie-series.json'),app.getJSON('data/movie-playback.json',{refresh:true}),app.getJSON('data/movie-hub-catalog.json'),app.getJSON('data/movie-hub-providers.json',{refresh:true}),app.getJSON('data/movie-posters.json').catch(()=>({})),window.MovieLibrary?.published?.().catch(()=>[])||[]]);
+    const [catalog,settings,hub,configuredProviders,posters,dynamicRows]=await Promise.all([app.getJSON('data/movie-series.json'),app.getJSON('data/movie-playback.json',{refresh:true}),app.getJSON('data/movie-hub-catalog.json'),app.getJSON('data/movie-hub-providers.json',{refresh:true}),app.getJSON('data/movie-posters.json').catch(()=>({})),window.MovieLibrary?.published?.().catch(()=>[])||[]]);
     const series = await Promise.all(catalog.map(async item => ({
       ...item,
       ...(await app.getJSON(`data/movies/${item.id}/movies.json`))
     })));
     const dynamicGroups=window.MovieLibrary?.asGroups?.(dynamicRows)||[],allSeries=[...dynamicGroups,...series],dynamicInfo=window.MovieLibrary?.info?.(dynamicRows)||new Map();
+    const builtInProviders=this.androidTmdbProviders();
+    const providers=[...builtInProviders,...configuredProviders.filter(provider=>!builtInProviders.some(extra=>extra.name===provider.name||extra.movieUrl===provider.movieUrl))];
     const legacy=settings.mode==='legacy'&&settings.legacyPrimaryEnabled===true,ids=new Map([...hub.films,...dynamicRows.map(row=>({id:row.id,tmdbId:Number(row.tmdb_id)}))].map(film=>[film.id,film.tmdbId])),useVidMario=settings.mode==='vidmario',embedProviders=providers.filter(provider=>provider.mode==='embed');
     const playable=legacy?allSeries.flatMap(item=>item.sources||[]).filter(item=>this.playbackSource(item).url):allSeries.flatMap(group=>group.films.map(([id,title,titleZh,year])=>{
       const dynamic=dynamicInfo.get(id),tmdb=ids.get(id),validTmdb=Number.isSafeInteger(tmdb)&&tmdb>0,mediaType=dynamic?.media_type==='tv'?'tv':'movie',seasonNumber=Math.max(1,Number(dynamic?.season_number)||1),episodeNumber=Math.max(1,Number(dynamic?.episode_number)||1);
@@ -242,7 +258,10 @@ window.MovieClassroom = {
       const onMessage=event=>{
         if(generation!==this.generation||event.source!==frame.contentWindow||event.origin!==new URL(sourceUrl).origin||event.data?.type!=='PLAYER_EVENT')return;
         const state=event.data.data?.event;
-        if(state==='unavailable'||state==='error')report('第三方报告本片暂不可用，请切换播放源或切回直链。',true);
+        if(state==='unavailable'||state==='error'){
+          report('当前线路报告视频不可用，正在尝试下一个 TMDB 备用源…',true);
+          nextEmbeddedSource();
+        }
         if(['play','playing','timeupdate'].includes(state))report('第三方播放器正在播放。');
       };
       window.addEventListener('message',onMessage);this.disposeEmbedMessages=()=>window.removeEventListener('message',onMessage);
@@ -275,6 +294,21 @@ window.MovieClassroom = {
       if (generation !== this.generation) return;
       if (this.nativeStartTimer) { clearTimeout(this.nativeStartTimer); this.nativeStartTimer = null; }
     };
+    const nextAfterDirectFailure = () => {
+      if (generation !== this.generation || !player.isConnected) return;
+      // One bad direct source must not strand the user. Continue through
+      // saved direct URLs, then the TMDB iframe providers. Do not loop.
+      const nextIndex=directIndex+1;
+      if (direct && nextIndex<directSources.length) {
+        report('当前直链不可用，正在尝试下一条直链…');
+        this.cleanup();
+        this.renderWatch(app,id,'direct-'+nextIndex).catch(()=>{});
+      } else if (embeddedAlternatives.length) {
+        report('直链播放失败，正在尝试 TMDB 备用播放器…');
+        this.cleanup();
+        this.renderWatch(app,id,'provider-0','embed').catch(()=>{});
+      } else report('所有已配置播放线路均不可用，请稍后重试。',true);
+    };
     const fallback = () => {
       if (generation !== this.generation || !player.isConnected) return;
       this.cleanup();
@@ -288,7 +322,8 @@ window.MovieClassroom = {
     player.addEventListener('waiting', () => { if (!player.paused) report(directLink ? '正在缓冲，请稍候；若持续转圈，可点击“直接打开播放”。' : '正在缓冲，请稍候…'); });
     player.addEventListener('error', () => {
       if (directNative) { fallback(); return; }
-      report(movie.playerMode==='dulo-direct'?'已获取视频地址，但当前网络未能加载视频；可重新获取线路或切换 Dulo 播放器。':hasBackup && !usingBackup ? '主片源加载失败，请选择备用片源或重新加载。' : directLink ? '影片加载失败，请重试或点击“直接打开播放”。' : '影片加载失败，请重新加载或切换片源。', true);
+      report('当前视频无法加载，尝试备用线路…',true);
+      if(movie.playerMode!=='dulo-direct')nextAfterDirectFailure();
     });
     const useNative = url => { player.src = url; this.disposeAdSkip = window.DyttAdSkip?.attach(player, sourceUrl); };
     if(/\.mp4(?:$|[?#])/i.test(sourceUrl)){useNative(sourceUrl);return;}
@@ -311,7 +346,7 @@ window.MovieClassroom = {
         throw new Error('当前浏览器不支持 HLS 播放');
       }
       const hls = new window.Hls(movie.playerMode==='dulo-direct'?{renderTextTracksNatively:false,xhrSetup:(xhr,url)=>{try{const source=new URL(sourceUrl),target=new URL(url,sourceUrl),token=source.searchParams.get('_rb'),prefix=source.pathname.slice(0,source.pathname.lastIndexOf('/')+1);if(token&&target.origin===source.origin&&target.pathname.startsWith(prefix)){target.searchParams.set('_rb',token);if(target.href!==url)xhr.open('GET',target.href,true);}}catch{}}}:{renderTextTracksNatively:false}); this.hls = hls;
-      hls.on(window.Hls.Events.ERROR, (_event, data) => { if (data.fatal) { hls.stopLoad(); report(movie.playerMode==='dulo-direct'?'已获取视频地址，但视频线路在当前网络下加载失败。请重新获取线路；如果仍失败，需要可直连线路或视频中转。':hasBackup && !usingBackup ? '主片源加载失败，请选择备用片源或重新加载。' : '影片加载失败：片源可能已过期，或存在网络／跨站访问限制。请重试；仍失败时需要更新片源地址。', true); } });
+      hls.on(window.Hls.Events.ERROR, (_event, data) => { if (data.fatal) { hls.stopLoad(); report('当前视频线路加载失败，尝试备用线路…',true); if(movie.playerMode!=='dulo-direct')nextAfterDirectFailure(); } });
       this.disposeAdSkip = window.DyttAdSkip?.attach(player, sourceUrl, hls);
       hls.loadSource(mediaUrl); hls.attachMedia(player);
     } catch (error) { report(error.message + '，请点击重新加载。', true); }
