@@ -7,6 +7,9 @@ public class PlayerAdGuardTest {
     public static void main(String[] args) {
         check(PlayerAdGuard.isKnownAdHost("cdn.doubleclick.net"), "known ads blocked");
         check(PlayerAdGuard.isKnownAdHost("adsterra.com"), "known ads blocked");
+        check(PlayerAdGuard.isKnownAdHost("ads.clickadu.com"), "known popunder host blocked");
+        check(!PlayerAdGuard.isKnownAdHost("cdn.vidlink.pro"), "TMDB playback iframe allowed");
+        check(!PlayerAdGuard.isKnownAdHost("vidfast.vc"), "TMDB playback iframe allowed");
         check(!PlayerAdGuard.isKnownAdHost("my-doubleclick.net.example.org"), "exact suffix check");
         check(!PlayerAdGuard.isKnownAdHost("api.obj2.top"), "TMDB HLS allowed");
         check(!PlayerAdGuard.isKnownAdHost("cdn.fastcloud.live"), "video CDN allowed");
