@@ -17,6 +17,7 @@ on:
       - 'tests/tmdb-tv-seasons.test.cjs'
       - 'tests/tvmaze-episode-autofill.test.cjs'
       - 'tests/PlayerAdGuardTest.java'
+      - 'tests/R2PathPolicyTest.java'
       - 'js/movie-library.js'
       - 'js/movie-subtitles.js'
       - 'js/movies.js'
@@ -86,6 +87,8 @@ jobs:
           mkdir -p /tmp/yqxyy-adguard-tests
           javac -d /tmp/yqxyy-adguard-tests android/app/src/main/java/com/yqxyy/english/PlayerAdGuard.java tests/PlayerAdGuardTest.java
           java -cp /tmp/yqxyy-adguard-tests PlayerAdGuardTest
+          javac -d /tmp/yqxyy-adguard-tests android/app/src/main/java/com/yqxyy/english/R2PathPolicy.java tests/R2PathPolicyTest.java
+          java -cp /tmp/yqxyy-adguard-tests com.yqxyy.english.R2PathPolicyTest
       - name: Install website test dependencies
         run: npm ci --no-audit --no-fund
       - name: Browser-check movie editor and in-video subtitles
