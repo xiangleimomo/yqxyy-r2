@@ -91,7 +91,7 @@ window.MovieClassroom = {
     }catch{return null;}
   },
   async getLibrary(app) {
-    const [catalog,settings,hub,configuredProviders,posters,dynamicRows]=await Promise.all([app.getJSON('data/movie-series.json'),app.getJSON('data/movie-playback.json',{refresh:true}),app.getJSON('data/movie-hub-catalog.json'),app.getJSON('data/movie-hub-providers.json',{refresh:true}),app.getJSON('data/movie-posters.json').catch(()=>({})),window.MovieLibrary?.published?.().catch(()=>[])||[]]);
+    const [catalog,settings,hub,configuredProviders,posters,dynamicRows,managedProviders]=await Promise.all([app.getJSON('data/movie-series.json'),app.getJSON('data/movie-playback.json',{refresh:true}),app.getJSON('data/movie-hub-catalog.json'),app.getJSON('data/movie-hub-providers.json',{refresh:true}),app.getJSON('data/movie-posters.json').catch(()=>({})),window.MovieLibrary?.published?.().catch(()=>[])||[],window.MovieSourceAdmin?.providers?.()||Promise.resolve([])]);
     const series = await Promise.all(catalog.map(async item => ({
       ...item,
       ...(await app.getJSON(`data/movies/${item.id}/movies.json`))
@@ -99,7 +99,7 @@ window.MovieClassroom = {
     const dynamicGroups=window.MovieLibrary?.asGroups?.(dynamicRows)||[],allSeries=[...dynamicGroups,...series],dynamicInfo=window.MovieLibrary?.info?.(dynamicRows)||new Map();
     const builtInProviders=this.androidTmdbProviders();
     const autoEmbedProvider={id:'autoembed',name:'AutoEmbed',mode:'embed',movieUrl:'https://autoembed.me/movie/tmdb/{tmdbId}',tvUrl:'https://autoembed.me/tv/tmdb/{tmdbId}-{seasonNumber}-{episodeNumber}'};
-    const providers=[...builtInProviders,...configuredProviders.filter(provider=>!builtInProviders.some(extra=>extra.name===provider.name||extra.movieUrl===provider.movieUrl))];
+    const providers=[...managedProviders,...builtInProviders.filter(provider=>!managedProviders.some(extra=>extra.name===provider.name||extra.movieUrl===provider.movieUrl)),...configuredProviders.filter(provider=>![...managedProviders,...builtInProviders].some(extra=>extra.name===provider.name||extra.movieUrl===provider.movieUrl))];
     if(!providers.some(provider=>provider.name==='AutoEmbed'||provider.movieUrl===autoEmbedProvider.movieUrl))providers.push(autoEmbedProvider);
     const legacy=settings.mode==='legacy'&&settings.legacyPrimaryEnabled===true,ids=new Map([...hub.films,...dynamicRows.map(row=>({id:row.id,tmdbId:Number(row.tmdb_id)}))].map(film=>[film.id,film.tmdbId])),useVidMario=settings.mode==='vidmario',embedProviders=providers.filter(provider=>provider.mode==='embed');
     const playable=legacy?allSeries.flatMap(item=>item.sources||[]).filter(item=>this.playbackSource(item).url):allSeries.flatMap(group=>group.films.map(([id,title,titleZh,year])=>{
