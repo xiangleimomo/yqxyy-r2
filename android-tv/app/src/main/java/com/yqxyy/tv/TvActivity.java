@@ -2,6 +2,11 @@ package com.yqxyy.tv;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.app.AlertDialog;
+import android.text.InputType;
+import android.widget.EditText;
+import android.widget.Toast;
+import org.json.JSONObject;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -25,6 +30,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -42,6 +49,8 @@ public final class TvActivity extends Activity {
   private String section="all";
   private Catalog.Show activeShow;
   private boolean compact;
+  private TvAccount account;
+  private boolean accountRefreshing=false;
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -49,8 +58,10 @@ public final class TvActivity extends Activity {
       getResources().getConfiguration().screenHeightDp<510;
     getWindow().setFlags(1024,1024);
     getWindow().setBackgroundDrawable(TvUi.bg(TvUi.BG,0,this));
+    try{account=new TvAccount(getApplicationContext());}catch(Exception ignored){}
     createShell();
     refresh();
+    refreshAccount();
   }
 
   private void createShell() {
@@ -66,8 +77,14 @@ public final class TvActivity extends Activity {
     shell.addView(masthead);
     nav=TvUi.row(this);
     nav.setPadding(0,TvUi.dp(this,compact?3:10),0,TvUi.dp(this,compact?5:12));
-    shell.addView(nav);
-    String[][] tabs={{"all","全部"},{"kids","儿童动画"},{"documentary","纪录片"},{"animated","动画大电影"},{"animation","动画故事"}};
+    HorizontalScrollView navScroll=new HorizontalScrollView(this);
+    navScroll.setHorizontalScrollBarEnabled(false);
+    navScroll.setFillViewport(false);
+    navScroll.addView(nav);
+    shell.addView(navScroll,new LinearLayout.LayoutParams(-1,-2));
+    String[][] tabs={{"all","全部"},{"kids","儿童动画"},{"documentary","纪录片"},
+      {"animated","动画大电影"},{"animation","动画故事"},
+      {"favorites","我的收藏"},{"recent","观看记录"},{"account","我的账号"}};
     for(String[] tab:tabs){
       TextView b=TvUi.button(this,tab[1],()->showHome(tab[0]));
       if(compact)b.setTextSize(13);
@@ -86,7 +103,7 @@ public final class TvActivity extends Activity {
   }
 
   private void refresh(){
-    indicator.setText("正在连接 Supabase…");
+    indicator.setText("正在连接影视目录…");
     io.execute(()->{
       try{
         List<Catalog.Show> result=Catalog.load(getApplicationContext());
@@ -94,6 +111,10 @@ public final class TvActivity extends Activity {
           if(isFinishing()||isDestroyed())return;
           catalogue=result;
           indicator.setText(result.size()+" 部作品 · 遥控器上下左右选择");
+          if(nav.getChildCount()>3){
+            int films=0;for(Catalog.Show show:result)if("animated".equals(show.category))films++;
+            ((TextView)nav.getChildAt(3)).setText("动画大电影 ("+films+")");
+          }
           if(activeShow==null)showHome(section);
         });
       }catch(Exception error){
@@ -124,22 +145,46 @@ public final class TvActivity extends Activity {
     nav.setVisibility(View.VISIBLE);
     scroll.scrollTo(0,0);
     body.removeAllViews();
+    if("account".equals(selected)){showAccount();return;}
+    if(("favorites".equals(selected)||"recent".equals(selected))&&
+       (account==null||!account.hasAccount())){
+      showMessage("登录后可以与网站同步收藏和观看历史",false);
+      body.addView(TvUi.button(this,"登录我的账号",this::showLoginDialog));
+      return;
+    }
     if(catalogue.isEmpty()){
       showMessage("还没有可显示的影片，或正在加载目录…",false);
       return;
     }
-    TextView heading=TvUi.text(this,selected.equals("all")?"今晚看什么？":Catalog.categoryName(selected),compact?21:28,TvUi.WHITE,true);
+    String pageTitle=selected.equals("all")?"今晚看什么？":selected.equals("favorites")?"我的收藏":
+      selected.equals("recent")?"最近观看":Catalog.categoryName(selected);
+    TextView heading=TvUi.text(this,pageTitle,compact?21:28,TvUi.WHITE,true);
     heading.setPadding(0,0,0,TvUi.dp(this,compact?4:10));body.addView(heading);
-    TextView note=TvUi.text(this,"选择海报查看全部季数及集数。按确定键打开。",compact?12:14,TvUi.DIM,false);
+    TextView note=TvUi.text(this,selected.equals("favorites")?"与网站同一账号的收藏列表":
+      selected.equals("recent")?"显示最近观看过的作品，打开可继续播放":
+      "选择海报查看影片或分集，按确定键打开。",compact?12:14,TvUi.DIM,false);
     body.addView(note);TvUi.gap(body,this,compact?11:24);
     int count=0;
-    for(String cat:Catalog.CATEGORIES){
-      if(!selected.equals("all")&&!selected.equals(cat))continue;
+    String[] sections=("favorites".equals(selected)||"recent".equals(selected))
+      ?new String[]{"personal"}:Catalog.CATEGORIES;
+    for(String cat:sections){
+      if(!"personal".equals(cat)&&!selected.equals("all")&&!selected.equals(cat))continue;
       List<Catalog.Show> shows=new ArrayList<>();
-      for(Catalog.Show show:catalogue)if(show.category.equals(cat))shows.add(show);
+      for(Catalog.Show show:catalogue){
+        if(!"personal".equals(cat)){
+          if(show.category.equals(cat))shows.add(show);
+        }else if("favorites".equals(selected)?isFavorite(show):!latestRead(show).isEmpty()){
+          shows.add(show);
+        }
+      }
+      if("recent".equals(selected)){
+        Collections.sort(shows,(a,b)->latestRead(b).compareTo(latestRead(a)));
+        if(shows.size()>30)shows.subList(30,shows.size()).clear();
+      }
       if(shows.isEmpty())continue;
       count++;
-      TextView title=TvUi.text(this,Catalog.categoryName(cat)+"    "+shows.size()+" 部",compact?18:23,TvUi.WHITE,true);
+      String caption="personal".equals(cat)?("favorites".equals(selected)?"我的收藏":"最近观看"):Catalog.categoryName(cat);
+      TextView title=TvUi.text(this,caption+"    "+shows.size()+" 部",compact?18:23,TvUi.WHITE,true);
       body.addView(title);
       TvUi.gap(body,this,compact?8:13);
       HorizontalScrollView h=new HorizontalScrollView(this);
@@ -167,7 +212,8 @@ public final class TvActivity extends Activity {
       body.addView(h);
       TvUi.gap(body,this,compact?12:20);
     }
-    if(count==0)showMessage("这个栏目目前还没有影片",false);
+    if(count==0)showMessage("favorites".equals(selected)?"目前没有收藏作品":
+      "recent".equals(selected)?"目前没有观看记录":"这个栏目目前还没有影片",false);
   }
 
   private View makeCard(Catalog.Show show,boolean eagerPoster) {
@@ -211,6 +257,7 @@ public final class TvActivity extends Activity {
       io.execute(()->{
         try {
           LegacyCatalog.loadEpisodes(show);
+          LegacyCatalog.attachWebPlayers(show);
           ui.post(()->{if(!isFinishing()&&!isDestroyed()&&activeShow==show)showDetail(show);});
         }catch(Exception error){
           ui.post(()->{
@@ -245,14 +292,23 @@ public final class TvActivity extends Activity {
     data.setPadding(TvUi.dp(this,compact?15:27),0,0,0);
     data.addView(TvUi.text(this,show.title,compact?23:30,TvUi.WHITE,true));
     TvUi.gap(data,this,compact?6:12);
-    data.addView(TvUi.text(this,Catalog.categoryName(show.category)+"  ·  "+(show.year>0?show.year+"  ·  ":"")+show.seasons.size()+" 季 · "+show.episodeCount()+" 集",compact?13:17,TvUi.ACCENT,false));
+    String subline=show.mediaType.equals("movie")?"电影 · 单片播放":
+      show.seasons.size()+" 季 · "+show.episodeCount()+" 集";
+    data.addView(TvUi.text(this,Catalog.categoryName(show.category)+"  ·  "+
+      (show.year>0?show.year+"  ·  ":"")+subline,compact?13:17,TvUi.ACCENT,false));
     TvUi.gap(data,this,12);
-    String summary=show.overview.trim().isEmpty()?"选择下面的季度和集数，按遥控器确定键开始播放。":show.overview;
+    String summary=show.overview.trim().isEmpty()?(show.mediaType.equals("movie")?
+      "电影为单片播放，不按电视剧的季数、集数编码。":"选择下面的季度和集数，按确定键开始播放。"):show.overview;
     TextView overview=TvUi.text(this,summary,compact?13:16,TvUi.DIM,false);
     overview.setMaxLines(4);data.addView(overview);
     hero.addView(data,new LinearLayout.LayoutParams(0,-2,1f));
     body.addView(hero);
     TvUi.gap(body,this,compact?14:27);
+    LinearLayout actions=TvUi.row(this);
+    TextView favorite=TvUi.button(this,isFavorite(show)?"★ 已收藏":"☆ 加入收藏",()->toggleFavorite(show));
+    actions.addView(favorite);
+    body.addView(actions);
+    TvUi.gap(body,this,compact?12:17);
     if(show.mediaType.equals("movie")){
       List<Catalog.Episode> episodes=show.seasons.firstEntry().getValue();
       if(!episodes.isEmpty()){
@@ -306,11 +362,173 @@ public final class TvActivity extends Activity {
   }
 
   private void startPlayer(Catalog.Show show,int season,int index){
+    List<Catalog.Episode> episodes=show.seasons.get(season);
+    if(episodes==null||index<0||index>=episodes.size())return;
+    Catalog.Episode episode=episodes.get(index);
     Intent intent=new Intent(this,PlayerActivity.class);
     intent.putExtra("seriesTitle",show.title);
     intent.putExtra("playlist",show.playlist(season).toString());
     intent.putExtra("index",index);
+    intent.putExtra("isMovie",show.mediaType.equals("movie"));
+    if(!show.legacySeriesId.isEmpty())intent.putExtra("legacySeriesId",show.legacySeriesId);
+    TvAccount.Personal state=account==null?null:account.state(historyKey(show,episode));
+    if(state!=null){
+      JSONObject position=state.position();
+      int positionEpisode=position.optInt("episodeId",episode.number);
+      if(positionEpisode==episode.number)intent.putExtra("resumeSeconds",position.optInt("seconds",0));
+    }
     startActivity(intent);
+  }
+
+  private String favoriteKey(Catalog.Show show){
+    if(!show.legacySeriesId.isEmpty())return "anim-"+show.legacySeriesId;
+    if(!show.legacyFilmId.isEmpty())return "film-"+show.legacyFilmId;
+    if("tv".equals(show.mediaType))
+      return "film-series-library-tv-"+show.tmdbId+"-"+show.category;
+    if(!show.seasons.isEmpty()&&!show.seasons.firstEntry().getValue().isEmpty())
+      return "film-"+show.seasons.firstEntry().getValue().get(0).id;
+    return "";
+  }
+  private String historyKey(Catalog.Show show,Catalog.Episode episode){
+    if(!show.legacySeriesId.isEmpty())return "anim-"+show.legacySeriesId;
+    if(!show.legacyFilmId.isEmpty())return "film-"+show.legacyFilmId;
+    return "film-"+episode.id;
+  }
+  private boolean isFavorite(Catalog.Show show){
+    if(account==null)return false;
+    String key=favoriteKey(show);
+    TvAccount.Personal row=account.state(key);
+    return row!=null&&row.favorite;
+  }
+  private String latestRead(Catalog.Show show){
+    if(account==null)return "";
+    String latest="";
+    String key=favoriteKey(show);
+    for(Map.Entry<String,TvAccount.Personal> entry:account.states().entrySet()){
+      String k=entry.getKey();
+      boolean match=k.equals(key);
+      if(!match&&show.mediaType.equals("tv")&&show.tmdbId>0&&show.legacySeriesId.isEmpty()){
+        String prefix="film-tmdb-tv-"+show.tmdbId;
+        match=k.equals(prefix)||k.startsWith(prefix+"-");
+      }
+      if(!match&&!show.seasons.isEmpty()){
+        for(List<Catalog.Episode> items:show.seasons.values()){
+          for(Catalog.Episode ep:items)if(k.equals(historyKey(show,ep))){match=true;break;}
+          if(match)break;
+        }
+      }
+      if(match){
+        String time=entry.getValue().lastReadAt;
+        if(time!=null&&time.compareTo(latest)>0)latest=time;
+      }
+    }
+    return latest;
+  }
+  private void toggleFavorite(Catalog.Show show){
+    if(account==null||!account.hasAccount()){showLoginDialog();return;}
+    String key=favoriteKey(show);
+    if(key.isEmpty()){Toast.makeText(this,"作品编号缺失",Toast.LENGTH_SHORT).show();return;}
+    boolean selected=!isFavorite(show);
+    io.execute(()->{
+      try{
+        account.setFavorite(key,selected);
+        ui.post(()->{if(!isFinishing()&&!isDestroyed()){
+          Toast.makeText(this,selected?"已同步收藏到网站":"已取消收藏",Toast.LENGTH_SHORT).show();
+          if(activeShow==show)showDetail(show);else if("favorites".equals(section))showHome(section);
+        }});
+      }catch(Exception ex){
+        ui.post(()->Toast.makeText(this,"收藏同步失败："+ex.getMessage(),Toast.LENGTH_LONG).show());
+      }
+    });
+  }
+  private void refreshAccount(){
+    if(account==null||!account.hasAccount()||accountRefreshing)return;
+    accountRefreshing=true;
+    io.execute(()->{
+      String issue=null;
+      try{account.restore();account.loadPersonal();}
+      catch(Exception ex){issue=ex.getMessage();}
+      final String message=issue;
+      ui.post(()->{
+        accountRefreshing=false;
+        if(isFinishing()||isDestroyed())return;
+        if(message!=null&&("account".equals(section)||"favorites".equals(section)||"recent".equals(section)))
+          Toast.makeText(this,"账户同步："+message,Toast.LENGTH_LONG).show();
+        if(activeShow==null&&("account".equals(section)||"favorites".equals(section)||"recent".equals(section)))
+          showHome(section);
+      });
+    });
+  }
+  private void showAccount(){
+    body.removeAllViews();
+    TextView title=TvUi.text(this,"我的账号",compact?22:28,TvUi.WHITE,true);
+    body.addView(title);TvUi.gap(body,this,18);
+    String status=account==null?"账号功能未初始化":
+      account.hasAccount()?"当前账号："+account.displayName():"未登录 · 可继续以访客身份观看";
+    body.addView(TvUi.text(this,status,18,TvUi.DIM,false));
+    TvUi.gap(body,this,20);
+    if(account!=null&&account.hasAccount()){
+      int fav=0,recent=0;
+      for(TvAccount.Personal row:account.states().values()){
+        if(row.favorite)fav++;
+        if(!row.lastReadAt.isEmpty())recent++;
+      }
+      body.addView(TvUi.text(this,"已同步收藏记录："+fav+" 项 · 观看记录："+recent+" 项",16,TvUi.ACCENT,false));
+      TvUi.gap(body,this,18);
+      body.addView(TvUi.button(this,"刷新云端收藏与记录",()->{refreshAccount();Toast.makeText(this,"正在同步",Toast.LENGTH_SHORT).show();}));
+      TvUi.gap(body,this,14);
+      body.addView(TvUi.button(this,"退出当前账号",()->new AlertDialog.Builder(this)
+        .setTitle("退出 TV 账号？")
+        .setMessage("本设备退出登录后，网站云端记录不会删除。")
+        .setNegativeButton("取消",null)
+        .setPositiveButton("退出", (dialog,which)->io.execute(()->{
+          account.signOut();
+          ui.post(()->{if(!isFinishing()&&!isDestroyed())showHome("account");});
+        })).show()));
+    }else{
+      body.addView(TvUi.button(this,"邮箱密码登录",this::showLoginDialog));
+      TvUi.gap(body,this,14);
+      body.addView(TvUi.text(this,"使用网页版或手机版已有账号，收藏与观看进度按同一账号同步。",16,TvUi.DIM,false));
+    }
+  }
+  private void showLoginDialog(){
+    if(account==null){Toast.makeText(this,"账号配置未就绪",Toast.LENGTH_SHORT).show();return;}
+    LinearLayout form=TvUi.column(this);
+    form.setPadding(TvUi.dp(this,25),TvUi.dp(this,10),TvUi.dp(this,25),TvUi.dp(this,8));
+    EditText email=new EditText(this);
+    email.setHint("邮箱");
+    email.setSingleLine(true);
+    email.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+    form.addView(email,new LinearLayout.LayoutParams(-1,TvUi.dp(this,55)));
+    EditText pass=new EditText(this);
+    pass.setHint("密码");
+    pass.setSingleLine(true);
+    pass.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_VARIATION_PASSWORD);
+    form.addView(pass,new LinearLayout.LayoutParams(-1,TvUi.dp(this,55)));
+    new AlertDialog.Builder(this).setTitle("登录一起学英语")
+      .setMessage("使用你在网站上注册的邮箱和密码")
+      .setView(form)
+      .setNegativeButton("取消",null)
+      .setPositiveButton("登录",(dialog,which)->{
+        String e=email.getText().toString().trim(),p=pass.getText().toString();
+        if(e.isEmpty()||p.isEmpty()){
+          Toast.makeText(this,"请输入完整邮箱和密码",Toast.LENGTH_LONG).show();return;
+        }
+        Toast.makeText(this,"正在登录…",Toast.LENGTH_SHORT).show();
+        io.execute(()->{
+          try{
+            account.signIn(e,p);
+            account.loadPersonal();
+            ui.post(()->{
+              if(isFinishing()||isDestroyed())return;
+              Toast.makeText(this,"已登录，与网站同步成功",Toast.LENGTH_LONG).show();
+              if(activeShow!=null)showDetail(activeShow);else showHome("account");
+            });
+          }catch(Exception error){
+            ui.post(()->Toast.makeText(this,"登录失败："+error.getMessage(),Toast.LENGTH_LONG).show());
+          }
+        });
+      }).show();
   }
 
   private void loadPoster(ImageView view,String url){
@@ -340,6 +558,10 @@ public final class TvActivity extends Activity {
   @Override public boolean onKeyDown(int keyCode,KeyEvent event) {
     if(keyCode==KeyEvent.KEYCODE_BACK&&activeShow!=null){showHome(section);return true;}
     return super.onKeyDown(keyCode,event);
+  }
+  @Override protected void onResume(){
+    super.onResume();
+    if(account!=null&&account.hasAccount())refreshAccount();
   }
   @Override protected void onDestroy(){
     io.shutdownNow();super.onDestroy();

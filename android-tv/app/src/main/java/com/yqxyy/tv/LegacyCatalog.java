@@ -1,6 +1,7 @@
 package com.yqxyy.tv;
 
 import android.net.Uri;
+import android.content.Context;
 import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -18,6 +19,8 @@ final class LegacyCatalog {
   private static final String BASE="https://yqxyy-r2.netlify.app/";
   private static final String TAG="YQXYY-TV-Legacy";
   private static final int MAX_BYTES=9*1024*1024;
+  private static JSONObject bundled;
+  private static JSONArray providerList=new JSONArray();
 
   private static Object get(String file) throws Exception {
     String url=resolve(file);
@@ -36,6 +39,22 @@ final class LegacyCatalog {
       String text=new String(out.toByteArray(),StandardCharsets.UTF_8);
       return new org.json.JSONTokener(text).nextValue();
     }finally{c.disconnect();}
+  }
+  private static synchronized Object getIndex(Context ctx,String file) throws Exception {
+    try{return get("data/"+file);}
+    catch(Exception remoteError){
+      if(bundled==null){
+        try(InputStream in=ctx.getAssets().open("tv-legacy.json")){
+          ByteArrayOutputStream out=new ByteArrayOutputStream();
+          byte[] buf=new byte[8192];int n;
+          while((n=in.read(buf))!=-1)out.write(buf,0,n);
+          bundled=new JSONObject(new String(out.toByteArray(),StandardCharsets.UTF_8));
+        }
+      }
+      Object fallback=bundled.opt(file);
+      if(fallback==null||fallback==JSONObject.NULL)throw remoteError;
+      return fallback;
+    }
   }
   static String resolve(String url){
     if(url==null||url.trim().isEmpty())return null;
@@ -72,14 +91,53 @@ final class LegacyCatalog {
       .put("_legacy_film_id",fid).put("_legacy_collection_id",collection);
     return data;
   }
-  static void appendPublicCatalogues(Map<String,Catalog.Show> map){
-    try{appendMovies(map);}catch(Exception e){Log.w(TAG,"Original movies unavailable: "+e.getMessage());}
-    try{appendAnimation(map);}catch(Exception e){Log.w(TAG,"Animation stories unavailable: "+e.getMessage());}
+  static void appendPublicCatalogues(Map<String,Catalog.Show> map,Context ctx){
+    try{appendMovies(map,ctx);}catch(Exception e){Log.w(TAG,"Original movies unavailable: "+e.getMessage());}
+    try{appendAnimation(map,ctx);}catch(Exception e){Log.w(TAG,"Animation stories unavailable: "+e.getMessage());}
+    try{
+      Object providerData=getIndex(ctx,"movie-hub-providers.json");
+      providerList=arr(providerData);
+      attachWebPlayers(map);
+    }catch(Exception e){Log.w(TAG,"TV web player settings unavailable: "+e.getMessage());}
+  }
+  static void attachWebPlayers(Catalog.Show show){
+    if(providerList.length()==0||show.seasons.isEmpty())return;
+    String type=show.mediaType;
+    if(!"movie".equals(type)&&!"tv".equals(type))return;
+    for(java.util.List<Catalog.Episode> entries:show.seasons.values()){
+      for(Catalog.Episode ep:entries){
+        if(ep.tmdbId<=0)continue;
+        for(int i=0;i<providerList.length();i++){
+          JSONObject provider=providerList.optJSONObject(i);
+          if(provider==null||!"embed".equals(provider.optString("mode")))continue;
+          String template=provider.optString("movie".equals(type)?"movieUrl":"tvUrl","");
+          if(!template.startsWith("https://"))continue;
+          String url=template.replace("{tmdbId}",Integer.toString(ep.tmdbId))
+            .replace("{seasonNumber}",Integer.toString(ep.season))
+            .replace("{episodeNumber}",Integer.toString(ep.number));
+          if(url.contains("{")||url.contains("}")||url.length()>900)continue;
+          try{
+            Uri u=Uri.parse(url);
+            if(!"https".equals(u.getScheme())||u.getHost()==null||u.getUserInfo()!=null)continue;
+            boolean exists=false;
+            for(int j=0;j<ep.sources.length();j++){
+              JSONObject previous=ep.sources.optJSONObject(j);
+              if(previous!=null&&url.equals(previous.optString("url"))){exists=true;break;}
+            }
+            if(!exists)ep.sources.put(new JSONObject().put("kind","embed")
+              .put("label",provider.optString("name","网页播放器")).put("url",url));
+          }catch(Exception ignored){}
+        }
+      }
+    }
+  }
+  private static void attachWebPlayers(Map<String,Catalog.Show> map){
+    for(Catalog.Show show:map.values())attachWebPlayers(show);
   }
 
-  private static void appendMovies(Map<String,Catalog.Show> map) throws Exception {
-    JSONObject hub=obj(get("data/movie-hub-catalog.json"));
-    JSONObject posters=obj(get("data/movie-posters.json"));
+  private static void appendMovies(Map<String,Catalog.Show> map,Context ctx) throws Exception {
+    JSONObject hub=obj(getIndex(ctx,"movie-hub-catalog.json"));
+    JSONObject posters=obj(getIndex(ctx,"movie-posters.json"));
     JSONArray movies=hub.optJSONArray("films");
     if(movies==null)return;
     Set<Integer> dynamicMovies=new HashSet<>();
@@ -119,8 +177,8 @@ final class LegacyCatalog {
     }
     return sources;
   }
-  private static void appendAnimation(Map<String,Catalog.Show> map) throws Exception {
-    JSONArray list=arr(get("data/series-list.json"));
+  private static void appendAnimation(Map<String,Catalog.Show> map,Context ctx) throws Exception {
+    JSONArray list=arr(getIndex(ctx,"series-list.json"));
     for(int i=0;i<list.length();i++){
       JSONObject m=list.optJSONObject(i);if(m==null)continue;
       String id=string(m,"seriesId");

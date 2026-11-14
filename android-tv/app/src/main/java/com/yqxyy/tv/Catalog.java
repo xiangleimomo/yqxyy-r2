@@ -172,7 +172,7 @@ final class Catalog {
     }
     // The original website serves existing film and animation-course catalogues
     // from R2 through its public /data proxy; they are NOT in movie_library.
-    LegacyCatalog.appendPublicCatalogues(map);
+    LegacyCatalog.appendPublicCatalogues(map,context);
     List<Show> result=new ArrayList<>(map.values());
     for(Show show:result)show.sort();
     Collections.sort(result,(a,b)->{

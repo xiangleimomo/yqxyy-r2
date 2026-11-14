@@ -1,6 +1,6 @@
 # YQXYY Android TV (independent from mobile)
 
-This is a **native Android TV preview**. It combines the public Supabase `movie_library`
+This is a **native Android TV preview (v0.2.0)**. It combines the public Supabase `movie_library`
 with the original R2-backed film list (82 records) and animation-learning series
 via the existing /data JSON proxy. No Netlify deployment, phone APK update,
 database schema change or R2 data change is required.
@@ -20,9 +20,13 @@ database schema change or R2 data change is required.
 - Movie titles and original animation-story series are now listed alongside
   the dynamic Supabase catalogue. Opening an R2 animation series fetches its
   episode list on demand and plays supported HTTPS HLS/MP4 sources.
-- **TV version only plays video**: Little Fox Read/Word/Quiz activities,
-  authentication and progress sync are NOT yet implemented.
-- Website embedded/iframe player sources cannot be decoded by native Media3.
+- TV sign-in uses the SAME Supabase Auth email/password as the website; favorites
+  and last-watched position sync through the existing `book_personal` /
+  `book_portal` interface. Android Keystore encrypts the saved refresh token.
+- Little Fox Read/Word/Quiz activities are NOT yet included; TV plays video only.
+- Native Media3 cannot decode webpage/iframe player sources. A separately selected
+  WebView fallback can try the existing provider's embed page, but some upstream
+  providers block WebView or TV remote control. No movie is guaranteed playable.
 - Chinese/English/bilingual choices require actual tracks; no synthetic
   translation. Subtitle time offset and dual-caption overlay are not yet built.
 - Some Android forks (set-top boxes) may not support Android TV launcher banners.
@@ -54,3 +58,22 @@ GitHub Actions `Build YQXYY Android TV APK` publishes
   Native Android TV on a large display keeps full-size artwork and focus rings.
 - These data files remain hosted by the existing Netlify /data proxy to R2.
   No modification is made to Netlify, R2, or the phone app.
+
+## Movie routing and account
+- Movies use `/hls/movie/{tmdbId}/master.m3u8`, never season or episode paths.
+  Only TV series use `/hls/tv/{tmdbId}/{season}/{episode}/master.m3u8`.
+  `MediaUrlsTest` checks these rules at build time.
+- Available HLS/MP4 direct sources are attempted before generic automatic URLs.
+  Failed native direct sources trigger a limited next-line attempt. The app
+  offers a user-selected third-party WebView fallback when a provider supplies
+  an embed URL; such sites may fail or contain ads.
+- A packaged snapshot of the original R2 film and animation-story indexes
+  prevents temporary R2 proxy outages from blanking the corresponding shelves.
+  Individual film/episode media metadata still updates on demand.
+- Main navigation includes My Account, Favorites and Watch History.
+  Watch position for native video is recorded in the existing website-compatible
+  `book_personal.last_cfi` JSON key, and playback can resume from that position.
+  This is not an upload of all old phone-local history; only records already
+  synced by the website are available on other devices.
+- Sign in with existing email and password via the TV remote. No account
+  creation, password recovery or third-party OAuth in the TV APK.

@@ -1,6 +1,7 @@
 package com.yqxyy.tv;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.app.AlertDialog;
 import android.graphics.Color;
 import android.net.Uri;
@@ -34,6 +35,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.HashSet;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /** Native Media3 player for Android TV / remote controls. */
 @UnstableApi
@@ -42,6 +46,15 @@ public final class PlayerActivity extends Activity {
   private JSONArray playlist;
   private int currentIndex,sourceIndex,captionSizeIndex=1;
   private String seriesTitle;
+  private boolean isMovie,seekApplied=false;
+  private int initialResumeSeconds=0,pendingSeekSeconds=0,lastSavedSecond=-1;
+  private TvAccount cloud;
+  private final ExecutorService updates=Executors.newSingleThreadExecutor();
+  private final List<JSONObject> webSources=new ArrayList<>();
+  private TextView webButton;
+  private final Runnable progressTick=new Runnable(){
+    @Override public void run(){saveProgress();handler.postDelayed(this,15000);}
+  };
   private ExoPlayer player;
   private PlayerView video;
   private FrameLayout root;
@@ -67,6 +80,9 @@ public final class PlayerActivity extends Activity {
     }catch(Exception error){finish();return;}
     seriesTitle=getIntent().getStringExtra("seriesTitle");
     if(seriesTitle==null)seriesTitle="一起学英语";
+    isMovie=getIntent().getBooleanExtra("isMovie",false);
+    initialResumeSeconds=Math.max(0,getIntent().getIntExtra("resumeSeconds",0));
+    try{cloud=new TvAccount(getApplicationContext());}catch(Exception ignored){}
     buildUi();
     player=new ExoPlayer.Builder(this).build();
     video.setPlayer(player);
@@ -75,13 +91,34 @@ public final class PlayerActivity extends Activity {
         if(playButton!=null)playButton.setText(isPlaying?"Ⅱ 暂停":"▶ 播放");
       }
       @Override public void onPlayerError(PlaybackException error) {
-        warning.setText("当前片源无法播放，请切换线路或返回选集。\n"+error.getErrorCodeName());
+        if(sourceIndex+1<playableSources.size()){
+          int next=sourceIndex+1;
+          int seconds=(int)Math.max(0,player.getCurrentPosition()/1000);
+          if(seconds>0)pendingSeekSeconds=seconds;
+          seekApplied=false;
+          playSource(next);
+          Toast.makeText(PlayerActivity.this,"直链失败，切换备用线路 "+(next+1),Toast.LENGTH_SHORT).show();
+          return;
+        }
+        warning.setText("无法播放：所有原生直链均失败。\n"
+          +error.getErrorCodeName()+"\n可能是片源失效、服务器限制或电视不支持该编码。"
+          +(webSources.isEmpty()?"":"\n可手动尝试网页线路。"));
         warning.setVisibility(View.VISIBLE);
         reveal();
+      }
+      @Override public void onPlaybackStateChanged(int state){
+        if(state==Player.STATE_READY&&!seekApplied){
+          seekApplied=true;
+          if(pendingSeekSeconds>3&&player.getDuration()>0&&
+             pendingSeekSeconds*1000L<player.getDuration()-2000)
+            player.seekTo(pendingSeekSeconds*1000L);
+        }
+        if(state==Player.STATE_ENDED)saveProgress();
       }
       @Override public void onTracksChanged(Tracks tracks) {updateCaptionButton();}
     });
     startEpisode();
+    handler.postDelayed(progressTick,15000);
   }
 
   private void buildUi() {
@@ -117,15 +154,17 @@ public final class PlayerActivity extends Activity {
     root.addView(barScroll,p);
     // Keep the outer bar and button row visibility coordinated.
     controls.setTag(barScroll);
-    addControl("⏮ 上一集",()->skip(-1));
+    if(!isMovie)addControl("⏮ 上一集",()->skip(-1));
     addControl("−10秒",()->seek(-10000));
     playButton=addControl("Ⅱ 暂停",this::toggle);
     addControl("+10秒",()->seek(10000));
-    addControl("下一集 ⏭",()->skip(1));
+    if(!isMovie)addControl("下一集 ⏭",()->skip(1));
     subtitleButton=addControl("CC 字幕",this::chooseCaptions);
     addControl("字号",this::changeCaptionSize);
     addControl("切换线路",this::chooseSource);
-    addControl("返回选集",this::finish);
+    webButton=addControl("网页线路",this::chooseWebSource);
+    webButton.setVisibility(View.GONE);
+    addControl(isMovie?"返回影片":"返回选集",this::finish);
     reveal();
   }
   private TextView addControl(String label,Runnable action) {
@@ -147,65 +186,119 @@ public final class PlayerActivity extends Activity {
     JSONObject ep=currentEpisode();
     if(ep==null)return;
     int season=ep.optInt("season",1),number=ep.optInt("number",1);
-    title.setText(seriesTitle+"    第 "+season+" 季 · 第 "+number+" 集");
+    String media=ep.optString("mediaType",isMovie?"movie":"tv");
+    title.setText(isMovie||"movie".equals(media)?seriesTitle+"   ·   电影":
+      seriesTitle+"    第 "+season+" 季 · 第 "+number+" 集");
     sourceIndex=0;
-    playableSources.clear();
-    sidecarCaptions.clear();
+    playableSources.clear();webSources.clear();sidecarCaptions.clear();
+    pendingSeekSeconds=currentIndex==getIntent().getIntExtra("index",0)?initialResumeSeconds:0;
+    seekApplied=false;lastSavedSecond=-1;
     JSONArray sources=ep.optJSONArray("sources");
+    HashSet<String> seen=new HashSet<>();
+    ArrayList<JSONObject> automatic=new ArrayList<>();
     if(sources!=null)for(int i=0;i<sources.length();i++){
       JSONObject source=sources.optJSONObject(i);
       if(source==null)continue;
-      String kind=source.optString("kind",""),url=source.optString("url","");
-      if(!url.startsWith("https://"))continue;
+      String kind=source.optString("kind","");
+      String raw=source.optString("url","");
+      String url=MediaUrls.forSource(kind,media,ep.optInt("tmdbId",0),season,number,raw);
+      if(!url.startsWith("https://")||url.length()>2000||!seen.add(url))continue;
       if(kind.equals("subtitle")||kind.equals("captions")){
-        String lower=url.toLowerCase(java.util.Locale.ROOT);
-        String mime=lower.contains(".vtt")?MimeTypes.TEXT_VTT:
-          lower.contains(".srt")?"application/x-subrip":null;
-        if(mime!=null)sidecarCaptions.add(
-            new MediaItem.SubtitleConfiguration.Builder(Uri.parse(url))
-              .setMimeType(mime).setLanguage(source.optString("language","en")).build());
+        Uri u=Uri.parse(url);
+        String lower=u.getPath()==null?"":u.getPath().toLowerCase(java.util.Locale.ROOT);
+        String mime=lower.endsWith(".vtt")?MimeTypes.TEXT_VTT:lower.endsWith(".srt")?"application/x-subrip":null;
+        if(mime!=null)sidecarCaptions.add(new MediaItem.SubtitleConfiguration.Builder(u)
+          .setMimeType(mime).setLanguage(source.optString("language","en")).build());
+      }else if(kind.equals("embed")){
+        JSONObject fixed=new JSONObject();try{
+          fixed.put("kind","embed").put("label",source.optString("label","网页播放器")).put("url",url);
+          webSources.add(fixed);
+        }catch(Exception ignored){}
       }else if(kind.equals("auto")||kind.equals("direct")){
-        playableSources.add(source);
-      }
-    }
-    // Some older catalogues have no explicit source; use the established
-    // TMDB convention, but never claim that the remote file actually exists.
-    if(playableSources.isEmpty()&&(sources==null||sources.length()==0)){
-      int tmdb=ep.optInt("tmdbId",0);
-      if(tmdb>0){
-        JSONObject automatic=new JSONObject();
-        try{
-          automatic.put("kind","auto");
-          automatic.put("label","自动播放源");
-          String mediaPath="movie".equals(ep.optString("mediaType","tv"))
-            ? "movie/"+tmdb : "tv/"+tmdb+"/"+season+"/"+number;
-          automatic.put("url","https://api.obj2.top/hls/"+mediaPath+"/master.m3u8");
-          playableSources.add(automatic);
+        JSONObject fixed=new JSONObject();try{
+          fixed.put("kind",kind).put("label",source.optString("label","直链播放")).put("url",url);
+          if(kind.equals("auto"))automatic.add(fixed);else playableSources.add(fixed);
         }catch(Exception ignored){}
       }
     }
+    playableSources.addAll(automatic);
+    if(playableSources.isEmpty()){
+      String guessed=MediaUrls.automatic(media,ep.optInt("tmdbId",0),season,number);
+      if(!guessed.isEmpty())try{
+        playableSources.add(new JSONObject().put("kind","auto")
+          .put("label","TMDB 自动直链").put("url",guessed));
+      }catch(Exception ignored){}
+    }
+    webButton.setVisibility(webSources.isEmpty()?View.GONE:View.VISIBLE);
     if(playableSources.isEmpty()){
       player.stop();
-      warning.setText("此影片目前只有第三方内嵌播放器，或没有可用的直链。\nTV 原生播放器暂不支持 iframe，请在手机/网页观看。");
-      warning.setVisibility(View.VISIBLE);
-      reveal();return;
+      warning.setText(webSources.isEmpty()?"当前没有可供 TV 原生播放器使用的视频直链。":
+        "此片目前只有网页播放线路，请选择“网页线路”手动尝试。");
+      warning.setVisibility(View.VISIBLE);reveal();return;
     }
     playSource(0);
   }
-
-  private void playSource(int index) {
+  private void playSource(int index){
     if(index<0||index>=playableSources.size())return;
     sourceIndex=index;
     String url=playableSources.get(index).optString("url","");
     if(!url.startsWith("https://"))return;
     MediaItem.Builder item=new MediaItem.Builder().setUri(Uri.parse(url));
-    if(url.toLowerCase(java.util.Locale.ROOT).contains(".m3u8"))item.setMimeType(MimeTypes.APPLICATION_M3U8);
+    String path=Uri.parse(url).getPath();
+    if(path!=null&&path.toLowerCase(java.util.Locale.ROOT).endsWith(".m3u8"))
+      item.setMimeType(MimeTypes.APPLICATION_M3U8);
     if(!sidecarCaptions.isEmpty())item.setSubtitleConfigurations(sidecarCaptions);
     warning.setVisibility(View.GONE);
-    player.setMediaItem(item.build());
-    player.prepare();
-    player.play();
+    player.setMediaItem(item.build());player.prepare();player.play();
     reveal();
+  }
+  private void chooseWebSource(){
+    if(webSources.isEmpty()){
+      Toast.makeText(this,"未提供网页播放线路",Toast.LENGTH_SHORT).show();return;
+    }
+    String[] names=new String[webSources.size()];
+    for(int i=0;i<names.length;i++)names[i]=webSources.get(i).optString("label","网页线路 "+(i+1));
+    new AlertDialog.Builder(this).setTitle("第三方网页播放器 · 可能不支持电视遥控器")
+      .setItems(names,(dialog,which)->{
+        saveProgress();
+        Intent intent=new Intent(this,WebPlayerActivity.class);
+        intent.putExtra("url",webSources.get(which).optString("url",""));
+        startActivity(intent);
+      }).setNegativeButton("取消",null).show();
+  }
+  private String historyKey(){
+    JSONObject ep=currentEpisode();
+    if(ep==null)return "";
+    String series=getIntent().getStringExtra("legacySeriesId");
+    if(series!=null&&!series.isEmpty())return "anim-"+series;
+    String id=ep.optString("id","");
+    if(id.startsWith("legacy-movie-"))return "film-"+id.substring("legacy-movie-".length());
+    if(id.startsWith("r2-story-"))return "";
+    if(id.isEmpty())return "";
+    return "film-"+id;
+  }
+  private void saveProgress(){
+    if(cloud==null||!cloud.hasAccount()||player==null)return;
+    int seconds=(int)Math.max(0,player.getCurrentPosition()/1000);
+    if(seconds<=0||seconds==lastSavedSecond)return;
+    lastSavedSecond=seconds;
+    String key=historyKey();
+    if(key.isEmpty())return;
+    JSONObject ep=currentEpisode();
+    JSONObject value=new JSONObject();
+    try{
+      String series=getIntent().getStringExtra("legacySeriesId");
+      if(series!=null&&!series.isEmpty()){
+        value.put("href","#/lesson/"+series+"/"+ep.optInt("number",1));
+        value.put("seriesId",series).put("episodeId",ep.optInt("number",1));
+      }else{
+        String id=ep.optString("id","");
+        if(id.startsWith("legacy-movie-"))id=id.substring("legacy-movie-".length());
+        value.put("href","#/movie/"+id);
+      }
+      value.put("seconds",seconds);
+    }catch(Exception ignored){return;}
+    updates.execute(()->{try{cloud.markWatched(key,value);}catch(Exception ignored){}});
   }
 
   private void skip(int direction) {
@@ -214,7 +307,7 @@ public final class PlayerActivity extends Activity {
       Toast.makeText(this,"本季没有更多剧集，请返回选集切换季度",Toast.LENGTH_SHORT).show();
       return;
     }
-    currentIndex=next;startEpisode();
+    saveProgress();currentIndex=next;startEpisode();
   }
   private void seek(long millis) {
     if(player==null)return;
@@ -226,13 +319,26 @@ public final class PlayerActivity extends Activity {
   private void toggle(){if(player==null)return;if(player.isPlaying())player.pause();else player.play();reveal();}
 
   private void chooseSource(){
-    if(playableSources.isEmpty()){Toast.makeText(this,"没有可切换的直链",Toast.LENGTH_SHORT).show();return;}
-    String[] choices=new String[playableSources.size()];
-    for(int i=0;i<choices.length;i++)
-      choices[i]=playableSources.get(i).optString("label","播放线路 "+(i+1));
+    if(playableSources.isEmpty()&&webSources.isEmpty()){
+      Toast.makeText(this,"此片没有配置任何线路",Toast.LENGTH_SHORT).show();return;
+    }
+    ArrayList<String> names=new ArrayList<>();
+    for(int i=0;i<playableSources.size();i++)
+      names.add("原生 · "+playableSources.get(i).optString("label","线路 "+(i+1)));
+    for(int i=0;i<webSources.size();i++)
+      names.add("网页 · "+webSources.get(i).optString("label","网页线路 "+(i+1)));
     new AlertDialog.Builder(this).setTitle("选择播放线路")
-      .setSingleChoiceItems(choices,sourceIndex,(dialog,which)->{
-        dialog.dismiss();playSource(which);
+      .setItems(names.toArray(new String[0]),(dialog,which)->{
+        if(which<playableSources.size()){
+          seekApplied=false;
+          pendingSeekSeconds=(int)Math.max(0,player.getCurrentPosition()/1000);
+          playSource(which);
+        }else {
+          saveProgress();
+          Intent intent=new Intent(this,WebPlayerActivity.class);
+          intent.putExtra("url",webSources.get(which-playableSources.size()).optString("url",""));
+          startActivity(intent);
+        }
       }).setNegativeButton("取消",null).show();
   }
 
@@ -331,9 +437,10 @@ public final class PlayerActivity extends Activity {
     }
     return super.onKeyDown(keyCode,event);
   }
-  @Override protected void onPause(){if(player!=null)player.pause();super.onPause();}
+  @Override protected void onPause(){saveProgress();if(player!=null)player.pause();super.onPause();}
   @Override protected void onDestroy(){
     handler.removeCallbacksAndMessages(null);
+    saveProgress();updates.shutdown();
     if(player!=null){video.setPlayer(null);player.release();player=null;}
     super.onDestroy();
   }

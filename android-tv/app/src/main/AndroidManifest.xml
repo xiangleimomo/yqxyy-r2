@@ -8,6 +8,8 @@
       android:allowBackup="false" android:usesCleartextTraffic="false"
       android:theme="@style/TvTheme" android:banner="@drawable/tv_banner"
       android:icon="@drawable/tv_icon">
+    <activity android:name=".WebPlayerActivity" android:exported="false"
+        android:screenOrientation="landscape" />
     <activity android:name=".PlayerActivity" android:exported="false"
         android:screenOrientation="landscape" />
     <activity android:name=".TvActivity" android:exported="true"
