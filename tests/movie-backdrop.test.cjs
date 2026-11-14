@@ -11,7 +11,7 @@ test('TMDB backdrop endpoint returns verified landscape path without exposing cr
     const res=await handler({httpMethod:'GET',queryStringParameters:{id:'49444',type:'movie'}});
     assert.equal(res.statusCode,200);
     assert.equal(JSON.parse(res.body).url,'https://image.tmdb.org/t/p/w1280/7BdxZXbSkUiVeCRXKD3hi9KYeWm.jpg');
-    assert.match(requested,/\/movie\/49444/);
+    assert.match(String(requested),/\/movie\/49444/);
     assert(!res.body.includes('test-private-key'));
     global.fetch=async()=>({ok:true,json:async()=>({id:49444,backdrop_path:'https://untrusted.example/evil.jpg'})});
     const bad=await handler({httpMethod:'GET',queryStringParameters:{id:'49444',type:'movie'}});
