@@ -260,8 +260,8 @@ window.MovieClassroom = {
         if(generation!==this.generation||event.source!==frame.contentWindow||event.origin!==new URL(sourceUrl).origin||event.data?.type!=='PLAYER_EVENT')return;
         const state=event.data.data?.event;
         if(state==='unavailable'||state==='error'){
-          report('当前线路报告视频不可用，正在尝试下一个 TMDB 备用源…',true);
-          nextEmbeddedSource();
+          report('第三方报告本片暂不可用，请尝试备用线路。',true);
+          if((hasBackup&&index+1<backups.length)||providerIndex+1<embeddedAlternatives.length)nextEmbeddedSource();
         }
         if(['play','playing','timeupdate'].includes(state))report('第三方播放器正在播放。');
       };
