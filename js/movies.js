@@ -97,7 +97,9 @@ window.MovieClassroom = {
     })));
     const dynamicGroups=window.MovieLibrary?.asGroups?.(dynamicRows)||[],allSeries=[...dynamicGroups,...series],dynamicInfo=window.MovieLibrary?.info?.(dynamicRows)||new Map();
     const builtInProviders=this.androidTmdbProviders();
+    const autoEmbedProvider={id:'autoembed',name:'AutoEmbed',mode:'embed',movieUrl:'https://autoembed.me/movie/tmdb/{tmdbId}',tvUrl:'https://autoembed.me/tv/tmdb/{tmdbId}-{seasonNumber}-{episodeNumber}'};
     const providers=[...builtInProviders,...configuredProviders.filter(provider=>!builtInProviders.some(extra=>extra.name===provider.name||extra.movieUrl===provider.movieUrl))];
+    if(!providers.some(provider=>provider.name==='AutoEmbed'||provider.movieUrl===autoEmbedProvider.movieUrl))providers.push(autoEmbedProvider);
     const legacy=settings.mode==='legacy'&&settings.legacyPrimaryEnabled===true,ids=new Map([...hub.films,...dynamicRows.map(row=>({id:row.id,tmdbId:Number(row.tmdb_id)}))].map(film=>[film.id,film.tmdbId])),useVidMario=settings.mode==='vidmario',embedProviders=providers.filter(provider=>provider.mode==='embed');
     const playable=legacy?allSeries.flatMap(item=>item.sources||[]).filter(item=>this.playbackSource(item).url):allSeries.flatMap(group=>group.films.map(([id,title,titleZh,year])=>{
       const dynamic=dynamicInfo.get(id),tmdb=ids.get(id),validTmdb=Number.isSafeInteger(tmdb)&&tmdb>0,mediaType=dynamic?.media_type==='tv'?'tv':'movie',seasonNumber=Math.max(1,Number(dynamic?.season_number)||1),episodeNumber=Math.max(1,Number(dynamic?.episode_number)||1);
