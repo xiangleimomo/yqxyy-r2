@@ -74,6 +74,23 @@ for(const key of urls){
   tests.push(row);
 }
 
+let bookCatalogue=null;
+try{
+  const response=await fetch(PUBLIC_R2.replace(/\/$/,'')+'/data/books.json',{
+    redirect:'error',signal:AbortSignal.timeout(10000)
+  });
+  if(response.ok){
+    const raw=await response.json();
+    const books=Array.isArray(raw)?raw:Array.isArray(raw.books)?raw.books:[];
+    bookCatalogue={
+      total:books.length,
+      withSourceUrl:books.filter(x=>!!(x.sourceUrl||x.source_url)).length,
+      withDownloadUrl:books.filter(x=>!!(x.downloadUrl||x.download_url)).length,
+      sampleKeys:books[0]?Object.keys(books[0]).slice(0,16):[]
+    };
+  }else bookCatalogue={error:'HTTP '+response.status};
+}catch(e){bookCatalogue={error:String(e?.message||e)};}
+
 const result={
   checkedAt:new Date().toISOString(),
   target:'Android phone APK (android/) only; android-tv/ audited separately',
@@ -83,6 +100,7 @@ const result={
   routeGroups,
   sourceInventory:inventory,
   remoteTests:tests,
+  bookCatalogue,
   preliminaryVerdict:tests.every(x=>x.accessible)
     ? 'R2 public URL readable; still verify CORS, Range, security, and production stability'
     : 'R2 public URL not verified for all critical objects; do NOT switch Android yet'
