@@ -198,6 +198,11 @@ public class MainActivity extends Activity {
                 WebResourceResponse nativePdf = BookPdfResolver.intercept(
                     request, Uri.parse(BuildConfig.APP_URL).getHost());
                 if (nativePdf != null) return nativePdf;
+                // Film catalogue search/verification no longer requires the
+                // Netlify movie-library-metadata Function.
+                WebResourceResponse nativeMovieSearch = MovieMetadataResolver.intercept(
+                    request, Uri.parse(BuildConfig.APP_URL).getHost());
+                if (nativeMovieSearch != null) return nativeMovieSearch;
                 // TMDB landscape backdrop metadata is resolved by the APK,
                 // not by Netlify, while retaining the webpage's same-origin
                 // request URL and avoiding browser CORS restrictions.
