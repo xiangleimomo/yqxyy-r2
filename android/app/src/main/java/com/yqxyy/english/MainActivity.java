@@ -188,6 +188,21 @@ public class MainActivity extends Activity {
                     return new WebResourceResponse("text/plain", "UTF-8",
                         new ByteArrayInputStream(new byte[0]));
                 }
+                // The full Little Fox /data tree is served directly by R2.
+                // No Netlify Edge Function, CORS permission or S3 secret needed.
+                WebResourceResponse directR2 = R2PublicDataProxy.intercept(
+                    request, Uri.parse(BuildConfig.APP_URL).getHost());
+                if (directR2 != null) return directR2;
+                // Download books from their validated original PDF sources.
+                // The original Netlify /book-download Edge function is bypassed.
+                WebResourceResponse nativePdf = BookPdfResolver.intercept(
+                    request, Uri.parse(BuildConfig.APP_URL).getHost());
+                if (nativePdf != null) return nativePdf;
+                // Film catalogue search/verification no longer requires the
+                // Netlify movie-library-metadata Function.
+                WebResourceResponse nativeMovieSearch = MovieMetadataResolver.intercept(
+                    request, Uri.parse(BuildConfig.APP_URL).getHost());
+                if (nativeMovieSearch != null) return nativeMovieSearch;
                 // TMDB landscape backdrop metadata is resolved by the APK,
                 // not by Netlify, while retaining the webpage's same-origin
                 // request URL and avoiding browser CORS restrictions.

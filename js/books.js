@@ -288,6 +288,10 @@ window.BookReader = {
       if (!current()) return;
       if (!blob) {
         const url = new URL(item.downloadUrl, location.origin);
+        // On Android, PDF bytes are fetched by the APK's same-origin native
+        // route from the validated catalogue source. Netlify is not involved.
+        if (String(navigator.userAgent || '').includes('YQXYYAndroid/') && item.sourceUrl)
+          url.searchParams.set('source', String(item.sourceUrl));
         const localPreview = location.protocol === 'http:' && ['127.0.0.1', 'localhost', '[::1]'].includes(location.hostname);
         if (!item.downloadUrl || (url.protocol !== 'https:' && !(localPreview && url.protocol === 'http:')) || url.username || url.password || url.origin !== location.origin) throw new Error('绘本加载地址不可用。');
         let response;

@@ -4,6 +4,14 @@ plugins {
 def buildSha = (project.findProperty('buildSha') ?: 'unknown').toString().replaceAll('[^0-9a-f]', '')
 def websiteUrl = (project.findProperty('websiteUrl') ?: 'https://yqxyy-r2.netlify.app/').toString()
 if (!websiteUrl.startsWith('https://')) throw new GradleException('The website URL must use HTTPS')
+def r2DataOrigin = (project.findProperty('r2DataOrigin') ?: 'https://pub-bf9dac62ea094bcdae4eca9e743f9b61.r2.dev').toString()
+def r2Uri = new URI(r2DataOrigin)
+if (r2Uri.scheme != 'https' || r2Uri.host == null || r2Uri.userInfo != null ||
+    r2Uri.port != -1 || (r2Uri.rawPath != null && r2Uri.rawPath != '' && r2Uri.rawPath != '/') ||
+    r2Uri.rawQuery != null || r2Uri.rawFragment != null)
+  throw new GradleException('R2 public reading origin must be a bare HTTPS hostname')
+r2DataOrigin = 'https://' + r2Uri.host
+
 android {
   namespace 'com.yqxyy.english'
   compileSdk 35
@@ -11,10 +19,11 @@ android {
     applicationId 'com.yqxyy.english'
     minSdk 24
     targetSdk 34
-    versionCode 12
-    versionName '1.6.4'
+    versionCode 13
+    versionName '1.6.5'
     buildConfigField 'String', 'APP_URL', '"' + websiteUrl + '"'
     buildConfigField 'String', 'APP_BUILD_SHA', '"' + buildSha + '"'
+    buildConfigField 'String', 'R2_DATA_ORIGIN', '"' + r2DataOrigin + '"'
   }
   buildFeatures { buildConfig true }
   compileOptions {
