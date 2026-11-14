@@ -266,6 +266,12 @@ body.flipbook-active .pdf-flipbook-reader .flipbook-controls .reader-dictionary-
    Container padding alone does not shrink that book in rotated Android
    portrait mode; scale the PageFlip root and its cover offset together. */
 body.flipbook-active .pdf-flipbook-reader.pdf-mobile-landscape .pdf-pageflip{
-  transform:translate3d(var(--cover-offset,0px),0,0) scale(.86)!important;
+  /* JS measures the real PageFlip spread and centers it after rotation. */
+  transform:translate3d(
+    calc(var(--cover-offset,0px) + var(--pdf-fit-x,0px)),
+    var(--pdf-fit-y,0px),0
+  ) scale(var(--pdf-fit-scale,.86))!important;
   transform-origin:center center!important;
+  /* Avoid measuring animated intermediate sizes while computing fit. */
+  transition:none!important;
 }

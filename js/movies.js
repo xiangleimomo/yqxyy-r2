@@ -40,6 +40,14 @@ window.MovieClassroom = {
     'trolls-1':'https://media.themoviedb.org/t/p/w500/9VlK2j0THZWzhQPq0W3Oc0IIdBB.jpg','trolls-2':'https://media.themoviedb.org/t/p/w500/7W0G3YECgDAfnuiHG91r8WqgIOe.jpg','trolls-3':'https://media.themoviedb.org/t/p/w500/3ySgD2xwasTHOK6R9bNZiEwKgYo.jpg','bad-guys-1':'https://media.themoviedb.org/t/p/w500/7qop80YfuO0BwJa1uXk1DXUUEwv.jpg','bad-guys-2':'https://media.themoviedb.org/t/p/w500/26oSPnq0ct59l07QOXZKyzsiRtN.jpg','peter-rabbit-1':'https://media.themoviedb.org/t/p/w500/lugOvdaNpbVGQK9TyMRDiUbLtY6.jpg','peter-rabbit-2':'https://media.themoviedb.org/t/p/w500/cycDz68DtTjJrDJ1fV8EBq2Xdpb.jpg',
     'sonic-1':'https://media.themoviedb.org/t/p/w500/aQvJ5WPzZgYVDrxLX4R6cLJCEaQ.jpg','sonic-2':'https://media.themoviedb.org/t/p/w500/6DrHO1jr3qVrViUO6s6kFiAGM7.jpg','sonic-3':'https://media.themoviedb.org/t/p/w500/d8Ryb8AunYAuycVKDp5HpdWPKgC.jpg','ice-age-1':'https://media.themoviedb.org/t/p/w500/gLhHHZUzeseRXShoDyC4VqLgsNv.jpg','ice-age-2':'https://media.themoviedb.org/t/p/w500/zDduhCHasKQ9YOTvlOreHem7Wbi.jpg','ice-age-3':'https://media.themoviedb.org/t/p/w500/cXOLaxcNjNAYmEx1trZxOTKhK3Q.jpg','ice-age-4':'https://media.themoviedb.org/t/p/w500/dfp1BZF7FxbBUyzHvMOI9t8NWDD.jpg','ice-age-5':'https://media.themoviedb.org/t/p/w500/tFzUkdhPOForVrEfvxydXfPLrZR.jpg','ice-age-buck-wild':'https://media.themoviedb.org/t/p/w500/9ginbMWmt9y7PIHW1c9hnbIVWPm.jpg'
   },
+  // Genuine landscape backdrops; VidFast's poster toggle is not an image API.
+  // These are TMDB backdrop images, keyed by the same numeric TMDB movie ID.
+  tmdbBackdrops: {
+    671:'https://image.tmdb.org/t/p/w1280/bfh9Z3Ghz4FOJAfLOAhmc3ccnHU.jpg',
+    9502:'https://image.tmdb.org/t/p/w1280/364B8ohneoQSgIuYNRYZhjOCcEL.jpg',
+    49444:'https://image.tmdb.org/t/p/w1280/7BdxZXbSkUiVeCRXKD3hi9KYeWm.jpg',
+    140300:'https://image.tmdb.org/t/p/w1280/uT5G4fA7jKxlJNfwYPMm353f5AI.jpg'
+  },
   cleanup() {
     this.generation++;
     this.disposeControls?.(); this.disposeControls=null;
@@ -107,6 +115,9 @@ window.MovieClassroom = {
         ? `https://api.obj2.top/hls/${tv?`tv/${tmdb}/${season}/${episode}`:`movie/${tmdb}`}/master.m3u8` : '';
       const savedSources=Array.isArray(metadata.playback_sources)?metadata.playback_sources:[];
       const providerSources=apiUrl?providers.map(provider=>this.providerSource(provider,{tmdb,mediaType:tv?'tv':'movie',season,episode})).filter(Boolean):[];
+      movie.tmdbId=tmdb;
+      movie.mediaType=tv?'tv':'movie';
+      movie.backdropUrl=metadata.backdropUrl||metadata.backdrop_url||source.backdropUrl||source.backdrop_url||this.tmdbBackdrops[tmdb]||'';
       movie.embeddedSources=[...savedSources.filter(source=>source.kind==='embed'),...providerSources].filter((source,index,all)=>{try{const url=new URL(source.url);return url.protocol==='https:'&&!url.username&&!url.password&&source.url!==movie.embedUrl&&all.findIndex(item=>item.url===source.url)===index;}catch{return false;}});
       const preferredTvSource=tv?savedSources.filter(source=>source.kind==='direct'&&source.label==='本集播放地址'):[];
       const candidates=[...preferredTvSource,{url:apiUrl,label:'直链播放'},...savedSources.filter(source=>source.kind==='direct'&&!preferredTvSource.includes(source)),{url:source.fullHlsUrl||source.hlsUrl,label:'原有备用直链'},...(source.backupSources||[]),{url:source.backupHlsUrl,label:'备用直链'}];
@@ -370,31 +381,43 @@ window.MovieClassroom = {
   // unchanged. Use known cover art rather than downloading frames from a stream.
   attachDirectPoster(player,movie){
     const stage=player.closest('.movie-watch-frame');
-    const raw=String(movie.backdropUrl||movie.backdrop_url||movie.cover||this.filmCovers[movie.id]||'').trim();
-    if(!stage||!raw)return;
-    let artwork;
-    try{
-      artwork=new URL(raw,window.location?.href||'https://yqxyy-r2.netlify.app/');
-      if(artwork.protocol!=='https:'||artwork.username||artwork.password)return;
-    }catch{return;}
-    player.poster=artwork.href;
-    const overlay=document.createElement('div');
-    overlay.className='movie-start-poster';
-    const image=document.createElement('img');
-    image.className='movie-start-artwork';
-    image.src=artwork.href;image.alt='';image.decoding='async';
-    const shade=document.createElement('div');shade.className='movie-start-shade';
-    const title=document.createElement('strong');
-    title.className='movie-start-title';title.textContent=movie.titleZh||movie.title||'';
-    const start=document.createElement('button');
-    start.type='button';start.className='movie-start-play';
-    start.textContent='▶';start.setAttribute('aria-label','播放'+(movie.titleZh||movie.title||'影片'));
-    start.onclick=()=>{const playback=player.play();playback?.catch?.(()=>{});};
-    overlay.append(image,shade,title,start);
-    stage.append(overlay);
-    const hide=()=>overlay.remove();
-    player.addEventListener('play',hide,{once:true});
-    player.addEventListener('playing',hide,{once:true});
+    if(!stage)return;
+    const showArtwork=raw=>{
+      if(!stage.isConnected || !player.isConnected || !player.paused)return;
+      let url;
+      try{
+        url=new URL(String(raw||'').trim());
+        if(url.protocol!=='https:'||url.username||url.password)return;
+      }catch{return;}
+      player.poster=url.href;
+      stage.querySelector('.movie-start-poster')?.remove();
+      const overlay=document.createElement('div');overlay.className='movie-start-poster';
+      const image=document.createElement('img');image.className='movie-start-artwork';
+      image.src=url.href;image.alt='';image.decoding='async';
+      const shade=document.createElement('div');shade.className='movie-start-shade';
+      const title=document.createElement('strong');title.className='movie-start-title';
+      title.textContent=movie.titleZh||movie.title||'';
+      const start=document.createElement('button');start.type='button';
+      start.className='movie-start-play';start.textContent='▶';
+      start.setAttribute('aria-label','播放'+(movie.titleZh||movie.title||'影片'));
+      start.onclick=()=>{player.play()?.catch?.(()=>{});};
+      overlay.append(image,shade,title,start);stage.append(overlay);
+      const hide=()=>overlay.remove();
+      player.addEventListener('play',hide,{once:true});
+      player.addEventListener('playing',hide,{once:true});
+    };
+    // Never stretch a vertical catalogue poster into a 16:9 video frame.
+    const known=movie.backdropUrl||movie.backdrop_url||this.tmdbBackdrops[movie.tmdbId];
+    if(known){showArtwork(known);return;}
+    const id=Number(movie.tmdbId),type=movie.mediaType==='tv'?'tv':'movie';
+    if(!Number.isSafeInteger(id)||id<1)return;
+    // Read the official TMDB backdrop through a server-side metadata endpoint.
+    // It never exposes the TMDB API credential to Android or the website.
+    fetch('/.netlify/functions/movie-backdrop?id='+encodeURIComponent(id)+'&type='+type,{
+      cache:'force-cache',signal:AbortSignal.timeout(8000)
+    }).then(response=>response.ok?response.json():null)
+      .then(data=>{if(data?.url)showArtwork(data.url);})
+      .catch(()=>{}); // No verified backdrop: leave the plain player, never use a portrait poster.
   },
   attachMovieControls(app,player,movie,group){
     const stage=player.closest('.movie-watch-frame');

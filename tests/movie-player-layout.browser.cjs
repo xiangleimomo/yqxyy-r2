@@ -15,15 +15,15 @@ const fs=require('fs'),assert=require('assert');
  await page.evaluate(()=>{
   class Hls{static isSupported(){return true;}static Events={ERROR:'error'};on(){}loadSource(url){window.loadedMovie=url;}attachMedia(){}destroy(){}stopLoad(){}}
   window.Hls=Hls;window.MediaShelf={bindCards(){},bindPlayer(){},record(){},card(){return '';},movieFilm(){return {};}};
-  const movie={id:'film',titleZh:'测试电影',cover:'https://example.test/poster.jpg',embedUrl:'https://example.test/embed',playerMode:'dulo',directSources:[{url:'https://example.test/full.m3u8',label:'完整电影直链'},{url:'https://example.test/backup.m3u8',label:'备用直链'}]};
+  const movie={id:'film',titleZh:'测试电影',backdropUrl:'https://example.test/backdrop.jpg',embedUrl:'https://example.test/embed',playerMode:'dulo',directSources:[{url:'https://example.test/full.m3u8',label:'完整电影直链'},{url:'https://example.test/backup.m3u8',label:'备用直链'}]};
   window.app={el:()=>document.getElementById('app'),escapeHtml:s=>String(s),subtitleControls:App.subtitleControls,subtitlePreferences:App.subtitlePreferences,applySubtitlePreferences:App.applySubtitlePreferences};
   MovieClassroom.getLibrary=async()=>({series:[{films:[['film','Film','测试电影']]}],playableById:new Map([['film',movie]])});
   return MovieClassroom.renderWatch(app,'film');
  });
  assert.equal(await page.locator('video').count(),1);assert.equal(await page.evaluate(()=>loadedMovie),'https://example.test/full.m3u8');
  assert.equal(await page.locator('.movie-start-poster').count(),1,'Direct HLS displays film artwork before playback');
- assert.equal(await page.locator('.movie-start-artwork').getAttribute('src'),'https://example.test/poster.jpg');
- assert.equal(await page.locator('video').getAttribute('poster'),'https://example.test/poster.jpg');
+ assert.equal(await page.locator('.movie-start-artwork').getAttribute('src'),'https://example.test/backdrop.jpg');
+ assert.equal(await page.locator('video').getAttribute('poster'),'https://example.test/backdrop.jpg');
  await page.locator('video').dispatchEvent('play');
  assert.equal(await page.locator('.movie-start-poster').count(),0,'Artwork leaves after playback starts');
 

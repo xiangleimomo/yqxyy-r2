@@ -29,6 +29,10 @@ on:
       - 'js/books.js'
       - 'css/movies.css'
       - 'tests/movie-player-layout.browser.cjs'
+      - 'tests/pdf-mobile-performance.browser.cjs'
+      - 'tests/pdf-adaptive-fit.browser.cjs'
+      - 'tests/movie-backdrop.test.cjs'
+      - 'netlify/functions/movie-backdrop.js'
       - 'tests/android-tmdb-providers.test.cjs'
       - '.github/workflows/build-android-app.yml'
 
@@ -72,10 +76,12 @@ jobs:
           node --check js/mobile-app.js
           node --check js/app-updates.js
           node --check netlify/functions/movie-tv-seasons.js
+          node --check netlify/functions/movie-backdrop.js
           node --check js/movie-subtitles.js
           node --check js/movie-library.js
           node --check js/movies.js
           node --check js/media-shelf.js
+          node --test tests/movie-backdrop.test.cjs
           node --test tests/android-tmdb-providers.test.cjs tests/android-player-bridge.test.cjs tests/movie-tv-batch.test.cjs tests/subtitle-position-offset.test.cjs tests/kids-update.test.cjs tests/tmdb-tv-seasons.test.cjs tests/tvmaze-episode-autofill.test.cjs
           mkdir -p /tmp/yqxyy-adguard-tests
           javac -d /tmp/yqxyy-adguard-tests android/app/src/main/java/com/yqxyy/english/PlayerAdGuard.java tests/PlayerAdGuardTest.java
@@ -87,6 +93,7 @@ jobs:
           node tests/movie-source-editor.browser.cjs
           node tests/movie-tv-admin.browser.cjs
           node tests/movie-player-layout.browser.cjs
+          node tests/pdf-adaptive-fit.browser.cjs
       - name: Install required Android platform
         run: |
           echo "ANDROID_HOME=$ANDROID_HOME"
