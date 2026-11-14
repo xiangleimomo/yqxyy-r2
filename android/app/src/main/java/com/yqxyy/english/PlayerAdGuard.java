@@ -28,7 +28,12 @@ public final class PlayerAdGuard {
         "adsterra.com",
         "hilltopads.net",
         "realsrv.com",
-        "trafficjunky.net"
+        "trafficjunky.net",
+        "adscore.com",
+        "clickadu.com",
+        "popmyads.com",
+        "a-ads.com",
+        "ad-maven.com"
     };
 
     public static boolean isKnownAdHost(String host) {

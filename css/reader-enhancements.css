@@ -208,3 +208,55 @@ body.flipbook-active .pdf-flipbook-reader .flipbook-controls .reader-dictionary-
     padding:3px 4px!important;
   }
 }
+
+
+/* Android/phone landscape: keep the entire page inside the visible reader.
+   A landscape phone is often wider than 760px, so the portrait-only
+   mobile media query above does not apply. Do not stretch PDF canvases. */
+@media (pointer:coarse) and (orientation:landscape) and (max-height:600px){
+  body.flipbook-active .pdf-flipbook-reader .pdf-flipbook-surface{
+    padding:8px 28px!important;
+    min-width:0!important;
+    min-height:0!important;
+  }
+  body.flipbook-active .pdf-flipbook-reader .pdf-pageflip{
+    width:100%!important;
+    height:100%!important;
+    max-width:100%!important;
+    max-height:100%!important;
+    min-width:0!important;
+    min-height:0!important;
+  }
+  body.flipbook-active .pdf-flipbook-reader .pdf-pageflip .stf__parent{
+    max-width:100%!important;
+    max-height:100%!important;
+  }
+  body.flipbook-active .pdf-flipbook-reader .flipbook-controls{
+    bottom:max(4px,env(safe-area-inset-bottom))!important;
+  }
+}
+
+
+/* Android portrait handset: the book itself rotates to landscape while the
+   CSS media orientation remains portrait. Preserve enough free space around
+   both pages to avoid the cropped outer margins shown on narrow screens. */
+@media (pointer:coarse) and (orientation:portrait) and (max-width:760px) {
+  body.flipbook-active .pdf-flipbook-reader.pdf-mobile-landscape .pdf-flipbook-surface {
+    padding:clamp(14px,6dvw,32px) clamp(36px,10dvw,70px)!important;
+  }
+  body.flipbook-active .pdf-flipbook-reader.pdf-mobile-landscape .pdf-pageflip {
+    width:100%!important;
+    height:100%!important;
+    max-width:100%!important;
+    max-height:100%!important;
+    min-width:0!important;
+    min-height:0!important;
+  }
+  body.flipbook-active .pdf-flipbook-reader.pdf-mobile-landscape .pdf-pageflip .stf__parent {
+    max-width:100%!important;
+    max-height:100%!important;
+  }
+  body.flipbook-active .pdf-flipbook-reader.pdf-mobile-landscape .flipbook-controls {
+    bottom:max(4px,env(safe-area-inset-bottom))!important;
+  }
+}
