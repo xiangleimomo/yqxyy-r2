@@ -26,6 +26,9 @@ on:
       - 'tests/subtitle-position-offset.test.cjs'
       - 'css/unified-player.css'
       - 'css/reader-enhancements.css'
+      - 'js/books.js'
+      - 'css/movies.css'
+      - 'tests/movie-player-layout.browser.cjs'
       - 'tests/android-tmdb-providers.test.cjs'
       - '.github/workflows/build-android-app.yml'
 

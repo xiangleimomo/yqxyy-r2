@@ -260,3 +260,12 @@ body.flipbook-active .pdf-flipbook-reader .flipbook-controls .reader-dictionary-
     bottom:max(4px,env(safe-area-inset-bottom))!important;
   }
 }
+
+
+/* Actual PDF book is rendered inside PageFlip's own fixed-size geometry.
+   Container padding alone does not shrink that book in rotated Android
+   portrait mode; scale the PageFlip root and its cover offset together. */
+body.flipbook-active .pdf-flipbook-reader.pdf-mobile-landscape .pdf-pageflip{
+  transform:translate3d(var(--cover-offset,0px),0,0) scale(.86)!important;
+  transform-origin:center center!important;
+}

@@ -596,7 +596,7 @@ window.BookReader = {
         const page = flip.getCurrentPageIndex();
         const singleCover = flip.getOrientation() === 'landscape';
         const offset = !animating && singleCover ? (page === pageCount - 1 ? bounds.pageWidth / 2 : page === 0 ? -bounds.pageWidth / 2 : 0) : 0;
-        root.style.setProperty('--cover-offset', `${offset}px`);
+        root.style.setProperty('--cover-offset', `${offset * (this.pdfPhoneLandscape ? 0.86 : 1)}px`);
       };
       this.pageFlip.on('init', () => centerBook());
       this.pageFlip.on('flip', () => centerBook());

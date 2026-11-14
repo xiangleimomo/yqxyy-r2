@@ -285,6 +285,7 @@ window.MovieClassroom = {
     this.disposeSubtitles = window.MovieSubtitles?.mount(app.el(), player, movie, () => this.hls, app, sourceUrl);
     this.attachMovieControls(app,player,movie,group);
     this.attachSourceMenu(player.closest('.movie-watch-frame'),lines,false);
+    this.attachDirectPoster(player,movie);
     const mediaUrl = movie.playerMode==='dulo-direct'?sourceUrl:this.mediaUrl(sourceUrl);
     const native = player.canPlayType('application/vnd.apple.mpegurl');
     const safari = /Safari/i.test(navigator.userAgent) && !/Chrome|Chromium|CriOS|Edg|Android/i.test(navigator.userAgent);
@@ -362,6 +363,38 @@ window.MovieClassroom = {
     document.addEventListener('pointerdown',event=>{if(!menu.contains(event.target)&&!buttons.some(b=>b.contains(event.target)))close();},{signal:controller.signal});
     document.addEventListener('keydown',event=>{if(event.key==='Escape')close();},{signal:controller.signal});
     this.disposeSources=()=>controller.abort();
+  },
+
+  // VidFast-style loading artwork for the first-party HLS player. This is
+  // presentation only: the selected media URL, HLS instance and controls are
+  // unchanged. Use known cover art rather than downloading frames from a stream.
+  attachDirectPoster(player,movie){
+    const stage=player.closest('.movie-watch-frame');
+    const raw=String(movie.backdropUrl||movie.backdrop_url||movie.cover||this.filmCovers[movie.id]||'').trim();
+    if(!stage||!raw)return;
+    let artwork;
+    try{
+      artwork=new URL(raw,window.location?.href||'https://yqxyy-r2.netlify.app/');
+      if(artwork.protocol!=='https:'||artwork.username||artwork.password)return;
+    }catch{return;}
+    player.poster=artwork.href;
+    const overlay=document.createElement('div');
+    overlay.className='movie-start-poster';
+    const image=document.createElement('img');
+    image.className='movie-start-artwork';
+    image.src=artwork.href;image.alt='';image.decoding='async';
+    const shade=document.createElement('div');shade.className='movie-start-shade';
+    const title=document.createElement('strong');
+    title.className='movie-start-title';title.textContent=movie.titleZh||movie.title||'';
+    const start=document.createElement('button');
+    start.type='button';start.className='movie-start-play';
+    start.textContent='▶';start.setAttribute('aria-label','播放'+(movie.titleZh||movie.title||'影片'));
+    start.onclick=()=>{const playback=player.play();playback?.catch?.(()=>{});};
+    overlay.append(image,shade,title,start);
+    stage.append(overlay);
+    const hide=()=>overlay.remove();
+    player.addEventListener('play',hide,{once:true});
+    player.addEventListener('playing',hide,{once:true});
   },
   attachMovieControls(app,player,movie,group){
     const stage=player.closest('.movie-watch-frame');
