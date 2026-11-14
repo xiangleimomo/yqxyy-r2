@@ -15,7 +15,7 @@ test('APK-only English TMDB provider list has movie and episode endpoints', () =
   const app = classroom('Mozilla/5.0 YQXYYAndroid/1.5');
   const sources = app.androidTmdbProviders();
   assert.deepEqual(Array.from(sources, x => x.name), [
-    '111Movies', 'VidFast', 'VidLink', 'VidSrc', 'VidCore', 'VidRock', '2Embed'
+    '111Movies', 'VidFast', 'VidLink', 'VidSrc', 'VidCore', 'VidRock', '2Embed', 'AutoEmbed'
   ]);
   for (const entry of sources) {
     assert.equal(entry.mode, 'embed');
