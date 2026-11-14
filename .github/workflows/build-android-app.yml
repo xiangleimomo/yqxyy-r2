@@ -30,6 +30,7 @@ on:
       - 'css/movies.css'
       - 'tests/movie-player-layout.browser.cjs'
       - 'tests/pdf-mobile-performance.browser.cjs'
+      - 'tests/pdf-adaptive-fit.browser.cjs'
       - 'tests/movie-backdrop.test.cjs'
       - 'netlify/functions/movie-backdrop.js'
       - 'tests/android-tmdb-providers.test.cjs'
@@ -92,7 +93,7 @@ jobs:
           node tests/movie-source-editor.browser.cjs
           node tests/movie-tv-admin.browser.cjs
           node tests/movie-player-layout.browser.cjs
-          TEMP=/tmp node tests/pdf-mobile-performance.browser.cjs
+          node tests/pdf-adaptive-fit.browser.cjs
       - name: Install required Android platform
         run: |
           echo "ANDROID_HOME=$ANDROID_HOME"
