@@ -411,12 +411,13 @@ window.MovieClassroom = {
       player.addEventListener('playing',hide,{once:true});
     };
     // Never stretch a vertical catalogue poster into a 16:9 video frame.
-    // Preserve explicit backdrops and a few existing offline defaults.
-    // Future movies and TV series do NOT need additions to the map.
-    const known=movie.backdropUrl||movie.backdrop_url||this.tmdbBackdrops[movie.tmdbId];
-    if(known){showArtwork(known);return;}
+    // Explicit editorial background takes precedence. The old fixed image
+    // mappings are only fallback artwork; ALL TMDB titles are auto-looked-up.
+    const explicit=movie.backdropUrl||movie.backdrop_url;
+    if(explicit){showArtwork(explicit);return;}
+    const fallback=this.tmdbBackdrops[movie.tmdbId]||'';
     const id=Number(movie.tmdbId),type=movie.mediaType==='tv'?'tv':'movie';
-    if(!Number.isSafeInteger(id)||id<1)return;
+    if(!Number.isSafeInteger(id)||id<1){if(fallback)showArtwork(fallback);return;}
     const key=type+':'+id;
     const cacheKey='sf-movie-backdrop-v1-'+key;
     const cached=this.backdropMemory.get(key);
@@ -427,6 +428,8 @@ window.MovieClassroom = {
         this.backdropMemory.set(key,saved);showArtwork(saved.url);return;
       }
     }catch{}
+    // Avoid a blank first view while refreshing legacy backgrounds.
+    if(fallback)showArtwork(fallback);
     const title=String(movie.tmdbTitle||movie.title||'').trim().slice(0,160);
     const existing=this.backdropRequests.get(key);
     const request=existing||fetch('/.netlify/functions/movie-backdrop?'+new URLSearchParams({
