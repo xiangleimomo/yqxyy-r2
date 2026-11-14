@@ -1,0 +1,31 @@
+name: Restore Android v1.6.4 download
+on:
+  push:
+    paths:
+      - '.github/workflows/restore-android-164.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download the exact successful v1.6.4 build artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/yqxyy-164
+          gh run download 43605703176 -n YQXYY-Android-APK -D /tmp/yqxyy-164
+          test -s /tmp/yqxyy-164/YQXYY-Android.apk
+          cp /tmp/yqxyy-164/YQXYY-Android.apk YQXYY-Android.apk
+      - name: Restore stable direct download URL to v1.6.4
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          TAG=android-app-latest
+          gh release upload "$TAG" YQXYY-Android.apk --clobber
+          gh release edit "$TAG" --title "一起学英语 Android APP v1.6.4" --notes "Version: v1.6.4\nOriginal successful build: https://github.com/xiangleimomo/yqxyy-r2/actions/runs/43605703176\nCommit: 10b6b9291c52ec554c398a76dfc221dd05cee859\n\n已恢复原版安卓安装包，不包含 v1.6.5 的管理员界面改动。"
