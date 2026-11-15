@@ -36,7 +36,7 @@ class Node {
 function fixture(agent='Mozilla/5.0 (Linux; Android 13) AppleWebKit YQXYYAndroid/1.1'){
   const body=new Node('body');body.isDocumentRoot=true;
   const html=new Node('html');html.isDocumentRoot=true;
-  const win={navigator:{userAgent:agent,maxTouchPoints:3},location:{href:'https://yqxyy-r2.netlify.app/'},
+  const win={navigator:{userAgent:agent,maxTouchPoints:3},location:{href:'https://yqxxyy.netlify.app/'},
     matchMedia:()=>({matches:true}),listeners:{},addEventListener(name,fn){(this.listeners[name]||=[]).push(fn);}};
   const doc={body,documentElement:html,fullscreenElement:null,createComment:name=>new Node(name),
     createElement:name=>new Node(name),addEventListener(){}};
@@ -62,7 +62,7 @@ test('ordinary Android browser does not invoke installed-app rotation',async()=>
   const x=fixture('Mozilla/5.0 (Linux; Android 13) Chrome/124.0 Mobile');
   await x.api.toggle();
   assert.equal(x.doc.documentElement.classList.contains('sf-android-app'),false);
-  assert.equal(x.win.location.href,'https://yqxyy-r2.netlify.app/');
+  assert.equal(x.win.location.href,'https://yqxxyy.netlify.app/');
   await x.api.toggle();
 });
 test('Android native handler validates main-frame scheme and trusted origin',()=>{
