@@ -1,0 +1,678 @@
+{
+  "seriesId": "little-fox-rocket-girl-fs0065",
+  "level": 4,
+  "format": "offline-authoring-v1",
+  "releasePolicy": "stage-only-no-R2-write",
+  "lessons": [
+    {
+      "episodeId": 23,
+      "title": "The Mysterious Rock",
+      "sourceContentId": "C0005836",
+      "questions": [
+        {
+          "evidenceParagraphId": "p2",
+          "question": "How did Roxy avoid being swallowed by a giant frog?",
+          "options": [
+            "She melted the frog with heat vision.",
+            "She asked Detective Smith for help.",
+            "She slipped off its tongue before its mouth closed.",
+            "She jumped inside a nearby bus."
+          ],
+          "answer": "C",
+          "explanation": "青蛙正要合上嘴巴时，罗克西及时挣脱黏滑的舌头，险些被吞进去。"
+        },
+        {
+          "evidenceParagraphId": "p8",
+          "question": "Why was it so difficult for Roxy to deal with the frogs?",
+          "options": [
+            "She was afraid of touching frogs, even though she could pick up other animals.",
+            "The frogs were invisible to her.",
+            "She had lost her ability to fly.",
+            "The mayor ordered her not to touch them."
+          ],
+          "answer": "A",
+          "explanation": "罗克西承认如果换成松鼠、花栗鼠或乌龟，她可以直接抱走，但她实在不愿碰任何青蛙。"
+        },
+        {
+          "evidenceParagraphId": "p16",
+          "question": "What happened when the frogs all shot their tongues at Roxy?",
+          "options": [
+            "The street turned purple.",
+            "The frogs flew away together.",
+            "Roxy became trapped by their tongues.",
+            "Roxy escaped upward, and the frogs stuck to each other."
+          ],
+          "answer": "D",
+          "explanation": "四只青蛙同时伸出黏舌，罗克西及时向上飞走，结果下面的青蛙反而互相粘在一起。"
+        },
+        {
+          "evidenceParagraphId": "p21",
+          "question": "What unusual change did Roxy notice at the park lake?",
+          "options": [
+            "The lake had frozen solid.",
+            "The water had turned purple.",
+            "All the water had disappeared.",
+            "The lake was filled with cars."
+          ],
+          "answer": "B",
+          "explanation": "罗克西飞到公园湖面上方时发现湖水竟变成紫色，这个异常现象是解开青蛙巨大化之谜的线索。"
+        },
+        {
+          "evidenceParagraphId": "p23",
+          "question": "What did Roxy see under the purple lake?",
+          "options": [
+            "A stolen school bus.",
+            "A hidden tunnel entrance.",
+            "A glowing purple rock on the lake floor.",
+            "The aliens' broken spaceship."
+          ],
+          "answer": "C",
+          "explanation": "罗克西被青蛙撞入湖里后，看到湖底有块发着亮紫光的神秘岩石，随后感觉身体出现变化。"
+        }
+      ]
+    },
+    {
+      "episodeId": 24,
+      "title": "Giant Rocket Girl",
+      "sourceContentId": "C0005837",
+      "questions": [
+        {
+          "evidenceParagraphId": "p2",
+          "question": "What happened to Rocket Girl after she came out of the lake?",
+          "options": [
+            "She became enormous.",
+            "She lost her super strength.",
+            "She turned into a frog.",
+            "She forgot how to fly."
+          ],
+          "answer": "A",
+          "explanation": "罗克西从湖中出现后发现自己变得非常巨大，甚至能俯视周围的建筑。"
+        },
+        {
+          "evidenceParagraphId": "p7",
+          "question": "How did giant Rocket Girl finally handle the frog on the bank?",
+          "options": [
+            "She frightened it away by shouting.",
+            "She blew it off the roof.",
+            "She trapped it in a bubble.",
+            "She gently picked it up even though it was slimy."
+          ],
+          "answer": "D",
+          "explanation": "罗克西虽然仍觉得青蛙黏滑恶心，但鼓起勇气再次伸手，终于轻轻把趴在银行上的青蛙抱起来。"
+        },
+        {
+          "evidenceParagraphId": "p10",
+          "question": "What did Rocket Girl do with the other giant frogs in the city?",
+          "options": [
+            "She sent them into space.",
+            "She collected them one by one and put them into the lake.",
+            "She hid them in the school basement.",
+            "She asked the zoo to feed them."
+          ],
+          "answer": "B",
+          "explanation": "罗克西回到市中心，逐只找到巨型青蛙，并把它们送回公园的湖中。"
+        },
+        {
+          "evidenceParagraphId": "p13",
+          "question": "What happened immediately after Rocket Girl took the meteor out of the lake?",
+          "options": [
+            "More frogs appeared on the shore.",
+            "The meteor broke into pieces.",
+            "The purple lake water returned to its normal color.",
+            "A spaceship landed beside her."
+          ],
+          "answer": "C",
+          "explanation": "罗克西在湖里捞出陨石后，湖水立即不再呈紫色，说明陨石与异常现象有关。"
+        },
+        {
+          "evidenceParagraphId": "p24",
+          "question": "How did Roxy's feelings about frogs change by the end?",
+          "options": [
+            "She said she was no longer afraid of frogs.",
+            "She refused to go near the lake ever again.",
+            "She asked Mara to throw away the frog.",
+            "She said she wanted to catch every frog in the city."
+          ],
+          "answer": "A",
+          "explanation": "事件结束后，罗克西主动请求抱玛拉手里的普通青蛙，并说自己已经不再害怕青蛙了。"
+        }
+      ]
+    },
+    {
+      "episodeId": 25,
+      "title": "Car Wash",
+      "sourceContentId": "C0005838",
+      "questions": [
+        {
+          "evidenceParagraphId": "p3",
+          "question": "What did Detective Smith see near Police Headquarters?",
+          "options": [
+            "A new playground being built.",
+            "A silver robot spraying blue mist that formed a large bubble.",
+            "A group of cars waiting for a wash.",
+            "An ice cream truck floating in the air."
+          ],
+          "answer": "B",
+          "explanation": "史密斯探长抬头看到一台高大的银色机器人喷出蓝色雾气，雾气形成一个包围警察总部的大泡泡。"
+        },
+        {
+          "evidenceParagraphId": "p6",
+          "question": "Why were Roxy and her friends washing cars?",
+          "options": [
+            "They needed money for new soccer uniforms.",
+            "They wanted to clean the mayor's car.",
+            "The school had ordered community service.",
+            "They were practicing for a competition."
+          ],
+          "answer": "A",
+          "explanation": "玛拉告诉司机，每辆洗车收费十美元，因为足球队正在筹钱购买新队服。"
+        },
+        {
+          "evidenceParagraphId": "p16",
+          "question": "Why did Roxy say Rocket Girl could not help make soccer uniforms?",
+          "options": [
+            "Rocket Girl had promised to visit the zoo.",
+            "Rocket Girl was scared of soap.",
+            "Rocket Girl was busy washing cars.",
+            "Rocket Girl could not sew and had more important work."
+          ],
+          "answer": "D",
+          "explanation": "罗克西想了想，解释火箭女孩不会缝制队服，而且还要处理更重要的事情。"
+        },
+        {
+          "evidenceParagraphId": "p20",
+          "question": "What surprising problem did Mayor Bloom report?",
+          "options": [
+            "The school playground was flooded.",
+            "The soccer game had been canceled.",
+            "Someone appeared to have stolen the entire Police Headquarters.",
+            "Detective Smith had lost his car."
+          ],
+          "answer": "C",
+          "explanation": "布卢姆市长说他怀疑有人偷走了整座警察总部，而不是只偷走楼里的某样物品。"
+        },
+        {
+          "evidenceParagraphId": "p22",
+          "question": "What did the mayor clarify about the theft?",
+          "options": [
+            "Only the police computers had disappeared.",
+            "The whole Police Headquarters building was gone.",
+            "Some police uniforms had been stolen.",
+            "The city bus station had vanished."
+          ],
+          "answer": "B",
+          "explanation": "罗克西以为市长说的是总部内有东西被偷，市长强调失踪的是整栋警察总部大楼。"
+        }
+      ]
+    },
+    {
+      "episodeId": 26,
+      "title": "Blue Bubbles",
+      "sourceContentId": "C0005839",
+      "questions": [
+        {
+          "evidenceParagraphId": "p4",
+          "question": "What made Terrell suspicious when Roxy left the car wash?",
+          "options": [
+            "Roxy left without taking any Car Wash signs.",
+            "She was wearing a police uniform.",
+            "She climbed into a stranger's car.",
+            "She carried a large bag of money."
+          ],
+          "answer": "A",
+          "explanation": "罗克西借口要去贴更多洗车标志，却什么标志都没带，特雷尔因此觉得她的行为很奇怪。"
+        },
+        {
+          "evidenceParagraphId": "p13",
+          "question": "How did the robot take away Police Headquarters?",
+          "options": [
+            "It folded the building into a suitcase.",
+            "It carried the building on its back.",
+            "It sprayed a bubble around the building and floated away with it.",
+            "It made the building sink into the ground."
+          ],
+          "answer": "C",
+          "explanation": "史密斯探长描述，机器人把蓝色泡泡喷在警察总部外，随后大楼连同泡泡一起飘走。"
+        },
+        {
+          "evidenceParagraphId": "p16",
+          "question": "Why did Rocket Girl think Dr. Odd had removed Police Headquarters?",
+          "options": [
+            "He wanted to turn it into a hotel.",
+            "He wanted to stop the city from preventing his next theft.",
+            "He needed more room for his laboratory.",
+            "He wanted to give the police a holiday."
+          ],
+          "answer": "B",
+          "explanation": "罗克西推测奥德博士搬走警察总部和市长，是为了让城市难以阻止他接下来盗窃银行等目标。"
+        },
+        {
+          "evidenceParagraphId": "p20",
+          "question": "What happened when Rocket Girl hit the bubble holding the mayor's mansion?",
+          "options": [
+            "It burst and fell safely into place.",
+            "It turned into a cloud of snow.",
+            "It let her walk inside the mansion.",
+            "She bounced off and landed far away."
+          ],
+          "answer": "D",
+          "explanation": "罗克西用力撞击装着市长府邸的蓝色泡泡，却像撞到弹性表面一样被弹开，落到远处街区。"
+        },
+        {
+          "evidenceParagraphId": "p27",
+          "question": "What happened to Rocket Girl as she approached the giant robot?",
+          "options": [
+            "She was trapped inside a blue bubble.",
+            "She lost her watch.",
+            "She was turned into a robot clone.",
+            "She was caught under the police station."
+          ],
+          "answer": "A",
+          "explanation": "罗克西冲向机器人时，对方转身喷出泡泡，把她困在蓝色泡泡里。"
+        }
+      ]
+    },
+    {
+      "episodeId": 27,
+      "title": "Trapped!",
+      "sourceContentId": "C0005840",
+      "questions": [
+        {
+          "evidenceParagraphId": "p2",
+          "question": "Where was Dr. Odd's robot heading while Rocket Girl floated in her bubble?",
+          "options": [
+            "Metro City Elementary School.",
+            "The new playground.",
+            "Metro City Bank.",
+            "The art gallery."
+          ],
+          "answer": "C",
+          "explanation": "被困在高空泡泡里的罗克西看到机器人正往大都会银行前进，担心它会把银行偷走。"
+        },
+        {
+          "evidenceParagraphId": "p9",
+          "question": "Why didn't heat vision help Rocket Girl escape?",
+          "options": [
+            "It froze the bubble instead of melting it.",
+            "It filled the bubble with smoke but did not damage the wall.",
+            "It made her fly faster.",
+            "It caused the bubble to disappear and reappear."
+          ],
+          "answer": "B",
+          "explanation": "罗克西试着用热射线烧穿泡泡，结果泡泡里充满烟雾，泡泡表面却一点也没受损。"
+        },
+        {
+          "evidenceParagraphId": "p11",
+          "question": "What did Rocket Girl discover with her X-ray vision?",
+          "options": [
+            "The robot was filled with stolen diamonds.",
+            "A second Rocket Girl was trapped inside.",
+            "The police headquarters was hidden in its chest.",
+            "Dr. Odd was sitting inside the robot's head."
+          ],
+          "answer": "D",
+          "explanation": "罗克西靠近机器人后用透视能力观察，看到奥德博士坐在机器人头部操纵机器。"
+        },
+        {
+          "evidenceParagraphId": "p19",
+          "question": "How did Rocket Girl interfere with Dr. Odd's attempt to steal the bank?",
+          "options": [
+            "She kept moving her bubble in front of the robot.",
+            "She called the mayor to shut the bank.",
+            "She threw the robot into the lake.",
+            "She hid the bank's money in her pocket."
+          ],
+          "answer": "A",
+          "explanation": "罗克西发现即使困在泡泡里，也能飞到机器人面前反复挡住它，阻止它靠近银行。"
+        },
+        {
+          "evidenceParagraphId": "p23",
+          "question": "Why was Rocket Girl finally freed from her bubble?",
+          "options": [
+            "She melted it with hot water.",
+            "A police officer cut it open.",
+            "Dr. Odd ordered the robot to pop it because it blocked his way.",
+            "It disappeared when the sun went down."
+          ],
+          "answer": "C",
+          "explanation": "奥德博士不堪泡泡反复妨碍抢银行，最后亲自按按钮让机器人刺破泡泡，反而释放了罗克西。"
+        }
+      ]
+    },
+    {
+      "episodeId": 28,
+      "title": "Blue Sticky Goo",
+      "sourceContentId": "C0005841",
+      "questions": [
+        {
+          "evidenceParagraphId": "p4",
+          "question": "What did Rocket Girl do when Dr. Odd made a car fall from its bubble?",
+          "options": [
+            "She flew toward the car and caught it.",
+            "She chased the robot instead.",
+            "She put up a road sign.",
+            "She asked the driver to jump out."
+          ],
+          "answer": "A",
+          "explanation": "奥德博士刺破装着汽车的泡泡，汽车往地面坠落，罗克西立即飞过去及时接住。"
+        },
+        {
+          "evidenceParagraphId": "p9",
+          "question": "Why were the rescued cars covered in blue goo?",
+          "options": [
+            "The kids had already washed them with blue soap.",
+            "They had fallen into the lake.",
+            "The robot had painted them blue.",
+            "They had been trapped in sticky blue bubbles."
+          ],
+          "answer": "D",
+          "explanation": "罗克西救下所有掉落的车后，车上仍粘着从蓝色泡泡留下的黏糊糊物质。"
+        },
+        {
+          "evidenceParagraphId": "p13",
+          "question": "How did Rocket Girl knock the robot down?",
+          "options": [
+            "She asked the police to tow it.",
+            "She kicked it with great force.",
+            "She used a giant magnet.",
+            "She threw a car at its legs."
+          ],
+          "answer": "B",
+          "explanation": "罗克西趁机器人向银行喷射时冲过去，一脚把机器人踢倒在地，随后继续破坏它。"
+        },
+        {
+          "evidenceParagraphId": "p17",
+          "question": "How did Rocket Girl capture Dr. Odd as he ran away?",
+          "options": [
+            "She locked him in the bank vault.",
+            "She stopped him with a traffic light.",
+            "She blew the remaining blue mist toward him, trapping him in a bubble.",
+            "She froze the road under his feet."
+          ],
+          "answer": "C",
+          "explanation": "奥德博士逃跑时，罗克西用力把机器人残留的蓝色雾气吹向他，雾气变成泡泡将他困住。"
+        },
+        {
+          "evidenceParagraphId": "p25",
+          "question": "Why did a long line of cars arrive at the children's car wash?",
+          "options": [
+            "The rescued cars were covered in blue sticky goo.",
+            "It was suddenly free to wash a car.",
+            "The mayor invited all drivers to the parking lot.",
+            "The school had bought new washing machines."
+          ],
+          "answer": "A",
+          "explanation": "刚被火箭女孩救下的汽车都沾满蓝色黏液，所以司机们排队来到洗车处清洗，帮助足球队赚到了钱。"
+        }
+      ]
+    },
+    {
+      "episodeId": 29,
+      "title": "Mayor Bloom",
+      "sourceContentId": "C0005842",
+      "questions": [
+        {
+          "evidenceParagraphId": "p5",
+          "question": "What was the money in Mayor Bloom's safe supposed to pay for?",
+          "options": [
+            "A television station.",
+            "New soccer uniforms.",
+            "A new playground at Metro City Park.",
+            "A police helicopter."
+          ],
+          "answer": "C",
+          "explanation": "市长助理指出，被市长取走的钱本来是用来建设大都会公园新游乐场的经费。"
+        },
+        {
+          "evidenceParagraphId": "p10",
+          "question": "What did Roxy hope the new playground would have?",
+          "options": [
+            "A swimming pool.",
+            "A swing set.",
+            "A diamond mine.",
+            "An ice cream shop."
+          ],
+          "answer": "B",
+          "explanation": "罗克西说自己希望新游乐场有秋千，因为荡秋千让她感到仿佛会飞。"
+        },
+        {
+          "evidenceParagraphId": "p17",
+          "question": "Why did Terrell imagine having two Rocket Girls?",
+          "options": [
+            "He wanted them to race each other.",
+            "He thought one could be a teacher.",
+            "He wanted both to help wash cars.",
+            "One could fight villains while the other built the playground."
+          ],
+          "answer": "D",
+          "explanation": "特雷尔开玩笑说，如果有两个火箭女孩，一个负责打击坏人，另一个就能快速建设大家期待的游乐场。"
+        },
+        {
+          "evidenceParagraphId": "p22",
+          "question": "Why did Roxy quickly put on her mask during the call?",
+          "options": [
+            "Detective Smith did not know her secret identity.",
+            "Her watch camera was broken.",
+            "She wanted to frighten the mayor.",
+            "She was about to fly through snow."
+          ],
+          "answer": "A",
+          "explanation": "罗克西发现来电的是不知道自己真实身份的史密斯探长，于是赶紧戴上面罩以免暴露。"
+        },
+        {
+          "evidenceParagraphId": "p24",
+          "question": "What did Detective Smith say Mayor Bloom had done?",
+          "options": [
+            "Hidden the playground plans.",
+            "Helped Professor Ditto build a robot.",
+            "Stolen the money set aside for the new playground.",
+            "Canceled the children's field trip."
+          ],
+          "answer": "C",
+          "explanation": "史密斯探长说市长可能偷走了用于建设公园游乐场的款项，这让一直信任市长的罗克西震惊。"
+        }
+      ]
+    },
+    {
+      "episodeId": 30,
+      "title": "Professor Ditto",
+      "sourceContentId": "C0005843",
+      "questions": [
+        {
+          "evidenceParagraphId": "p3",
+          "question": "Why did Terrell doubt Roxy's excuse for leaving?",
+          "options": [
+            "She had no schoolbooks with her.",
+            "The teacher had not assigned any book report.",
+            "He knew the mayor was calling.",
+            "She had already finished her homework."
+          ],
+          "answer": "B",
+          "explanation": "罗克西说要回家写读书报告，特雷尔却记得老师根本没有布置读书报告，因此怀疑她在找借口。"
+        },
+        {
+          "evidenceParagraphId": "p13",
+          "question": "Where did the mysterious call to Mayor Bloom come from?",
+          "options": [
+            "The city art gallery.",
+            "The police station.",
+            "The school cafeteria.",
+            "A lab at Metro City University."
+          ],
+          "answer": "D",
+          "explanation": "市长助理检查电话后发现，市长拿走款项前接到的神秘电话来自大都会大学实验室。"
+        },
+        {
+          "evidenceParagraphId": "p18",
+          "question": "Who was the man waiting for Rocket Girl in the laboratory?",
+          "options": [
+            "Professor Ditto.",
+            "Mayor Bloom.",
+            "Detective Smith.",
+            "Mr. Sweeps."
+          ],
+          "answer": "A",
+          "explanation": "罗克西来到大学实验室，发现一名戴厚眼镜的男人正等着她，对方自我介绍叫迪托教授。"
+        },
+        {
+          "evidenceParagraphId": "p23",
+          "question": "What confused Rocket Girl about the men in the lab?",
+          "options": [
+            "They were all wearing masks.",
+            "They spoke different languages.",
+            "They all looked exactly like Professor Ditto.",
+            "They were carrying stolen paintings."
+          ],
+          "answer": "C",
+          "explanation": "一个又一个看起来完全相同的男人出现，罗克西惊讶地发现他们每个人都像迪托教授。"
+        },
+        {
+          "evidenceParagraphId": "p27",
+          "question": "What stepped out of the second booth after Roxy had been inside the first?",
+          "options": [
+            "A robot version of the mayor.",
+            "Another Rocket Girl.",
+            "A giant silver robot.",
+            "A frightened police officer."
+          ],
+          "answer": "B",
+          "explanation": "迪托教授把罗克西推进机器舱，机器运转后，另一间舱里竟走出一个和火箭女孩一模一样的人。"
+        }
+      ]
+    },
+    {
+      "episodeId": 31,
+      "title": "Two Rocket Girls!",
+      "sourceContentId": "C0005844",
+      "questions": [
+        {
+          "evidenceParagraphId": "p6",
+          "question": "What did the real Mayor Bloom say about the playground money?",
+          "options": [
+            "He was planning to spend it on a new car.",
+            "He had given it to the university.",
+            "He had hidden it at the museum.",
+            "He had been kidnapped and never reached City Hall."
+          ],
+          "answer": "D",
+          "explanation": "被囚禁的真市长说自己早上被绑架，根本没有去市政厅，因此并非他本人偷走了游乐场经费。"
+        },
+        {
+          "evidenceParagraphId": "p8",
+          "question": "How did Professor Ditto make it look as if Mayor Bloom had stolen the money?",
+          "options": [
+            "He sent the mayor's robot clone to take it.",
+            "He asked the assistant to lie.",
+            "He changed the security camera footage.",
+            "He borrowed the mayor's wallet."
+          ],
+          "answer": "A",
+          "explanation": "市长解释迪托教授制造了他的机器人复制体，让复制体以市长的外貌去偷钱。"
+        },
+        {
+          "evidenceParagraphId": "p12",
+          "question": "Why was a Rocket Girl robot clone especially dangerous?",
+          "options": [
+            "It knew where every schoolbook was kept.",
+            "It could fly only at night.",
+            "It could have all of Rocket Girl's superpowers.",
+            "It carried the city's playground plans."
+          ],
+          "answer": "C",
+          "explanation": "市长听说迪托教授也复制了火箭女孩后很担心，因为复制体可能拥有火箭女孩的全部超能力。"
+        },
+        {
+          "evidenceParagraphId": "p19",
+          "question": "Who did the police dispatcher say was robbing Metro City Museum?",
+          "options": [
+            "Professor Ditto wearing a mask.",
+            "Someone who looked like Rocket Girl.",
+            "Mayor Bloom's assistant.",
+            "Detective Smith himself."
+          ],
+          "answer": "B",
+          "explanation": "警察调度员告诉探长，抢劫博物馆的竟然是火箭女孩，实际是迪托教授制造的机器人复制体。"
+        },
+        {
+          "evidenceParagraphId": "p23",
+          "question": "How did the real Rocket Girl protect Detective Smith at the museum?",
+          "options": [
+            "She took the priceless vase away.",
+            "She hid him behind a display case.",
+            "She asked the clone to stop.",
+            "She landed in front of him and the clone's lasers bounced off her chest."
+          ],
+          "answer": "D",
+          "explanation": "复制体向史密斯探长发射激光时，真正的罗克西降落在探长面前，用身体挡下激光攻击。"
+        }
+      ]
+    },
+    {
+      "episodeId": 32,
+      "title": "Clones",
+      "sourceContentId": "C0005845",
+      "questions": [
+        {
+          "evidenceParagraphId": "p3",
+          "question": "What happened when the real Rocket Girl shot the clone?",
+          "options": [
+            "The clone's foot was scorched by her eye laser.",
+            "The clone disappeared in purple smoke.",
+            "The clone turned into a normal girl.",
+            "The clone dropped a bag of money."
+          ],
+          "answer": "A",
+          "explanation": "火箭女孩的激光击中了复制体的脚，脚部冒出烟雾，说明机器人复制体受到了损伤。"
+        },
+        {
+          "evidenceParagraphId": "p8",
+          "question": "What surprising sight did Terrell report at the park?",
+          "options": [
+            "A new playground was already finished.",
+            "The lake had turned purple again.",
+            "Two Rocket Girls flew past.",
+            "The mayor was flying over the trees."
+          ],
+          "answer": "C",
+          "explanation": "特雷尔抬头看到真正的火箭女孩追逐复制体，两位外形相同的火箭女孩先后飞过公园。"
+        },
+        {
+          "evidenceParagraphId": "p19",
+          "question": "What happened when Rocket Girl fired at one of the Professor Ditto figures?",
+          "options": [
+            "It escaped through a secret door.",
+            "Smoke came from the figure's ears.",
+            "The figure turned into Mayor Bloom.",
+            "All the lab lights went out."
+          ],
+          "answer": "B",
+          "explanation": "罗克西的激光击中一名迪托教授复制体后，对方耳朵冒烟，显示它也是机器复制品。"
+        },
+        {
+          "evidenceParagraphId": "p24",
+          "question": "Why did the Professor Ditto clones start breaking down?",
+          "options": [
+            "The mayor called them back to school.",
+            "They ran out of food.",
+            "Rocket Girl switched off the lights.",
+            "Rocket Girl's laser damaged the computer controlling them."
+          ],
+          "answer": "D",
+          "explanation": "罗克西的激光误打中实验室电脑，电脑爆炸后所有复制体开始冒烟失灵，逐个倒下。"
+        },
+        {
+          "evidenceParagraphId": "p29",
+          "question": "Why did the real Professor Ditto donate money for the playground?",
+          "options": [
+            "He felt bad that the clones he invented had caused trouble.",
+            "He wanted a statue of himself in the park.",
+            "He was running for mayor.",
+            "He had won a prize for building the fastest robot."
+          ],
+          "answer": "A",
+          "explanation": "真正的迪托教授已经退休十年，他为自己发明的复制体惹麻烦而歉疚，因此捐钱帮助修建新游乐场。"
+        }
+      ]
+    }
+  ]
+}
