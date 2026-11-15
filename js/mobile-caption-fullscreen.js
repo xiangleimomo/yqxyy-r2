@@ -17,7 +17,14 @@
   if (installedAndroidApp) document.documentElement.classList.add('sf-android-app');
   const rotateInstalledApp = enter => {
     if (!installedAndroidApp) return;
-    // Android intercepts this main-frame custom scheme without navigating.
+    // Use the trusted native bridge when present: custom-URL navigation can
+    // pollute WebView history and send Back from an episode to Home.
+    const bridge = window.YQXYYAndroidApp;
+    if (typeof bridge?.requestVideoFullscreen === 'function') {
+      bridge.requestVideoFullscreen(!!enter);
+      return;
+    }
+    // Compatibility with pre-1.6.10 APKs, which lack the native method.
     window.location.href = 'yqxyy-app://fullscreen/' + (enter ? 'enter' : 'exit');
   };
   const mobileEnvironment = () => {
