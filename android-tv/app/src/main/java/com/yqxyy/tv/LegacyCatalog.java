@@ -16,32 +16,76 @@ import java.util.Set;
 
 /** R2-backed legacy media, matching the original site's data/ JSON catalogue. */
 final class LegacyCatalog {
-  private static final String BASE="https://yqxyy-r2.netlify.app/";
+  private static volatile String BASE="https://yqxxyy.netlify.app/";
+  private static volatile String R2_BASE="https://pub-bf9dac62ea094bcdae4eca9e743f9b61.r2.dev/";
+  private static void configure(Context ctx) {
+    try(InputStream in=ctx.getAssets().open("tv-config.json")){
+      ByteArrayOutputStream out=new ByteArrayOutputStream();
+      byte[] buf=new byte[4096];int n;
+      while((n=in.read(buf))!=-1)out.write(buf,0,n);
+      JSONObject config=new JSONObject(new String(out.toByteArray(),StandardCharsets.UTF_8));
+      String site=config.optString("webUrl",BASE);
+      String r2=config.optString("r2DataOrigin",R2_BASE);
+      if(site.startsWith("https://")&&site.endsWith("/"))BASE=site;
+      if(r2.startsWith("https://")&&r2.endsWith("/"))R2_BASE=r2;
+    }catch(Exception e){Log.w(TAG,"TV origin settings unavailable: "+e.getMessage());}
+  }
   private static final String TAG="YQXYY-TV-Legacy";
   private static final int MAX_BYTES=9*1024*1024;
   private static JSONObject bundled;
   private static JSONArray providerList=new JSONArray();
 
   private static Object get(String file) throws Exception {
-    String url=resolve(file);
-    if(url==null||!url.startsWith(BASE+"data/"))
-      throw new IllegalArgumentException("Invalid legacy JSON path");
+    if(!file.startsWith("data/")||file.contains(".."))
+      throw new IllegalArgumentException("Invalid R2 resource path");
+    Exception first=null;
+    for(String root:new String[]{R2_BASE,BASE}){
+      try{return readJson(root+file);}
+      catch(Exception e){
+        if(first==null)first=e;
+        Log.w(TAG,"Resource source "+root+" failed for "+file+": "+e.getMessage());
+      }
+    }
+    throw first==null?new IllegalStateException("No TV resource source"):first;
+  }
+  private static Object readJson(String url) throws Exception {
     HttpURLConnection c=(HttpURLConnection)new URL(url).openConnection();
+    c.setInstanceFollowRedirects(false);
     c.setConnectTimeout(12000);c.setReadTimeout(18000);
     c.setRequestProperty("Accept","application/json");
     try{
-      if(c.getResponseCode()!=200)throw new IllegalStateException("R2 proxy HTTP "+c.getResponseCode()+" "+file);
+      int status=c.getResponseCode();
+      if(status!=200)throw new IllegalStateException("TV JSON HTTP "+status);
       ByteArrayOutputStream out=new ByteArrayOutputStream();
       try(InputStream in=c.getInputStream()){
         byte[] chunk=new byte[8192];int n;
-        while((n=in.read(chunk))!=-1){out.write(chunk,0,n);if(out.size()>MAX_BYTES)throw new IllegalStateException("R2 JSON too large");}
+        while((n=in.read(chunk))!=-1){out.write(chunk,0,n);
+          if(out.size()>MAX_BYTES)throw new IllegalStateException("TV JSON too large");}
       }
-      String text=new String(out.toByteArray(),StandardCharsets.UTF_8);
+      String text=new String(out.toByteArray(),StandardCharsets.UTF_8).trim();
+      if(!text.startsWith("{")&&!text.startsWith("["))
+        throw new IllegalStateException("Expected JSON, got website HTML or proxy error");
       return new org.json.JSONTokener(text).nextValue();
     }finally{c.disconnect();}
   }
+  private static boolean validIndex(String file,Object item){
+    if(file.equals("series-list.json"))
+      return item instanceof JSONArray&&((JSONArray)item).length()>0;
+    if(file.equals("movie-hub-catalog.json"))
+      return item instanceof JSONArray&&((JSONArray)item).length()>0||
+        item instanceof JSONObject&&((JSONObject)item).optJSONArray("films")!=null;
+    if(file.equals("movie-series.json"))
+      return item instanceof JSONArray&&((JSONArray)item).length()>0;
+    if(file.equals("movie-posters.json"))return item instanceof JSONObject;
+    if(file.equals("movie-hub-providers.json"))return item instanceof JSONArray;
+    return item!=null&&item!=JSONObject.NULL;
+  }
   private static synchronized Object getIndex(Context ctx,String file) throws Exception {
-    try{return get("data/"+file);}
+    try{
+      Object live=get("data/"+file);
+      if(!validIndex(file,live))throw new IllegalStateException("Invalid or empty "+file);
+      return live;
+    }
     catch(Exception remoteError){
       if(bundled==null){
         try(InputStream in=ctx.getAssets().open("tv-legacy.json")){
@@ -52,15 +96,25 @@ final class LegacyCatalog {
         }
       }
       Object fallback=bundled.opt(file);
-      if(fallback==null||fallback==JSONObject.NULL)throw remoteError;
+      if(!validIndex(file,fallback))throw remoteError;
       return fallback;
     }
   }
   static String resolve(String url){
     if(url==null||url.trim().isEmpty())return null;
     try{
-      URL src=new URL(new URL(BASE),url.trim());
+      String raw=url.trim();
+      if(raw.startsWith("data/")||raw.startsWith("/data/"))
+        return R2_BASE+(raw.startsWith("/")?raw.substring(1):raw);
+      URL src=new URL(new URL(BASE),raw);
       if(!"https".equals(src.getProtocol())||src.getUserInfo()!=null)return null;
+      if(src.getHost().equals("yqxyy-r2.netlify.app")){
+        String path=src.getPath();
+        if(path.startsWith("/data/"))return R2_BASE+path.substring(1)+
+          (src.getQuery()==null?"":"?"+src.getQuery());
+        return BASE+(path.startsWith("/")?path.substring(1):path)+
+          (src.getQuery()==null?"":"?"+src.getQuery());
+      }
       return src.toString();
     }catch(Exception e){return null;}
   }
@@ -92,8 +146,13 @@ final class LegacyCatalog {
     return data;
   }
   static void appendPublicCatalogues(Map<String,Catalog.Show> map,Context ctx){
+    configure(ctx);
     try{appendMovies(map,ctx);}catch(Exception e){Log.w(TAG,"Original movies unavailable: "+e.getMessage());}
-    try{appendAnimation(map,ctx);}catch(Exception e){Log.w(TAG,"Animation stories unavailable: "+e.getMessage());}
+    try{appendAnimation(map,ctx);}catch(Exception e){Log.e(TAG,"Animation stories unavailable: "+e.getMessage());}
+    int storyCount=0;
+    for(Catalog.Show show:map.values())if("animation".equals(show.category))storyCount++;
+    Log.i(TAG,"Animation stories loaded: "+storyCount+" from current R2 or packaged catalogue");
+    if(storyCount==0)Log.e(TAG,"No animation stories: check packaged TV legacy index");
     try{
       Object providerData=getIndex(ctx,"movie-hub-providers.json");
       providerList=arr(providerData);

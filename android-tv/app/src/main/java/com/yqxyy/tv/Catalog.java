@@ -132,6 +132,9 @@ final class Catalog {
       throw new IllegalArgumentException("Supabase public settings are not configured");
     Map<String,Show> map=new LinkedHashMap<>();
     final int pageSize=400;
+    // The public Supabase catalogue is optional for R2 animation stories.
+    // A transient Supabase outage must not blank the animation and movie shelves.
+    try {
     for(int offset=0;offset<16000;offset+=pageSize) {
       Uri uri=Uri.parse(endpoint+"/rest/v1/movie_library").buildUpon()
           .appendQueryParameter("select","id,category,media_type,tmdb_id,title,title_zh,year,poster_url,overview,season_number,episode_number,playback_sources")
@@ -170,10 +173,15 @@ final class Catalog {
       }
       if(batch.length()<pageSize)break;
     }
+    }catch(Exception e){
+      android.util.Log.w("YQXYY-TV","Supabase catalogue temporarily unavailable: "+e.getMessage());
+    }
     // The original website serves existing film and animation-course catalogues
     // from R2 through its public /data proxy; they are NOT in movie_library.
     LegacyCatalog.appendPublicCatalogues(map,context);
     List<Show> result=new ArrayList<>(map.values());
+    if(result.isEmpty())throw new IllegalStateException(
+      "动画与影片目录均未读取到，请检查 R2 公开地址及打包目录");
     for(Show show:result)show.sort();
     Collections.sort(result,(a,b)->{
       int ca=categoryIndex(a.category),cb=categoryIndex(b.category);

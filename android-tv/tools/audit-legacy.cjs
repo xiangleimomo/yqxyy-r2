@@ -1,5 +1,8 @@
 'use strict';
-const base='https://yqxyy-r2.netlify.app/';
+const fs=require('node:fs');
+const path=require('node:path');
+const cfg=JSON.parse(fs.readFileSync(path.join(__dirname,'../app/src/main/assets/tv-config.json'),'utf8'));
+const base=cfg.r2DataOrigin;
 async function read(path){
   const u=new URL(path,base);
   if(u.origin!==new URL(base).origin||!u.pathname.startsWith('/data/'))throw Error('Unsafe path');

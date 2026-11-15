@@ -1,6 +1,6 @@
 # YQXYY Android TV (independent from mobile)
 
-This is a **native Android TV preview (v0.2.0)**. It combines the public Supabase `movie_library`
+This is a **native Android TV preview (v0.2.2)**. It combines the public Supabase `movie_library`
 with the original R2-backed film list (82 records) and animation-learning series
 via the existing /data JSON proxy. No Netlify deployment, phone APK update,
 database schema change or R2 data change is required.
@@ -77,3 +77,16 @@ GitHub Actions `Build YQXYY Android TV APK` publishes
   synced by the website are available on other devices.
 - Sign in with existing email and password via the TV remote. No account
   creation, password recovery or third-party OAuth in the TV APK.
+
+## v0.2.2: Updated site and animation-stories repair
+- TV uses the production site's current public resource configuration from the
+  mobile Android Gradle defaults: `yqxxyy.netlify.app` and the **public R2 read host**.
+- Original film and story indexes are downloaded directly from public R2 first,
+  with the current site as fallback; a freshly generated packaged snapshot
+  remains available when the network fails. The obsolete `yqxyy-r2` origin
+  is no longer the source of truth.
+- The animation-story navigation now displays the actual series count and a
+  reload control on failure. Index shape and at least 15 eligible series are
+  validated in the build rather than merely checking that Gradle compiles.
+- Existing Supabase sign-in, favorites, watch history, native captions and
+  movie-vs-TV playback routing remain unchanged.

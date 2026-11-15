@@ -36,6 +36,8 @@ jobs:
         run: node android-tv/tools/prepare-config.cjs
       - name: Bundle original movie and animation catalogues
         run: node android-tv/tools/package-legacy.cjs
+      - name: Verify real animation story episode indexes
+        run: node android-tv/tools/check-animation.cjs
       - name: Verify TMDB movie and TV routes
         run: |
           mkdir -p /tmp/tv-url-tests
@@ -55,6 +57,10 @@ jobs:
       - name: Compile TV APK
         working-directory: android-tv
         run: gradle --no-daemon --stacktrace :app:assembleDebug
+      - name: Confirm animation catalogue is actually inside APK
+        run: |
+          unzip -p android-tv/app/build/outputs/apk/debug/app-debug.apk assets/tv-legacy.json > /tmp/tv-legacy-inside-apk.json
+          node -e 'const v=require("/tmp/tv-legacy-inside-apk.json"); const n=(v["series-list.json"]||[]).length; if(n<40)process.exit(1); console.log("APK contains "+n+" animation series records");'
       - name: Package
         run: cp android-tv/app/build/outputs/apk/debug/app-debug.apk YQXYY-TV.apk
       - name: Upload TV APK artifact

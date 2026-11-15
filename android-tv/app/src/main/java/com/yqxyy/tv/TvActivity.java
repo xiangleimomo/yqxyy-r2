@@ -111,9 +111,14 @@ public final class TvActivity extends Activity {
           if(isFinishing()||isDestroyed())return;
           catalogue=result;
           indicator.setText(result.size()+" 部作品 · 遥控器上下左右选择");
-          if(nav.getChildCount()>3){
-            int films=0;for(Catalog.Show show:result)if("animated".equals(show.category))films++;
+          if(nav.getChildCount()>4){
+            int films=0,stories=0;
+            for(Catalog.Show show:result){
+              if("animated".equals(show.category))films++;
+              if("animation".equals(show.category))stories++;
+            }
             ((TextView)nav.getChildAt(3)).setText("动画大电影 ("+films+")");
+            ((TextView)nav.getChildAt(4)).setText("动画故事 ("+stories+")");
           }
           if(activeShow==null)showHome(section);
         });
@@ -212,8 +217,15 @@ public final class TvActivity extends Activity {
       body.addView(h);
       TvUi.gap(body,this,compact?12:20);
     }
-    if(count==0)showMessage("favorites".equals(selected)?"目前没有收藏作品":
-      "recent".equals(selected)?"目前没有观看记录":"这个栏目目前还没有影片",false);
+    if(count==0){
+      String message="favorites".equals(selected)?"目前没有收藏作品":
+        "recent".equals(selected)?"目前没有观看记录":
+        "animation".equals(selected)?"动画故事目录暂时不可用。请检查网络或重新加载，应用不会隐藏读取错误。":
+        "这个栏目目前还没有影片";
+      showMessage(message,false);
+      if("animation".equals(selected))
+        body.addView(TvUi.button(this,"重新读取动画故事目录",this::refresh));
+    }
   }
 
   private View makeCard(Catalog.Show show,boolean eagerPoster) {
