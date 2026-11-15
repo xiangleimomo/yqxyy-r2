@@ -16,10 +16,10 @@ import java.util.Collections;
 /**
  * APK-only implementation of the movie-backdrop lookup.
  *
- * The app bundles its frontend files and does not need Netlify Functions for
- * these images. Intercept the same-origin API path locally before WebView
- * makes any network request to Netlify. Query the same public movie metadata
- * endpoint already used by the catalogue's portrait poster search.
+ * The app bundles its frontend files. Try a native, public-source landscape
+ * lookup first; if it has no valid match, let WebView use the yqxxyy website
+ * function that the PC frontend already uses (official TMDB then public
+ * fallbacks). Never mask that working route with an empty native response.
  *
  * Never return a backdrop unless the numeric TMDB ID and movie/TV type match,
  * and never return an arbitrary image host.
