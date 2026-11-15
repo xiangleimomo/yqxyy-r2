@@ -1,0 +1,51 @@
+name: Final Atomic Rocket Girl V2 Quiz Replacement
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type REPLACE_252_REVIEWED_QUIZZES to confirm one full replacement'
+        type: string
+        required: true
+permissions:
+  contents: read
+concurrency:
+  group: rocket-girl-final-atomic-publish
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+      R2_BUCKET: ${{ secrets.R2_BUCKET }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci --omit=dev --no-audit --no-fund
+      - name: Check explicit full-series replacement approval
+        env:
+          CONFIRM: ${{ inputs.confirm }}
+        run: |
+          if [ "$CONFIRM" != "REPLACE_252_REVIEWED_QUIZZES" ]; then
+            echo "Full-series replacement was not explicitly confirmed"
+            exit 1
+          fi
+      - name: Recompile and verify all original Read evidence
+        run: |
+          node --test tests/rocket-girl-offline-compile.test.mjs tests/rocket-girl-atomic-publish.test.mjs
+          node scripts/quiz-revisions/rocket-girl-compile-offline.mjs
+      - name: Upload reviewed full package for record
+        uses: actions/upload-artifact@v4
+        with:
+          name: RocketGirl-Level4-Full-252-Quiz-PrePublish
+          path: out/rocketgirl-v2-offline/
+          retention-days: 90
+      - name: Backup entire previous quiz and replace with one verified full JSON
+        env:
+          ROCKET_GIRL_FINAL_PUBLISH: I_UNDERSTAND_SINGLE_R2_REPLACEMENT
+        run: node scripts/quiz-revisions/rocket-girl-atomic-publish.mjs
