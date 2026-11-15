@@ -74,14 +74,24 @@ export async function main(){
   const r2=new AwsClient({accessKeyId:process.env.R2_ACCESS_KEY_ID,secretAccessKey:process.env.R2_SECRET_ACCESS_KEY,service:'s3',region:'auto'});
   const object=targetURL();
   const preflight=await r2.fetch(object,{method:'GET'});let old=null;
+  let createOnly=false;
   if(preflight.ok){
     old=await preflight.json();
     if(old?.schemaVersion!==1||!Number.isSafeInteger(old.total))throw Error('Unknown existing snapshot');
     if(rows.length<Math.floor(old.total*0.75))throw Error('Unexpected catalogue shrink; refusing overwrite');
+  }else if(preflight.status===403){
+    // S3 may return 403 for missing keys when ListBucket permission is absent.
+    // Verify readable known data before trying a create-only write.
+    const known=await r2.fetch(object.replace(/movie-library-published\.json$/,'series-list.json'),{method:'GET'});
+    if(!known.ok)throw Error('R2 existing-object access check failed HTTP '+known.status);
+    await known.body?.cancel();
+    createOnly=true;
   }else if(preflight.status!==404)throw Error('R2 preflight failed HTTP '+preflight.status);
   let action='unchanged';
   if(!old||old.checksum!==fresh.checksum){
-    const put=await r2.fetch(object,{method:'PUT',headers:{'Content-Type':'application/json; charset=utf-8','Cache-Control':'public, max-age=60'},body:JSON.stringify(fresh)});
+    const headers={'Content-Type':'application/json; charset=utf-8','Cache-Control':'public, max-age=60'};
+    if(createOnly)headers['If-None-Match']='*';
+    const put=await r2.fetch(object,{method:'PUT',headers,body:JSON.stringify(fresh)});
     if(!put.ok)throw Error('R2 PUT failed HTTP '+put.status);
     await put.body?.cancel();action='uploaded';
   }
