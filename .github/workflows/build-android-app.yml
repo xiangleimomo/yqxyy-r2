@@ -22,6 +22,7 @@ on:
       - 'js/movies.js'
       - 'js/media-shelf.js'
       - 'tests/movie-tv-batch.test.cjs'
+      - 'tests/movie-library-pagination.test.cjs'
       - 'tests/movie-tv-admin.browser.cjs'
       - 'tests/subtitle-position-offset.test.cjs'
       - 'css/unified-player.css'
@@ -82,7 +83,7 @@ jobs:
           node --check js/movies.js
           node --check js/media-shelf.js
           node --test tests/movie-backdrop.test.cjs
-          node --test tests/android-tmdb-providers.test.cjs tests/android-player-bridge.test.cjs tests/movie-tv-batch.test.cjs tests/subtitle-position-offset.test.cjs tests/kids-update.test.cjs tests/tmdb-tv-seasons.test.cjs tests/tvmaze-episode-autofill.test.cjs
+          node --test tests/android-tmdb-providers.test.cjs tests/android-player-bridge.test.cjs tests/movie-tv-batch.test.cjs tests/movie-library-pagination.test.cjs tests/subtitle-position-offset.test.cjs tests/kids-update.test.cjs tests/tmdb-tv-seasons.test.cjs tests/tvmaze-episode-autofill.test.cjs
           mkdir -p /tmp/yqxyy-adguard-tests
           javac -d /tmp/yqxyy-adguard-tests android/app/src/main/java/com/yqxyy/english/PlayerAdGuard.java tests/PlayerAdGuardTest.java
           java -cp /tmp/yqxyy-adguard-tests PlayerAdGuardTest
@@ -114,7 +115,7 @@ jobs:
           path: YQXYY-Android.apk
           retention-days: 30
       - name: Publish direct download
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/stable-1.6.4-pagination'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
