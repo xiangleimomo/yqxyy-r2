@@ -5,9 +5,22 @@ window.MovieLibrary={
   admin(){return !!window.SFCloud?.isAdmin?.()&&!!window.SFCloud?.client;},
   async rows(includeDrafts=false){
     const client=window.SFCloud?.client;if(!client)return [];
-    let query=client.from('movie_library').select('*').order('sort_order',{ascending:true}).order('created_at',{ascending:false});
-    if(!includeDrafts)query=query.eq('published',true);
-    const {data,error}=await query;if(error)throw error;return data||[];
+    // Supabase/PostgREST limits each response (commonly 1,000 rows).
+    // Read the full catalogue in stable, bounded pages so every season/episode appears.
+    const pageSize=500, rows=[];
+    for(let offset=0;;offset+=pageSize){
+      let query=client.from('movie_library').select('*')
+        .order('sort_order',{ascending:true})
+        .order('created_at',{ascending:false})
+        .order('id',{ascending:true});
+      if(!includeDrafts)query=query.eq('published',true);
+      const {data,error}=await query.range(offset,offset+pageSize-1);
+      if(error)throw error;
+      const batch=data||[];
+      rows.push(...batch);
+      if(batch.length<pageSize)break;
+    }
+    return rows;
   },
   async published(){
     // Do not permanently cache an empty response when the cloud client has not initialized.
