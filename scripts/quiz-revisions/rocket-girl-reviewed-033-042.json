@@ -1,0 +1,678 @@
+{
+  "seriesId": "little-fox-rocket-girl-fs0065",
+  "level": 4,
+  "format": "offline-authoring-v1",
+  "releasePolicy": "stage-only-no-R2-write",
+  "lessons": [
+    {
+      "episodeId": 33,
+      "title": "Kickball",
+      "sourceContentId": "C0006006",
+      "questions": [
+        {
+          "evidenceParagraphId": "p6",
+          "question": "What was strange about the bubble Mara blew?",
+          "options": [
+            "It popped immediately.",
+            "It became as large as a car without popping.",
+            "It turned into a frozen ball.",
+            "It floated away with her book report."
+          ],
+          "answer": "B",
+          "explanation": "玛拉从糖果店买了新口香糖，吹出的泡泡不断增大，甚至比汽车还大，却始终没有破裂。"
+        },
+        {
+          "evidenceParagraphId": "p10",
+          "question": "Why did Mara say she would arrive at the park later?",
+          "options": [
+            "She had to finish her book report.",
+            "She had a dentist appointment.",
+            "She wanted to visit the candy factory.",
+            "She was watching Mighty Man on TV."
+          ],
+          "answer": "A",
+          "explanation": "罗克西告诉朋友们，玛拉要先完成读书报告，所以约好两点在公园会合。"
+        },
+        {
+          "evidenceParagraphId": "p18",
+          "question": "Why did the friends begin to worry about Mara?",
+          "options": [
+            "She had forgotten her kickball.",
+            "It had started to rain.",
+            "The park was closing.",
+            "She still had not arrived after another thirty minutes."
+          ],
+          "answer": "D",
+          "explanation": "大家又踢了半小时球，玛拉仍未出现，所以朋友们开始猜测她为何失约。"
+        },
+        {
+          "evidenceParagraphId": "p23",
+          "question": "What did Roxy think was the most likely reason Mara was missing?",
+          "options": [
+            "She had been captured by a monster.",
+            "She had left Metro City.",
+            "She was probably still working on her book report.",
+            "She had gone swimming with her parents."
+          ],
+          "answer": "C",
+          "explanation": "其他孩子猜测玛拉遭到外星人或怪物袭击，罗克西则认为她大概还在写读书报告。"
+        },
+        {
+          "evidenceParagraphId": "p32",
+          "question": "What did Mayor Bloom report to Rocket Girl?",
+          "options": [
+            "A giant dinosaur was near the school.",
+            "A giant pink blob was invading downtown.",
+            "The art gallery had lost its paintings.",
+            "A robot had stolen City Hall."
+          ],
+          "answer": "B",
+          "explanation": "布卢姆市长联系罗克西，告诉她巨大的粉红色黏块正在侵入市中心，请求火箭女孩处理。"
+        }
+      ]
+    },
+    {
+      "episodeId": 34,
+      "title": "The Blob",
+      "sourceContentId": "C0006007",
+      "questions": [
+        {
+          "evidenceParagraphId": "p2",
+          "question": "What excuse did Roxy give her friends before flying downtown?",
+          "options": [
+            "She needed to buy new shoes.",
+            "She was going to the museum.",
+            "She had promised to wash more cars.",
+            "She was going to look for Mara."
+          ],
+          "answer": "D",
+          "explanation": "罗克西为了赶去阻止粉红色黏块，又要保住身份秘密，就对朋友们说自己去寻找玛拉。"
+        },
+        {
+          "evidenceParagraphId": "p7",
+          "question": "What did the giant pink blob remind Roxy of?",
+          "options": [
+            "Bubble gum, both in appearance and smell.",
+            "A giant bowl of ice cream.",
+            "A cloud made of snow.",
+            "A piece of shiny metal."
+          ],
+          "answer": "A",
+          "explanation": "罗克西看到黏块贴着大楼爬行，觉得它看上去像口香糖，而且闻起来也有口香糖的味道。"
+        },
+        {
+          "evidenceParagraphId": "p13",
+          "question": "Why was Detective Smith worried about the blob?",
+          "options": [
+            "It was going to eat the police radios.",
+            "It had stolen the mayor's watch.",
+            "It kept growing and might cover the entire city.",
+            "It was turning all cars into toys."
+          ],
+          "answer": "C",
+          "explanation": "探长告诉罗克西，黏块已经存在一个小时并持续扩大，如果不尽快处理，很可能覆盖全城。"
+        },
+        {
+          "evidenceParagraphId": "p20",
+          "question": "How did Rocket Girl rescue the bus caught in the blob?",
+          "options": [
+            "She used her heat vision to melt the bus.",
+            "She grabbed its bumper and pulled it free.",
+            "She called a tow truck from the police station.",
+            "She asked everyone to jump out."
+          ],
+          "answer": "B",
+          "explanation": "粉红黏块把公共汽车拖向自己，罗克西迅速抓住保险杠并使劲拉，把巴士从黏块里拽了出来。"
+        },
+        {
+          "evidenceParagraphId": "p33",
+          "question": "Who did Rocket Girl discover trapped inside the blob?",
+          "options": [
+            "Detective Smith.",
+            "Mayor Bloom.",
+            "Terrell.",
+            "Mara."
+          ],
+          "answer": "D",
+          "explanation": "罗克西用超强听力听到黏块里有人呼救，绕到另一面后用力把人拉出，发现竟是失踪的玛拉。"
+        }
+      ]
+    },
+    {
+      "episodeId": 35,
+      "title": "Mrs. Wiggles",
+      "sourceContentId": "C0006008",
+      "questions": [
+        {
+          "evidenceParagraphId": "p2",
+          "question": "How did Mara say the giant pink blob began?",
+          "options": [
+            "She spilled a bottle of glue.",
+            "She blew a bubble that kept growing.",
+            "She opened a broken ice cream box.",
+            "She found a meteor in the park."
+          ],
+          "answer": "B",
+          "explanation": "玛拉解释她吹了一个口香糖泡泡，而那个泡泡不断膨胀，最终变成危害城市的巨大黏块。"
+        },
+        {
+          "evidenceParagraphId": "p10",
+          "question": "What was the name of the gum Mara had been chewing?",
+          "options": [
+            "Mrs. Wiggles Gum.",
+            "Rocket Girl Super Gum.",
+            "Metro City Mint Gum.",
+            "Giant Bubble Ice Gum."
+          ],
+          "answer": "A",
+          "explanation": "玛拉拿出口香糖包装，告诉罗克西这是名叫Mrs. Wiggles Gum的新产品。"
+        },
+        {
+          "evidenceParagraphId": "p14",
+          "question": "What did Mrs. Wiggles demand to stop the blob?",
+          "options": [
+            "A new candy factory.",
+            "The city's best television show.",
+            "A truckload of ice cream.",
+            "One million dollars from Mayor Bloom."
+          ],
+          "answer": "D",
+          "explanation": "维格尔斯夫人威胁，如果市长不给她一百万美元，就让口香糖黏块覆盖整个城市。"
+        },
+        {
+          "evidenceParagraphId": "p24",
+          "question": "What did Rocket Girl do when she saw people stuck in the blob?",
+          "options": [
+            "She left them for the police.",
+            "She used the blob to catch the villain.",
+            "She pulled each person out and carried them to safety.",
+            "She threw the blob into the lake."
+          ],
+          "answer": "C",
+          "explanation": "罗克西优先救人，逐个将困在黏块里的人拉出来，再把他们飞送到安全的位置。"
+        },
+        {
+          "evidenceParagraphId": "p30",
+          "question": "Why was destroying the giant blob with eye lasers a mistake?",
+          "options": [
+            "The small pieces began moving and growing into new blobs.",
+            "It made the city lose all electricity.",
+            "It froze the entire street.",
+            "It made Mrs. Wiggles disappear."
+          ],
+          "answer": "A",
+          "explanation": "罗克西用激光把巨型口香糖黏块炸成许多小块，但这些小块又开始活动并各自长大，反而加重了危机。"
+        }
+      ]
+    },
+    {
+      "episodeId": 36,
+      "title": "Small Blobs",
+      "sourceContentId": "C0006009",
+      "questions": [
+        {
+          "evidenceParagraphId": "p4",
+          "question": "What clue helped Mara discover how to stop the blobs?",
+          "options": [
+            "The blobs hated bright sunlight.",
+            "The blobs were afraid of water.",
+            "A helicopter's cold breeze froze a blob.",
+            "The blobs could not climb stairs."
+          ],
+          "answer": "C",
+          "explanation": "玛拉看见一小块黏块跳向直升机时被寒冷气流冻住，因而想到可以利用冷气解决危机。"
+        },
+        {
+          "evidenceParagraphId": "p9",
+          "question": "What happened after Rocket Girl used her super breath repeatedly?",
+          "options": [
+            "Every blob froze solid.",
+            "The blobs joined into one giant bubble.",
+            "All the buildings turned purple.",
+            "The blobs floated into space."
+          ],
+          "answer": "A",
+          "explanation": "罗克西按照玛拉的提醒持续用超强呼吸吹出冷风，最终使所有小黏块冻得硬邦邦的。"
+        },
+        {
+          "evidenceParagraphId": "p17",
+          "question": "What did Mrs. Wiggles summon when Rocket Girl confronted her at the factory?",
+          "options": [
+            "A group of giant robots.",
+            "A swarm of angry bees.",
+            "A team of police officers.",
+            "Several large gingerbread men."
+          ],
+          "answer": "D",
+          "explanation": "火箭女孩来到糖果工厂要逮捕维格尔斯夫人时，对方打响指召来几个高大凶恶的姜饼人。"
+        },
+        {
+          "evidenceParagraphId": "p25",
+          "question": "How did Rocket Girl defeat Mrs. Wiggles's gingerbread guards?",
+          "options": [
+            "She melted them with hot water.",
+            "She threw frozen blobs at them until they broke.",
+            "She trapped them inside the candy oven.",
+            "She told the police to take them away."
+          ],
+          "answer": "B",
+          "explanation": "罗克西离开工厂后返回，用冻住的小黏块不断砸向姜饼人，很快把这些卫兵打碎了。"
+        },
+        {
+          "evidenceParagraphId": "p34",
+          "question": "What did Mara tell Roxy's friends about Rocket Girl?",
+          "options": [
+            "She had built a new playground.",
+            "She had given Mara a new book.",
+            "Rocket Girl saved her from a giant bubble-gum blob.",
+            "Rocket Girl helped the soccer team wash cars."
+          ],
+          "answer": "C",
+          "explanation": "回到公园后，玛拉兴奋地告诉朋友们，火箭女孩把她从巨大口香糖黏块中救了出来。"
+        }
+      ]
+    },
+    {
+      "episodeId": 37,
+      "title": "Dinosaur Bones",
+      "sourceContentId": "C0006020",
+      "questions": [
+        {
+          "evidenceParagraphId": "p1",
+          "question": "What strange sight appeared above West Street early in the morning?",
+          "options": [
+            "A giant pink bubble.",
+            "A bright flash of electricity in the dark sky.",
+            "A blizzard covering the road.",
+            "Two Rocket Girls flying together."
+          ],
+          "answer": "B",
+          "explanation": "清晨垃圾车驶过西街时，天空突然被一道道电光照亮，随后又恢复黑暗，预示异常事件。"
+        },
+        {
+          "evidenceParagraphId": "p12",
+          "question": "Why couldn't Mara join her friends at the park the next day?",
+          "options": [
+            "She had a soccer match.",
+            "She had to wash cars.",
+            "She needed to finish homework.",
+            "Her parents had planned a museum visit."
+          ],
+          "answer": "D",
+          "explanation": "玛拉说父母早已安排带她去大都会自然历史博物馆，因此无法按原计划去公园。"
+        },
+        {
+          "evidenceParagraphId": "p20",
+          "question": "Why did Terrell wish he could see real living dinosaurs?",
+          "options": [
+            "He knew dinosaurs were extinct and could only see fossils.",
+            "He had been invited to a dinosaur farm.",
+            "He wanted to make a television show.",
+            "He wanted to visit the future."
+          ],
+          "answer": "A",
+          "explanation": "特雷尔希望能看到活着的恐龙，但也知道恐龙早已灭绝，平时只能去博物馆看骨骼化石。"
+        },
+        {
+          "evidenceParagraphId": "p23",
+          "question": "Why did Roxy doubt Rocket Girl could help build a time machine?",
+          "options": [
+            "Rocket Girl had never been to the museum.",
+            "The time machine was already broken.",
+            "She did not think Rocket Girl knew how to build one.",
+            "She thought the professor would forbid it."
+          ],
+          "answer": "C",
+          "explanation": "特雷尔想让火箭女孩帮忙造时光机，罗克西觉得这想法不现实，怀疑火箭女孩具备这样的技术。"
+        },
+        {
+          "evidenceParagraphId": "p30",
+          "question": "What emergency did Mayor Bloom report?",
+          "options": [
+            "A giant robot had taken the city hall.",
+            "Live dinosaurs were roaming downtown Metro City.",
+            "The new dinosaur exhibit had been stolen.",
+            "The zoo animals were making too much noise."
+          ],
+          "answer": "B",
+          "explanation": "市长告诉罗克西，市中心出现了四处游荡的活恐龙，需要火箭女孩立即前去救援。"
+        }
+      ]
+    },
+    {
+      "episodeId": 38,
+      "title": "Dinosaur Trouble!",
+      "sourceContentId": "C0006021",
+      "questions": [
+        {
+          "evidenceParagraphId": "p8",
+          "question": "What happened when two long-necked dinosaurs came down West Street?",
+          "options": [
+            "They helped drivers move traffic.",
+            "They destroyed the museum roof.",
+            "A frightened car crashed into a store window.",
+            "They carried a bus away."
+          ],
+          "answer": "C",
+          "explanation": "两只长颈恐龙在西街行走，一辆汽车试图逃开，结果撞破商店橱窗，司机只能下车逃跑。"
+        },
+        {
+          "evidenceParagraphId": "p15",
+          "question": "What did Detective Smith know about the dinosaurs' arrival?",
+          "options": [
+            "The zoo had opened its gates.",
+            "Strange electricity lit the sky before the dinosaurs appeared.",
+            "The museum brought them on a truck.",
+            "Professor Ditto had built them."
+          ],
+          "answer": "B",
+          "explanation": "探长说清晨天空出现奇怪电光，之后恐龙才出现在城市里，但他尚不知道这些恐龙来自哪里。"
+        },
+        {
+          "evidenceParagraphId": "p19",
+          "question": "What happened after the small dinosaurs knocked over the hot-dog cart?",
+          "options": [
+            "They ran back to the museum.",
+            "They chased Detective Smith.",
+            "They flew over the park.",
+            "They ate all the fallen hot dogs."
+          ],
+          "answer": "D",
+          "explanation": "一群小恐龙撞翻热狗摊，摊主逃走后，恐龙把掉出来的热狗都吃光了。"
+        },
+        {
+          "evidenceParagraphId": "p24",
+          "question": "How did Rocket Girl save the woman threatened by the T. rex?",
+          "options": [
+            "She swept the woman up just before the dinosaur bit.",
+            "She froze the T. rex's jaws.",
+            "She pushed it into the lake.",
+            "She took the woman into the bank."
+          ],
+          "answer": "A",
+          "explanation": "霸王龙张开大嘴要攻击老妇人时，罗克西飞速赶到，在最后一刻把她抱起救走。"
+        },
+        {
+          "evidenceParagraphId": "p30",
+          "question": "Why did Rocket Girl become alarmed when the T. rex ran away?",
+          "options": [
+            "It was running toward the art gallery.",
+            "It was carrying the mayor.",
+            "It was heading along Mountain Street toward the elementary school.",
+            "It had stolen a police car."
+          ],
+          "answer": "C",
+          "explanation": "霸王龙离开后沿着通往大都会小学的山街奔跑，罗克西想到孩子们可能遇险，因此再次紧张起来。"
+        }
+      ]
+    },
+    {
+      "episodeId": 39,
+      "title": "The Man with the Hat",
+      "sourceContentId": "C0006022",
+      "questions": [
+        {
+          "evidenceParagraphId": "p4",
+          "question": "How did Terrell's feelings about real dinosaurs change?",
+          "options": [
+            "He now wanted to keep a T. rex as a pet.",
+            "He was no longer excited after seeing the frightening T. rex.",
+            "He wanted to build a larger museum.",
+            "He thought dinosaurs were friendly to everyone."
+          ],
+          "answer": "B",
+          "explanation": "特雷尔原本觉得看到活恐龙会很酷，但霸王龙来到学校后，他被吓得不再这样想了。"
+        },
+        {
+          "evidenceParagraphId": "p12",
+          "question": "How did Rocket Girl stop the T. rex outside the school?",
+          "options": [
+            "She flew it to the zoo.",
+            "She froze its feet.",
+            "She hid the students in the basement.",
+            "She blasted a deep hole that trapped the dinosaur."
+          ],
+          "answer": "D",
+          "explanation": "罗克西把霸王龙引到球场，用眼睛激光轰出一个大坑，霸王龙踩进去后被困住。"
+        },
+        {
+          "evidenceParagraphId": "p16",
+          "question": "Why did Rocket Girl chase the man driving the jeep?",
+          "options": [
+            "He looked suspicious and drove away quickly after seeing her.",
+            "He had stolen a school bus.",
+            "He was carrying the mayor's money.",
+            "He threw a Weather Ball at the school."
+          ],
+          "answer": "A",
+          "explanation": "罗克西注意到戴探险帽的男子看见她就慌张逃走，于是怀疑他和恐龙出现有关，飞起来追踪吉普车。"
+        },
+        {
+          "evidenceParagraphId": "p20",
+          "question": "What did Rocket Girl find in the mansion's basement?",
+          "options": [
+            "A hidden diamond mine.",
+            "A room filled with television cameras.",
+            "A laboratory full of clocks, watches, and calendars.",
+            "A pile of stolen dinosaur bones."
+          ],
+          "answer": "C",
+          "explanation": "罗克西循着许多钟表同时滴答的声音进入地下室，发现一间到处都是钟、表和日历的实验室。"
+        },
+        {
+          "evidenceParagraphId": "p26",
+          "question": "Why had Professor Flashback brought dinosaurs into Metro City?",
+          "options": [
+            "He wanted to frighten the mayor.",
+            "He moved the city millions of years into the past to study living dinosaurs.",
+            "He needed help building a museum.",
+            "He was testing a robot dinosaur."
+          ],
+          "answer": "B",
+          "explanation": "闪回教授坦言自己想研究活恐龙，所以利用时间旅行装置把整个大都会市送回数百万年前。"
+        }
+      ]
+    },
+    {
+      "episodeId": 40,
+      "title": "The Giant Clock",
+      "sourceContentId": "C0006023",
+      "questions": [
+        {
+          "evidenceParagraphId": "p5",
+          "question": "Why was Rocket Girl worried about the giant clock being damaged?",
+          "options": [
+            "It might trap Metro City in the distant past.",
+            "It would stop the school bell.",
+            "It might turn the dinosaurs into robots.",
+            "It could cover the city in snow."
+          ],
+          "answer": "A",
+          "explanation": "罗克西意识到巨钟控制着城市的时间，一旦钟坏掉，大都会市可能永远被困在过去。"
+        },
+        {
+          "evidenceParagraphId": "p11",
+          "question": "What happened when Rocket Girl moved the giant clock's hand to the present?",
+          "options": [
+            "The professor turned into a dinosaur.",
+            "The clock began playing music.",
+            "The laboratory filled with ice cream.",
+            "Electricity flashed and the dinosaurs disappeared."
+          ],
+          "answer": "D",
+          "explanation": "罗克西把巨钟指针转回现在，实验室出现电光，随后城里的恐龙全部消失，表明时间恢复正常。"
+        },
+        {
+          "evidenceParagraphId": "p14",
+          "question": "Why did Rocket Girl destroy the giant clock after saving the city?",
+          "options": [
+            "The clock had stopped telling time.",
+            "She believed it was too dangerous to leave it working.",
+            "The professor had asked her to destroy it.",
+            "She needed its metal to fix a car."
+          ],
+          "answer": "B",
+          "explanation": "罗克西用激光摧毁巨钟，是因为她认为它能让整座城市穿越时间，继续使用非常危险。"
+        },
+        {
+          "evidenceParagraphId": "p18",
+          "question": "How did Professor Flashback escape after the clock was broken?",
+          "options": [
+            "He hid inside the museum.",
+            "He climbed out of a window.",
+            "He pressed a button on a golden watch and vanished.",
+            "He asked Rocket Girl to take him away."
+          ],
+          "answer": "C",
+          "explanation": "闪回教授卷起袖子露出金表，按下按钮后伴随电光消失，说明他仍有另一件时间旅行装置。"
+        },
+        {
+          "evidenceParagraphId": "p28",
+          "question": "Why was the Stone Age cave painting strange to Mara?",
+          "options": [
+            "A caveman appeared to be wearing a hat and using binoculars.",
+            "A dinosaur was painted blue.",
+            "It showed the school in the present.",
+            "All the people in it looked like robots."
+          ],
+          "answer": "A",
+          "explanation": "朋友们在洞穴壁画上发现一个似乎戴帽子、拿望远镜的古代人，但望远镜在石器时代尚未发明，因此玛拉觉得不合理。"
+        }
+      ]
+    },
+    {
+      "episodeId": 41,
+      "title": "Monster Trucks",
+      "sourceContentId": "C0006059",
+      "questions": [
+        {
+          "evidenceParagraphId": "p4",
+          "question": "What happened to the armored truck on West Street?",
+          "options": [
+            "The driver stopped for lunch.",
+            "A giant bubble carried it away.",
+            "A robot turned it into a toy.",
+            "Something suddenly grabbed the truck."
+          ],
+          "answer": "D",
+          "explanation": "押运车在西街行驶时，突然有东西抓住车身，接着车辆失控撞上邮箱。"
+        },
+        {
+          "evidenceParagraphId": "p11",
+          "question": "What made the monster-truck show exciting to Roxy's friends?",
+          "options": [
+            "The cars were racing underwater.",
+            "The huge noisy trucks had unusual designs, including a gorilla and a shark.",
+            "The trucks could travel through time.",
+            "Every truck was driven by a superhero."
+          ],
+          "answer": "B",
+          "explanation": "朋友们在竞技场观看的巨型卡车声音响亮、外形奇特，有的像大猩猩，有的带着鲨鱼鳍。"
+        },
+        {
+          "evidenceParagraphId": "p24",
+          "question": "What did the Rocket Girl monster truck do after jumping off the dirt ramp?",
+          "options": [
+            "It crashed into a bank.",
+            "It became stuck in the mud.",
+            "It landed on and crushed a row of old cars.",
+            "It picked up a bus with its arms."
+          ],
+          "answer": "C",
+          "explanation": "火箭女孩主题卡车跃过土坡后落到破旧汽车上，车身被压弯、玻璃破碎，引起观众欢呼。"
+        },
+        {
+          "evidenceParagraphId": "p33",
+          "question": "Why did Terrell doubt the real Rocket Girl was driving the monster truck?",
+          "options": [
+            "He believed Rocket Girl had more important things to do.",
+            "He had seen her at school that morning.",
+            "He knew the driver was Detective Smith.",
+            "The monster truck was too small for her."
+          ],
+          "answer": "A",
+          "explanation": "特雷尔觉得真正的火箭女孩还有更重要的救援任务，因此不大可能亲自开竞技场的表演卡车。"
+        },
+        {
+          "evidenceParagraphId": "p42",
+          "question": "What emergency interrupted Roxy at the monster-truck show?",
+          "options": [
+            "The arena caught fire.",
+            "A dinosaur escaped from the museum.",
+            "Professor Ditto returned.",
+            "An armored truck was robbed on West Street."
+          ],
+          "answer": "D",
+          "explanation": "罗克西手表响起后，市长告诉她西街有押运车被抢，她必须离开观众席处理事件。"
+        }
+      ]
+    },
+    {
+      "episodeId": 42,
+      "title": "Yee-ha!",
+      "sourceContentId": "C0006060",
+      "questions": [
+        {
+          "evidenceParagraphId": "p4",
+          "question": "Why was Roxy worried about the last pretzel being sold?",
+          "options": [
+            "She wanted one for herself.",
+            "She had promised to bring Terrell a pretzel.",
+            "The snack bar was closing early.",
+            "The mayor had asked for a pretzel."
+          ],
+          "answer": "B",
+          "explanation": "罗克西在小吃摊看到最后一个椒盐卷饼被买走，因为特雷尔此前托她带一个，虽然她还有更紧急的任务。"
+        },
+        {
+          "evidenceParagraphId": "p12",
+          "question": "What damage on the armored truck suggested how it was attacked?",
+          "options": [
+            "A large hole burned through its roof.",
+            "Purple slime covered the wheels.",
+            "A dent wrapped around the whole truck like a lasso.",
+            "Its windows were frozen solid."
+          ],
+          "answer": "C",
+          "explanation": "罗克西仔细观察押运车，发现凹痕围绕车身一圈，像被套索捆住过一样。"
+        },
+        {
+          "evidenceParagraphId": "p16",
+          "question": "What other clue did the guards mention after the crash?",
+          "options": [
+            "They heard a horse.",
+            "They saw a robot flying.",
+            "They found a candy wrapper.",
+            "They noticed a strange clock."
+          ],
+          "answer": "A",
+          "explanation": "守卫说车祸后不仅听到有人喊Yee-ha，还听到了马的声音，进一步暗示抢劫者像牛仔。"
+        },
+        {
+          "evidenceParagraphId": "p20",
+          "question": "Who did Rocket Girl identify as the robber?",
+          "options": [
+            "Professor Ditto.",
+            "Dr. Odd.",
+            "Freddie Freeze.",
+            "Stinky Bart."
+          ],
+          "answer": "D",
+          "explanation": "罗克西根据套索痕迹、牛仔的叫喊和马声，认定抢劫押运车的是城里唯一的亡命牛仔臭巴特。"
+        },
+        {
+          "evidenceParagraphId": "p27",
+          "question": "What was Rocket Girl's plan for catching the thief?",
+          "options": [
+            "Ask the guards to stop transporting money.",
+            "Follow another armored truck and wait for Stinky Bart to attack.",
+            "Search all the monster trucks.",
+            "Build a giant fence around the bank."
+          ],
+          "answer": "B",
+          "explanation": "罗克西决定跟随另一辆押运车，判断臭巴特迟早还会出手，届时她就能提前准备抓住他。"
+        }
+      ]
+    }
+  ]
+}
