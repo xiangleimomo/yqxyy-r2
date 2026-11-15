@@ -78,15 +78,25 @@ export async function main(){
   if(preflight.ok){
     old=await preflight.json();
     if(old?.schemaVersion!==1||!Number.isSafeInteger(old.total))throw Error('Unknown existing snapshot');
-    if(rows.length<Math.floor(old.total*0.75))throw Error('Unexpected catalogue shrink; refusing overwrite');
   }else if(preflight.status===403){
-    // S3 may return 403 for missing keys when ListBucket permission is absent.
-    // Verify readable known data before trying a create-only write.
-    const known=await r2.fetch(object.replace(/movie-library-published\.json$/,'series-list.json'),{method:'GET'});
-    if(!known.ok)throw Error('R2 existing-object access check failed HTTP '+known.status);
+    // Restricted R2 tokens can deny GetObject. Read public objects instead,
+    // but never overwrite an unknown key without a create-only condition.
+    const origin=process.env.R2_PUBLIC_READ_URL||'https://pub-bf9dac62ea094bcdae4eca9e743f9b61.r2.dev';
+    const root=new URL(origin);
+    if(root.protocol!=='https:'||root.username||root.password||root.search||root.hash||root.pathname!=='/'||root.port)throw Error('Invalid public R2 origin');
+    const known=await fetch(root.origin+'/data/series-list.json',{signal:AbortSignal.timeout(20000)});
+    if(!known.ok)throw Error('R2 public known-object access failed HTTP '+known.status);
     await known.body?.cancel();
-    createOnly=true;
-  }else if(preflight.status!==404)throw Error('R2 preflight failed HTTP '+preflight.status);
+    const snapshotRead=await fetch(root.origin+'/'+OBJECT_KEY+'?verify='+fresh.checksum,{signal:AbortSignal.timeout(20000)});
+    if(snapshotRead.ok)old=await snapshotRead.json();
+    else if(snapshotRead.status===404)createOnly=true;
+    else throw Error('R2 public object preflight failed HTTP '+snapshotRead.status);
+  }else if(preflight.status===404)createOnly=true;
+  else throw Error('R2 preflight failed HTTP '+preflight.status);
+  if(old){
+    if(old?.schemaVersion!==1||!Number.isSafeInteger(old.total))throw Error('Unknown existing snapshot');
+    if(rows.length<Math.floor(old.total*0.75))throw Error('Unexpected catalogue shrink; refusing overwrite');
+  }
   let action='unchanged';
   if(!old||old.checksum!==fresh.checksum){
     const headers={'Content-Type':'application/json; charset=utf-8','Cache-Control':'public, max-age=60'};
@@ -95,8 +105,14 @@ export async function main(){
     if(!put.ok)throw Error('R2 PUT failed HTTP '+put.status);
     await put.body?.cancel();action='uploaded';
   }
-  const verified=await r2.fetch(object,{method:'GET'});
-  if(!verified.ok)throw Error('R2 GET readback HTTP '+verified.status);
+  const signedCheck=await r2.fetch(object,{method:'GET'});
+  let verified=signedCheck;
+  if(!signedCheck.ok){
+    if(signedCheck.status!==403)throw Error('R2 signed GET readback HTTP '+signedCheck.status);
+    const origin=process.env.R2_PUBLIC_READ_URL||'https://pub-bf9dac62ea094bcdae4eca9e743f9b61.r2.dev';
+    verified=await fetch(new URL(origin).origin+'/'+OBJECT_KEY+'?readback='+fresh.checksum,{signal:AbortSignal.timeout(20000)});
+  }
+  if(!verified.ok)throw Error('R2 public readback HTTP '+verified.status);
   const stored=await verified.json();
   if(stored?.schemaVersion!==1||stored.total!==rows.length||stored.checksum!==fresh.checksum||!Array.isArray(stored.rows)||stored.rows.length!==rows.length)throw Error('R2 readback did not match source');
   const categories=Object.fromEntries([...new Set(rows.map(x=>x.category))].map(c=>[c,rows.filter(x=>x.category===c).length]));
