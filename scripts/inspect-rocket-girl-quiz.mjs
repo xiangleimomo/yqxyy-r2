@@ -34,3 +34,8 @@ const summary={source:eps.origin,episodes:eps.data.length,quizEntries:Object.key
   r2CredentialConfigured:Boolean(process.env.R2_ACCESS_KEY_ID&&process.env.R2_SECRET_ACCESS_KEY),
   sample};
 console.log('ROCKET_GIRL_SOURCE_AUDIT '+JSON.stringify(summary));
+
+const first=read.data['1'];
+if(!first?.paragraphs?.length)throw Error('Episode 1 missing official Read');
+console.log('ROCKET_GIRL_EP1_READ '+JSON.stringify({sourceId:first.sourceId,paragraphs:first.paragraphs.map(p=>({id:p.id,text:p.text}))}));
+console.log('ROCKET_GIRL_EP1_LEGACY_QUIZ '+JSON.stringify(quiz.data['1']));
