@@ -14,7 +14,7 @@ const assert=require('node:assert/strict');
       const client={
         from:()=>({
           select(){
-            const q={order(){return q;},eq(){return q;},then(resolve){return Promise.resolve({data:structuredClone(savedRows),error:null}).then(resolve);}};
+            const q={order(){return q;},eq(){return q;},range(from,to){return Promise.resolve({data:structuredClone(savedRows.slice(from,to+1)),error:null});}};
             return q;
           },
           upsert(input){
