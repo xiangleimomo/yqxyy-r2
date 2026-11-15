@@ -1,9 +1,9 @@
 # 一起学英语 Android APP
 
-Android WebView app around the existing yqxyy-r2 website and its responsive mobile UI.\nVersion 1.5 extends the in-video PC-style control bar with drag-to-position subtitles, per-video subtitle timing adjustments and grouped TV episode playback. The APK includes the latest GitHub frontend snapshot.
+Android WebView app using the production yqxxyy website origin and its responsive mobile UI.\nVersion 1.5 extends the in-video PC-style control bar with drag-to-position subtitles, per-video subtitle timing adjustments and grouped TV episode playback. The APK includes the latest GitHub frontend snapshot.
 Site data, Supabase accounts, Cloudflare R2 media and GitHub workflows stay unchanged.
 
-- Default website: https://yqxyy-r2.netlify.app/
+- Default website: https://yqxxyy.netlify.app/
 - Application ID: com.yqxyy.english
 - Minimum Android: 7.0 (API 24)\n- Test version: 1.5.0; returning from fullscreen restores portrait orientation.\n- The Android Back button closes HTML fullscreen before navigating.
 - Build: JDK 17; Gradle 8.9; Android Gradle plugin 8.7.3
@@ -33,8 +33,7 @@ The release GitHub Action runs `npm run build`, then copies `dist/` into
 Android WebView serves **only the public static frontend routes**
 (`/`, `/index.html`, `/js/`, `/css/`, `/assets/`, `/arcade/`,
 and `/source-lab/`) from this snapshot using the existing HTTPS
-website origin. All `/data/*` content, Netlify Functions and
-Supabase requests remain online and are not intercepted.
+website origin. `/data/*` resources are fetched directly from public Cloudflare R2 by the APK. Netlify Functions and Supabase requests remain online.
 
 This deliberately works even if the Netlify static frontend is stale.
 Each new APK is a fixed snapshot of the GitHub commit that built it;
