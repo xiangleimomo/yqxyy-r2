@@ -36,6 +36,7 @@ on:
       - 'tests/movie-backdrop.test.cjs'
       - 'netlify/functions/movie-backdrop.js'
       - 'tests/android-tmdb-providers.test.cjs'
+      - 'tests/android-site-origin.test.cjs'
       - '.github/workflows/build-android-app.yml'
 
 concurrency:
@@ -84,7 +85,7 @@ jobs:
           node --check js/movies.js
           node --check js/media-shelf.js
           node --test tests/movie-backdrop.test.cjs
-          node --test tests/android-tmdb-providers.test.cjs tests/android-player-bridge.test.cjs tests/movie-tv-batch.test.cjs tests/movie-library-pagination.test.cjs tests/subtitle-position-offset.test.cjs tests/kids-update.test.cjs tests/tmdb-tv-seasons.test.cjs tests/tvmaze-episode-autofill.test.cjs
+          node --test tests/android-site-origin.test.cjs tests/android-tmdb-providers.test.cjs tests/android-player-bridge.test.cjs tests/movie-tv-batch.test.cjs tests/movie-library-pagination.test.cjs tests/subtitle-position-offset.test.cjs tests/kids-update.test.cjs tests/tmdb-tv-seasons.test.cjs tests/tvmaze-episode-autofill.test.cjs
           mkdir -p /tmp/yqxyy-adguard-tests
           javac -d /tmp/yqxyy-adguard-tests android/app/src/main/java/com/yqxyy/english/PlayerAdGuard.java tests/PlayerAdGuardTest.java
           java -cp /tmp/yqxyy-adguard-tests PlayerAdGuardTest
