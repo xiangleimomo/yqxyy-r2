@@ -90,10 +90,10 @@ public class MainActivity extends Activity {
     }
 
 
-    // Serve the GitHub main snapshot bundled at build time. Netlify continues
-    // handling /data/* (R2), Supabase and API/function requests; only public
-    // static website assets are packaged. This avoids depending on a stale
-    // Netlify frontend deployment while testing the Android-specific player.
+    // Serve the GitHub main snapshot bundled at build time under the trusted
+    // yqxxyy website origin. R2 /data/* is resolved by R2PublicDataProxy;
+    // Supabase and other remote APIs remain online. Only public static assets
+    // are packaged, so a site-origin change requires a new APK release.
     private WebResourceResponse bundledWebsiteFile(WebResourceRequest request) {
         Uri url = request.getUrl();
         Uri home = Uri.parse(BuildConfig.APP_URL);

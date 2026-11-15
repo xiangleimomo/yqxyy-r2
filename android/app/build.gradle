@@ -2,7 +2,7 @@ plugins {
   id 'com.android.application'
 }
 def buildSha = (project.findProperty('buildSha') ?: 'unknown').toString().replaceAll('[^0-9a-f]', '')
-def websiteUrl = (project.findProperty('websiteUrl') ?: 'https://yqxyy-r2.netlify.app/').toString()
+def websiteUrl = (project.findProperty('websiteUrl') ?: 'https://yqxxyy.netlify.app/').toString()
 if (!websiteUrl.startsWith('https://')) throw new GradleException('The website URL must use HTTPS')
 def r2DataOrigin = (project.findProperty('r2DataOrigin') ?: 'https://pub-bf9dac62ea094bcdae4eca9e743f9b61.r2.dev').toString()
 def r2Uri = new URI(r2DataOrigin)
@@ -19,8 +19,8 @@ android {
     applicationId 'com.yqxyy.english'
     minSdk 24
     targetSdk 34
-    versionCode 15
-    versionName '1.6.7'
+    versionCode 16
+    versionName '1.6.8'
     buildConfigField 'String', 'APP_URL', '"' + websiteUrl + '"'
     buildConfigField 'String', 'R2_DATA_ORIGIN', '"' + r2DataOrigin + '"'
     buildConfigField 'String', 'APP_BUILD_SHA', '"' + buildSha + '"'
