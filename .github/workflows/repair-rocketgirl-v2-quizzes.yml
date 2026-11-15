@@ -1,4 +1,4 @@
-name: Repair Rocket Girl V2 Quizzes (Reviewed Only)
+name: Audit and Repair Rocket Girl V2 Quizzes
 on:
   push:
     paths:
