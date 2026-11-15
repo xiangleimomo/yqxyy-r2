@@ -1,0 +1,37 @@
+name: Build Rocket Girl Offline V2 Quiz Review Package
+on:
+  push:
+    paths:
+      - 'scripts/quiz-revisions/rocket-girl-reviewed-*.json'
+      - 'scripts/quiz-revisions/rocket-girl-compile-offline.mjs'
+      - 'tests/rocket-girl-offline-compile.test.mjs'
+      - '.github/workflows/build-rocket-girl-offline-quiz.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: rocket-girl-offline-draft
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci --omit=dev --no-audit --no-fund
+      - name: Verify schema, evidence and non-publication safeguards
+        run: |
+          node --check scripts/quiz-revisions/rocket-girl-compile-offline.mjs
+          node --test tests/rocket-girl-offline-compile.test.mjs
+      - name: Compile unpublished drafts against exact public R2 official Read
+        run: node scripts/quiz-revisions/rocket-girl-compile-offline.mjs
+      - name: Store offline package for editorial review
+        uses: actions/upload-artifact@v4
+        with:
+          name: RocketGirl-Level4-V2-Offline-Quiz-Draft
+          path: out/rocketgirl-v2-offline/
+          retention-days: 30
+          if-no-files-found: error
