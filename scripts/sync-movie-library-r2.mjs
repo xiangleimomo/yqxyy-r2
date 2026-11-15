@@ -68,8 +68,8 @@ function targetURL(){
 
 async function safeR2Error(response){
   const raw=(await response.text()).slice(0,2048);
-  const code=raw.match(/<Code>([A-Za-z0-9]+)<\\/Code>/)?.[1]||response.headers.get('x-amz-error-code')||'unavailable';
-  const message=raw.match(/<Message>([^<>]{1,120})<\\/Message>/)?.[1]||'unavailable';
+  const code=raw.match(new RegExp('<Code>([A-Za-z0-9]+)</Code>'))?.[1]||response.headers.get('x-amz-error-code')||'unavailable';
+  const message=raw.match(new RegExp('<Message>([^<>]{1,120})</Message>'))?.[1]||'unavailable';
   return {status:response.status,errorCode:String(code).slice(0,60),message:String(message).slice(0,120),contentType:response.headers.get('content-type')};
 }
 
