@@ -1,0 +1,184 @@
+{
+  "seriesId": "little-fox-rocket-girl-fs0065",
+  "level": 4,
+  "revision": "2026-11-15",
+  "lessons": [
+    {
+      "episodeId": 1,
+      "sourceContentId": "C0005780",
+      "title": "Sloppy Joe Day",
+      "questions": [
+        {
+          "id": "q1",
+          "type": "single-choice",
+          "category": "reading",
+          "question": "What did Mr. Mann see heading toward his farm?",
+          "options": [
+            {
+              "key": "A",
+              "text": "A school bus crossing the field"
+            },
+            {
+              "key": "B",
+              "text": "Something flashing across the sky"
+            },
+            {
+              "key": "C",
+              "text": "A giant robot walking along the road"
+            },
+            {
+              "key": "D",
+              "text": "A balloon floating over his cows"
+            }
+          ],
+          "answer": "B",
+          "explanation": "曼恩先生听见奶牛叫后跑到屋外，看到天空中有东西闪过，直直朝他的农场飞来；故事此时并未说它是校车或机器人。",
+          "source": "editorial-official-read",
+          "evidence": {
+            "paragraphIds": [
+              "p2"
+            ],
+            "quote": "Mr. Mann heard his cows mooing in the field. He ran outside and saw something flash across the sky. It shot straight toward his farm.",
+            "sourceContentId": "C0005780"
+          }
+        },
+        {
+          "id": "q2",
+          "type": "single-choice",
+          "category": "reading",
+          "question": "Why did Mara dislike sloppy joes?",
+          "options": [
+            {
+              "key": "A",
+              "text": "They were served too cold"
+            },
+            {
+              "key": "B",
+              "text": "She couldn't eat them with a fork"
+            },
+            {
+              "key": "C",
+              "text": "They were gross and dripped everywhere"
+            },
+            {
+              "key": "D",
+              "text": "They had no sauce at all"
+            }
+          ],
+          "answer": "C",
+          "explanation": "玛拉明确说这种午餐很难吃，而且酱汁会滴得到处都是；她并没有抱怨温度或缺少酱汁。",
+          "source": "editorial-official-read",
+          "evidence": {
+            "paragraphIds": [
+              "p7"
+            ],
+            "quote": "\"Sloppy joes are the worst,\" said Mara. \"They're so gross and they drip everywhere.\"",
+            "sourceContentId": "C0005780"
+          }
+        },
+        {
+          "id": "q3",
+          "type": "single-choice",
+          "category": "reading",
+          "question": "Which superpower did Mara say Rocket Girl had?",
+          "options": [
+            {
+              "key": "A",
+              "text": "She could shoot lasers out of her eyes"
+            },
+            {
+              "key": "B",
+              "text": "She could turn herself invisible"
+            },
+            {
+              "key": "C",
+              "text": "She could freeze time"
+            },
+            {
+              "key": "D",
+              "text": "She could speak every animal language"
+            }
+          ],
+          "answer": "A",
+          "explanation": "玛拉介绍火箭女孩时明确提到她能飞、力气大，还能从眼睛里射出激光；其他三种能力没有出现在这段描述中。",
+          "source": "editorial-official-read",
+          "evidence": {
+            "paragraphIds": [
+              "p10"
+            ],
+            "quote": "\"Rocket Girl is the number one superhero in Metro City,\" said Mara. \"She can fly, she's really strong, and she can shoot lasers out of her eyes. She has lots of other super powers too!\"",
+            "sourceContentId": "C0005780"
+          }
+        },
+        {
+          "id": "q4",
+          "type": "single-choice",
+          "category": "reading",
+          "question": "What interrupted Roxy's conversation with her friends?",
+          "options": [
+            {
+              "key": "A",
+              "text": "The principal announced an emergency to everyone"
+            },
+            {
+              "key": "B",
+              "text": "A teacher entered the classroom"
+            },
+            {
+              "key": "C",
+              "text": "Terrell showed everyone a photograph"
+            },
+            {
+              "key": "D",
+              "text": "Her watch beeped quietly so only she could hear"
+            }
+          ],
+          "answer": "D",
+          "explanation": "就在大家谈论火箭女孩时，罗克西的手表轻轻响起，声音小到只有她能听见，这也是她随后避开朋友的重要线索。",
+          "source": "editorial-official-read",
+          "evidence": {
+            "paragraphIds": [
+              "p20"
+            ],
+            "quote": "Just then Roxy's watch beeped. It was only loud enough for Roxy to hear, and no one else.",
+            "sourceContentId": "C0005780"
+          }
+        },
+        {
+          "id": "q5",
+          "type": "single-choice",
+          "category": "reading",
+          "question": "What did Mayor Bloom want Rocket Girl to investigate?",
+          "options": [
+            {
+              "key": "A",
+              "text": "A problem with the school lunch"
+            },
+            {
+              "key": "B",
+              "text": "A strange object that might be a spaceship at Mr. Mann's farm"
+            },
+            {
+              "key": "C",
+              "text": "A lost pet in Metro City"
+            },
+            {
+              "key": "D",
+              "text": "A broken bus beside the school"
+            }
+          ],
+          "answer": "B",
+          "explanation": "布卢姆市长告诉罗克西，曼恩先生的农场落下一个奇怪物体，可能是宇宙飞船，因此需要火箭女孩去查明情况。",
+          "source": "editorial-official-read",
+          "evidence": {
+            "paragraphIds": [
+              "p24"
+            ],
+            "quote": "\"A strange object landed at Mr. Mann's farm,\" said Mayor Bloom. \"We think it might be a spaceship.\"",
+            "sourceContentId": "C0005780"
+          }
+        }
+      ]
+    }
+  ]
+}

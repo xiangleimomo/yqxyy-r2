@@ -1,0 +1,64 @@
+name: Audit and Repair Rocket Girl V2 Quizzes
+on:
+  push:
+    paths:
+      - 'scripts/repair-rocketgirl-v2-quizzes.mjs'
+      - 'scripts/quiz-revisions/rocket-girl-2026-11-15-reviewed.json'
+      - 'tests/rocket-girl-quiz-v2.test.cjs'
+      - '.github/workflows/repair-rocketgirl-v2-quizzes.yml'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'audit (read only), reviewed (prewritten, fact checked), generate (requires separate API billing/key)'
+        required: true
+        default: audit
+        type: choice
+        options: [audit, reviewed, generate]
+      start_episode:
+        description: 'Start from episode 1-252'
+        required: true
+        default: '1'
+        type: string
+      limit:
+        description: 'Max 1-10 episodes per run'
+        required: true
+        default: '5'
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: rocket-girl-v2-quiz-single-writer
+  cancel-in-progress: false
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    env:
+      ROCKET_QUIZ_MODE: ${{ github.event_name == 'workflow_dispatch' && inputs.mode || 'audit' }}
+      ROCKET_START_EPISODE: ${{ github.event_name == 'workflow_dispatch' && inputs.start_episode || '1' }}
+      ROCKET_LIMIT: ${{ github.event_name == 'workflow_dispatch' && inputs.limit || '5' }}
+      LF_OPENAI_API_KEY: ${{ secrets.LF_OPENAI_API_KEY }}
+      LF_COURSE_MODEL: ${{ vars.LF_COURSE_MODEL }}
+      R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+      R2_BUCKET: ${{ secrets.R2_BUCKET }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci --omit=dev --no-audit --no-fund
+      - name: Local schema and repair safety tests
+        run: |
+          node --check scripts/repair-rocketgirl-v2-quizzes.mjs
+          node --test tests/rocket-girl-quiz-v2.test.cjs
+      - name: Audit public Read/Quiz or apply source-verified correction
+        run: |
+          if [ "$GITHUB_EVENT_NAME" != "workflow_dispatch" ] && [ "$ROCKET_QUIZ_MODE" != "audit" ]; then
+            echo "Push event may only perform read-only audit"; exit 1;
+          fi
+          if [ "$ROCKET_QUIZ_MODE" != "audit" ] && [ "$GITHUB_REF" != "refs/heads/main" ]; then
+            echo "Publication requires manual dispatch from main"; exit 1;
+          fi
+          node scripts/repair-rocketgirl-v2-quizzes.mjs
