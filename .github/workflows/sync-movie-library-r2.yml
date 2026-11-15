@@ -3,10 +3,6 @@ name: Sync Published Movie Catalogue to R2
 # Both existing-object GET and new-object PUT currently return HTTP 403.
 # Re-enable scheduled runs after a successful full export + R2 readback.
 on:
-  push:
-    paths:
-      - 'scripts/sync-movie-library-r2.mjs'
-      - '.github/workflows/sync-movie-library-r2.yml'
   workflow_dispatch:
 permissions:
   contents: read
