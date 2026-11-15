@@ -39,3 +39,27 @@ const first=read.data['1'];
 if(!first?.paragraphs?.length)throw Error('Episode 1 missing official Read');
 console.log('ROCKET_GIRL_EP1_READ '+JSON.stringify({sourceId:first.sourceId,paragraphs:first.paragraphs.map(p=>({id:p.id,text:p.text}))}));
 console.log('ROCKET_GIRL_EP1_LEGACY_QUIZ '+JSON.stringify(quiz.data['1']));
+
+if(process.env.R2_ENDPOINT&&process.env.R2_BUCKET&&process.env.R2_ACCESS_KEY_ID&&process.env.R2_SECRET_ACCESS_KEY){
+ const {AwsClient}=await import('aws4fetch');
+ const r2=new AwsClient({accessKeyId:process.env.R2_ACCESS_KEY_ID,secretAccessKey:process.env.R2_SECRET_ACCESS_KEY,service:'s3',region:'auto'});
+ const endpoint=process.env.R2_ENDPOINT.replace(/\/+$/,'');
+ const base=endpoint+'/'+encodeURIComponent(process.env.R2_BUCKET)+'/';
+ const signed=await r2.fetch(base+root+'quiz.json',{method:'GET'});
+ console.log('ROCKET_GIRL_SIGNED_R2_GET '+signed.status);
+ await signed.body?.cancel();
+ if(signed.ok){
+   const probe='data/__rocketgirl-tests/verification-'+(process.env.GITHUB_RUN_ID||'manual')+'.json';
+   const put=await r2.fetch(base+probe,{method:'PUT',headers:{'content-type':'application/json'},body:'{"probe":true}'});
+   console.log('ROCKET_GIRL_R2_TEST_PUT '+put.status);
+   await put.body?.cancel();
+   if(put.ok){
+     const verify=await r2.fetch(base+probe,{method:'GET'});
+     console.log('ROCKET_GIRL_R2_TEST_READBACK '+verify.status);
+     await verify.body?.cancel();
+     const del=await r2.fetch(base+probe,{method:'DELETE'});
+     console.log('ROCKET_GIRL_R2_TEST_CLEANUP '+del.status);
+     await del.body?.cancel();
+   }
+ }
+}
