@@ -7,7 +7,7 @@ const [e,r]=await Promise.all(['episodes.json','reading-lessons.json'].map(async
   return x.json();
 }));
 if(!Array.isArray(e)||e.length!==252||Object.keys(r).length!==252)throw Error('Unexpected Rocket Girl source count');
-for(let i=2;i<=22;i++){
+for(let i=23;i<=42;i++){
  const ep=e.find(x=>Number(x.episodeId)===i), read=r[String(i)];
  if(!ep||!read||ep.sourceContentId!==read.sourceId)throw Error('Episode and Read source mismatch '+i);
  console.log('ROCKET_READ_PREVIEW '+JSON.stringify({
