@@ -65,6 +65,14 @@ function targetURL(){
     !/^[a-z0-9][a-z0-9.-]{1,61}[a-z0-9]$/.test(bucket))throw Error('Invalid R2 endpoint/bucket');
   return origin.origin+'/'+encodeURIComponent(bucket)+'/'+OBJECT_KEY;
 }
+
+async function safeR2Error(response){
+  const raw=(await response.text()).slice(0,2048);
+  const code=raw.match(/<Code>([A-Za-z0-9]+)<\\/Code>/)?.[1]||response.headers.get('x-amz-error-code')||'unavailable';
+  const message=raw.match(/<Message>([^<>]{1,120})<\\/Message>/)?.[1]||'unavailable';
+  return {status:response.status,errorCode:String(code).slice(0,60),message:String(message).slice(0,120),contentType:response.headers.get('content-type')};
+}
+
 export async function main(){
   const {url,key}=await publicConfig();
   const rows=await readPublished({url,key});
@@ -74,6 +82,7 @@ export async function main(){
   const r2=new AwsClient({accessKeyId:process.env.R2_ACCESS_KEY_ID,secretAccessKey:process.env.R2_SECRET_ACCESS_KEY,service:'s3',region:'auto'});
   const object=targetURL();
   const preflight=await r2.fetch(object,{method:'GET'});let old=null;
+  if(preflight.status===403)console.log('R2_PREFLIGHT_DIAGNOSTIC '+JSON.stringify(await safeR2Error(preflight)));
   let createOnly=false;
   if(preflight.ok){
     old=await preflight.json();
@@ -114,8 +123,8 @@ export async function main(){
           await deleted.body?.cancel();
           throw Error('R2 conditional PUT rejected (403); plain PUT allowed; temp cleanup '+deleted.status);
         }
-        await check.body?.cancel();
-        throw Error('R2 credentials cannot write objects: conditional PUT '+put.status+', regular PUT '+check.status);
+        console.log('R2_PLAIN_PUT_DIAGNOSTIC '+JSON.stringify(await safeR2Error(check)));
+        throw Error('R2 write rejected: conditional PUT '+put.status+', plain PUT '+check.status);
       }
       throw Error('R2 PUT failed HTTP '+put.status);
     }
