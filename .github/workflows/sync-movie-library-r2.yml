@@ -1,0 +1,38 @@
+name: Sync Published Movie Catalogue to R2
+on:
+  push:
+    paths:
+      - 'scripts/sync-movie-library-r2.mjs'
+      - 'tests/movie-library-r2-sync.test.mjs'
+      - '.github/workflows/sync-movie-library-r2.yml'
+  workflow_dispatch:
+  schedule:
+    - cron: '*/30 * * * *'
+permissions:
+  contents: read
+concurrency:
+  group: yqxyy-movie-catalog-r2
+  cancel-in-progress: false
+jobs:
+  sync:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+      R2_BUCKET: ${{ secrets.R2_BUCKET }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install existing R2 client
+        run: npm ci --omit=dev --no-audit --no-fund
+      - name: Validate export and snapshot safety
+        run: |
+          node --check scripts/sync-movie-library-r2.mjs
+          node --test tests/movie-library-r2-sync.test.mjs
+      - name: Upload published catalogue and verify signed R2 readback
+        run: node scripts/sync-movie-library-r2.mjs
