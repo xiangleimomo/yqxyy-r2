@@ -5,6 +5,8 @@ on:
       - 'scripts/quiz-revisions/rocket-girl-reviewed-*.json'
       - 'scripts/quiz-revisions/rocket-girl-compile-offline.mjs'
       - 'tests/rocket-girl-offline-compile.test.mjs'
+      - 'scripts/quiz-revisions/rocket-girl-atomic-publish.mjs'
+      - 'tests/rocket-girl-atomic-publish.test.mjs'
       - '.github/workflows/build-rocket-girl-offline-quiz.yml'
   workflow_dispatch:
 permissions:
@@ -25,7 +27,7 @@ jobs:
       - name: Verify schema, evidence and non-publication safeguards
         run: |
           node --check scripts/quiz-revisions/rocket-girl-compile-offline.mjs
-          node --test tests/rocket-girl-offline-compile.test.mjs
+          node --test tests/rocket-girl-offline-compile.test.mjs tests/rocket-girl-atomic-publish.test.mjs
       - name: Compile unpublished drafts against exact public R2 official Read
         run: node scripts/quiz-revisions/rocket-girl-compile-offline.mjs
       - name: Store offline package for editorial review
