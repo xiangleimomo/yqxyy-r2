@@ -48,6 +48,13 @@ public class MainActivity extends Activity {
         @JavascriptInterface public void openUpdatePage() {
             runOnUiThread(() -> openExternally(Uri.parse(UPDATE_URL)));
         }
+        // A native callback avoids yqxyy-app:// navigation history entries:
+        // leaving video fullscreen must never return the learner to Home.
+        @JavascriptInterface public void requestVideoFullscreen(boolean enter) {
+            runOnUiThread(() -> {
+                if (isTrustedAppPage()) setAppLandscapeFullscreen(enter);
+            });
+        }
     }
     private static final int ASK_MIC = 1202;
     private WebView browser;
@@ -377,13 +384,34 @@ public class MainActivity extends Activity {
                 value -> {
                     if ("true".equals(value)) return;
                     setAppLandscapeFullscreen(false);
-                    if (browser.canGoBack()) browser.goBack();
-                    else MainActivity.super.onBackPressed();
+                    returnToCurrentLessonOrHistory();
                 });
             return;
         }
-        if (browser.canGoBack()) browser.goBack();
-        else super.onBackPressed();
+        returnToCurrentLessonOrHistory();
+    }
+
+    // WebView history may point straight to Home after video playback.
+    // The first Back from a watched lesson ends the video session, leaving
+    // the current episode's Read/Words/Quiz tabs available. The next Back
+    // may follow normal browser history if the learner chooses to leave.
+    private void returnToCurrentLessonOrHistory() {
+        browser.evaluateJavascript(
+            "(function(){" +
+            "if(!/^#\\/lesson\\/[^/]+\\/\\d+(?:\\/|$)/.test(location.hash||''))return false;" +
+            "var panel=document.getElementById('lessonPanel');" +
+            "var video=panel&&panel.querySelector('video');" +
+            "if(!video||video.dataset.sfBackToLesson==='1')return false;" +
+            "if(!video.ended&&video.paused&&video.currentTime<=0)return false;" +
+            "video.pause();video.dataset.sfBackToLesson='1';" +
+            "video.addEventListener('play',function(){delete video.dataset.sfBackToLesson;},{once:true});" +
+            "return true;" +
+            "})()",
+            consumed -> {
+                if ("true".equals(consumed)) return;
+                if (browser.canGoBack()) browser.goBack();
+                else MainActivity.super.onBackPressed();
+            });
     }
     @Override protected void onPause() {
         super.onPause();

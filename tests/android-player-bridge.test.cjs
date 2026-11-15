@@ -33,11 +33,12 @@ class Node {
   closest(){return null;}
   querySelector(){return null;}
 }
-function fixture(agent='Mozilla/5.0 (Linux; Android 13) AppleWebKit YQXYYAndroid/1.1'){
+function fixture(agent='Mozilla/5.0 (Linux; Android 13) AppleWebKit YQXYYAndroid/1.1', nativeBridge=null){
   const body=new Node('body');body.isDocumentRoot=true;
   const html=new Node('html');html.isDocumentRoot=true;
   const win={navigator:{userAgent:agent,maxTouchPoints:3},location:{href:'https://yqxxyy.netlify.app/'},
     matchMedia:()=>({matches:true}),listeners:{},addEventListener(name,fn){(this.listeners[name]||=[]).push(fn);}};
+  if(nativeBridge)win.YQXYYAndroidApp=nativeBridge;
   const doc={body,documentElement:html,fullscreenElement:null,createComment:name=>new Node(name),
     createElement:name=>new Node(name),addEventListener(){}};
   const container=new Node('container'),stage=new Node('stage'),player=new Node('video'),trigger=new Node('button');
@@ -88,4 +89,28 @@ test('Android release serves packaged GitHub frontend while API and R2 stay remo
   assert.ok(!java.includes('route.startsWith("/data/")'), 'R2 data must remain live');
   assert.ok(workflow.includes('npm run build'));
   assert.ok(workflow.includes('cp -a dist/. android/app/src/main/assets/site/'));
+});
+
+test('new Android bridge exits video fullscreen without leaving the current episode',async()=>{
+  const calls=[];
+  const x=fixture('Mozilla/5.0 (Linux; Android 13) YQXYYAndroid/1.6.10',{
+    requestVideoFullscreen:enter=>calls.push(enter)
+  });
+  await x.api.toggle();
+  assert.deepEqual(calls,[true]);
+  assert.equal(x.win.location.href,'https://yqxxyy.netlify.app/');
+  assert.equal(x.stage.parentNode,x.doc.body);
+  for(const callback of x.win.listeners['sf-android-back'])callback();
+  assert.deepEqual(calls,[true,false]);
+  assert.equal(x.win.location.href,'https://yqxxyy.netlify.app/');
+  assert.equal(x.stage.parentNode,x.container);
+});
+test('Android native Back returns to watched episode before navigating history',()=>{
+  const java=fs.readFileSync('android/app/src/main/java/com/yqxyy/english/MainActivity.java','utf8');
+  assert.match(java,/@JavascriptInterface public void requestVideoFullscreen\(boolean enter\)/);
+  assert.match(java,/if \(isTrustedAppPage\(\)\) setAppLandscapeFullscreen\(enter\)/);
+  assert.match(java,/private void returnToCurrentLessonOrHistory\(\)/);
+  assert.match(java,/lesson.*video\.pause\(\)/s);
+  assert.match(java,/video\.ended/);
+  assert.match(java,/video\.dataset\.sfBackToLesson/);
 });
