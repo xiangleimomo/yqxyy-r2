@@ -16,10 +16,10 @@ import java.util.Collections;
 /**
  * APK-only implementation of the movie-backdrop lookup.
  *
- * The app bundles its frontend files and does not need Netlify Functions for
- * these images. Intercept the same-origin API path locally before WebView
- * makes any network request to Netlify. Query the same public movie metadata
- * endpoint already used by the catalogue's portrait poster search.
+ * The app bundles its frontend files. Try a native, public-source landscape
+ * lookup first; if it has no valid match, let WebView use the yqxxyy website
+ * function that the PC frontend already uses (official TMDB then public
+ * fallbacks). Never mask that working route with an empty native response.
  *
  * Never return a backdrop unless the numeric TMDB ID and movie/TV type match,
  * and never return an arbitrary image host.
@@ -50,10 +50,15 @@ final class MovieBackdropResolver {
         try {
             long id = Long.parseLong(rawId);
             String image = searchExactBackdrop(id, mediaType, title);
-            return reply(image);
+            if (image != null) return reply(image);
         } catch (Exception ignored) {
-            return reply(null);
+            // Local metadata provider may be blocked or missing this backdrop.
+            // Do not replace the working website endpoint with {"url":null}.
         }
+        // The new yqxxyy production website can resolve the same title via
+        // official TMDB credentials or the public TMDB title-page fallback.
+        // Returning null tells WebView to request that normal HTTPS endpoint.
+        return null;
     }
 
     private static String searchExactBackdrop(long tmdbId, String type, String title) throws Exception {

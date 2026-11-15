@@ -1,0 +1,20 @@
+const test=require('node:test');
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path='android/app/src/main/java/com/yqxyy/english/MovieBackdropResolver.java';
+test('APK native backdrop lookup falls through to the same endpoint used by PC when source fails',()=>{
+  const java=fs.readFileSync(path,'utf8');
+  const main=fs.readFileSync('android/app/src/main/java/com/yqxyy/english/MainActivity.java','utf8');
+  const current=java.match(/try \{\s*long id = Long\.parseLong\(rawId\);[\s\S]*?\n    \}/)?.[0];
+  assert(current,'Expected native backdrop resolver block');
+  assert.match(current,/if \(image != null\) return reply\(image\)/);
+  assert.match(current,/return null;/);
+  assert.doesNotMatch(current,/return reply\(null\);/,'Do not turn valid no-backdrop results into HTTP 200 null');
+  assert.match(main,/MovieBackdropResolver\.intercept\(/);
+  assert.match(main,/if \(nativeBackdrop != null\) return nativeBackdrop;/);
+  assert.match(main,/return bundledWebsiteFile\(request\);/);
+  const gradle=fs.readFileSync('android/app/build.gradle','utf8');
+  assert.match(gradle,/https:\/\/yqxxyy\.netlify\.app\//);
+  assert.match(gradle,/versionCode 17/);
+  assert.match(gradle,/versionName '1\.6\.9'/);
+});
