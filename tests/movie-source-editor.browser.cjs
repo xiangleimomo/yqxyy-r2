@@ -4,7 +4,7 @@ const {chromium}=require('playwright'),fs=require('node:fs'),assert=require('nod
  await page.addScriptTag({content:fs.readFileSync('js/movie-library.js','utf8')});await page.addScriptTag({content:fs.readFileSync('js/movies.js','utf8')});
  await page.evaluate(()=>{
   window.savedRows=[];window.writeCount=0;
-  window.SFCloud={user:{id:'00000000-0000-0000-0000-000000000001'},isAdmin:()=>true,client:{from:()=>({select(){const q={order(){return q;},eq(){return q;},then(resolve){return Promise.resolve({data:structuredClone(savedRows),error:null}).then(resolve);}};return q;},upsert(row){writeCount++;savedRows=[structuredClone(row)];return {select:()=>({single:async()=>({data:structuredClone(row),error:null})})};}})}};
+  window.SFCloud={user:{id:'00000000-0000-0000-0000-000000000001'},isAdmin:()=>true,client:{from:()=>({select(){const q={order(){return q;},eq(){return q;},range(from,to){return Promise.resolve({data:structuredClone(savedRows.slice(from,to+1)),error:null});}};return q;},upsert(row){writeCount++;savedRows=[structuredClone(row)];return {select:()=>({single:async()=>({data:structuredClone(row),error:null})})};}})}};
   window.app={el:()=>document.getElementById('app'),escapeHtml:s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))};
   MovieLibrary.search=async()=>[{title:'Test film',titleZh:'测试影片',tmdbId:9502,mediaType:'movie',year:2008}];MovieLibrary.verifyPlayback=async()=>{};
   return MovieLibrary.renderAdmin(app);
