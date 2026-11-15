@@ -24,6 +24,8 @@ export function validateQuestions(ep,read,questions){
    ['official-text','official-public-read'].includes(read?.source)&&
    Array.isArray(read?.paragraphs)&&read.paragraphs.length>=5,
    'Episode '+ep?.episodeId+' lacks its matching official Read');
+ ensure(Array.isArray(questions)&&questions.every((q,i)=>q.id==='q'+(i+1)),
+   'Expected question IDs q1 to q5');
  const errors=checkQuiz({questions},read.paragraphs,read.sourceId);
  ensure(!errors.length,'Episode '+ep.episodeId+' failed V2 quality gate: '+errors.join('; '));
  ensure(new Set(questions.map(q=>q.answer)).size>=3,'Answers biased in episode '+ep.episodeId);
@@ -96,6 +98,14 @@ export async function main(env=process.env){
  const [eps,quizzes,reads]=await Promise.all([
    readPublic('episodes.json'),readPublic('quiz.json'),readPublic('reading-lessons.json')]);
  ensure(Array.isArray(eps)&&eps.length===252,'Expected exactly 252 Rocket Girl episodes');
+ const reviewed=JSON.parse(await readFile(new URL('./quiz-revisions/rocket-girl-2026-11-15-reviewed.json',import.meta.url),'utf8'));
+ ensure(reviewed.seriesId===SERIES&&reviewed.level===4,'Reviewed bank for wrong series');
+ for(const lesson of reviewed.lessons){
+   const ep=eps.find(x=>Number(x.episodeId)===Number(lesson.episodeId));
+   ensure(ep&&lesson.sourceContentId===ep.sourceContentId,'Reviewed bank episode source mismatch');
+   validateQuestions(ep,reads[String(ep.episodeId)],lesson.questions);
+ }
+ console.log('ROCKET_GIRL_REVIEWED_SOURCE_VERIFIED '+reviewed.lessons.map(x=>x.episodeId).join(','));
  const invalid=eps.filter(ep=>Number(ep.episodeId)>=start&&
    !compliant(ep,reads[String(ep.episodeId)],quizzes[String(ep.episodeId)]));
  console.log('ROCKET_GIRL_V2_AUDIT '+JSON.stringify({
@@ -110,8 +120,6 @@ export async function main(env=process.env){
    'Signed/public R2 Quiz mismatch, refusing concurrent overwrite');
  let requests=[];
  if(mode==='reviewed'){
-   const reviewed=JSON.parse(await readFile(new URL('./quiz-revisions/rocket-girl-2026-11-15-reviewed.json',import.meta.url),'utf8'));
-   ensure(reviewed.seriesId===SERIES&&reviewed.level===4,'Reviewed bank for wrong series');
    requests=reviewed.lessons.filter(x=>x.episodeId>=start&&x.episodeId<start+limit);
  }else{
    ensure(Boolean(env.LF_OPENAI_API_KEY),
