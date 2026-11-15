@@ -81,6 +81,20 @@ export async function main(){
   if(!process.env.R2_ACCESS_KEY_ID||!process.env.R2_SECRET_ACCESS_KEY)throw Error('Missing R2 GitHub secrets');
   const r2=new AwsClient({accessKeyId:process.env.R2_ACCESS_KEY_ID,secretAccessKey:process.env.R2_SECRET_ACCESS_KEY,service:'s3',region:'auto'});
   const object=targetURL();
+  const bucket=process.env.R2_BUCKET||'';
+  const endpoint=process.env.R2_ENDPOINT||'';
+  const access=process.env.R2_ACCESS_KEY_ID||'';
+  const secret=process.env.R2_SECRET_ACCESS_KEY||'';
+  console.log('R2_CONFIG_CHECK '+JSON.stringify({
+    expectedBucket:bucket==='yqxyy-resources',
+    bucketHasWhitespace:bucket!==bucket.trim(),
+    endpointHasWhitespace:endpoint!==endpoint.trim(),
+    accessIdHasWhitespace:access!==access.trim(),
+    secretHasWhitespace:secret!==secret.trim(),
+    apiEndpointMatchesR2:/^https:\/\/[a-f0-9]{32}(?:\.(?:eu|fedramp))?\.r2\.cloudflarestorage\.com\/?$/.test(endpoint),
+    accessIdLooksLikeR2Key:/^[A-Za-z0-9]{32}$/.test(access),
+    secretLooksLikeR2Secret:/^[A-Za-z0-9/+_=-]{40,80}$/.test(secret)
+  }));
   const preflight=await r2.fetch(object,{method:'GET'});let old=null;
   if(preflight.status===403)console.log('R2_PREFLIGHT_DIAGNOSTIC '+JSON.stringify(await safeR2Error(preflight)));
   let createOnly=false;
