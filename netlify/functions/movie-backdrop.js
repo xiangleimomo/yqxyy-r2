@@ -52,6 +52,18 @@ const lookupPosterSource=async(id,type,title)=>{
   const matching=results.find(item=>Number(item?.id)===id&&item?.media_type===type);
   return matching?pathToImage(matching.backdrop_path):null;
 };
+const lookupPublicTmdb=async(id,type)=>{
+  const response=await fetch(`https://www.themoviedb.org/${type}/${id}`,{
+    headers:{Accept:'text/html'},signal:AbortSignal.timeout(4500)
+  });
+  if(!response.ok)throw Error('TMDB page HTTP '+response.status);
+  const page=new URL(response.url);
+  if(page.origin!=='https://www.themoviedb.org'||!new RegExp(`^/${type}/${id}(?:-|/|$)`).test(page.pathname))return null;
+  const html=await response.text();
+  // The title page identifies its landscape hero separately from the portrait.
+  const match=/background-image:\s*url\(['"]https:\/\/(?:media\.themoviedb\.org|image\.tmdb\.org)\/t\/p\/w1920_and_h800_multi_faces(\/[A-Za-z0-9_-]+\.(?:jpe?g|png|webp))['"]\)/i.exec(html);
+  return pathToImage(match?.[1]);
+};
 exports.handler=async event=>{
   if(event.httpMethod!=='GET')return respond(405,{error:'GET only'});
   const id=asId(event.queryStringParameters?.id);
@@ -64,6 +76,12 @@ exports.handler=async event=>{
     url=await lookupOfficial(id,type);
     if(url)source='tmdb';
   }catch(error){console.warn('Official TMDB backdrop unavailable',String(error.message||error));}
+  if(!url){
+    try{
+      url=await lookupPublicTmdb(id,type);
+      if(url)source='tmdb-title-page';
+    }catch(error){console.warn('TMDB title page backdrop unavailable',String(error.message||error));}
+  }
   if(!url && title){
     try{
       url=await lookupPosterSource(id,type,title);

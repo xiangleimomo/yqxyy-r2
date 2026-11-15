@@ -36,9 +36,10 @@ const App = {
     this.updateUtilityNav();
     // On phone/tablet, initialize the cloud catalogue before the first render.
     // This avoids painting an incomplete homepage and then visibly rendering it again.
-    if(window.MobileApp?.active&&window.SFCloud) await window.SFCloud.init(this);
+    const needsCloudBeforeRender=window.MobileApp?.active||['movie','movie-series'].includes(this.route()[0]);
+    if(needsCloudBeforeRender&&window.SFCloud) await window.SFCloud.init(this);
     await this.render();
-    if(window.SFCloud&&!window.MobileApp?.active){
+    if(window.SFCloud&&!needsCloudBeforeRender){
       await window.SFCloud.init(this);
       if(['movies','movie-hub','announcements','announcement-admin'].includes(this.route()[0])) await this.render();
     }
