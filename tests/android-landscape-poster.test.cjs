@@ -15,6 +15,6 @@ test('APK native backdrop lookup falls through to the same endpoint used by PC w
   assert.match(main,/return bundledWebsiteFile\(request\);/);
   const gradle=fs.readFileSync('android/app/build.gradle','utf8');
   assert.match(gradle,/https:\/\/yqxxyy\.netlify\.app\//);
-  assert.match(gradle,/versionCode 17/);
-  assert.match(gradle,/versionName '1\.6\.9'/);
+  assert.match(gradle,/versionCode 18/);
+  assert.match(gradle,/versionName '1\.6\.10'/);
 });
