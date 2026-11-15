@@ -402,7 +402,7 @@ public class MainActivity extends Activity {
             "var panel=document.getElementById('lessonPanel');" +
             "var video=panel&&panel.querySelector('video');" +
             "if(!video||video.dataset.sfBackToLesson==='1')return false;" +
-            "if(!video.ended&&(video.paused||video.currentTime<=0))return false;" +
+            "if(!video.ended&&video.paused&&video.currentTime<=0)return false;" +
             "video.pause();video.dataset.sfBackToLesson='1';" +
             "video.addEventListener('play',function(){delete video.dataset.sfBackToLesson;},{once:true});" +
             "return true;" +
