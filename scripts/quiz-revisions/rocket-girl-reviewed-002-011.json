@@ -1,0 +1,678 @@
+{
+  "seriesId": "little-fox-rocket-girl-fs0065",
+  "level": 4,
+  "format": "offline-authoring-v1",
+  "releasePolicy": "stage-only-no-R2-write",
+  "lessons": [
+    {
+      "episodeId": 2,
+      "title": "Roxy's Secret",
+      "sourceContentId": "C0005781",
+      "questions": [
+        {
+          "evidenceParagraphId": "p2",
+          "question": "Why did Roxy tell only Mayor Bloom and Principal Penn that she was Rocket Girl?",
+          "options": [
+            "She wanted to hide from the police.",
+            "She wanted to have a normal life.",
+            "She was afraid of Detective Smith.",
+            "She had forgotten who her friends were."
+          ],
+          "answer": "B",
+          "explanation": "罗克西希望平时仍像普通孩子一样生活，所以只把自己是火箭女孩的秘密告诉市长和校长。"
+        },
+        {
+          "evidenceParagraphId": "p7",
+          "question": "What did Rocket Girl find when she reached Mr. Mann's farm?",
+          "options": [
+            "A new spaceship ready to launch.",
+            "A group of aliens eating lunch.",
+            "Cut-down corn but no spaceship.",
+            "A truck full of tomato soup."
+          ],
+          "answer": "C",
+          "explanation": "火箭女孩到达农场，发现部分玉米被割倒了，却没有找到飞船，这促使她继续调查。"
+        },
+        {
+          "evidenceParagraphId": "p14",
+          "question": "Why couldn't Mr. Mann tell where the spaceship went?",
+          "options": [
+            "He hid under his bed until it was gone.",
+            "He had been away from the farm.",
+            "He was talking to the mayor.",
+            "The detective told him not to look."
+          ],
+          "answer": "A",
+          "explanation": "曼恩先生受到惊吓，跑回屋里躲在床下，等他再出来时飞船和玉米都不见了，因此没看到飞船去向。"
+        },
+        {
+          "evidenceParagraphId": "p18",
+          "question": "What clue helped Rocket Girl follow the spaceship's route?",
+          "options": [
+            "A letter left beside the corn.",
+            "A map hidden under the bed.",
+            "A trail of dropped apples.",
+            "Broken branches, a damaged fence, and more damaged trees."
+          ],
+          "answer": "D",
+          "explanation": "罗克西看到树枝折断、栅栏损坏，并发现栅栏外有一连串受损树木，因而能够推测飞船经过的路线。"
+        },
+        {
+          "evidenceParagraphId": "p21",
+          "question": "Where did Rocket Girl realize the spaceship was heading?",
+          "options": [
+            "The school playground.",
+            "Downtown Metro City.",
+            "The nearby ice cream parlor.",
+            "The mountains outside town."
+          ],
+          "answer": "B",
+          "explanation": "罗克西飞到高处查看破坏痕迹，发现路线通向大都会市中心，于是判断飞船正往市区去。"
+        }
+      ]
+    },
+    {
+      "episodeId": 3,
+      "title": "Trouble Downtown",
+      "sourceContentId": "C0005782",
+      "questions": [
+        {
+          "evidenceParagraphId": "p3",
+          "question": "What did Rocket Girl see when she reached downtown Metro City?",
+          "options": [
+            "People running in fear.",
+            "An empty shopping street.",
+            "A parade for the mayor.",
+            "Students arriving for lunch."
+          ],
+          "answer": "A",
+          "explanation": "罗克西飞到大都会市中心时看到人们四处奔跑，表明现场发生了紧急状况。"
+        },
+        {
+          "evidenceParagraphId": "p10",
+          "question": "How did Rocket Girl guess where the spaceship had gone?",
+          "options": [
+            "She followed a map from Detective Smith.",
+            "She saw it fly over the school.",
+            "She heard the aliens calling her.",
+            "She noticed people fleeing from Shop Well Supermarket."
+          ],
+          "answer": "D",
+          "explanation": "罗克西看见一群穿着Shop Well超市制服的人跑过，便推测飞船就在那家超市。"
+        },
+        {
+          "evidenceParagraphId": "p12",
+          "question": "What did Rocket Girl see an alien put into the spaceship?",
+          "options": [
+            "A bottle of water.",
+            "Cans of tomato soup.",
+            "A box of batteries.",
+            "A bag of diamonds."
+          ],
+          "answer": "B",
+          "explanation": "罗克西躲在卡车后观察，看到外星人把番茄汤倒进飞船侧面的洞中。"
+        },
+        {
+          "evidenceParagraphId": "p14",
+          "question": "What did Rocket Girl suspect about the spaceship?",
+          "options": [
+            "It could only fly at night.",
+            "It needed new wheels.",
+            "It might run on food.",
+            "It was controlled by the police."
+          ],
+          "answer": "C",
+          "explanation": "外星人把食物倒入飞船并尝试启动后，罗克西推测这艘飞船可能以食物为燃料。"
+        },
+        {
+          "evidenceParagraphId": "p21",
+          "question": "What happened when purple slime hit the pizza truck?",
+          "options": [
+            "Its wheels became stuck to the road.",
+            "It flew over a building.",
+            "Its doors turned to ice.",
+            "Its food disappeared."
+          ],
+          "answer": "A",
+          "explanation": "外星人的装置射出紫色黏液，披萨车的车轮立即粘在路面上，司机无法脱困。"
+        }
+      ]
+    },
+    {
+      "episodeId": 4,
+      "title": "A Sticky Situation",
+      "sourceContentId": "C0005783",
+      "questions": [
+        {
+          "evidenceParagraphId": "p2",
+          "question": "How did Rocket Girl free her feet from the purple slime?",
+          "options": [
+            "She asked Detective Smith to help.",
+            "She melted it with hot water.",
+            "She used her super strength to pull free.",
+            "She waited for the slime to dry."
+          ],
+          "answer": "C",
+          "explanation": "紫色黏液使罗克西的双脚粘住地面，她用超强力量拉扯和扭动，终于挣脱。"
+        },
+        {
+          "evidenceParagraphId": "p8",
+          "question": "What kind of food did Brim say the spaceship needed?",
+          "options": [
+            "Something very thick and gloppy.",
+            "Something frozen and crunchy.",
+            "Only fresh vegetables.",
+            "Anything salty or spicy."
+          ],
+          "answer": "A",
+          "explanation": "外星人布里姆解释，飞船需要浓稠黏糊的食物作燃料，普通食物不起作用。"
+        },
+        {
+          "evidenceParagraphId": "p16",
+          "question": "How did Rocket Girl calm the frightened students?",
+          "options": [
+            "She told them the aliens had already left.",
+            "She asked them to hide in the hall.",
+            "She ordered everyone to stop eating.",
+            "She explained that the aliens were friendly and needed sloppy joes."
+          ],
+          "answer": "D",
+          "explanation": "当外星人进入食堂引起恐慌时，火箭女孩说明他们是友好的，只需要孩子们的肉酱三明治给飞船补充燃料。"
+        },
+        {
+          "evidenceParagraphId": "p24",
+          "question": "Why were the aliens finally able to leave?",
+          "options": [
+            "Detective Smith repaired the spaceship.",
+            "The sloppy joes were the right fuel.",
+            "The mayor gave them a new engine.",
+            "The students pushed the ship into the air."
+          ],
+          "answer": "B",
+          "explanation": "布里姆重新启动飞船后感谢大家，并明确说肉酱三明治恰好是飞船所需的完美燃料。"
+        },
+        {
+          "evidenceParagraphId": "p30",
+          "question": "Why did Mayor Bloom bring pizza to the cafeteria?",
+          "options": [
+            "He wanted to celebrate his birthday.",
+            "He was opening a pizza shop.",
+            "He wanted to thank students for giving up their lunches.",
+            "He wanted the aliens to stay for dinner."
+          ],
+          "answer": "C",
+          "explanation": "学生们把午餐让给外星人帮助拯救城市，布卢姆市长于是带来披萨感谢大家的付出。"
+        }
+      ]
+    },
+    {
+      "episodeId": 5,
+      "title": "Roxy's Secret Power",
+      "sourceContentId": "C0005784",
+      "questions": [
+        {
+          "evidenceParagraphId": "p6",
+          "question": "Why couldn't the students concentrate during reading time?",
+          "options": [
+            "The classroom was too noisy.",
+            "The school air conditioning was broken and it was very hot.",
+            "Their books had gone missing.",
+            "It was time for a field trip."
+          ],
+          "answer": "B",
+          "explanation": "学校空调坏了，教室里非常炎热，孩子们难受得无法集中注意力阅读。"
+        },
+        {
+          "evidenceParagraphId": "p17",
+          "question": "Why did Roxy ask her friends to keep a promise?",
+          "options": [
+            "She was about to tell them her supposed secret trick.",
+            "She had lost a book from the library.",
+            "She wanted them to leave school.",
+            "She had found a stolen ice cream freezer."
+          ],
+          "answer": "A",
+          "explanation": "罗克西装作要分享一个神秘的降温方法，先郑重要求朋友们答应不要告诉别人。"
+        },
+        {
+          "evidenceParagraphId": "p21",
+          "question": "What was Roxy's joke about staying cool in hot weather?",
+          "options": [
+            "She could make snow with her hands.",
+            "She slept in an ice cream freezer.",
+            "She could control the school air conditioner.",
+            "She simply tried not to think about the heat."
+          ],
+          "answer": "D",
+          "explanation": "朋友们以为罗克西真有特殊本领，但她故意卖关子，最后说自己的办法只是尽量不想天气有多热。"
+        },
+        {
+          "evidenceParagraphId": "p26",
+          "question": "What told Roxy that she needed to leave the classroom?",
+          "options": [
+            "The school bell rang for lunch.",
+            "A teacher called her name.",
+            "Her watch began beeping.",
+            "Someone knocked on the window."
+          ],
+          "answer": "C",
+          "explanation": "罗克西听到手表发出提示音，意识到市长正在联系她，随后借口去洗手间离开教室。"
+        },
+        {
+          "evidenceParagraphId": "p31",
+          "question": "What emergency did Mayor Bloom report to Rocket Girl?",
+          "options": [
+            "A spaceship had landed at the school.",
+            "True Savings Bank was being robbed.",
+            "The cafeteria had caught fire.",
+            "The zoo animals had escaped."
+          ],
+          "answer": "B",
+          "explanation": "布卢姆市长通过手表告诉火箭女孩，True Savings银行正在遭遇抢劫，并已与校长沟通让她离开课堂处理案件。"
+        }
+      ]
+    },
+    {
+      "episodeId": 6,
+      "title": "Heat Vision",
+      "sourceContentId": "C0005803",
+      "questions": [
+        {
+          "evidenceParagraphId": "p5",
+          "question": "What surprised Rocket Girl when she reached True Savings Bank?",
+          "options": [
+            "She found the bank locked for the day.",
+            "The robber was waiting for her outside.",
+            "The bank had become a supermarket.",
+            "All the people there were frozen."
+          ],
+          "answer": "D",
+          "explanation": "罗克西赶到银行原以为会遇见劫匪，却看到一群人全被冻住，这是她没料到的景象。"
+        },
+        {
+          "evidenceParagraphId": "p10",
+          "question": "Why had Detective Smith been at Dairy Dream Ice Cream Parlor?",
+          "options": [
+            "He was investigating stolen ice cream.",
+            "He wanted ice cream for breakfast.",
+            "He was meeting Principal Penn.",
+            "He was repairing the freezer."
+          ],
+          "answer": "A",
+          "explanation": "史密斯探长澄清自己并不是去吃早餐，而是因为冰淇淋店发生盗窃案，前去调查。"
+        },
+        {
+          "evidenceParagraphId": "p14",
+          "question": "Why did Rocket Girl think the bank and ice cream robberies were connected?",
+          "options": [
+            "The same witness had seen both thieves.",
+            "Both crimes happened after school.",
+            "Ice cream was stolen and the bank's people were frozen.",
+            "The mayor owned both businesses."
+          ],
+          "answer": "C",
+          "explanation": "罗克西将冰淇淋失窃与银行里的人被冻住联系起来，因而怀疑两起案件由同一人制造。"
+        },
+        {
+          "evidenceParagraphId": "p19",
+          "question": "How did Rocket Girl rescue the frozen people?",
+          "options": [
+            "She broke the ice with a hammer.",
+            "She melted their ice blocks using heat vision.",
+            "She carried them outside to the sun.",
+            "She asked firefighters to bring heaters."
+          ],
+          "answer": "B",
+          "explanation": "火箭女孩用眼睛发出的橙色热射线逐一融化冰块，最终让所有被冻住的人恢复自由。"
+        },
+        {
+          "evidenceParagraphId": "p27",
+          "question": "What new problem did Detective Smith report at the end?",
+          "options": [
+            "Another bank was being robbed.",
+            "The stolen ice cream had been found.",
+            "The school had closed early.",
+            "An alien spaceship had landed."
+          ],
+          "answer": "A",
+          "explanation": "探长接电话后告诉罗克西，又有一家银行遭到抢劫，表明案件尚未结束。"
+        }
+      ]
+    },
+    {
+      "episodeId": 7,
+      "title": "A Slippery Slope",
+      "sourceContentId": "C0005804",
+      "questions": [
+        {
+          "evidenceParagraphId": "p2",
+          "question": "Which bank was being robbed when Rocket Girl rushed away?",
+          "options": [
+            "True Savings Bank again.",
+            "Metro City Central Bank.",
+            "A bank outside the mountains.",
+            "The bank inside the supermarket."
+          ],
+          "answer": "B",
+          "explanation": "史密斯探长明确告诉罗克西，这次遭抢的是大都会中央银行，所以她立即赶过去。"
+        },
+        {
+          "evidenceParagraphId": "p11",
+          "question": "What did Rocket Girl discover inside Freddie Freeze's tank?",
+          "options": [
+            "Hot water used to melt metal.",
+            "A collection of stolen diamonds.",
+            "Electric batteries for the blaster.",
+            "Ice cream used as the blaster's power."
+          ],
+          "answer": "D",
+          "explanation": "罗克西运用透视能力看到弗雷迪的背部大罐里装满冰淇淋，随后判断那是冻结枪的能量来源。"
+        },
+        {
+          "evidenceParagraphId": "p19",
+          "question": "What did Rocket Girl do after Freddie fired his first freeze ray?",
+          "options": [
+            "She dodged it and ran outside, with Freddie following.",
+            "She grabbed his blaster immediately.",
+            "She melted the bank vault door.",
+            "She hid behind the detective's car."
+          ],
+          "answer": "A",
+          "explanation": "弗雷迪第一次向火箭女孩射出冰冻射线时，她及时躲开并跑出银行，弗雷迪紧跟着追了出来。"
+        },
+        {
+          "evidenceParagraphId": "p22",
+          "question": "What happened when Freddie fired at Rocket Girl near the hill?",
+          "options": [
+            "The street lamps went out.",
+            "The bank windows shattered.",
+            "A nearby tree froze solid.",
+            "The hill turned into a river."
+          ],
+          "answer": "C",
+          "explanation": "弗雷迪在山坡附近朝罗克西开火，射线没击中她，却把她旁边的树冻得结结实实。"
+        },
+        {
+          "evidenceParagraphId": "p30",
+          "question": "Why did Rocket Girl suddenly slide down the hill?",
+          "options": [
+            "Freddie pushed her down the stairs.",
+            "Freddie's last ray had frozen the steep street.",
+            "She stepped onto a skateboard.",
+            "A truck spilled oil across the road."
+          ],
+          "answer": "B",
+          "explanation": "弗雷迪最后射出的冰冻光束冻住整条陡坡道路，罗克西因路面结冰而失去控制，快速滑下去。"
+        }
+      ]
+    },
+    {
+      "episodeId": 8,
+      "title": "Ice Cream!",
+      "sourceContentId": "C0005805",
+      "questions": [
+        {
+          "evidenceParagraphId": "p2",
+          "question": "Why did Freddie Freeze's blaster stop working?",
+          "options": [
+            "He had used up its freeze power.",
+            "Rocket Girl had stolen the trigger.",
+            "The blaster was soaked with water.",
+            "The police had switched it off."
+          ],
+          "answer": "A",
+          "explanation": "弗雷迪试图再次开火时发现冰冻枪毫无反应，因为他刚才对付火箭女孩时已经耗尽能量。"
+        },
+        {
+          "evidenceParagraphId": "p6",
+          "question": "Where did Rocket Girl think Freddie would go for more ice cream?",
+          "options": [
+            "The city zoo.",
+            "Detective Smith's office.",
+            "The school cafeteria.",
+            "The hotel restaurant."
+          ],
+          "answer": "C",
+          "explanation": "罗克西想到弗雷迪还需要大量冰淇淋，于是意识到他很可能去大都会小学的食堂。"
+        },
+        {
+          "evidenceParagraphId": "p12",
+          "question": "What unusual instruction did Rocket Girl give everyone in the cafeteria?",
+          "options": [
+            "Finish their meatball sandwiches first.",
+            "Hide all their lunches in lockers.",
+            "Run outside as fast as possible.",
+            "Eat lots of ice cream right away."
+          ],
+          "answer": "D",
+          "explanation": "火箭女孩赶到食堂后立刻让学生们大量吃冰淇淋，以免弗雷迪抢走冰淇淋给武器补充能量。"
+        },
+        {
+          "evidenceParagraphId": "p21",
+          "question": "What did Freddie Freeze discover when he entered the cafeteria?",
+          "options": [
+            "All the teachers had left.",
+            "All the ice cream was gone.",
+            "The freezer had turned to ice.",
+            "Rocket Girl had disappeared."
+          ],
+          "answer": "B",
+          "explanation": "学生们依照罗克西的要求把冰淇淋吃光了，弗雷迪冲进食堂时已经没有冰淇淋可抢。"
+        },
+        {
+          "evidenceParagraphId": "p26",
+          "question": "How did Roxy explain her absence to Mara after the rescue?",
+          "options": [
+            "She had been helping Principal Penn with the school website.",
+            "She was taking a swimming lesson.",
+            "She visited Detective Smith for lunch.",
+            "She went to the mountains to get ice cream."
+          ],
+          "answer": "A",
+          "explanation": "罗克西回校后为了掩盖火箭女孩身份，对玛拉说自己此前在帮潘校长处理学校网站工作。"
+        }
+      ]
+    },
+    {
+      "episodeId": 9,
+      "title": "Star Buttons",
+      "sourceContentId": "C0005806",
+      "questions": [
+        {
+          "evidenceParagraphId": "p1",
+          "question": "Why did Principal Penn and the teachers go to the Grand Hotel?",
+          "options": [
+            "They were attending a school field trip.",
+            "They were looking for a missing student.",
+            "Mr. Sweeps had invited them to a special meeting.",
+            "They were going to meet Rocket Girl."
+          ],
+          "answer": "C",
+          "explanation": "故事开头说明，神秘的斯威普斯先生邀请潘校长和教师们到大都会大酒店参加一个特别会议。"
+        },
+        {
+          "evidenceParagraphId": "p10",
+          "question": "Why were Roxy's friends worried about the upcoming zoo trip?",
+          "options": [
+            "It was expected to snow.",
+            "The school might not have enough money.",
+            "The zoo was closing forever.",
+            "Their bus driver was missing."
+          ],
+          "answer": "B",
+          "explanation": "玛拉听妈妈说学校缺钱，因此担心下周去动物园的校外活动可能取消。"
+        },
+        {
+          "evidenceParagraphId": "p18",
+          "question": "What first made Roxy wonder whether something was wrong at school?",
+          "options": [
+            "Every student was wearing a costume.",
+            "The cafeteria was empty.",
+            "The playground was covered in snow.",
+            "The teachers' cars were missing from the parking lot."
+          ],
+          "answer": "D",
+          "explanation": "罗克西到了学校后发现停车场里没有教师们的汽车，心里开始觉得事情不对劲。"
+        },
+        {
+          "evidenceParagraphId": "p19",
+          "question": "Who was handing out star-shaped buttons at the school entrance?",
+          "options": [
+            "Mr. Sweeps, who said he was the substitute principal.",
+            "Detective Smith, who was visiting the school.",
+            "Mayor Bloom, who came to announce a holiday.",
+            "Principal Penn, who had returned from the hotel."
+          ],
+          "answer": "A",
+          "explanation": "一个自称临时代校长的男子斯威普斯在学校门口欢迎学生，并分发星形纽扣。"
+        },
+        {
+          "evidenceParagraphId": "p27",
+          "question": "What did Mayor Bloom ask Rocket Girl to find out?",
+          "options": [
+            "Who had stolen the school bus.",
+            "Why the students wanted to visit the zoo.",
+            "What had happened to the missing Principal Penn.",
+            "Where Detective Smith had gone."
+          ],
+          "answer": "C",
+          "explanation": "布卢姆市长通知火箭女孩潘校长失踪，希望她调查校长究竟出了什么事。"
+        }
+      ]
+    },
+    {
+      "episodeId": 10,
+      "title": "Missing Teachers",
+      "sourceContentId": "C0005823",
+      "questions": [
+        {
+          "evidenceParagraphId": "p7",
+          "question": "Where did Rocket Girl go to look for clues about Principal Penn?",
+          "options": [
+            "Metro City Police Headquarters.",
+            "The hotel rooftop.",
+            "The cafeteria freezer.",
+            "Mr. Mann's farm."
+          ],
+          "answer": "A",
+          "explanation": "为了查找潘校长的线索，罗克西变成火箭女孩，前往警察总部找史密斯探长。"
+        },
+        {
+          "evidenceParagraphId": "p9",
+          "question": "What was Detective Smith watching on his computer?",
+          "options": [
+            "A comedy television show.",
+            "A video of Rocket Girl flying.",
+            "Video from a traffic camera.",
+            "A recording of the school concert."
+          ],
+          "answer": "C",
+          "explanation": "探长说明他并不是在看电视节目，而是在查看交通摄像头拍到的视频，以调查校长去向。"
+        },
+        {
+          "evidenceParagraphId": "p15",
+          "question": "What did the traffic video show after Principal Penn drove past?",
+          "options": [
+            "Mr. Sweeps running down the street.",
+            "Miss Apricot, Mr. Green, and other teachers driving by.",
+            "Students walking to the zoo.",
+            "Mayor Bloom getting into a taxi."
+          ],
+          "answer": "B",
+          "explanation": "交通录像先拍到潘校长的车，接着还有艾普丽科特老师、格林老师等学校教师相继开车经过。"
+        },
+        {
+          "evidenceParagraphId": "p19",
+          "question": "What detail made Rocket Girl suspicious when she watched the video again?",
+          "options": [
+            "The teachers were driving red buses.",
+            "Everyone was carrying a large bag.",
+            "The cars all had broken windows.",
+            "All the teachers wore glowing star buttons."
+          ],
+          "answer": "D",
+          "explanation": "罗克西重新看录像时发现所有老师都戴着同样的星形纽扣，而且纽扣在发光，因而意识到这可能与失踪事件有关。"
+        },
+        {
+          "evidenceParagraphId": "p27",
+          "question": "What did Rocket Girl discover when she returned to the school?",
+          "options": [
+            "The entire school was empty.",
+            "The teachers had begun class again.",
+            "The students were eating lunch.",
+            "Mr. Sweeps was waiting in the office."
+          ],
+          "answer": "A",
+          "explanation": "罗克西冲回学校后发现走廊、教室和校长办公室都空无一人，整所学校似乎都被清空了。"
+        }
+      ]
+    },
+    {
+      "episodeId": 11,
+      "title": "Missing Students",
+      "sourceContentId": "C0005824",
+      "questions": [
+        {
+          "evidenceParagraphId": "p2",
+          "question": "What unexpected sound did Rocket Girl hear with her super hearing?",
+          "options": [
+            "A helicopter over the playground.",
+            "A bell ringing in the office.",
+            "A crowd singing in the gym.",
+            "A deep voice coming from under the school."
+          ],
+          "answer": "D",
+          "explanation": "罗克西用超强听力听到水滴声和蟋蟀声之外，还听见学校地下传来的低沉说话声。"
+        },
+        {
+          "evidenceParagraphId": "p6",
+          "question": "How did Rocket Girl get past the locked basement doors?",
+          "options": [
+            "She found a spare key.",
+            "She blasted the doors with lasers from her eyes.",
+            "She asked a teacher to open them.",
+            "She slipped through a small window."
+          ],
+          "answer": "B",
+          "explanation": "地下室的门锁住了，罗克西用眼睛发射激光轰开门，得以继续进入地下寻找学生。"
+        },
+        {
+          "evidenceParagraphId": "p12",
+          "question": "What was hidden in the cavern beneath the school?",
+          "options": [
+            "A spaceship repair shop.",
+            "A room full of school buses.",
+            "A diamond mine where students were working.",
+            "A frozen ice cream warehouse."
+          ],
+          "answer": "C",
+          "explanation": "罗克西进入地下洞穴，发现学生们正在挖矿，并认出岩壁中闪闪发亮的是钻石。"
+        },
+        {
+          "evidenceParagraphId": "p17",
+          "question": "Why didn't Terrell answer Rocket Girl when she spoke to him?",
+          "options": [
+            "The glowing star buttons had hypnotized him.",
+            "He was wearing earphones.",
+            "He had already left the mine.",
+            "He was pretending not to recognize her."
+          ],
+          "answer": "A",
+          "explanation": "罗克西叫特雷尔时他毫无反应，她很快意识到学生都受星形纽扣催眠，不是故意不理她。"
+        },
+        {
+          "evidenceParagraphId": "p24",
+          "question": "What did Mr. Sweeps order Jack and Mara to do?",
+          "options": [
+            "Bring him a bag of diamonds.",
+            "Go find Principal Penn.",
+            "Turn off the mine lights.",
+            "Take Rocket Girl away as a prisoner."
+          ],
+          "answer": "D",
+          "explanation": "斯威普斯先生命令被催眠的杰克和玛拉把火箭女孩作为俘虏带走，使她陷入危险。"
+        }
+      ]
+    }
+  ]
+}
