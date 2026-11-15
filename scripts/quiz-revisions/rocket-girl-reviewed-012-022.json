@@ -1,0 +1,745 @@
+{
+  "seriesId": "little-fox-rocket-girl-fs0065",
+  "level": 4,
+  "format": "offline-authoring-v1",
+  "releasePolicy": "stage-only-no-R2-write",
+  "lessons": [
+    {
+      "episodeId": 12,
+      "title": "Locked Up!",
+      "sourceContentId": "C0005825",
+      "questions": [
+        {
+          "evidenceParagraphId": "p4",
+          "question": "Why didn't Rocket Girl simply break down the cell door?",
+          "options": [
+            "She couldn't break iron doors.",
+            "She was afraid of the dark.",
+            "She wanted to surprise Mr. Sweeps without warning him.",
+            "She had lost all her superpowers."
+          ],
+          "answer": "C",
+          "explanation": "罗克西知道自己能破坏牢门，但担心斯威普斯听见，所以想找一种办法悄悄接近他。"
+        },
+        {
+          "evidenceParagraphId": "p10",
+          "question": "How did Rocket Girl escape while everyone guarded the cell door?",
+          "options": [
+            "She blasted through the cavern floor behind them.",
+            "She hid inside a mine cart.",
+            "She borrowed the detective's key.",
+            "She jumped out through the ceiling."
+          ],
+          "answer": "A",
+          "explanation": "大家都守在牢门前时，火箭女孩从洞穴地面后方冲出，成功绕过了守门的学生。"
+        },
+        {
+          "evidenceParagraphId": "p11",
+          "question": "What did Rocket Girl destroy with her eye lasers?",
+          "options": [
+            "The diamonds in the mine.",
+            "The locked basement doors.",
+            "The teachers' cars.",
+            "Mr. Sweeps's glowing ring."
+          ],
+          "answer": "D",
+          "explanation": "罗克西用眼睛发出的激光击中斯威普斯手上的戒指，戒指爆炸，打破了他的控制。"
+        },
+        {
+          "evidenceParagraphId": "p16",
+          "question": "What did Rocket Girl tell the students after they were freed?",
+          "options": [
+            "They had been practicing for a school play.",
+            "Mr. Sweeps had hypnotized them to make them mine diamonds.",
+            "Principal Penn had asked them to study underground.",
+            "The detective had organized a treasure hunt."
+          ],
+          "answer": "B",
+          "explanation": "学生们醒来后，火箭女孩解释斯威普斯是假校长，利用催眠逼迫他们在学校地下挖钻石。"
+        },
+        {
+          "evidenceParagraphId": "p26",
+          "question": "How could the school pay for its zoo field trip after the rescue?",
+          "options": [
+            "Mayor Bloom canceled the ticket prices.",
+            "The teachers found money at the hotel.",
+            "Principal Penn planned to sell the diamonds.",
+            "Mr. Sweeps offered to buy a new bus."
+          ],
+          "answer": "C",
+          "explanation": "玛拉说潘校长准备出售地下矿洞中的钻石，因此学校重新有钱组织去动物园的校外活动。"
+        }
+      ]
+    },
+    {
+      "episodeId": 13,
+      "title": "Mighty Man",
+      "sourceContentId": "C0005826",
+      "questions": [
+        {
+          "evidenceParagraphId": "p4",
+          "question": "Who appeared suddenly at the television studio?",
+          "options": [
+            "A magician with a tall hat and a monkey on his shoulder.",
+            "Rocket Girl with a new robot.",
+            "Detective Smith carrying a camera.",
+            "A teacher from Metro City Elementary."
+          ],
+          "answer": "A",
+          "explanation": "电视台准备拍摄时，一名戴高帽、留细胡子、穿燕尾服且肩上坐着猴子的神秘魔术师突然出现。"
+        },
+        {
+          "evidenceParagraphId": "p14",
+          "question": "Why did Terrell think Mighty Man was less impressive than Rocket Girl?",
+          "options": [
+            "He had never seen the television show.",
+            "Mighty Man was only a fictional television character.",
+            "Mighty Man had stolen the school's money.",
+            "Terrell disliked every superhero."
+          ],
+          "answer": "B",
+          "explanation": "特雷尔指出Mighty Man只是电视中的虚构角色，而火箭女孩是真实帮助城市的超级英雄。"
+        },
+        {
+          "evidenceParagraphId": "p20",
+          "question": "Which superhero did Roxy say was cooler?",
+          "options": [
+            "The hero on the television show.",
+            "Neither superhero.",
+            "A superhero from another city.",
+            "Rocket Girl."
+          ],
+          "answer": "D",
+          "explanation": "当朋友们询问罗克西的意见时，她同意特雷尔，觉得火箭女孩比电视中的Mighty Man更厉害。"
+        },
+        {
+          "evidenceParagraphId": "p23",
+          "question": "What did the strange man announce on television?",
+          "options": [
+            "He would host a cooking show.",
+            "He was closing the TV station for repairs.",
+            "Mighty Man was canceled and his own magic show would replace it.",
+            "The city's zoo trip would be on television."
+          ],
+          "answer": "C",
+          "explanation": "那名神秘男子在电视上宣称Mighty Man节目已取消，取而代之的是由他主演的魔术秀。"
+        },
+        {
+          "evidenceParagraphId": "p27",
+          "question": "What emergency did Mayor Bloom tell Roxy about?",
+          "options": [
+            "Mr. Presto had taken over the television station.",
+            "The zoo animals had escaped.",
+            "Detective Smith had gone missing.",
+            "Someone had stolen a school bus."
+          ],
+          "answer": "A",
+          "explanation": "市长通过手表告诉罗克西，邪恶魔术师普雷斯托控制了电视台，需要火箭女孩出面阻止。"
+        }
+      ]
+    },
+    {
+      "episodeId": 14,
+      "title": "Presto!",
+      "sourceContentId": "C0005827",
+      "questions": [
+        {
+          "evidenceParagraphId": "p2",
+          "question": "What excuse did Roxy give her friends before leaving?",
+          "options": [
+            "She wanted to watch the show alone.",
+            "She was going to visit the hospital.",
+            "She had promised to help her mother with chores.",
+            "She needed to buy more snacks."
+          ],
+          "answer": "C",
+          "explanation": "为了隐瞒自己去处理事件的真实原因，罗克西对朋友们说想起要回家帮妈妈做家务。"
+        },
+        {
+          "evidenceParagraphId": "p13",
+          "question": "How did Rocket Girl open the locked room at the television station?",
+          "options": [
+            "She used her eye lasers to blast the door.",
+            "The actor gave her a key.",
+            "She climbed in through a window.",
+            "Detective Smith opened it with his phone."
+          ],
+          "answer": "A",
+          "explanation": "罗克西听到有人求救后，发现房门被锁住，于是发射眼部激光把门炸开。"
+        },
+        {
+          "evidenceParagraphId": "p18",
+          "question": "What did the television crew say Mr. Presto had stolen?",
+          "options": [
+            "A bag of money.",
+            "A superhero costume.",
+            "All the television screens.",
+            "A camera."
+          ],
+          "answer": "D",
+          "explanation": "被救出的电视台工作人员说普雷斯托偷走了一台摄像机，随后他们借助监视画面查看他的行动。"
+        },
+        {
+          "evidenceParagraphId": "p25",
+          "question": "What happened to Molly's diamond necklace?",
+          "options": [
+            "It fell into the street.",
+            "Mr. Presto made it disappear during a magic trick.",
+            "Detective Smith took it for safekeeping.",
+            "Molly gave it to Rocket Girl."
+          ],
+          "answer": "B",
+          "explanation": "普雷斯托向莫莉表演魔术，挥动魔杖并念出咒语后，她的钻石项链突然不见了。"
+        },
+        {
+          "evidenceParagraphId": "p33",
+          "question": "What did Mr. Presto make disappear from the man's wrist?",
+          "options": [
+            "A bracelet.",
+            "A ring.",
+            "A watch.",
+            "A set of keys."
+          ],
+          "answer": "C",
+          "explanation": "普雷斯托随后挑中一名戴着漂亮手表的男子，重复施法后，男子的手表也消失了。"
+        }
+      ]
+    },
+    {
+      "episodeId": 15,
+      "title": "The World's Greatest Magician",
+      "sourceContentId": "C0005828",
+      "questions": [
+        {
+          "evidenceParagraphId": "p4",
+          "question": "What surprised Mara while watching Mr. Presto on television?",
+          "options": [
+            "The school was shown on the news.",
+            "Rocket Girl appeared on the television screen.",
+            "Mighty Man started singing.",
+            "The mayor began doing magic tricks."
+          ],
+          "answer": "B",
+          "explanation": "玛拉在观看普雷斯托的节目时突然喊出火箭女孩上电视了，说明罗克西已经赶到现场。"
+        },
+        {
+          "evidenceParagraphId": "p12",
+          "question": "What was Mr. Presto planning as his greatest trick?",
+          "options": [
+            "Make the moon vanish from the sky.",
+            "Turn every car into a toy.",
+            "Make all the money in Metro City Bank disappear.",
+            "Bring the Mighty Man actor back to the studio."
+          ],
+          "answer": "C",
+          "explanation": "普雷斯托扬言要在观众面前施展最惊人的魔术，把大都会银行里的全部钱变没。"
+        },
+        {
+          "evidenceParagraphId": "p17",
+          "question": "How did Mr. Presto stop Rocket Girl's first charge?",
+          "options": [
+            "He made a wall appear in front of her.",
+            "He froze the street beneath her.",
+            "He used a purple slime gun.",
+            "He ordered the police to block the road."
+          ],
+          "answer": "A",
+          "explanation": "罗克西冲向普雷斯托时，他挥动魔杖制造一堵墙，罗克西来不及躲避，直接撞了上去。"
+        },
+        {
+          "evidenceParagraphId": "p20",
+          "question": "Why couldn't Rocket Girl grab Mr. Presto after jumping over the wall?",
+          "options": [
+            "He drove away in a truck.",
+            "He ran into the bank vault.",
+            "The television cameras stopped working.",
+            "He made himself disappear."
+          ],
+          "answer": "D",
+          "explanation": "罗克西翻过墙要抓住魔术师时，普雷斯托念出咒语，让自己突然消失，成功躲开她。"
+        },
+        {
+          "evidenceParagraphId": "p30",
+          "question": "What appeared in front of Rocket Girl when she flew at the magician?",
+          "options": [
+            "A tower of books.",
+            "A big black box.",
+            "A frozen statue.",
+            "A school bus."
+          ],
+          "answer": "B",
+          "explanation": "罗克西高速飞向普雷斯托时，他变出一个大黑箱，罗克西无法及时停下，撞进了箱子里。"
+        }
+      ]
+    },
+    {
+      "episodeId": 16,
+      "title": "The Amazing Trick",
+      "sourceContentId": "C0005829",
+      "questions": [
+        {
+          "evidenceParagraphId": "p7",
+          "question": "How did Mr. Presto learn that Rocket Girl had escaped the sword trick?",
+          "options": [
+            "A detective called him.",
+            "The television went dark.",
+            "He opened the box and found a burned hole in its back.",
+            "He saw Rocket Girl hiding in his hat."
+          ],
+          "answer": "C",
+          "explanation": "普雷斯托把剑插入黑箱后打开一看，箱内空空如也，背后还有被烧穿的洞，说明火箭女孩已逃脱。"
+        },
+        {
+          "evidenceParagraphId": "p13",
+          "question": "What happened to the people inside Metro City Bank when Mr. Presto used magic?",
+          "options": [
+            "They disappeared and reappeared outside the bank.",
+            "They turned into statues.",
+            "They all fell asleep on the floor.",
+            "They were trapped in the elevator."
+          ],
+          "answer": "A",
+          "explanation": "普雷斯托施展魔法使银行里的人突然消失，片刻后他们出现在银行外面。"
+        },
+        {
+          "evidenceParagraphId": "p20",
+          "question": "What did Mr. Presto do to reach the money in the bank?",
+          "options": [
+            "He dug a tunnel under the vault.",
+            "He used a stolen card.",
+            "He asked the teller to unlock the safe.",
+            "He waved his wand and opened the metal door."
+          ],
+          "answer": "D",
+          "explanation": "普雷斯托站到金属金库门前挥动魔杖念咒，沉重的门随即打开，他以为钱马上就是自己的。"
+        },
+        {
+          "evidenceParagraphId": "p25",
+          "question": "How did Rocket Girl end Mr. Presto's magic tricks?",
+          "options": [
+            "She hid his hat in a locker.",
+            "She snapped his wand in half.",
+            "She turned off the bank cameras.",
+            "She took the magician's microphone."
+          ],
+          "answer": "B",
+          "explanation": "火箭女孩从普雷斯托手中夺过魔杖，双手把它折断，阻止他继续使用魔法。"
+        },
+        {
+          "evidenceParagraphId": "p35",
+          "question": "What did Terrell do when Roxy returned to her friends?",
+          "options": [
+            "He asked to watch Mighty Man again.",
+            "He gave her a snack.",
+            "He looked from the TV to Roxy suspiciously.",
+            "He rushed out to meet the magician."
+          ],
+          "answer": "C",
+          "explanation": "罗克西回来后，特雷尔先看电视画面，再看她本人，神情怀疑，暗示他觉得她与火箭女孩的行踪有联系。"
+        }
+      ]
+    },
+    {
+      "episodeId": 17,
+      "title": "Stolen Paintings",
+      "sourceContentId": "C0005830",
+      "questions": [
+        {
+          "evidenceParagraphId": "p6",
+          "question": "What happened after thick fog filled the art gallery?",
+          "options": [
+            "The paintings disappeared.",
+            "The lights became brighter.",
+            "The visitors saw a new sculpture.",
+            "The gallery closed for lunch."
+          ],
+          "answer": "A",
+          "explanation": "画廊突然被浓雾笼罩，等雾散去，一名女士惊呼新画作都不见了。"
+        },
+        {
+          "evidenceParagraphId": "p14",
+          "question": "Why did Roxy say she liked fall best?",
+          "options": [
+            "She could go swimming every day.",
+            "The zoo gave free tickets.",
+            "She loved the cool air and playing in leaves.",
+            "The school had no homework."
+          ],
+          "answer": "C",
+          "explanation": "罗克西明确说秋天是她最爱的季节，因为天气凉爽，而且她喜欢在落叶堆里玩耍。"
+        },
+        {
+          "evidenceParagraphId": "p22",
+          "question": "What did Terrell suggest asking Rocket Girl to do?",
+          "options": [
+            "Take everyone to the zoo.",
+            "Help them rake the backyard.",
+            "Find a lost dog in the park.",
+            "Make it snow for them."
+          ],
+          "answer": "D",
+          "explanation": "几个朋友在秋天的后院玩落叶时，特雷尔提议请火箭女孩让天气下雪，好让大家玩雪。"
+        },
+        {
+          "evidenceParagraphId": "p23",
+          "question": "Why did Roxy reject Terrell's idea?",
+          "options": [
+            "She said Rocket Girl was out of town.",
+            "She said Rocket Girl could not control the weather.",
+            "She thought snow would hurt the trees.",
+            "She wanted to finish her lunch first."
+          ],
+          "answer": "B",
+          "explanation": "罗克西认为这个主意荒谬，因为火箭女孩并没有控制天气的超能力，无法随意让天空下雪。"
+        },
+        {
+          "evidenceParagraphId": "p29",
+          "question": "What crime did Mayor Bloom ask Rocket Girl to investigate?",
+          "options": [
+            "All the new paintings at Metro City Art Gallery had been stolen.",
+            "Someone had stolen the school bus.",
+            "The Grand Hotel had been robbed.",
+            "A bank's money had vanished."
+          ],
+          "answer": "A",
+          "explanation": "市长的电话说明，大都会美术馆刚展出的新画作全部被盗，火箭女孩必须展开调查。"
+        }
+      ]
+    },
+    {
+      "episodeId": 18,
+      "title": "An Important Clue",
+      "sourceContentId": "C0005831",
+      "questions": [
+        {
+          "evidenceParagraphId": "p6",
+          "question": "What clue did Detective Smith find at the art gallery?",
+          "options": [
+            "A map marked with a school bus.",
+            "A small ball marked with a lightning bolt and the word 'fog'.",
+            "A bag of stolen diamonds.",
+            "An empty ice cream container."
+          ],
+          "answer": "B",
+          "explanation": "探长在美术馆地上找到一个小球，一面有闪电标志，另一面写着fog，这是调查的重要线索。"
+        },
+        {
+          "evidenceParagraphId": "p9",
+          "question": "Why was the fog useful to the painting thief?",
+          "options": [
+            "It made the paintings easier to carry.",
+            "It made the gallery warmer.",
+            "It turned the paintings invisible.",
+            "It prevented witnesses from seeing who stole them."
+          ],
+          "answer": "D",
+          "explanation": "罗克西根据目击者的描述推断，浓雾遮挡视线，使在场的人无法看到是谁偷走画作。"
+        },
+        {
+          "evidenceParagraphId": "p12",
+          "question": "What vehicle were the police chasing on West Street?",
+          "options": [
+            "A black van with lightning bolts on its sides.",
+            "A red school bus.",
+            "A white ambulance.",
+            "A pizza delivery truck."
+          ],
+          "answer": "A",
+          "explanation": "警方在西街追逐的是一辆黑色货车，车身两侧画有闪电标志，与天气人的作案方式相符。"
+        },
+        {
+          "evidenceParagraphId": "p15",
+          "question": "How did Rocket Girl find the van after fog covered the street?",
+          "options": [
+            "She followed its horn.",
+            "She asked people for directions.",
+            "She blew the fog away with a powerful breath.",
+            "She waited for the wind to change."
+          ],
+          "answer": "C",
+          "explanation": "天气人用浓雾甩开警车后，罗克西深吸一口气用力吹散浓雾，才重新看清前方的货车。"
+        },
+        {
+          "evidenceParagraphId": "p20",
+          "question": "What danger did Weatherman create after throwing another Weather Ball?",
+          "options": [
+            "A huge wave from the river.",
+            "A giant lightning bolt heading toward Rocket Girl.",
+            "A snowstorm inside the art gallery.",
+            "A wall that trapped the police."
+          ],
+          "answer": "B",
+          "explanation": "天气人抛出天气球后天空变黑，云层聚集，一道巨大的闪电朝火箭女孩劈来。"
+        }
+      ]
+    },
+    {
+      "episodeId": 19,
+      "title": "Tornado!",
+      "sourceContentId": "C0005832",
+      "questions": [
+        {
+          "evidenceParagraphId": "p2",
+          "question": "How did Rocket Girl avoid the first lightning bolt?",
+          "options": [
+            "She hid inside a taxi.",
+            "She caught the lightning with her hands.",
+            "She flew behind a bank.",
+            "She dived aside just before it hit a mailbox."
+          ],
+          "answer": "D",
+          "explanation": "火箭女孩在闪电击中邮箱前迅速扑向一旁，险险避开第一道闪电。"
+        },
+        {
+          "evidenceParagraphId": "p14",
+          "question": "What did Weatherman's next Weather Ball create on West Street?",
+          "options": [
+            "A huge tornado.",
+            "A thick fog inside the bank.",
+            "A wall of solid ice.",
+            "A rain of diamonds."
+          ],
+          "answer": "A",
+          "explanation": "天气人再次启动天气球后，狂风和轰鸣加剧，西街出现了一道巨大的龙卷风。"
+        },
+        {
+          "evidenceParagraphId": "p20",
+          "question": "Which vehicles did the tornado lift into the air with Rocket Girl?",
+          "options": [
+            "A train and a truck.",
+            "Two school buses.",
+            "A bus and a taxi.",
+            "A police car and a bicycle."
+          ],
+          "answer": "C",
+          "explanation": "龙卷风除了卷起罗克西，还卷走了一辆公交车和一辆出租车，车上的乘客十分惊恐。"
+        },
+        {
+          "evidenceParagraphId": "p24",
+          "question": "What did Rocket Girl grab after taking hold of the taxi?",
+          "options": [
+            "A traffic light.",
+            "The bus.",
+            "The villain's van.",
+            "A fallen tree."
+          ],
+          "answer": "B",
+          "explanation": "罗克西先用一只手抓住出租车，随后飞向被卷起的公交车并抓牢它，准备一起救走。"
+        },
+        {
+          "evidenceParagraphId": "p30",
+          "question": "How did Weatherman's van escape through the snow?",
+          "options": [
+            "It began flying like a helicopter.",
+            "It drove into an underground tunnel.",
+            "Rocket Girl pushed it out of the snow.",
+            "Its wheels folded away and snow treads took their place."
+          ],
+          "answer": "D",
+          "explanation": "天气人按下货车按钮后，原有车轮收起，换成能在雪地行驶的履带，随后开车逃走。"
+        }
+      ]
+    },
+    {
+      "episodeId": 20,
+      "title": "The Blizzard",
+      "sourceContentId": "C0005833",
+      "questions": [
+        {
+          "evidenceParagraphId": "p4",
+          "question": "Where did Rocket Girl set down the bus and taxi?",
+          "options": [
+            "On the roof of the bank.",
+            "In front of the school.",
+            "On a safe, quiet street.",
+            "Inside the police station."
+          ],
+          "answer": "C",
+          "explanation": "罗克西带着被龙卷风卷起的公交车与出租车，找到一条安全安静的街道，把两辆车放下来。"
+        },
+        {
+          "evidenceParagraphId": "p11",
+          "question": "Where did the police say Weatherman had gone?",
+          "options": [
+            "Toward the mountains.",
+            "Toward the school cafeteria.",
+            "To the art gallery.",
+            "Back to Metro City Bank."
+          ],
+          "answer": "A",
+          "explanation": "警方告诉火箭女孩天气人朝山里逃去，于是她沿着雪地中的货车痕迹追赶。"
+        },
+        {
+          "evidenceParagraphId": "p16",
+          "question": "How did Rocket Girl stop Weatherman's van in the blizzard?",
+          "options": [
+            "She froze its tires with ice.",
+            "She blew a huge snowdrift in front of it.",
+            "She cut off the road with a laser wall.",
+            "She lifted it high into the clouds."
+          ],
+          "answer": "B",
+          "explanation": "罗克西追上货车后用力吹出强风，在车前堆起巨大的雪堆，货车随后一头撞了上去。"
+        },
+        {
+          "evidenceParagraphId": "p17",
+          "question": "What did Rocket Girl do before Weatherman could throw another Weather Ball?",
+          "options": [
+            "She took away his van keys.",
+            "She asked the police to stop him.",
+            "She melted all the snow.",
+            "She destroyed the Weather Ball with her eye lasers."
+          ],
+          "answer": "D",
+          "explanation": "天气人跳下车正要再次扔出天气球时，火箭女孩先一步用眼睛的激光把它打成碎片。"
+        },
+        {
+          "evidenceParagraphId": "p25",
+          "question": "Why did Terrell look at Roxy suspiciously after the snowstorm?",
+          "options": [
+            "She was carrying a large snowball.",
+            "She had forgotten the snowman's name.",
+            "He wondered whether Rocket Girl caused the sudden snow.",
+            "She said she had been at the art gallery."
+          ],
+          "answer": "C",
+          "explanation": "罗克西回到后院后，特雷尔怀疑这场突如其来的大雪可能与火箭女孩有关，因此用怀疑的眼神看她。"
+        }
+      ]
+    },
+    {
+      "episodeId": 21,
+      "title": "Roxy Is Scared",
+      "sourceContentId": "C0005834",
+      "questions": [
+        {
+          "evidenceParagraphId": "p2",
+          "question": "What strange event happened at the park lake during the night?",
+          "options": [
+            "A spaceship flew over the trees.",
+            "A bright object fell into the lake and turned its water purple.",
+            "All the frogs suddenly disappeared.",
+            "A large boat sank in the lake."
+          ],
+          "answer": "B",
+          "explanation": "夜晚有发亮的物体从天空落入公园湖中，湖水随即冒泡并变成紫色，为后续青蛙异常埋下线索。"
+        },
+        {
+          "evidenceParagraphId": "p9",
+          "question": "What was Jack afraid of while his friends climbed the boulder?",
+          "options": [
+            "High places.",
+            "Small frogs.",
+            "Cold weather.",
+            "Dark classrooms."
+          ],
+          "answer": "A",
+          "explanation": "杰克拒绝爬上大岩石，并说自己不喜欢待在高处，朋友们由此谈起各自害怕的东西。"
+        },
+        {
+          "evidenceParagraphId": "p13",
+          "question": "What kind of creatures did Mara say frightened her?",
+          "options": [
+            "All birds in the park.",
+            "Fish swimming in deep water.",
+            "Robots with bright lights.",
+            "Monsters, especially ones with fangs."
+          ],
+          "answer": "D",
+          "explanation": "玛拉告诉朋友们，她害怕怪物，尤其害怕长着尖牙的怪物。"
+        },
+        {
+          "evidenceParagraphId": "p19",
+          "question": "What did Roxy want Mara to keep away from her?",
+          "options": [
+            "A large spider.",
+            "A bright flashlight.",
+            "A small frog.",
+            "A toy robot."
+          ],
+          "answer": "C",
+          "explanation": "玛拉捡起一只小青蛙后，罗克西非常反感，叫她把青蛙拿远一些，显露出自己的恐惧。"
+        },
+        {
+          "evidenceParagraphId": "p36",
+          "question": "What did Mayor Bloom say about the giant frogs?",
+          "options": [
+            "There was only one frog in the woods.",
+            "Giant frogs were appearing all over Metro City.",
+            "The frogs had already left the city.",
+            "The frogs were part of a school experiment."
+          ],
+          "answer": "B",
+          "explanation": "市长说问题并非只有一只巨型青蛙，而是全城都有巨型青蛙入侵，因此请求火箭女孩帮忙。"
+        }
+      ]
+    },
+    {
+      "episodeId": 22,
+      "title": "Frog Trouble!",
+      "sourceContentId": "C0005835",
+      "questions": [
+        {
+          "evidenceParagraphId": "p6",
+          "question": "How did Roxy leave her friends without revealing she was Rocket Girl?",
+          "options": [
+            "She asked Detective Smith to pick her up.",
+            "She pretended another giant frog appeared and ran into the woods.",
+            "She told them she had to visit the hospital.",
+            "She went home with Mara."
+          ],
+          "answer": "B",
+          "explanation": "罗克西为了避开朋友变身，假装看到第二只巨型青蛙，大声提醒大家逃命，然后钻进树林。"
+        },
+        {
+          "evidenceParagraphId": "p8",
+          "question": "What did Rocket Girl discover when she reached downtown?",
+          "options": [
+            "People were celebrating a frog festival.",
+            "All the frogs had disappeared.",
+            "The streets were flooded with ice cream.",
+            "Giant frogs were hopping in streets and clinging to buildings."
+          ],
+          "answer": "D",
+          "explanation": "罗克西抵达市中心时发现巨大的黏滑青蛙到处都是，有的沿西街跳跃，还有的趴在楼房外侧。"
+        },
+        {
+          "evidenceParagraphId": "p18",
+          "question": "Who was in danger when Rocket Girl looked up at a building?",
+          "options": [
+            "A driver trapped in a car held in a frog's mouth.",
+            "A teacher standing on a balcony.",
+            "A pilot inside a helicopter.",
+            "A child climbing a tree."
+          ],
+          "answer": "A",
+          "explanation": "一只巨型青蛙趴在楼房半腰，嘴里叼着一辆汽车，而司机还在车内，急需救援。"
+        },
+        {
+          "evidenceParagraphId": "p24",
+          "question": "How did Rocket Girl protect people from the falling bear statue?",
+          "options": [
+            "She told them to run into a bank.",
+            "She asked the mayor to move the statue.",
+            "She caught it and put it back on its platform.",
+            "She melted it with heat vision."
+          ],
+          "answer": "C",
+          "explanation": "青蛙撞倒熊雕像，雕像正朝人群倾倒，罗克西飞下去接住雕像并将它重新放回基座。"
+        },
+        {
+          "evidenceParagraphId": "p27",
+          "question": "What did Rocket Girl do when the frog dropped the car?",
+          "options": [
+            "She froze it in midair.",
+            "She caught it before it hit the street.",
+            "She pushed it onto a nearby roof.",
+            "She asked the police to catch it."
+          ],
+          "answer": "B",
+          "explanation": "巨蛙松开汽车后，罗克西立即俯冲，在汽车撞到地面前及时接住了它，救下车内司机。"
+        }
+      ]
+    }
+  ]
+}
