@@ -102,7 +102,23 @@ export async function main(){
     const headers={'Content-Type':'application/json; charset=utf-8','Cache-Control':'public, max-age=60'};
     if(createOnly)headers['If-None-Match']='*';
     const put=await r2.fetch(object,{method:'PUT',headers,body:JSON.stringify(fresh)});
-    if(!put.ok)throw Error('R2 PUT failed HTTP '+put.status);
+    if(!put.ok){
+      if(put.status===403){
+        // Diagnose conditional-write rejection versus a nonfunctional R2 write key.
+        // Only touch a unique, temporary non-production probe object.
+        const probe=object.replace(OBJECT_KEY,'data/__pipeline-tests/movie-catalog-'+(process.env.GITHUB_RUN_ID||'manual')+'.json');
+        const check=await r2.fetch(probe,{method:'PUT',headers:{'Content-Type':'application/json'},body:'{"probe":"movie-catalog"}'});
+        if(check.ok){
+          await check.body?.cancel();
+          const deleted=await r2.fetch(probe,{method:'DELETE'});
+          await deleted.body?.cancel();
+          throw Error('R2 conditional PUT rejected (403); plain PUT allowed; temp cleanup '+deleted.status);
+        }
+        await check.body?.cancel();
+        throw Error('R2 credentials cannot write objects: conditional PUT '+put.status+', regular PUT '+check.status);
+      }
+      throw Error('R2 PUT failed HTTP '+put.status);
+    }
     await put.body?.cancel();action='uploaded';
   }
   const signedCheck=await r2.fetch(object,{method:'GET'});
