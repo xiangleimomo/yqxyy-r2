@@ -1,15 +1,22 @@
 window.MovieLibrary={
   categories:{animated:'动画大电影',documentary:'纪录片',animation:'动画故事',kids:'儿童动画'},
+  // The public catalogue is identical for all visitors; avoid refetching
+  // thousands of episode rows on every route change. Admin lists stay live.
   cache:null,
+  pending:null,
+  cacheVersion:0,
+  cacheTTL:120000,
+  publicFields:'id,category,media_type,tmdb_id,title,title_zh,year,poster_url,overview,season_number,episode_number,published,sort_order,playback_sources',
   e(app,value){return app.escapeHtml(String(value??''));},
   admin(){return !!window.SFCloud?.isAdmin?.()&&!!window.SFCloud?.client;},
   async rows(includeDrafts=false){
     const client=window.SFCloud?.client;if(!client)return [];
-    // Supabase/PostgREST caps a single response (normally 1,000 rows).
-    // Fetch every page so large shows do not silently lose most episodes.
+    // Keep complete pagination (including shows with >1,000 episodes) but
+    // never fetch editor identity, timestamps or other private metadata for
+    // the visitor's publicly published catalogue.
     const pageSize=500, rows=[];
     for(let offset=0;;offset+=pageSize){
-      let query=client.from('movie_library').select('*')
+      let query=client.from('movie_library').select(includeDrafts?'*':this.publicFields)
         .order('sort_order',{ascending:true})
         .order('created_at',{ascending:false})
         .order('id',{ascending:true});
@@ -23,12 +30,30 @@ window.MovieLibrary={
     return rows;
   },
   async published(){
-    // Do not permanently cache an empty response when the cloud client has not initialized.
-    if(!window.SFCloud?.client){this.cache=null;return [];}
-    // Refresh published catalogue on every shelf navigation; admin updates must appear immediately.
-    try{return await this.rows(false);}catch(error){console.warn('Published movie library unavailable',error);throw error;}
+    const client=window.SFCloud?.client;
+    if(!client){this.invalidate();return [];}
+    if(this.cache?.client===client&&Date.now()<this.cache.expiresAt)return this.cache.rows;
+    if(this.pending?.client===client)return this.pending.promise;
+    const version=this.cacheVersion;
+    const promise=this.rows(false).then(rows=>{
+      if(this.cacheVersion===version)
+        this.cache={client,rows,expiresAt:Date.now()+this.cacheTTL};
+      return rows;
+    }).catch(error=>{
+      console.warn('Published movie library unavailable',error);
+      throw error;
+    }).finally(()=>{
+      if(this.pending?.promise===promise)this.pending=null;
+    });
+    this.pending={client,promise};
+    return promise;
   },
-  invalidate(){this.cache=null;},
+  invalidate(){
+    this.cacheVersion++;
+    this.cache=null;
+    this.pending=null;
+    window.MovieClassroom?.invalidateLibrary?.();
+  },
   asGroups(rows){
     // A television show is one shelf cover with separate playable episodes.
     // Existing single-episode TV rows and new batch rows share this layout.

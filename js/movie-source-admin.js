@@ -112,14 +112,14 @@ window.MovieSourceAdmin = {
           try {
             const {error} = await window.SFCloud.client.from('movie_source_providers')
               .update({enabled: !row.enabled, updated_at: new Date().toISOString()}).eq('id',row.id);
-            if(error) throw error; await refresh(); show('线路状态已更新。');
+            if(error) throw error; window.MovieClassroom?.invalidateLibrary?.(); await refresh(); show('线路状态已更新。');
           } catch (error) { show('操作失败：' + error.message); }
         }));
         actions.append(button('删除', async () => {
           if (!window.confirm('确定删除「' + row.name + '」吗？')) return;
           try {
             const {error} = await window.SFCloud.client.from('movie_source_providers').delete().eq('id',row.id);
-            if(error) throw error; await refresh(); reset(); show('线路已删除。');
+            if(error) throw error; window.MovieClassroom?.invalidateLibrary?.(); await refresh(); reset(); show('线路已删除。');
           } catch (error) { show('删除失败：' + error.message); }
         }));
         article.append(detail, actions); list.append(article);
@@ -142,6 +142,7 @@ window.MovieSourceAdmin = {
           ? await query.update({...payload,updated_at:new Date().toISOString()}).eq('id',id)
           : await query.insert(payload);
         if(error) throw error;
+        window.MovieClassroom?.invalidateLibrary?.();
         await refresh(); reset(); show('已保存，重新打开影视播放器即可加载新线路。');
       } catch (error) { show('保存失败：' + error.message); }
       finally { save.disabled = false; }

@@ -25,12 +25,15 @@ const {chromium}=require('playwright'),fs=require('node:fs'),assert=require('nod
  const rejected=await page.evaluate(()=>{try{MovieLibrary.validateSources({tmdb_id:9502},[{kind:'embed',label:'bad',url:'javascript:alert(1)'}]);return false;}catch{return true;}});assert(rejected);
  const sync=await page.evaluate(async()=>{
   savedRows[0]={...savedRows[0],id:'tmdb-tv-1044',tmdb_id:1044,media_type:'tv',season_number:2,episode_number:3};
+  MovieLibrary.invalidate();
   const data={'data/movie-series.json':[],'data/movie-playback.json':{mode:'vidmario'},'data/movie-hub-catalog.json':{films:[]},'data/movie-hub-providers.json':[{id:'primary',name:'Primary',mode:'embed',movieUrl:'https://player.vidmario.net/embed/movie/{tmdbId}?server=Fermat',tvUrl:'https://player.vidmario.net/embed/tv/{tmdbId}/{seasonNumber}/{episodeNumber}?server=Fermat'}],'data/movie-posters.json':{}};
   const refreshed=[];const app={getJSON:async(key,options)=>{if(options?.refresh)refreshed.push(key);return data[key];}};
   const first=(await MovieClassroom.getLibrary(app)).playableById.get('tmdb-tv-1044');
   savedRows[0].episode_number=4;
+  MovieLibrary.invalidate();
   const next=(await MovieClassroom.getLibrary(app)).playableById.get('tmdb-tv-1044');
   const changedProvider={...data['data/movie-hub-providers.json'][0],tvUrl:'https://new-provider.test/tv/{tmdbId}/{seasonNumber}/{episodeNumber}'};data['data/movie-hub-providers.json']=[changedProvider];
+  MovieClassroom.invalidateLibrary();
   const changed=(await MovieClassroom.getLibrary(app)).playableById.get('tmdb-tv-1044');
   return {first:first.embedUrl,next:next.embedUrl,direct:next.directSources[0].url,manual:next.embeddedSources.some(s=>s.url==='https://example.com/player'),changed:changed.embedUrl,refreshed};
  });
