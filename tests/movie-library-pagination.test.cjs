@@ -13,7 +13,11 @@ function mockClient(rows, recordCalls){
         recordCalls.push({type:'order',column,ascending:options.ascending});
         return chain;
       },
-      select(value){assert.equal(value,'*');return chain;},
+      select(value){
+        if(chain.filters.length===0)recordCalls.push({type:'select',value});
+        assert(value==='*'||value===library.publicFields);
+        return chain;
+      },
       eq(column,value){chain.filters.push([column,value]);return chain;},
       async range(from,to){
         recordCalls.push({type:'range',from,to,filters:[...chain.filters]});
@@ -37,6 +41,7 @@ test('published movie catalogue loads every page, including all 43 Owl House epi
   const calls=[];
   window.SFCloud={client:mockClient([...extra,...owl],calls)};
   const rows=await library.rows(false);
+  assert(calls.some(call=>call.type==='select'&&call.value===library.publicFields));
   assert.equal(rows.length,1193);
   assert.equal(new Set(rows.map(row=>row.id)).size,1193);
   assert.deepEqual(calls.filter(call=>call.type==='range').map(call=>[call.from,call.to]),[[0,499],[500,999],[1000,1499]]);
@@ -51,6 +56,8 @@ test('admin catalogue includes drafts and continues past a full page',async()=>{
   const calls=[];
   window.SFCloud={client:mockClient(rows,calls)};
   const result=await library.rows(true);
+  assert(calls.some(call=>call.type==='select'&&call.value==='*'));
+  library.invalidate();
   assert.equal(result.length,1025);
   assert.deepEqual(calls.filter(call=>call.type==='range').map(call=>call.from),[0,500,1000]);
   assert(calls.filter(call=>call.type==='range').every(call=>call.filters.length===0));
