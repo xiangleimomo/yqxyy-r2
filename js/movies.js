@@ -90,13 +90,45 @@ window.MovieClassroom = {
       return {url:url.href,label:automatic?'第三方播放器（自动选线）':provider.name||'第三方线路',embedded:true};
     }catch{return null;}
   },
+  // Reuse the fully assembled directory while users move among genres,
+  // seasons and playback pages. Database edits explicitly invalidate it.
+  libraryCache:null,
+  libraryPending:null,
+  libraryEpoch:0,
+  libraryTTL:90000,
+  invalidateLibrary(){
+    this.libraryEpoch++;
+    this.libraryCache=null;
+    this.libraryPending=null;
+  },
   async getLibrary(app) {
+    const client=window.SFCloud?.client||null;
+    if(this.libraryCache?.client===client&&Date.now()<this.libraryCache.expiresAt)
+      return this.libraryCache.value;
+    if(this.libraryPending?.client===client)return this.libraryPending.promise;
+    const epoch=this.libraryEpoch;
+    const promise=this.buildLibrary(app).then(value=>{
+      if(this.libraryEpoch===epoch)
+        this.libraryCache={client,value,expiresAt:Date.now()+this.libraryTTL};
+      return value;
+    }).finally(()=>{
+      if(this.libraryPending?.promise===promise)this.libraryPending=null;
+    });
+    this.libraryPending={client,promise};
+    return promise;
+  },
+  async buildLibrary(app) {
     const [catalog,settings,hub,configuredProviders,posters,dynamicRows,managedProviders]=await Promise.all([app.getJSON('data/movie-series.json'),app.getJSON('data/movie-playback.json',{refresh:true}),app.getJSON('data/movie-hub-catalog.json'),app.getJSON('data/movie-hub-providers.json',{refresh:true}),app.getJSON('data/movie-posters.json').catch(()=>({})),window.MovieLibrary?.published?.().catch(()=>[])||[],window.MovieSourceAdmin?.providers?.()||Promise.resolve([])]);
     const series = await Promise.all(catalog.map(async item => ({
       ...item,
       ...(await app.getJSON(`data/movies/${item.id}/movies.json`))
     })));
     const dynamicGroups=window.MovieLibrary?.asGroups?.(dynamicRows)||[],allSeries=[...dynamicGroups,...series],dynamicInfo=window.MovieLibrary?.info?.(dynamicRows)||new Map();
+    // Index original sources once. Previously every one of the thousands
+    // of episodes rescanned every series (quadratic work on Android).
+    const sourceById=new Map();
+    for(const group of allSeries)for(const item of group.sources||[])
+      if(item?.id&&!sourceById.has(item.id))sourceById.set(item.id,item);
     const builtInProviders=this.androidTmdbProviders();
     const autoEmbedProvider={id:'autoembed',name:'AutoEmbed',mode:'embed',movieUrl:'https://autoembed.me/movie/tmdb/{tmdbId}',tvUrl:'https://autoembed.me/tv/tmdb/{tmdbId}-{seasonNumber}-{episodeNumber}'};
     const providers=[...managedProviders,...builtInProviders.filter(provider=>!managedProviders.some(extra=>extra.name===provider.name||extra.movieUrl===provider.movieUrl)),...configuredProviders.filter(provider=>![...managedProviders,...builtInProviders].some(extra=>extra.name===provider.name||extra.movieUrl===provider.movieUrl))];
@@ -106,12 +138,12 @@ window.MovieClassroom = {
       const dynamic=dynamicInfo.get(id),tmdb=ids.get(id),validTmdb=Number.isSafeInteger(tmdb)&&tmdb>0,mediaType=dynamic?.media_type==='tv'?'tv':'movie',seasonNumber=Math.max(1,Number(dynamic?.season_number)||1),episodeNumber=Math.max(1,Number(dynamic?.episode_number)||1);
       if(useVidMario){
         const embeddedSources=validTmdb?embedProviders.map(provider=>this.providerSource(provider,{tmdb,mediaType,season:seasonNumber,episode:episodeNumber},true)).filter(Boolean):[];
-        return {...(group.sources||[]).find(item=>item.id===id),id,title,titleZh,year,cover:dynamic?.poster_url||posters[id]||'',description:dynamic?.overview||'',playerMode:'embed-fallback',embedUrl:embeddedSources[0]?.url||'',sourceLabel:embeddedSources[0]?.label||'嵌入播放源',backupSources:[]};
+        return {...sourceById.get(id),id,title,titleZh,year,cover:dynamic?.poster_url||posters[id]||'',description:dynamic?.overview||'',playerMode:'embed-fallback',embedUrl:embeddedSources[0]?.url||'',sourceLabel:embeddedSources[0]?.label||'嵌入播放源',backupSources:[]};
       }
-      return {...(group.sources||[]).find(item=>item.id===id),id,title,titleZh,year,cover:dynamic?.poster_url||posters[id]||'',description:dynamic?.overview||'',playerMode:'dulo',embedUrl:validTmdb?'https://dulo.mov/watch/movie/'+tmdb:'',sourceLabel:'Dulo 播放器'};
+      return {...sourceById.get(id),id,title,titleZh,year,cover:dynamic?.poster_url||posters[id]||'',description:dynamic?.overview||'',playerMode:'dulo',embedUrl:validTmdb?'https://dulo.mov/watch/movie/'+tmdb:'',sourceLabel:'Dulo 播放器'};
     })).filter(item=>item.embedUrl);
     for(const movie of playable){
-      const source=allSeries.flatMap(group=>group.sources||[]).find(item=>item.id===movie.id)||movie;
+      const source=sourceById.get(movie.id)||movie;
       const metadata=dynamicInfo.get(movie.id)||source;
       const tmdb=Number(ids.get(movie.id)||metadata.tmdbId||metadata.tmdb_id);
       const tv=(metadata.media_type||metadata.mediaType)==='tv';
