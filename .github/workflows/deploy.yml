@@ -2,9 +2,6 @@ name: Deploy yqxxyy to Netlify
 # Manual deploy of the verified yqxxyy project, independent of the old Netlify account.
 # The access token must belong to hanzhimin60's Netlify account.
 on:
-  push:
-    paths:
-      - '.github/workflows/deploy.yml'
   workflow_dispatch:
 
 permissions:
