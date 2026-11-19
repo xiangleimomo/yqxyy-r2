@@ -1,16 +1,26 @@
 
 const App = {
   cache: {},
+  pendingJSON: new Map(),
   activeLessonTab: 'watch',
   searchTimer: null,
   searchRequest: 0,
   async getJSON(path,{refresh=false}={}){
-    if(!refresh&&this.cache[path]) return this.cache[path];
-    const res = await fetch(path, {cache:'no-store'});
-    if(!res.ok) throw new Error('无法加载 ' + path);
-    const data = await res.json();
-    this.cache[path] = data;
-    return data;
+    if(!refresh&&this.cache[path])return this.cache[path];
+    // Concurrent homepage cards, movie directory and course widgets may
+    // request the same R2 JSON. One in-flight request is enough.
+    if(this.pendingJSON.has(path))return this.pendingJSON.get(path);
+    const request=(async()=>{
+      const res=await fetch(path,{cache:'no-store'});
+      if(!res.ok)throw new Error('无法加载 '+path);
+      const data=await res.json();
+      this.cache[path]=data;
+      return data;
+    })().finally(()=>{
+      if(this.pendingJSON.get(path)===request)this.pendingJSON.delete(path);
+    });
+    this.pendingJSON.set(path,request);
+    return request;
   },
   el(){return document.getElementById('app')},
   route(){

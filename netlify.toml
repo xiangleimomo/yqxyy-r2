@@ -11,6 +11,23 @@
   function = "book-download"
   path = "/book-download/*"
 
+# Cache site code briefly while keeping HTML fresh, so repeat navigations
+# use the browser cache and new production releases remain available quickly.
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "no-cache, must-revalidate"
+
+[[headers]]
+  for = "/js/*"
+  [headers.values]
+    Cache-Control = "public, max-age=300, must-revalidate"
+
+[[headers]]
+  for = "/css/*"
+  [headers.values]
+    Cache-Control = "public, max-age=300, must-revalidate"
+
 # Reader libraries have versioned directory names; reuse them on mobile visits.
 [[headers]]
   for = "/assets/vendor/*"

@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,6 +36,14 @@ final class R2PublicDataProxy {
         if (!"GET".equalsIgnoreCase(method) && !"HEAD".equalsIgnoreCase(method))
             return failure(405, "Read only");
 
+        String rangeHeader = request.getRequestHeaders().get("Range");
+        boolean cacheableJson = "GET".equalsIgnoreCase(method) &&
+            path.endsWith(".json") && (rangeHeader == null || rangeHeader.isEmpty());
+        if (cacheableJson) {
+            R2MemoryCache.Entry cached = R2MemoryCache.get(path, System.currentTimeMillis());
+            if (cached != null) return cachedJson(cached);
+        }
+
         HttpURLConnection connection = null;
         try {
             String base = BuildConfig.R2_DATA_ORIGIN;
@@ -59,6 +68,40 @@ final class R2PublicDataProxy {
             }
 
             String type = mime(path, connection.getContentType());
+            long contentLength = connection.getContentLengthLong();
+            if (cacheableJson && "application/json".equals(type) &&
+                contentLength > 0 && contentLength <= R2MemoryCache.MAX_ENTRY_BYTES) {
+                InputStream source = connection.getInputStream();
+                ByteArrayOutputStream output = new ByteArrayOutputStream((int) contentLength);
+                byte[] buffer = new byte[8192];
+                int amount;
+                while ((amount = source.read(buffer)) != -1) {
+                    if (output.size() + amount > R2MemoryCache.MAX_ENTRY_BYTES) {
+                        // If an origin sends an inaccurate Content-Length, preserve
+                        // the complete response as a stream rather than truncating it.
+                        InputStream combined = new java.io.SequenceInputStream(
+                            new ByteArrayInputStream(output.toByteArray()), source);
+                        final HttpURLConnection openConnection = connection;
+                        InputStream stream = new FilterInputStream(combined) {
+                            @Override public void close() throws IOException {
+                                try { super.close(); }
+                                finally { openConnection.disconnect(); }
+                            }
+                        };
+                        connection = null;
+                        return streamedResponse(type, stream, 200, contentLength, openConnection);
+                    }
+                    output.write(buffer, 0, amount);
+                }
+                source.close();
+                byte[] body = output.toByteArray();
+                connection.disconnect();
+                connection = null;
+                R2MemoryCache.put(path, body, type, System.currentTimeMillis());
+                R2MemoryCache.Entry entry = R2MemoryCache.get(path, System.currentTimeMillis());
+                return jsonBody(body, entry != null);
+            }
+
             InputStream stream;
             if ("HEAD".equalsIgnoreCase(method)) {
                 stream = new ByteArrayInputStream(new byte[0]);
@@ -73,24 +116,48 @@ final class R2PublicDataProxy {
                     }
                 };
             }
-            WebResourceResponse response =
-                new WebResourceResponse(type, type.startsWith("text/") ||
-                    "application/json".equals(type) ? "UTF-8" : null, stream);
-            response.setStatusCodeAndReasonPhrase(status, status == 206 ? "Partial Content" : "OK");
-            Map<String, String> headers = new LinkedHashMap<>();
-            headers.put("Cache-Control", "no-store");
-            headers.put("X-Content-Type-Options", "nosniff");
-            if (connection != null) for (String h : new String[]{"Content-Range",
-                    "Content-Length", "Accept-Ranges", "ETag", "Last-Modified"}) {
-                String val = connection.getHeaderField(h);
-                if (val != null) headers.put(h, val);
-            }
-            response.setResponseHeaders(headers);
-            return response;
+            long responseLength = connection == null ? -1 : connection.getContentLengthLong();
+            return streamedResponse(type, stream, status, responseLength, connection);
         } catch (Exception e) {
             if (connection != null) connection.disconnect();
             return failure(503, "R2 unavailable");
         }
+    }
+
+    private static WebResourceResponse cachedJson(R2MemoryCache.Entry entry) {
+        return jsonBody(entry.copyBody(), true);
+    }
+
+    private static WebResourceResponse jsonBody(byte[] body, boolean cached) {
+        WebResourceResponse response = new WebResourceResponse(
+            "application/json", "UTF-8", new ByteArrayInputStream(body));
+        response.setStatusCodeAndReasonPhrase(200, "OK");
+        Map<String, String> headers = new LinkedHashMap<>();
+        headers.put("Cache-Control", cached ? "private, max-age=60" : "no-store");
+        headers.put("Content-Length", Integer.toString(body.length));
+        headers.put("X-Content-Type-Options", "nosniff");
+        response.setResponseHeaders(headers);
+        return response;
+    }
+
+    private static WebResourceResponse streamedResponse(
+            String type, InputStream stream, int status, long contentLength,
+            HttpURLConnection connection) {
+        WebResourceResponse response = new WebResourceResponse(
+            type, type.startsWith("text/") || "application/json".equals(type) ? "UTF-8" : null, stream);
+        response.setStatusCodeAndReasonPhrase(status,
+            status == 206 ? "Partial Content" : "OK");
+        Map<String, String> headers = new LinkedHashMap<>();
+        headers.put("Cache-Control", "no-store");
+        headers.put("X-Content-Type-Options", "nosniff");
+        if (contentLength >= 0) headers.put("Content-Length", Long.toString(contentLength));
+        if (connection != null) for (String h : new String[]{"Content-Range", "Accept-Ranges",
+                "ETag", "Last-Modified"}) {
+            String val = connection.getHeaderField(h);
+            if (val != null) headers.put(h, val);
+        }
+        response.setResponseHeaders(headers);
+        return response;
     }
 
     static String mime(String path, String supplied) {

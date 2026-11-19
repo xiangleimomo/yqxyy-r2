@@ -11,25 +11,33 @@ window.MovieLibrary={
   catalogCache:null,
   catalogPending:null,
   catalogTTL:120000,
+  // Public shelf view is only a list of 52 titles, never playback payloads.
+  catalogFields:'id,category,media_type,tmdb_id,title,title_zh,year,poster_url,season_number,episode_number,sort_order,episode_count',
   seasonCache:new Map(),
+  seasonPending:new Map(),
+  pageCache:new Map(),
+  pagePending:new Map(),
   episodeCache:new Map(),
+  episodePending:new Map(),
   async catalog(){
     const client=window.SFCloud?.client;
     if(!client)return [];
     if(this.catalogCache?.client===client&&Date.now()<this.catalogCache.expiresAt)return this.catalogCache.rows;
     if(this.catalogPending?.client===client)return this.catalogPending.promise;
+    const version=this.cacheVersion;
     const promise=(async()=>{
       const result=[];
       for(let offset=0;;offset+=500){
         const {data,error}=await client.from('movie_library_catalog')
-          .select(this.publicFields+',episode_count')
+          .select(this.catalogFields)
           .order('sort_order',{ascending:true}).order('id',{ascending:true})
           .range(offset,offset+499);
         if(error)throw error;
         const batch=data||[];result.push(...batch);
         if(batch.length<500)break;
       }
-      this.catalogCache={client,rows:result,expiresAt:Date.now()+this.catalogTTL};
+      if(this.cacheVersion===version)
+        this.catalogCache={client,rows:result,expiresAt:Date.now()+this.catalogTTL};
       return result;
     })().catch(async error=>{
       // Retain the existing website if a fresh DB view is temporarily unavailable.
@@ -43,36 +51,76 @@ window.MovieLibrary={
     const client=window.SFCloud?.client;if(!client)return [];
     const key=category+':'+tmdbId,cached=this.seasonCache.get(key);
     if(cached?.client===client&&Date.now()<cached.expiresAt)return cached.rows;
-    const {data,error}=await client.from('movie_library_seasons')
-      .select('category,tmdb_id,season_number,episode_count')
-      .eq('category',category).eq('tmdb_id',tmdbId)
-      .order('season_number',{ascending:true});
-    if(error)throw error;
-    const rows=data||[];
-    this.seasonCache.set(key,{client,rows,expiresAt:Date.now()+this.catalogTTL});
-    return rows;
+    const pending=this.seasonPending.get(key);
+    if(pending?.client===client)return pending.promise;
+    const version=this.cacheVersion;
+    const promise=(async()=>{
+      const {data,error}=await client.from('movie_library_seasons')
+        .select('category,tmdb_id,season_number,episode_count')
+        .eq('category',category).eq('tmdb_id',tmdbId)
+        .order('season_number',{ascending:true});
+      if(error)throw error;
+      const rows=data||[];
+      if(version===this.cacheVersion)
+        this.seasonCache.set(key,{client,rows,expiresAt:Date.now()+this.catalogTTL});
+      return rows;
+    })().finally(()=>{
+      if(this.seasonPending.get(key)?.promise===promise)this.seasonPending.delete(key);
+    });
+    this.seasonPending.set(key,{client,promise});
+    return promise;
   },
   async episodePage(tmdbId,category,season,page=0,pageSize=40){
     const client=window.SFCloud?.client;if(!client)return [];
-    const offset=page*pageSize;
-    const {data,error}=await client.from('movie_library')
-      .select(this.publicFields)
-      .eq('published',true).eq('media_type','tv')
-      .eq('tmdb_id',tmdbId).eq('category',category).eq('season_number',season)
-      .order('episode_number',{ascending:true}).order('id',{ascending:true})
-      .range(offset,offset+pageSize-1);
-    if(error)throw error;
-    return data||[];
+    const safePage=Math.max(0,Math.floor(Number(page)||0));
+    const size=Math.max(1,Math.min(80,Math.floor(Number(pageSize)||40)));
+    const key=[category,tmdbId,season,safePage,size].join(':');
+    const cached=this.pageCache.get(key);
+    if(cached?.client===client&&Date.now()<cached.expiresAt)return cached.rows;
+    const pending=this.pagePending.get(key);
+    if(pending?.client===client)return pending.promise;
+    const version=this.cacheVersion;
+    const promise=(async()=>{
+      const offset=safePage*size;
+      const {data,error}=await client.from('movie_library')
+        .select(this.publicFields)
+        .eq('published',true).eq('media_type','tv')
+        .eq('tmdb_id',tmdbId).eq('category',category).eq('season_number',season)
+        .order('episode_number',{ascending:true}).order('id',{ascending:true})
+        .range(offset,offset+size-1);
+      if(error)throw error;
+      const rows=data||[];
+      if(version===this.cacheVersion){
+        // A user might browse many seasons: bound the in-memory page cache.
+        if(this.pageCache.size>=60)this.pageCache.delete(this.pageCache.keys().next().value);
+        this.pageCache.set(key,{client,rows,expiresAt:Date.now()+this.catalogTTL});
+      }
+      return rows;
+    })().finally(()=>{
+      if(this.pagePending.get(key)?.promise===promise)this.pagePending.delete(key);
+    });
+    this.pagePending.set(key,{client,promise});
+    return promise;
   },
   async episode(id){
     const client=window.SFCloud?.client;if(!client)return null;
     const entry=this.episodeCache.get(id);
     if(entry?.client===client&&Date.now()<entry.expiresAt)return entry.row;
-    const {data,error}=await client.from('movie_library')
-      .select(this.publicFields).eq('id',id).eq('published',true).maybeSingle();
-    if(error)throw error;
-    if(data)this.episodeCache.set(id,{client,row:data,expiresAt:Date.now()+this.catalogTTL});
-    return data||null;
+    const pending=this.episodePending.get(id);
+    if(pending?.client===client)return pending.promise;
+    const version=this.cacheVersion;
+    const promise=(async()=>{
+      const {data,error}=await client.from('movie_library')
+        .select(this.publicFields).eq('id',id).eq('published',true).maybeSingle();
+      if(error)throw error;
+      if(data&&version===this.cacheVersion)
+        this.episodeCache.set(id,{client,row:data,expiresAt:Date.now()+this.catalogTTL});
+      return data||null;
+    })().finally(()=>{
+      if(this.episodePending.get(id)?.promise===promise)this.episodePending.delete(id);
+    });
+    this.episodePending.set(id,{client,promise});
+    return promise;
   },
   e(app,value){return app.escapeHtml(String(value??''));},
   admin(){return !!window.SFCloud?.isAdmin?.()&&!!window.SFCloud?.client;},
@@ -122,7 +170,11 @@ window.MovieLibrary={
     this.catalogCache=null;
     this.catalogPending=null;
     this.seasonCache.clear();
+    this.seasonPending.clear();
+    this.pageCache.clear();
+    this.pagePending.clear();
     this.episodeCache.clear();
+    this.episodePending.clear();
     window.MovieClassroom?.invalidateLibrary?.();
   },
   asGroups(rows){
