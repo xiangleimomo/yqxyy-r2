@@ -117,12 +117,16 @@ window.MovieClassroom = {
     this.libraryPending={client,promise};
     return promise;
   },
-  async buildLibrary(app) {
-    const [catalog,settings,hub,configuredProviders,posters,dynamicRows,managedProviders]=await Promise.all([app.getJSON('data/movie-series.json'),app.getJSON('data/movie-playback.json',{refresh:true}),app.getJSON('data/movie-hub-catalog.json'),app.getJSON('data/movie-hub-providers.json',{refresh:true}),app.getJSON('data/movie-posters.json').catch(()=>({})),window.MovieLibrary?.published?.().catch(()=>[])||[],window.MovieSourceAdmin?.providers?.()||Promise.resolve([])]);
+  async buildLibrary(app,extraRows=[]) {
+    const [catalog,settings,hub,configuredProviders,posters,catalogRows,managedProviders]=await Promise.all([app.getJSON('data/movie-series.json'),app.getJSON('data/movie-playback.json',{refresh:true}),app.getJSON('data/movie-hub-catalog.json'),app.getJSON('data/movie-hub-providers.json',{refresh:true}),app.getJSON('data/movie-posters.json').catch(()=>({})),window.MovieLibrary?.catalog?.().catch(()=>[])||[],window.MovieSourceAdmin?.providers?.()||Promise.resolve([])]);
     const series = await Promise.all(catalog.map(async item => ({
       ...item,
       ...(await app.getJSON(`data/movies/${item.id}/movies.json`))
     })));
+    // A selected page can enrich the 52-item browse summary without loading
+    // every published episode. Explicit episode rows override the summary row.
+    const extraIds=new Set(extraRows.map(row=>row.id));
+    const dynamicRows=[...catalogRows.filter(row=>!extraIds.has(row.id)),...extraRows];
     const dynamicGroups=window.MovieLibrary?.asGroups?.(dynamicRows)||[],allSeries=[...dynamicGroups,...series],dynamicInfo=window.MovieLibrary?.info?.(dynamicRows)||new Map();
     // Index original sources once. Previously every one of the thousands
     // of episodes rescanned every series (quadratic work on Android).
@@ -216,20 +220,64 @@ window.MovieClassroom = {
   async renderList(app, query='', level='all') {
     return window.MediaShelf.render(app,'movies',{query,level});
   },
-  async renderSeries(app, id) {
+  async renderSeries(app, id, pageToken='') {
     const generation = this.generation;
     const { series, playableById } = await this.getLibrary(app);
     if (generation !== this.generation) return;
     const group = series.find(item => item.id === id);
     if (!group) { app.el().innerHTML = '<div class="empty">系列不存在。<p><a class="btn" href="#/movies">返回光影课堂</a></p></div>'; return; }
+    if(group.dynamicTv)return this.renderTvSeries(app,group,pageToken,generation);
     const e = value => this.escape(app, value);
     app.el().innerHTML = window.MediaShelf.nav('movies') + `<div class="breadcrumb"><a href="#/movies">光影课堂</a> › ${e(group.titleZh)}</div><section class="media-catalog"><div class="book-grid">${group.films.map(film => this.movieCard(app, group, film, playableById)).join('')}</div></section>`;
     window.MediaShelf.bindCards(app);
   },
+  async renderTvSeries(app,group,pageToken,generation){
+    const match=/^library-tv-(\\d+)-(animated|documentary|animation|kids)$/.exec(group.id);
+    if(!match)return;
+    const tmdbId=Number(match[1]),category=match[2],e=value=>this.escape(app,value);
+    const seasons=await window.MovieLibrary.seasons(tmdbId,category);
+    if(generation!==this.generation)return;
+    const token=/^s(\\d+)-p(\\d+)$/.exec(pageToken||'');
+    const selected=Number(token?.[1]||seasons[0]?.season_number||1);
+    const chosen=seasons.find(item=>Number(item.season_number)===selected)||seasons[0];
+    const season=Number(chosen?.season_number||1),pageSize=40;
+    const total=Number(chosen?.episode_count||0),pageCount=Math.max(1,Math.ceil(total/pageSize));
+    const page=selected===season?Math.min(Math.max(0,Number(token?.[2]||0)),pageCount-1):0;
+    const rows=chosen?await window.MovieLibrary.episodePage(tmdbId,category,season,page,pageSize):[];
+    if(generation!==this.generation)return;
+    const details=rows.length?await this.buildLibrary(app,rows):null;
+    if(generation!==this.generation)return;
+    const expanded=details?.series.find(item=>item.id===group.id)||group;
+    const navigate=(n,p=0)=>`#/movie-series/${encodeURIComponent(group.id)}/s${n}-p${p}`;
+    const seasonPicker=seasons.length
+      ?`<label>选择季 <select id="movieSeasonPicker" aria-label="选择季">${seasons.map(item=>`<option value="${Number(item.season_number)}"${Number(item.season_number)===season?' selected':''}>第 ${Number(item.season_number)} 季 · ${Number(item.episode_count)} 集</option>`).join('')}</select></label>`
+      :'';
+    const pager=`<nav class="movie-season-pagination" aria-label="剧集分页" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:16px 0">
+      ${page>0?`<a class="btn secondary" href="${navigate(season,page-1)}">上一页</a>`:''}
+      <span>第 ${page+1} / ${pageCount} 页 · 本季共 ${total} 集</span>
+      ${page+1<pageCount?`<a class="btn secondary" href="${navigate(season,page+1)}">下一页</a>`:''}
+    </nav>`;
+    app.el().innerHTML=window.MediaShelf.nav('movies')
+      +`<div class="breadcrumb"><a href="#/movies/${e(category)}">光影课堂</a> › ${e(group.titleZh)}</div>`
+      +`<section class="media-catalog"><h2>${e(group.titleZh)}</h2><div class="movie-season-toolbar">${seasonPicker}</div>`
+      +pager+`<div class="book-grid">${rows.map(row=>this.movieCard(app,expanded,[row.id,'Season '+season+' Episode '+row.episode_number,'第'+season+'季 · 第'+row.episode_number+'集',row.year],details.playableById)).join('')||'<p>本季暂无已发布剧集。</p>'}</div>`
+      +pager+`</section>`;
+    const picker=app.el().querySelector('#movieSeasonPicker');
+    if(picker)picker.onchange=()=>{location.hash=navigate(Number(picker.value));};
+    window.MediaShelf.bindCards(app);
+  },
   async renderWatch(app, id, sourceChoice = 'primary', transportChoice = 'auto') {
     const generation = this.generation;
-    const { series, playableById } = await this.getLibrary(app);
-    if (generation !== this.generation) return;
+    let library=await this.getLibrary(app);
+    if(generation!==this.generation)return;
+    if(!library.playableById.has(id)){
+      // Deep links to any episode still work: request one row, not 3,000+.
+      const episode=await window.MovieLibrary?.episode?.(id);
+      if(generation!==this.generation)return;
+      if(episode)library=await this.buildLibrary(app,[episode]);
+    }
+    if(generation!==this.generation)return;
+    const {series,playableById}=library;
     let movie = playableById.get(id);
     const group = series.find(item => item.films.some(([filmId]) => filmId === id));
     if (!movie || !group) { app.el().innerHTML = '<div class="empty">这部影片暂未添加授权播放源。<p><a class="btn" href="#/movies">返回光影课堂</a></p></div>'; return; }
