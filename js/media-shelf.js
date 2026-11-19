@@ -51,22 +51,25 @@ window.MediaShelf = {
       const list=(await app.getJSON('data/series-list.json')).filter(row=>!String(row.seriesId).startsWith('movie-')&&(!app.isGuest()||!app.isGuestRestrictedLevel(row.level)));
       items=list.map(row=>this.animation(row));
       const {series,playableById}=await window.MovieClassroom.getLibrary(app);
-      const directItems=series.filter(group=>group.dynamicCategory==='animation').flatMap(group=>group.films.map(film=>this.movieFilm(group,film,playableById)));
-      allItems=[...items,...directItems];
-      if(mode==='direct')items=directItems;
+      const directItems=series.filter(group=>group.dynamicCategory==='animation'&&!group.dynamicTv).flatMap(group=>group.films.map(film=>this.movieFilm(group,film,playableById)));
+      const tvSeries=series.filter(group=>group.dynamicTv&&group.libraryCategory==='animation').map(group=>this.movieSeries(group));
+      allItems=[...items,...directItems,...tvSeries];
+      if(mode==='direct')items=[...directItems,...tvSeries];
     }else{
       const {series,playableById}=await window.MovieClassroom.getLibrary(app);
       // Dynamic rows belong directly in the two top-level tabs, never as an extra “collection” card.
-      items=series.filter(row=>!row.dynamicCategory).map(row=>this.movieSeries(row));allItems=[...items,...series.flatMap(row=>row.films.map(film=>this.movieFilm(row,film,playableById)))];
+      items=series.filter(row=>!row.dynamicCategory).map(row=>this.movieSeries(row));
+      // TV episodes are represented by their show, never thousands of cards.
+      allItems=[...items,...series.filter(row=>row.dynamicTv).map(row=>this.movieSeries(row)),...series.filter(row=>!row.dynamicTv).flatMap(row=>row.films.map(film=>this.movieFilm(row,film,playableById)))];
       if(mode==='animated'){
         // Every movie is a standalone card; personal favourites/categories replace series shelves.
         const originalCollections=allItems.filter(row=>row.key.startsWith('film-')&&!row.key.startsWith('film-series-')&&!row.id.startsWith('tmdb-'));
-        const publishedFilms=allItems.filter(row=>row.id.startsWith('tmdb-')&&series.find(group=>group.films.some(([id])=>id===row.id))?.dynamicCategory==='animated');
+        const publishedFilms=allItems.filter(row=>row.id.startsWith('tmdb-')&&series.find(group=>!group.dynamicTv&&group.films.some(([id])=>id===row.id))?.dynamicCategory==='animated');
         const tvShows=series.filter(group=>group.dynamicTv&&group.libraryCategory==='animated').map(group=>this.movieSeries(group));
         items=[...originalCollections,...publishedFilms,...tvShows];
       }
-      if(mode==='kids')items=[...series.filter(group=>group.dynamicCategory==='kids').flatMap(group=>group.films.map(film=>this.movieFilm(group,film,playableById))),...series.filter(group=>group.dynamicTv&&group.libraryCategory==='kids').map(group=>this.movieSeries(group))];
-      if(mode==='documentary')items=[...series.filter(group=>group.dynamicCategory==='documentary').flatMap(group=>group.films.map(film=>this.movieFilm(group,film,playableById))),...series.filter(group=>group.dynamicTv&&group.libraryCategory==='documentary').map(group=>this.movieSeries(group))];
+      if(mode==='kids')items=[...series.filter(group=>group.dynamicCategory==='kids'&&!group.dynamicTv).flatMap(group=>group.films.map(film=>this.movieFilm(group,film,playableById))),...series.filter(group=>group.dynamicTv&&group.libraryCategory==='kids').map(group=>this.movieSeries(group))];
+      if(mode==='documentary')items=[...series.filter(group=>group.dynamicCategory==='documentary'&&!group.dynamicTv).flatMap(group=>group.films.map(film=>this.movieFilm(group,film,playableById))),...series.filter(group=>group.dynamicTv&&group.libraryCategory==='documentary').map(group=>this.movieSeries(group))];
       if(mode==='episodes'){
         const courseIds=[...new Set(series.flatMap(group=>group.films.map(([filmId])=>playableById.get(filmId)?.studyCourse?.seriesId).filter(Boolean)))];
         const courses=await Promise.all(courseIds.map(async seriesId=>{
