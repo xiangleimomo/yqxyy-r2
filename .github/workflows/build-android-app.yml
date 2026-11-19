@@ -18,6 +18,7 @@ on:
       - 'tests/tvmaze-episode-autofill.test.cjs'
       - 'tests/PlayerAdGuardTest.java'
       - 'tests/R2PathPolicyTest.java'
+      - 'tests/R2MemoryCacheTest.java'
       - 'js/movie-library.js'
       - 'js/movie-subtitles.js'
       - 'js/movies.js'
