@@ -232,12 +232,12 @@ window.MovieClassroom = {
     window.MediaShelf.bindCards(app);
   },
   async renderTvSeries(app,group,pageToken,generation){
-    const match=/^library-tv-(\\d+)-(animated|documentary|animation|kids)$/.exec(group.id);
+    const match=/^library-tv-(\d+)-(animated|documentary|animation|kids)$/.exec(group.id);
     if(!match)return;
     const tmdbId=Number(match[1]),category=match[2],e=value=>this.escape(app,value);
     const seasons=await window.MovieLibrary.seasons(tmdbId,category);
     if(generation!==this.generation)return;
-    const token=/^s(\\d+)-p(\\d+)$/.exec(pageToken||'');
+    const token=/^s(\d+)-p(\d+)$/.exec(pageToken||'');
     const selected=Number(token?.[1]||seasons[0]?.season_number||1);
     const chosen=seasons.find(item=>Number(item.season_number)===selected)||seasons[0];
     const season=Number(chosen?.season_number||1),pageSize=40;
