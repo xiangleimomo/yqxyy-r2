@@ -1,28 +1,47 @@
-name: Deploy to new Netlify account
-# Deployment paused until manually re-enabled next month.
-# Keep the workflow definition for easy restoration.
+name: Deploy yqxxyy to Netlify
+# One-time production deploy when this workflow is changed; manual runs remain available.
+# Normal website commits do NOT trigger this workflow automatically.
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/deploy.yml'
+
 permissions:
   contents: read
+
 concurrency:
-  group: netlify-production
+  group: netlify-yqxxyy-production
   cancel-in-progress: false
+
 jobs:
   deploy:
-    if: ${{ false }} # Deployment temporarily disabled, including manual dispatch
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: npm
-      - run: npm ci
-      - name: Build and deploy
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Verify yqxxyy site target and deploy credential
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-        run: npx --yes netlify-cli@27.16.2 deploy --prod --build --context production
+          NETLIFY_SITE_ID: '502e6053-5171-454d-8806-2a5b7b3481ee'
+        run: |
+          if [ -z "$NETLIFY_AUTH_TOKEN" ]; then
+            echo "::error::GitHub secret NETLIFY_AUTH_TOKEN is missing; no deployment attempted."
+            exit 1
+          fi
+          echo "Target Netlify site: yqxxyy (502e6053-5171-454d-8806-2a5b7b3481ee)"
+      - name: Build static site
+        run: npm run build
+      - name: Deploy to yqxxyy production
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: '502e6053-5171-454d-8806-2a5b7b3481ee'
+        run: npx --yes netlify-cli@27.16.2 deploy --prod --build --context production --site "$NETLIFY_SITE_ID"
