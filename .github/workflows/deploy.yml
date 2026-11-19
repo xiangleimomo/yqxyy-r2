@@ -3,10 +3,6 @@ name: Deploy yqxxyy to Netlify
 # The access token must belong to hanzhimin60's Netlify account.
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/deploy.yml'
 
 permissions:
   contents: read
