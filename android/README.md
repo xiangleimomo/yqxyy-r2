@@ -1,11 +1,11 @@
 # 一起学英语 Android APP
 
-Android WebView app using the production yqxxyy website origin and its responsive mobile UI.\nVersion 1.5 extends the in-video PC-style control bar with drag-to-position subtitles, per-video subtitle timing adjustments and grouped TV episode playback. The APK includes the latest GitHub frontend snapshot.
+Android WebView app using the production yqxxyy website origin and its responsive mobile UI.\nVersion 1.5 extends the in-video PC-style control bar with drag-to-position subtitles, per-video subtitle timing adjustments and grouped TV episode playback. The APK includes the latest GitHub frontend snapshot. Small public R2 JSON files are cached in memory for up to 60 seconds (8 MiB total); large files, range requests and media streams are not cached.
 Site data, Supabase accounts, Cloudflare R2 media and GitHub workflows stay unchanged.
 
 - Default website: https://yqxxyy.netlify.app/
 - Application ID: com.yqxyy.english
-- Minimum Android: 7.0 (API 24)\n- Test version: 1.5.0; returning from fullscreen restores portrait orientation.\n- The Android Back button closes HTML fullscreen before navigating.
+- Minimum Android: 7.0 (API 24)\n- Test version: 1.6.12; returning from fullscreen restores portrait orientation.\n- The Android Back button closes HTML fullscreen before navigating.
 - Build: JDK 17; Gradle 8.9; Android Gradle plugin 8.7.3
 - Build command: `cd android && gradle assembleDebug`
 - APK location: `android/app/build/outputs/apk/debug/app-debug.apk`
