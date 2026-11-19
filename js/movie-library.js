@@ -7,6 +7,73 @@ window.MovieLibrary={
   cacheVersion:0,
   cacheTTL:120000,
   publicFields:'id,category,media_type,tmdb_id,title,title_zh,year,poster_url,overview,season_number,episode_number,published,sort_order,playback_sources',
+  // Browse only one row per film/show. The original rows() remains available for admins.
+  catalogCache:null,
+  catalogPending:null,
+  catalogTTL:120000,
+  seasonCache:new Map(),
+  episodeCache:new Map(),
+  async catalog(){
+    const client=window.SFCloud?.client;
+    if(!client)return [];
+    if(this.catalogCache?.client===client&&Date.now()<this.catalogCache.expiresAt)return this.catalogCache.rows;
+    if(this.catalogPending?.client===client)return this.catalogPending.promise;
+    const promise=(async()=>{
+      const result=[];
+      for(let offset=0;;offset+=500){
+        const {data,error}=await client.from('movie_library_catalog')
+          .select(this.publicFields+',episode_count')
+          .order('sort_order',{ascending:true}).order('id',{ascending:true})
+          .range(offset,offset+499);
+        if(error)throw error;
+        const batch=data||[];result.push(...batch);
+        if(batch.length<500)break;
+      }
+      this.catalogCache={client,rows:result,expiresAt:Date.now()+this.catalogTTL};
+      return result;
+    })().catch(async error=>{
+      // Retain the existing website if a fresh DB view is temporarily unavailable.
+      console.warn('Lightweight movie catalog unavailable; using legacy fallback',error);
+      return this.published();
+    }).finally(()=>{if(this.catalogPending?.promise===promise)this.catalogPending=null;});
+    this.catalogPending={client,promise};
+    return promise;
+  },
+  async seasons(tmdbId,category){
+    const client=window.SFCloud?.client;if(!client)return [];
+    const key=category+':'+tmdbId,cached=this.seasonCache.get(key);
+    if(cached?.client===client&&Date.now()<cached.expiresAt)return cached.rows;
+    const {data,error}=await client.from('movie_library_seasons')
+      .select('category,tmdb_id,season_number,episode_count')
+      .eq('category',category).eq('tmdb_id',tmdbId)
+      .order('season_number',{ascending:true});
+    if(error)throw error;
+    const rows=data||[];
+    this.seasonCache.set(key,{client,rows,expiresAt:Date.now()+this.catalogTTL});
+    return rows;
+  },
+  async episodePage(tmdbId,category,season,page=0,pageSize=40){
+    const client=window.SFCloud?.client;if(!client)return [];
+    const offset=page*pageSize;
+    const {data,error}=await client.from('movie_library')
+      .select(this.publicFields)
+      .eq('published',true).eq('media_type','tv')
+      .eq('tmdb_id',tmdbId).eq('category',category).eq('season_number',season)
+      .order('episode_number',{ascending:true}).order('id',{ascending:true})
+      .range(offset,offset+pageSize-1);
+    if(error)throw error;
+    return data||[];
+  },
+  async episode(id){
+    const client=window.SFCloud?.client;if(!client)return null;
+    const entry=this.episodeCache.get(id);
+    if(entry?.client===client&&Date.now()<entry.expiresAt)return entry.row;
+    const {data,error}=await client.from('movie_library')
+      .select(this.publicFields).eq('id',id).eq('published',true).maybeSingle();
+    if(error)throw error;
+    if(data)this.episodeCache.set(id,{client,row:data,expiresAt:Date.now()+this.catalogTTL});
+    return data||null;
+  },
   e(app,value){return app.escapeHtml(String(value??''));},
   admin(){return !!window.SFCloud?.isAdmin?.()&&!!window.SFCloud?.client;},
   async rows(includeDrafts=false){
@@ -52,6 +119,10 @@ window.MovieLibrary={
     this.cacheVersion++;
     this.cache=null;
     this.pending=null;
+    this.catalogCache=null;
+    this.catalogPending=null;
+    this.seasonCache.clear();
+    this.episodeCache.clear();
     window.MovieClassroom?.invalidateLibrary?.();
   },
   asGroups(rows){
@@ -71,10 +142,11 @@ window.MovieLibrary={
         id:'library-tv-'+id+'-'+row.category,
         title:row.title,titleZh:row.title_zh||row.title,
         cover:row.poster_url||'',level:'',rating:0,genre:'电视剧',
-        dynamicTv:true,libraryCategory:row.category,films:[],_episodes:[]
+        dynamicTv:true,libraryCategory:row.category,totalEpisodes:Number(row.episode_count||0),films:[],_episodes:[]
       });
       const show=shows.get(key);
       show._episodes.push(row);
+      if(Number(row.episode_count)>show.totalEpisodes)show.totalEpisodes=Number(row.episode_count);
       if(!show.cover&&row.poster_url)show.cover=row.poster_url;
     }
     for(const group of shows.values()){
