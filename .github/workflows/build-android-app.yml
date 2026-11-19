@@ -94,6 +94,8 @@ jobs:
           java -cp /tmp/yqxyy-adguard-tests PlayerAdGuardTest
           javac -d /tmp/yqxyy-adguard-tests android/app/src/main/java/com/yqxyy/english/R2PathPolicy.java tests/R2PathPolicyTest.java
           java -cp /tmp/yqxyy-adguard-tests com.yqxyy.english.R2PathPolicyTest
+          javac -d /tmp/yqxyy-adguard-tests android/app/src/main/java/com/yqxyy/english/R2MemoryCache.java tests/R2MemoryCacheTest.java
+          java -cp /tmp/yqxyy-adguard-tests com.yqxyy.english.R2MemoryCacheTest
       - name: Install website test dependencies
         run: npm ci --no-audit --no-fund
       - name: Browser-check movie editor and in-video subtitles
