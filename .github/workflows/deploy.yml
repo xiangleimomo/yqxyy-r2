@@ -1,12 +1,8 @@
 name: Deploy yqxxyy to Netlify
-# One-time production deploy when this workflow is changed; manual runs remain available.
-# Normal website commits do NOT trigger this workflow automatically.
+# Manual deploy of the verified yqxxyy project, independent of the old Netlify account.
+# The access token must belong to hanzhimin60's Netlify account.
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/deploy.yml'
 
 permissions:
   contents: read
@@ -30,11 +26,11 @@ jobs:
         run: npm ci --no-audit --no-fund
       - name: Verify yqxxyy site target and deploy credential
         env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN_YQXXYY }}
           NETLIFY_SITE_ID: '502e6053-5171-454d-8806-2a5b7b3481ee'
         run: |
           if [ -z "$NETLIFY_AUTH_TOKEN" ]; then
-            echo "::error::GitHub secret NETLIFY_AUTH_TOKEN is missing; no deployment attempted."
+            echo "::error::GitHub secret NETLIFY_AUTH_TOKEN_YQXXYY is missing; no deployment attempted."
             exit 1
           fi
           echo "Target Netlify site: yqxxyy (502e6053-5171-454d-8806-2a5b7b3481ee)"
@@ -42,6 +38,6 @@ jobs:
         run: npm run build
       - name: Deploy to yqxxyy production
         env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN_YQXXYY }}
           NETLIFY_SITE_ID: '502e6053-5171-454d-8806-2a5b7b3481ee'
         run: npx --yes netlify-cli@27.16.2 deploy --prod --build --context production --site "$NETLIFY_SITE_ID"
