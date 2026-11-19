@@ -2,12 +2,12 @@ const test=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 
-test('APK v1.6.11 targets the verified yqxxyy production site, not the legacy origin',()=>{
+test('APK v1.6.12 targets the verified yqxxyy production site, not the legacy origin',()=>{
   const gradle=fs.readFileSync('android/app/build.gradle','utf8');
   assert.match(gradle,/websiteUrl.*https:\/\/yqxxyy\.netlify\.app\//);
   assert.doesNotMatch(gradle,/yqxyy-r2\.netlify\.app/);
-  assert.match(gradle,/versionCode 19/);
-  assert.match(gradle,/versionName '1\.6\.11'/);
+  assert.match(gradle,/versionCode 20/);
+  assert.match(gradle,/versionName '1\.6\.12'/);
   assert.match(gradle,/buildConfigField 'String', 'APP_URL'/);
   assert.match(gradle,/R2_DATA_ORIGIN/);
 });
