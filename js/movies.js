@@ -96,10 +96,43 @@ window.MovieClassroom = {
   libraryPending:null,
   libraryEpoch:0,
   libraryTTL:90000,
+  staticCache:null,
+  staticPending:null,
   invalidateLibrary(){
     this.libraryEpoch++;
     this.libraryCache=null;
     this.libraryPending=null;
+    this.staticCache=null;
+    this.staticPending=null;
+  },
+  // A selected TV season reuses the fixed directory/provider JSON instead of
+  // downloading the same configuration for each of its 40 episodes.
+  async staticResources(app){
+    if(this.staticCache?.app===app&&Date.now()<this.staticCache.expiresAt)
+      return this.staticCache.value;
+    if(this.staticPending?.app===app)return this.staticPending.promise;
+    const epoch=this.libraryEpoch;
+    const promise=(async()=>{
+      const [catalog,settings,hub,configuredProviders,posters,managedProviders]=await Promise.all([
+        app.getJSON('data/movie-series.json'),
+        app.getJSON('data/movie-playback.json',{refresh:true}),
+        app.getJSON('data/movie-hub-catalog.json'),
+        app.getJSON('data/movie-hub-providers.json',{refresh:true}),
+        app.getJSON('data/movie-posters.json').catch(()=>({})),
+        window.MovieSourceAdmin?.providers?.()||Promise.resolve([])
+      ]);
+      const series=await Promise.all(catalog.map(async item=>({
+        ...item,...(await app.getJSON(`data/movies/${item.id}/movies.json`))
+      })));
+      const value={series,settings,hub,configuredProviders,posters,managedProviders};
+      if(epoch===this.libraryEpoch)
+        this.staticCache={app,value,expiresAt:Date.now()+this.libraryTTL};
+      return value;
+    })().finally(()=>{
+      if(this.staticPending?.promise===promise)this.staticPending=null;
+    });
+    this.staticPending={app,promise};
+    return promise;
   },
   async getLibrary(app) {
     const client=window.SFCloud?.client||null;
@@ -118,14 +151,14 @@ window.MovieClassroom = {
     return promise;
   },
   async buildLibrary(app,extraRows=[]) {
-    const [catalog,settings,hub,configuredProviders,posters,catalogRows,managedProviders]=await Promise.all([app.getJSON('data/movie-series.json'),app.getJSON('data/movie-playback.json',{refresh:true}),app.getJSON('data/movie-hub-catalog.json'),app.getJSON('data/movie-hub-providers.json',{refresh:true}),app.getJSON('data/movie-posters.json').catch(()=>({})),window.MovieLibrary?.catalog?.().catch(()=>[])||[],window.MovieSourceAdmin?.providers?.()||Promise.resolve([])]);
-    const series = await Promise.all(catalog.map(async item => ({
-      ...item,
-      ...(await app.getJSON(`data/movies/${item.id}/movies.json`))
-    })));
+    const [staticData,catalogRows]=await Promise.all([
+      this.staticResources(app),window.MovieLibrary?.catalog?.().catch(()=>[])||[]
+    ]);
+    const {series,settings,hub,configuredProviders,posters,managedProviders}=staticData;
     // A selected page can enrich the 52-item browse summary without loading
     // every published episode. Explicit episode rows override the summary row.
     const extraIds=new Set(extraRows.map(row=>row.id));
+    const catalogIds=new Set(catalogRows.map(row=>row.id));
     const dynamicRows=[...catalogRows.filter(row=>!extraIds.has(row.id)),...extraRows];
     const dynamicGroups=window.MovieLibrary?.asGroups?.(dynamicRows)||[],allSeries=[...dynamicGroups,...series],dynamicInfo=window.MovieLibrary?.info?.(dynamicRows)||new Map();
     // Index original sources once. Previously every one of the thousands
@@ -158,6 +191,9 @@ window.MovieClassroom = {
       const providerSources=apiUrl?providers.map(provider=>this.providerSource(provider,{tmdb,mediaType:tv?'tv':'movie',season,episode})).filter(Boolean):[];
       movie.tmdbId=tmdb;
       movie.mediaType=tv?'tv':'movie';
+      // Browse summaries intentionally omit source arrays and descriptions.
+      // Fetch the selected movie by primary key before choosing actual sources.
+      movie.catalogSummary=catalogIds.has(movie.id)&&!extraIds.has(movie.id);
       movie.tmdbTitle=String(metadata.title||source.title||movie.title||'').trim();
       movie.backdropUrl=metadata.backdropUrl||metadata.backdrop_url||source.backdropUrl||source.backdrop_url||this.tmdbBackdrops[tmdb]||'';
       movie.embeddedSources=[...savedSources.filter(source=>source.kind==='embed'),...providerSources].filter((source,index,all)=>{try{const url=new URL(source.url);return url.protocol==='https:'&&!url.username&&!url.password&&source.url!==movie.embedUrl&&all.findIndex(item=>item.url===source.url)===index;}catch{return false;}});
@@ -270,8 +306,9 @@ window.MovieClassroom = {
     const generation = this.generation;
     let library=await this.getLibrary(app);
     if(generation!==this.generation)return;
-    if(!library.playableById.has(id)){
-      // Deep links to any episode still work: request one row, not 3,000+.
+    if(!library.playableById.has(id)||library.playableById.get(id)?.catalogSummary){
+      // Both a direct episode link and a clicked movie summary fetch only
+      // the selected full row, preserving every manually managed source.
       const episode=await window.MovieLibrary?.episode?.(id);
       if(generation!==this.generation)return;
       if(episode)library=await this.buildLibrary(app,[episode]);
