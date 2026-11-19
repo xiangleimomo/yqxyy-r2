@@ -23,12 +23,12 @@ public final class R2MemoryCacheTest {
         for (int i = 0; i < 8; i++)
             R2MemoryCache.put("/data/" + i + ".json", oneMb, "application/json", 2_000L);
         check(R2MemoryCache.get("/data/0.json", 2_001L) != null,
-            "oldest entry should initially exist");
+            "first entry should initially exist");
         R2MemoryCache.get("/data/1.json", 2_001L); // refresh LRU order
         R2MemoryCache.put("/data/new.json", oneMb, "application/json", 2_002L);
-        check(R2MemoryCache.get("/data/0.json", 2_003L) == null,
+        check(R2MemoryCache.get("/data/2.json", 2_003L) == null,
             "least-recently-used entry should be evicted");
-        check(R2MemoryCache.get("/data/1.json", 2_003L) != null,
+        check(R2MemoryCache.get("/data/0.json", 2_003L) != null,
             "recently accessed entry should remain");
         check(R2MemoryCache.get("/data/new.json", 2_003L) != null,
             "new entry should remain");
