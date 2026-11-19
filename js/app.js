@@ -146,7 +146,7 @@ const App = {
       if(page === 'movie-hub') return await window.MovieHub.render(this,a==='search'?'':a,a==='search'?decodeURIComponent(b||''):'');
       if(page === 'movie-admin') return await window.MovieLibrary.renderAdmin(this);
       if(page === 'movie-source-admin') return await window.MovieSourceAdmin.render(this);
-      if(page === 'movie-series') return await window.MovieClassroom.renderSeries(this, a);
+      if(page === 'movie-series') return await window.MovieClassroom.renderSeries(this, a, b);
       if(page === 'movie') return await window.MovieClassroom.renderWatch(this, a);
       if(page === 'reading'||page === 'magazines') {
         if(a === 'admin') return await window.BookAdmin.render(this);
