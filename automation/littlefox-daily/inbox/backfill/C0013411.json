@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 2,
+  "date": "2026-11-20",
+  "sourceReleaseDate": "2026-11-18",
+  "hintPath": "automation/littlefox-daily/cid-hints/C0013411.json",
+  "contentId": "C0013411",
+  "status": "blocked",
+  "workflowRunId": "44741630715",
+  "privateArtifactName": "littlefox-source-44741630715",
+  "privateArtifactUploaded": true,
+  "items": [
+    {
+      "seriesId": "three-kingdoms",
+      "episodeNumber": 15,
+      "contentId": "C0013411",
+      "title": "The Journey to Luoyang",
+      "level": 5,
+      "releaseDate": "2026-11-18",
+      "contentIdVerified": true,
+      "sourceArtifact": false,
+      "status": "blocked",
+      "error": "R2 GET data/three-kingdoms/episodes.json: HTTP 401"
+    }
+  ],
+  "errors": [
+    "R2 GET data/three-kingdoms/episodes.json: HTTP 401"
+  ],
+  "privateArtifactId": "14631500934",
+  "sourceReadyCount": 0
+}
