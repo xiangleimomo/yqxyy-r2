@@ -5,8 +5,8 @@
   "hintPath": "automation/littlefox-daily/cid-hints/C0013411.json",
   "contentId": "C0013411",
   "status": "blocked",
-  "workflowRunId": "44741630715",
-  "privateArtifactName": "littlefox-source-44741630715",
+  "workflowRunId": "44741778654",
+  "privateArtifactName": "littlefox-source-44741778654",
   "privateArtifactUploaded": true,
   "items": [
     {
@@ -17,14 +17,21 @@
       "level": 5,
       "releaseDate": "2026-11-18",
       "contentIdVerified": true,
-      "sourceArtifact": false,
-      "status": "blocked",
-      "error": "R2 GET data/three-kingdoms/episodes.json: HTTP 401"
+      "sourceArtifact": true,
+      "status": "ready_for_chatgpt",
+      "videoStatus": "verified",
+      "captionCueCount": 60,
+      "paragraphCount": 35,
+      "storybookHeadStatus": 200,
+      "r2Status": "unverified",
+      "publicationBlockedByR2Check": true,
+      "r2Error": "R2 GET data/three-kingdoms/episodes.json: HTTP 401"
     }
   ],
   "errors": [
-    "R2 GET data/three-kingdoms/episodes.json: HTTP 401"
+    "R2 duplicate verification unavailable: R2 GET data/three-kingdoms/episodes.json: HTTP 401"
   ],
-  "privateArtifactId": "14631500934",
-  "sourceReadyCount": 0
+  "blockStage": "r2_duplicate_check",
+  "privateArtifactId": "14631012094",
+  "sourceReadyCount": 1
 }
