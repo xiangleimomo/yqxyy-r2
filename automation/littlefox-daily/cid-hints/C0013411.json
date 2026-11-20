@@ -30,5 +30,12 @@
     "R2 contains no already-published duplicate",
     "Generate V2 curriculum and independently approve 5 questions before outbox"
   ],
-  "instruction": "Discovery hint only, not a published course, not verified material. Never treat this file as an approved outbox or as a trigger to publish."
+  "instruction": "Discovery hint only, not a published course, not verified material. Never treat this file as an approved outbox or as a trigger to publish.",
+  "verificationRequest": {
+    "workflow": "littlefox-verify-cid-hint.yml",
+    "stage": "request_targeted_source_verification",
+    "mode": "read_only_no_publish",
+    "requestedAt": "2026-11-20",
+    "note": "Verify against official FS0182 series catalog and original English text, save actual sources to private Actions artifact; do not auto-publish."
+  }
 }
