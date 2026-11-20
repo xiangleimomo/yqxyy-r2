@@ -64,27 +64,7 @@ try{
     contentIdVerified:true,sourceArtifact:false,status:'checking'
   };
   report.items.push(item);
-  const store=await makeR2(process.env,fetch);
-  const currentRaw=await store.get('data/'+hint.seriesId+'/episodes.json');
-  if(currentRaw===null)throw Error('R2 episode index missing, duplicate check unavailable');
-  const episodes=JSON.parse(currentRaw);
-  if(!Array.isArray(episodes))throw Error('R2 episode index not an array');
-  const targetMatches=episodes.filter(e=>Number(e.episodeId)===hint.episodeNumber ||
-    e.sourceContentId===id||e.storyBook?.contentId===id);
-  if(targetMatches.length){
-    const exact=targetMatches.length===1&&
-      Number(targetMatches[0].episodeId)===hint.episodeNumber&&
-      (targetMatches[0].sourceContentId||targetMatches[0].storyBook?.contentId)===id;
-    if(!exact)throw Error('R2 episode/C-ID conflict, manual review required');
-    item.status='already_published';
-    report.status='checked';
-  }else{
-    const highest=Math.max(0,...episodes.map(e=>Number(e.episodeId)||0));
-    if(hint.episodeNumber>highest+1){
-      item.publicationBlockedBySequenceGap=true;
-      item.r2LatestEpisodeNumber=highest;
-      item.missingEpisodeNumbers=Array.from({length:hint.episodeNumber-highest-1},(_,i)=>highest+i+1);
-    }
+  // Official material collection must not depend on R2 access.
     const textOriginal=ORIGINAL_TEXT(id);
     const caption='https://cdn.littlefox.com/contents/caption/'+id+'.xml';
     const storybook='https://res.littlefox.com/en/supplement/load_pdf/'+id;
@@ -133,8 +113,55 @@ try{
       },
       status:'ready_for_chatgpt'
     });
-    report.status='checked';
-  }
+    // R2 is read only and checked after real official sources are secured.
+    // An R2 permission failure blocks publication, but not editorial handoff.
+    try{
+      const store=await makeR2(process.env,fetch);
+      const currentRaw=await store.get('data/'+hint.seriesId+'/episodes.json');
+      if(currentRaw===null)throw Error('R2 episode index missing');
+      const episodes=JSON.parse(currentRaw);
+      if(!Array.isArray(episodes))throw Error('R2 episode index not an array');
+      const matches=episodes.filter(e=>Number(e.episodeId)===hint.episodeNumber||
+        e.sourceContentId===id||e.storyBook?.contentId===id);
+      if(matches.length){
+        const exact=matches.length===1&&
+          Number(matches[0].episodeId)===hint.episodeNumber&&
+          (matches[0].sourceContentId||matches[0].storyBook?.contentId)===id;
+        if(!exact){
+          item.r2Status='conflict';
+          item.status='blocked';
+          item.sourceArtifact=false;
+          sources.items.length=0;
+          report.status='blocked';
+          report.errors.push('R2 episode/C-ID conflict; no course approval or publishing');
+        }else{
+          item.r2Status='already_published';
+          item.status='already_published';
+          item.sourceArtifact=false;
+          sources.items.length=0;
+          report.status='checked';
+        }
+      }else{
+        const highest=Math.max(0,...episodes.map(e=>Number(e.episodeId)||0));
+        item.r2Status='not_published';
+        if(hint.episodeNumber>highest+1){
+          item.publicationBlockedBySequenceGap=true;
+          item.r2LatestEpisodeNumber=highest;
+          item.missingEpisodeNumbers=Array.from({length:hint.episodeNumber-highest-1},(_,i)=>highest+i+1);
+          sources.items[0].publicationBlockedBySequenceGap=true;
+          sources.items[0].missingEpisodeNumbers=item.missingEpisodeNumbers;
+        }
+        report.status='checked';
+      }
+    }catch(e){
+      item.r2Status='unverified';
+      item.publicationBlockedByR2Check=true;
+      item.r2Error=String(e.message||e).slice(0,250);
+      sources.items[0].publicationBlockedByR2Check=true;
+      report.status='blocked';
+      report.blockStage='r2_duplicate_check';
+      report.errors.push('R2 duplicate verification unavailable: '+item.r2Error);
+    }
 }catch(e){
   report.status='blocked';
   report.errors.push(String(e.message||e).slice(0,800));
