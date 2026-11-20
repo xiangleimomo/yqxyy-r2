@@ -1,0 +1,113 @@
+name: Little Fox V2 Verify One C-ID Hint
+# Only a targeted evidence collection. No AI, R2 writes, or site deployments.
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'automation/littlefox-daily/cid-hints/C*.json'
+permissions:
+  contents: write
+concurrency:
+  group: littlefox-cid-hint-verification
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Identify exactly one changed candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t hints < <(git diff-tree --no-commit-id --name-only -r HEAD | grep -E '^automation/littlefox-daily/cid-hints/C[0-9]{7}[.]json$' || true)
+          if [ "${#hints[@]}" -ne 1 ]; then
+            echo "Expected exactly one changed hint, got ${#hints[@]}"
+            exit 1
+          fi
+          echo "LF_HINT_FILE=${hints[0]}" >> "$GITHUB_ENV"
+      - name: Install dependencies
+        run: npm ci --omit=dev
+      - name: Validate targeted verifier syntax
+        run: node --check automation/littlefox-daily/verify-cid-hint.mjs
+      - name: Verify official CID, English Text, subtitles, storybook and R2 state
+        id: verify
+        continue-on-error: true
+        env:
+          R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+        run: node automation/littlefox-daily/verify-cid-hint.mjs
+      - name: Upload private original-source package for ChatGPT
+        id: source_artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: littlefox-source-${{ github.run_id }}
+          path: /tmp/littlefox-source-*.json
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Save metadata-only result even on verification failure
+        if: always()
+        shell: bash
+        env:
+          ARTIFACT_ID: ${{ steps.source_artifact.outputs.artifact-id }}
+        run: |
+          set -euo pipefail
+          if [ -z "${LF_HINT_FILE:-}" ]; then
+            echo "No hint file selected; cannot write a safe report."
+            exit 1
+          fi
+          node <<'NODE'
+          const fs=require('node:fs');
+          const p=require('node:path');
+          const f=p.join('automation/littlefox-daily/inbox/backfill',p.basename(process.env.LF_HINT_FILE));
+          let data;
+          if(fs.existsSync(f))data=JSON.parse(fs.readFileSync(f,'utf8'));
+          else data={
+            schemaVersion:2,status:'blocked',workflowRunId:process.env.GITHUB_RUN_ID,
+            contentId:p.basename(process.env.LF_HINT_FILE,'.json'),
+            items:[],errors:['Collector failed before it could create a verification report']
+          };
+          data.privateArtifactName='littlefox-source-'+process.env.GITHUB_RUN_ID;
+          data.privateArtifactId=process.env.ARTIFACT_ID||null;
+          data.privateArtifactUploaded=Boolean(process.env.ARTIFACT_ID);
+          data.sourceReadyCount=data.items.filter(x=>x.status==='ready_for_chatgpt'&&x.sourceArtifact===true).length;
+          fs.mkdirSync(p.dirname(f),{recursive:true});
+          fs.writeFileSync(f,JSON.stringify(data,null,2)+'\n');
+          console.log(JSON.stringify({report:f,status:data.status,artifactUploaded:data.privateArtifactUploaded,sourceReadyCount:data.sourceReadyCount,errors:data.errors}));
+          NODE
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add automation/littlefox-daily/inbox/backfill/
+          if ! git diff --cached --quiet; then
+            git commit -m "data(littlefox): record targeted official source verification"
+            pushed=false
+            for attempt in 1 2 3; do
+              git fetch origin main
+              if ! git rebase origin/main; then
+                git rebase --abort || true
+                exit 1
+              fi
+              if git push origin HEAD:main; then
+                pushed=true
+                break
+              fi
+              if [ "$attempt" -lt 3 ]; then sleep 10; fi
+            done
+            if [ "$pushed" != "true" ]; then
+              echo "Metadata report could not be committed."
+              exit 1
+            fi
+          fi
+      - name: Fail visibly if verification was blocked
+        if: always() && steps.verify.outcome == 'failure'
+        run: exit 1
