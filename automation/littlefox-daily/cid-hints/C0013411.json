@@ -36,6 +36,8 @@
     "stage": "request_targeted_source_verification",
     "mode": "read_only_no_publish",
     "requestedAt": "2026-11-20",
-    "note": "Verify against official FS0182 series catalog and original English text, save actual sources to private Actions artifact; do not auto-publish."
+    "note": "Verify against official FS0182 series catalog and original English text, save actual sources to private Actions artifact; do not auto-publish.",
+    "attempt": 2,
+    "reason": "Retry with official-source-first collection; prior R2 HTTP 401 must not suppress private English Text and caption evidence"
   }
 }
