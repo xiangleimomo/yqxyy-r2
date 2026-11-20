@@ -1,0 +1,535 @@
+{
+  "schemaVersion": 1,
+  "status": "draft_pending_r2_preflight",
+  "reviewStatus": "editorially_approved_pending_r2_verification",
+  "publicationAuthorized": false,
+  "seriesId": "three-kingdoms",
+  "episodeNumber": 15,
+  "contentId": "C0013411",
+  "title": "The Journey to Luoyang",
+  "level": 5,
+  "releaseDate": "2026-11-18",
+  "calendarEpisodeNumber": 15,
+  "officialSourceUrls": {
+    "textOriginal": "https://cn.littlefox.com/cn/supplement/org/C0013411",
+    "caption": "https://cdn.littlefox.com/contents/caption/C0013411.xml",
+    "storybook": "https://res.littlefox.com/en/supplement/load_pdf/C0013411"
+  },
+  "sourceVerification": {
+    "englishText": true,
+    "storybook": true,
+    "storybookMethod": "HEAD HTTP 200 (PDF content not extracted)",
+    "subtitleXml": true,
+    "episodeTitleMatched": true,
+    "officialCatalogContentIdVerified": true,
+    "workflowRunId": "44741778654",
+    "sourceArtifactName": "littlefox-source-44741778654",
+    "r2DuplicateCheck": false,
+    "r2DuplicateCheckError": "R2 GET data/three-kingdoms/episodes.json: HTTP 401"
+  },
+  "captionMetadata": {
+    "cueCount": 60,
+    "firstCueStart": 0.054,
+    "lastCueEnd": 341.93
+  },
+  "lesson": {
+    "themeZh": "勇气与合作、胜利后的反转，以及战争对百姓和都城的破坏",
+    "learningObjectivesZh": [
+      "按顺序复述关羽与华雄交战、联军在虎牢关遭遇吕布、三兄弟联手战斗的经过",
+      "理解吕布由强势到撤退的转折及三兄弟合作的作用",
+      "结合老妇人的话解释洛阳被焚及皇帝被带走的结局"
+    ],
+    "sections": [
+      {
+        "id": "s1",
+        "title": "Guan Yu's Swift Victory",
+        "titleZh": "关羽速斩华雄",
+        "paragraphIds": [
+          "p1",
+          "p2",
+          "p3",
+          "p4",
+          "p5",
+          "p6",
+          "p7",
+          "p8",
+          "p9"
+        ],
+        "startSeconds": 0.054,
+        "endSeconds": 89.92,
+        "summaryZh": "关羽向华雄挑战，躲开长矛并将其斩断。刘备在帐中担心关羽安危；关羽获胜归来，华雄部下撤退，他端起仍然温热的酒杯，曹操称赞他的勇武。",
+        "focus": [
+          "单挑经过",
+          "人物反应",
+          "时间细节"
+        ]
+      },
+      {
+        "id": "s2",
+        "title": "A Dangerous Challenge at Hulao Pass",
+        "titleZh": "虎牢关遭遇吕布",
+        "paragraphIds": [
+          "p10",
+          "p11",
+          "p12",
+          "p13",
+          "p14",
+          "p15",
+          "p16",
+          "p17",
+          "p18",
+          "p19"
+        ],
+        "startSeconds": 89.92,
+        "endSeconds": 194.53,
+        "summaryZh": "十八路联军向洛阳推进，却在虎牢关被董卓率领的大军阻挡。吕布骑着赤兔马出现，其他将领最初不敢上前，随后数名出战的将领接连被吕布击倒。",
+        "focus": [
+          "地点转换",
+          "人物登场",
+          "实力对比"
+        ]
+      },
+      {
+        "id": "s3",
+        "title": "The Three Brothers Fight Together",
+        "titleZh": "三兄弟联手迎战",
+        "paragraphIds": [
+          "p20",
+          "p21",
+          "p22",
+          "p23",
+          "p24",
+          "p25",
+          "p26",
+          "p27",
+          "p28",
+          "p29"
+        ],
+        "startSeconds": 194.53,
+        "endSeconds": 274.92,
+        "summaryZh": "张飞先与吕布交战，关羽随后加入，刘备也赶来援助。三兄弟合力围攻，吕布渐渐气喘疲惫，最终下令撤退。董卓的军队随之退回洛阳，联军欢呼获胜。",
+        "focus": [
+          "合作与转折",
+          "动作顺序",
+          "战斗结果"
+        ]
+      },
+      {
+        "id": "s4",
+        "title": "The Ruins of Luoyang",
+        "titleZh": "被焚毁的洛阳",
+        "paragraphIds": [
+          "p30",
+          "p31",
+          "p32",
+          "p33",
+          "p34",
+          "p35"
+        ],
+        "startSeconds": 274.92,
+        "endSeconds": 341.93,
+        "summaryZh": "联军继续前进，途中刘备看见远处洛阳方向燃起大火。次日到达时，众人发现都城已化为废墟。一位老妇人告诉张飞，董卓焚毁城市，带走幸存者和皇帝。",
+        "focus": [
+          "线索与发现",
+          "结局反转",
+          "信息来源"
+        ]
+      }
+    ]
+  },
+  "sections": [
+    {
+      "id": "s1",
+      "title": "Guan Yu's Swift Victory",
+      "titleZh": "关羽速斩华雄",
+      "paragraphIds": [
+        "p1",
+        "p2",
+        "p3",
+        "p4",
+        "p5",
+        "p6",
+        "p7",
+        "p8",
+        "p9"
+      ],
+      "startSeconds": 0.054,
+      "endSeconds": 89.92,
+      "summaryZh": "关羽向华雄挑战，躲开长矛并将其斩断。刘备在帐中担心关羽安危；关羽获胜归来，华雄部下撤退，他端起仍然温热的酒杯，曹操称赞他的勇武。",
+      "focus": [
+        "单挑经过",
+        "人物反应",
+        "时间细节"
+      ]
+    },
+    {
+      "id": "s2",
+      "title": "A Dangerous Challenge at Hulao Pass",
+      "titleZh": "虎牢关遭遇吕布",
+      "paragraphIds": [
+        "p10",
+        "p11",
+        "p12",
+        "p13",
+        "p14",
+        "p15",
+        "p16",
+        "p17",
+        "p18",
+        "p19"
+      ],
+      "startSeconds": 89.92,
+      "endSeconds": 194.53,
+      "summaryZh": "十八路联军向洛阳推进，却在虎牢关被董卓率领的大军阻挡。吕布骑着赤兔马出现，其他将领最初不敢上前，随后数名出战的将领接连被吕布击倒。",
+      "focus": [
+        "地点转换",
+        "人物登场",
+        "实力对比"
+      ]
+    },
+    {
+      "id": "s3",
+      "title": "The Three Brothers Fight Together",
+      "titleZh": "三兄弟联手迎战",
+      "paragraphIds": [
+        "p20",
+        "p21",
+        "p22",
+        "p23",
+        "p24",
+        "p25",
+        "p26",
+        "p27",
+        "p28",
+        "p29"
+      ],
+      "startSeconds": 194.53,
+      "endSeconds": 274.92,
+      "summaryZh": "张飞先与吕布交战，关羽随后加入，刘备也赶来援助。三兄弟合力围攻，吕布渐渐气喘疲惫，最终下令撤退。董卓的军队随之退回洛阳，联军欢呼获胜。",
+      "focus": [
+        "合作与转折",
+        "动作顺序",
+        "战斗结果"
+      ]
+    },
+    {
+      "id": "s4",
+      "title": "The Ruins of Luoyang",
+      "titleZh": "被焚毁的洛阳",
+      "paragraphIds": [
+        "p30",
+        "p31",
+        "p32",
+        "p33",
+        "p34",
+        "p35"
+      ],
+      "startSeconds": 274.92,
+      "endSeconds": 341.93,
+      "summaryZh": "联军继续前进，途中刘备看见远处洛阳方向燃起大火。次日到达时，众人发现都城已化为废墟。一位老妇人告诉张飞，董卓焚毁城市，带走幸存者和皇帝。",
+      "focus": [
+        "线索与发现",
+        "结局反转",
+        "信息来源"
+      ]
+    }
+  ],
+  "vocabulary": [
+    {
+      "word": "challenge",
+      "meaningZh": "挑战；要求较量",
+      "example": "Guan Yu was ready to challenge Hua Xiong.",
+      "exampleZh": "关羽准备向华雄挑战。",
+      "paragraphIds": [
+        "p2"
+      ],
+      "sourceContentId": "C0013411"
+    },
+    {
+      "word": "retreating",
+      "meaningZh": "正在撤退",
+      "example": "Hua Xiong's soldiers were retreating after the fight.",
+      "exampleZh": "战斗结束后，华雄的士兵正在撤退。",
+      "paragraphIds": [
+        "p7"
+      ],
+      "sourceContentId": "C0013411"
+    },
+    {
+      "word": "hopeful",
+      "meaningZh": "充满希望的",
+      "example": "The armies felt hopeful as they marched toward Luoyang.",
+      "exampleZh": "联军向洛阳进发时充满希望。",
+      "paragraphIds": [
+        "p10"
+      ],
+      "sourceContentId": "C0013411"
+    },
+    {
+      "word": "blocked",
+      "meaningZh": "阻挡；拦住（过去式）",
+      "example": "Dong Zhuo's army blocked the road at Hulao Pass.",
+      "exampleZh": "董卓的大军在虎牢关阻挡了去路。",
+      "paragraphIds": [
+        "p10"
+      ],
+      "sourceContentId": "C0013411"
+    },
+    {
+      "word": "neighing",
+      "meaningZh": "马嘶声",
+      "example": "Liu Bei heard neighing before Lu Bu appeared.",
+      "exampleZh": "吕布出现前，刘备听到了马嘶声。",
+      "paragraphIds": [
+        "p13"
+      ],
+      "sourceContentId": "C0013411"
+    },
+    {
+      "word": "circled",
+      "meaningZh": "围绕；包围（过去式）",
+      "example": "The three brothers circled Lu Bu during the battle.",
+      "exampleZh": "战斗中三兄弟围住了吕布。",
+      "paragraphIds": [
+        "p23"
+      ],
+      "sourceContentId": "C0013411"
+    },
+    {
+      "word": "fending off",
+      "meaningZh": "抵挡；招架",
+      "example": "Lu Bu kept fending off the brothers' weapons.",
+      "exampleZh": "吕布不断招架三兄弟的兵器。",
+      "paragraphIds": [
+        "p24"
+      ],
+      "sourceContentId": "C0013411"
+    },
+    {
+      "word": "retreat",
+      "meaningZh": "撤退",
+      "example": "Lu Bu ordered his soldiers to retreat.",
+      "exampleZh": "吕布命令士兵撤退。",
+      "paragraphIds": [
+        "p27"
+      ],
+      "sourceContentId": "C0013411"
+    },
+    {
+      "word": "blazing",
+      "meaningZh": "熊熊燃烧的",
+      "example": "Liu Bei noticed fires blazing in the distance.",
+      "exampleZh": "刘备注意到远处熊熊燃烧的大火。",
+      "paragraphIds": [
+        "p31"
+      ],
+      "sourceContentId": "C0013411"
+    },
+    {
+      "word": "rubble",
+      "meaningZh": "瓦砾；废墟",
+      "example": "Luoyang was reduced to smoking rubble.",
+      "exampleZh": "洛阳化成了一片冒烟的废墟。",
+      "paragraphIds": [
+        "p32"
+      ],
+      "sourceContentId": "C0013411"
+    },
+    {
+      "word": "survivors",
+      "meaningZh": "幸存者",
+      "example": "The woman said Dong Zhuo took away the survivors.",
+      "exampleZh": "老妇人说董卓带走了幸存者。",
+      "paragraphIds": [
+        "p35"
+      ],
+      "sourceContentId": "C0013411"
+    },
+    {
+      "word": "emperor",
+      "meaningZh": "皇帝",
+      "example": "The emperor had been taken from the city.",
+      "exampleZh": "皇帝已被带离这座城。",
+      "paragraphIds": [
+        "p35"
+      ],
+      "sourceContentId": "C0013411"
+    }
+  ],
+  "quiz": {
+    "episodeId": 15,
+    "title": "The Journey to Luoyang Quiz",
+    "styleReference": "yqxyy-v2-story-comprehension",
+    "revision": "2026-11-20",
+    "questions": [
+      {
+        "id": "q1",
+        "type": "single-choice",
+        "category": "reading",
+        "question": "How did Guan Yu respond when Hua Xiong attacked him with a spear?",
+        "options": [
+          {
+            "key": "A",
+            "text": "He asked Liu Bei to fight in his place."
+          },
+          {
+            "key": "B",
+            "text": "He dodged the spear and sliced it with his blade."
+          },
+          {
+            "key": "C",
+            "text": "He hid behind the soldiers until Hua Xiong left."
+          },
+          {
+            "key": "D",
+            "text": "He threw his own weapon away and ran."
+          }
+        ],
+        "answer": "B",
+        "explanation": "第4段明确写到华雄用长矛刺来时，关羽先躲开攻击，再用自己的兵器将长矛斩断；其他三项均未发生。",
+        "evidence": {
+          "paragraphIds": [
+            "p4"
+          ],
+          "sourceContentId": "C0013411"
+        }
+      },
+      {
+        "id": "q2",
+        "type": "single-choice",
+        "category": "reading",
+        "question": "What stopped the 18 armies as they approached Luoyang?",
+        "options": [
+          {
+            "key": "A",
+            "text": "A river that had flooded the road."
+          },
+          {
+            "key": "B",
+            "text": "A broken bridge with no way across."
+          },
+          {
+            "key": "C",
+            "text": "A huge army led by Dong Zhuo at Hulao Pass."
+          },
+          {
+            "key": "D",
+            "text": "A storm that forced them to return home."
+          }
+        ],
+        "answer": "C",
+        "explanation": "联军抵达虎牢关时，前方出现由董卓率领的大军，挡住通往洛阳的道路，而不是河水、断桥或暴风雨。",
+        "evidence": {
+          "paragraphIds": [
+            "p10"
+          ],
+          "sourceContentId": "C0013411"
+        }
+      },
+      {
+        "id": "q3",
+        "type": "single-choice",
+        "category": "reading",
+        "question": "What happened to the generals who fought Lu Bu before Zhang Fei joined the battle?",
+        "options": [
+          {
+            "key": "A",
+            "text": "Lu Bu knocked them down one after another."
+          },
+          {
+            "key": "B",
+            "text": "They persuaded Lu Bu to surrender."
+          },
+          {
+            "key": "C",
+            "text": "They defeated Lu Bu and took his horse."
+          },
+          {
+            "key": "D",
+            "text": "They refused to leave their tents."
+          }
+        ],
+        "answer": "A",
+        "explanation": "第17至19段先写将领们犹豫，之后有人出战，但吕布击倒了第一名将领，也击倒了后来上前挑战的人；投降、夺马和始终不出帐均不符。",
+        "evidence": {
+          "paragraphIds": [
+            "p17",
+            "p18",
+            "p19"
+          ],
+          "sourceContentId": "C0013411"
+        }
+      },
+      {
+        "id": "q4",
+        "type": "single-choice",
+        "category": "reading",
+        "question": "Why did Lu Bu finally retreat from the battle?",
+        "options": [
+          {
+            "key": "A",
+            "text": "Dong Zhuo ordered him to guard the capital before the fighting began."
+          },
+          {
+            "key": "B",
+            "text": "His horse ran away without him."
+          },
+          {
+            "key": "C",
+            "text": "The 18 armies had already reached Luoyang."
+          },
+          {
+            "key": "D",
+            "text": "He grew tired while fighting Zhang Fei, Guan Yu, and Liu Bei together."
+          }
+        ],
+        "answer": "D",
+        "explanation": "张飞、关羽、刘备依次加入战斗，三人合力围攻。第24至27段写吕布气喘、张飞指出他累了，三兄弟再度进攻后吕布才转身撤退。",
+        "evidence": {
+          "paragraphIds": [
+            "p22",
+            "p23",
+            "p24",
+            "p25",
+            "p26",
+            "p27"
+          ],
+          "sourceContentId": "C0013411"
+        }
+      },
+      {
+        "id": "q5",
+        "type": "single-choice",
+        "category": "reading",
+        "question": "What did the old woman say had happened in Luoyang?",
+        "options": [
+          {
+            "key": "A",
+            "text": "The emperor had won the battle and welcomed the armies."
+          },
+          {
+            "key": "B",
+            "text": "A fire had started accidentally, but everyone stayed safe."
+          },
+          {
+            "key": "C",
+            "text": "Dong Zhuo had burned the city and taken the survivors and emperor away."
+          },
+          {
+            "key": "D",
+            "text": "Lu Bu had rebuilt the city after the fighting."
+          }
+        ],
+        "answer": "C",
+        "explanation": "第35段中老妇人明确说明董卓放火烧城，把幸存者带走，甚至把皇帝也带走；其余选项与她的叙述不符。",
+        "evidence": {
+          "paragraphIds": [
+            "p35"
+          ],
+          "sourceContentId": "C0013411"
+        }
+      }
+    ]
+  },
+  "reviewNotes": "依据 Little Fox 官方系列目录及 GitHub Actions Run 44741778654 的私有素材编制：英文Text共35段、字幕60条（带时间轴）、Storybook HEAD 200，播放器标题与C0013411相符，M3U8已验证。4段教学结构完整覆盖p1–p35，12个词汇均直接定位于本集原文。5道原创英文四选一剧情题的证据分别定位p4、p10、p17–p19、p22–p27、p35，覆盖开端、发展、战斗转折和结尾；每题核查唯一答案、具体中文解析及剧情真实性，不混入原著其他章节。未提交官方英文全文、字幕全文或长篇原文引述。当前GitHub读取R2索引返回HTTP 401，无法确认是否已有第15集，因此本文件仅为不触发发布的待审稿，禁止将状态改为ready_for_publish直至R2去重成功。"
+}
