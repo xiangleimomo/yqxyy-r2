@@ -3,8 +3,56 @@
   "seriesId": "three-kingdoms",
   "episodeNumber": 15,
   "requestedPublish": true,
-  "checkedAt": "2026-11-24T08:43:06.470Z",
-  "status": "blocked",
-  "stages": [],
-  "error": "R2 GET data/three-kingdoms/episodes.json: HTTP 401"
+  "checkedAt": "2026-11-24T08:59:49.226Z",
+  "status": "published_verified",
+  "stages": [
+    {
+      "name": "r2_real_state_checked",
+      "episodeIndexExists": true,
+      "existingEpisodes": 14,
+      "latestEpisode": {
+        "episodeId": 14,
+        "title": "Eighteen Armies",
+        "contentId": "C0013410"
+      },
+      "targetExists": false,
+      "matchingEntries": []
+    },
+    {
+      "name": "target_mode",
+      "mode": "new_publish",
+      "previousEntry": false
+    },
+    {
+      "name": "r2_current_index_checked",
+      "existingEpisodes": 14
+    },
+    {
+      "name": "official_video_verified",
+      "host": "cdn.littlefox.com"
+    },
+    {
+      "name": "official_text_xml_pdf_verified",
+      "paragraphs": 35,
+      "cues": 60,
+      "storybookStatus": 200
+    },
+    {
+      "name": "v2_curriculum_and_quiz_checked",
+      "words": 10,
+      "questions": 5,
+      "sections": 5
+    },
+    {
+      "name": "r2_patch_prepared",
+      "files": 8
+    },
+    {
+      "name": "backups_written"
+    },
+    {
+      "name": "r2_written_and_readback",
+      "objects": 8
+    }
+  ]
 }
