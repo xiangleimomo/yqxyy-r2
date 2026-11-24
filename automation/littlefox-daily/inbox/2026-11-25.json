@@ -2,8 +2,8 @@
   "schemaVersion": 2,
   "date": "2026-11-25",
   "status": "checked",
-  "workflowRunId": "45464015344",
-  "privateArtifactName": "littlefox-source-45464015344",
+  "workflowRunId": "45465038930",
+  "privateArtifactName": "littlefox-source-45465038930",
   "items": [
     {
       "seriesId": "three-kingdoms",
@@ -16,7 +16,7 @@
     }
   ],
   "errors": [],
-  "privateArtifactId": "14955260652",
+  "privateArtifactId": "14953492817",
   "privateArtifactUploaded": true,
   "sourceReadyCount": 0,
   "retryableItemCount": 1
