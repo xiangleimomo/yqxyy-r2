@@ -1,0 +1,10 @@
+{
+  "contentId": "C0013411",
+  "seriesId": "three-kingdoms",
+  "episodeNumber": 15,
+  "requestedPublish": true,
+  "checkedAt": "2026-11-24T08:43:06.470Z",
+  "status": "blocked",
+  "stages": [],
+  "error": "R2 GET data/three-kingdoms/episodes.json: HTTP 401"
+}
