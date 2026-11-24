@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "date": "2026-11-25",
+  "status": "checked",
+  "workflowRunId": "45463212471",
+  "privateArtifactName": "littlefox-source-45463212471",
+  "items": [
+    {
+      "seriesId": "three-kingdoms",
+      "calendarEpisodeNumber": 16,
+      "calendarKeyword": "Romance of the Three Kingdoms16: A New Capital",
+      "title": "A New Capital",
+      "level": 5,
+      "status": "blocked",
+      "error": "Title not found in official series catalog; absolute episode number unverified"
+    }
+  ],
+  "errors": [],
+  "privateArtifactId": "14952519531",
+  "privateArtifactUploaded": true,
+  "sourceReadyCount": 0,
+  "retryableItemCount": 1
+}
