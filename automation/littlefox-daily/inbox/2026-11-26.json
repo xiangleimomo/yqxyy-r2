@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "date": "2026-11-26",
+  "status": "checked",
+  "workflowRunId": "45669526365",
+  "privateArtifactName": "littlefox-source-45669526365",
+  "items": [
+    {
+      "seriesId": "little-fox-red-magic-fs0059",
+      "calendarEpisodeNumber": 16,
+      "calendarKeyword": "Red Magic, The New Heroes 16: Beastly World",
+      "title": "Beastly World",
+      "level": 7,
+      "status": "blocked",
+      "error": "Title not found in official series catalog; absolute episode number unverified"
+    }
+  ],
+  "errors": [],
+  "privateArtifactId": "15049795015",
+  "privateArtifactUploaded": true,
+  "sourceReadyCount": 0,
+  "retryableItemCount": 1
+}
