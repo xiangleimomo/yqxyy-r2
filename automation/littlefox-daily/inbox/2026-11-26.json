@@ -2,8 +2,8 @@
   "schemaVersion": 2,
   "date": "2026-11-26",
   "status": "checked",
-  "workflowRunId": "45669946860",
-  "privateArtifactName": "littlefox-source-45669946860",
+  "workflowRunId": "45670867756",
+  "privateArtifactName": "littlefox-source-45670867756",
   "items": [
     {
       "seriesId": "little-fox-red-magic-fs0059",
@@ -16,7 +16,7 @@
     }
   ],
   "errors": [],
-  "privateArtifactId": "15048223878",
+  "privateArtifactId": "15048693565",
   "privateArtifactUploaded": true,
   "sourceReadyCount": 0,
   "retryableItemCount": 1
