@@ -1,8 +1,9 @@
 {
   "mode": "reviewed_littlefox_v2",
-  "contentId": "C0013574",
-  "publish": false,
+  "contentId": "C0013412",
+  "publish": true,
   "forceRepublish": false,
   "repairVideo": false,
-  "reason": "No pending manual publication request. Historical Red Magic episode 214 was already published_verified in run 43203023392; keep the request file non-publishing after completion."
+  "repairStorybookIndex": true,
+  "reason": "Repair only the verified Little Fox episode 16 Storybook index entry after published_verified; require official PDF header, R2 backup and readback; do not republish the lesson or deploy site."
 }
