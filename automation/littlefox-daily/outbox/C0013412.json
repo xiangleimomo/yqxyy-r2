@@ -1,0 +1,530 @@
+{
+  "schemaVersion": 1,
+  "status": "ready_for_publish",
+  "reviewStatus": "approved",
+  "seriesId": "three-kingdoms",
+  "episodeNumber": 16,
+  "contentId": "C0013412",
+  "title": "A New Capital",
+  "level": 5,
+  "releaseDate": "2026-11-25",
+  "officialSourceUrls": {
+    "textOriginal": "https://cn.littlefox.com/cn/supplement/org/C0013412",
+    "caption": "https://cdn.littlefox.com/contents/caption/C0013412.xml",
+    "storybook": "https://res.littlefox.com/en/supplement/load_pdf/C0013412"
+  },
+  "sourceVerification": {
+    "englishText": true,
+    "storybook": true,
+    "storybookMethod": "HEAD HTTP 200",
+    "subtitleXml": true,
+    "episodeTitleMatched": true,
+    "officialCatalogMatched": true,
+    "workflowRunId": "45743028359",
+    "sourceArtifactName": "littlefox-source-45743028359",
+    "catalogEpisodeNumber": 16,
+    "catalogContentId": "C0013412",
+    "videoStatus": "verified",
+    "r2DuplicateCheck": "not_published"
+  },
+  "captionMetadata": {
+    "cueCount": 57,
+    "firstCueStart": 0.179,
+    "lastCueEnd": 328.922
+  },
+  "lesson": {
+    "themeZh": "诸侯分裂、权力与百姓苦难",
+    "learningObjectivesZh": [
+      "解释十八路诸侯为何停止追击董卓",
+      "叙述董卓如何重建长安并展示其残暴",
+      "分析王允的处境和貂蝉的结尾计划"
+    ],
+    "sections": [
+      {
+        "id": "s1",
+        "title": "The Alliance Falls Apart",
+        "titleZh": "诸侯联盟解散",
+        "paragraphIds": [
+          "p1",
+          "p2",
+          "p3",
+          "p4",
+          "p5",
+          "p6",
+          "p7",
+          "p8",
+          "p9"
+        ],
+        "startSeconds": 0.179,
+        "endSeconds": 92.897,
+        "summaryZh": "刘备看到洛阳的废墟，呼吁十八路诸侯继续追击董卓。然而孙坚、袁绍等人各有顾虑，军队陆续撤走；曹操决定独自出兵，刘备认为兵力仍不足。",
+        "focus": [
+          "motivation",
+          "cause and effect"
+        ]
+      },
+      {
+        "id": "s2",
+        "title": "The Oath Brothers Return Home",
+        "titleZh": "结义兄弟重返平原",
+        "paragraphIds": [
+          "p10",
+          "p11",
+          "p12",
+          "p13",
+          "p14",
+          "p15",
+          "p16"
+        ],
+        "startSeconds": 92.898,
+        "endSeconds": 145.999,
+        "summaryZh": "刘备、关羽和张飞谈论战争给普通百姓带来的苦难，批评诸侯只关心权力。由于兵力不足，他们第二天带兵返回平原县。",
+        "focus": [
+          "character perspective",
+          "sequence"
+        ]
+      },
+      {
+        "id": "s3",
+        "title": "Dong Zhuo's New Capital",
+        "titleZh": "董卓营建长安新都",
+        "paragraphIds": [
+          "p17",
+          "p18"
+        ],
+        "startSeconds": 146,
+        "endSeconds": 192.041,
+        "summaryZh": "董卓击败曹操后迁都长安。他用从洛阳富户掠夺的财富重建城市，并为自己建造兼具宫殿和堡垒功能的眉坞宫。",
+        "focus": [
+          "historical setting within story",
+          "cause and effect"
+        ]
+      },
+      {
+        "id": "s4",
+        "title": "Cruelty at Meiwo Palace",
+        "titleZh": "眉坞宫宴会的残酷场面",
+        "paragraphIds": [
+          "p19",
+          "p20",
+          "p21",
+          "p22",
+          "p23",
+          "p24",
+          "p25",
+          "p26"
+        ],
+        "startSeconds": 192.042,
+        "endSeconds": 287.499,
+        "summaryZh": "王允不情愿地参加董卓的宴会，看到董卓穿着仅皇帝可穿的黄色袍服。董卓把战俘称为叛徒，在宾客面前羞辱他们，还下令不给食物和饮水。",
+        "focus": [
+          "character inference",
+          "conflict"
+        ]
+      },
+      {
+        "id": "s5",
+        "title": "Diao Chan's Plan",
+        "titleZh": "貂蝉提出计策",
+        "paragraphIds": [
+          "p27",
+          "p28",
+          "p29",
+          "p30"
+        ],
+        "startSeconds": 287.5,
+        "endSeconds": 328.922,
+        "summaryZh": "宴会后王允忧心忡忡，独自在花园散步。深受王允信赖的歌女貂蝉主动上前，说自己已有除掉董卓的计划。",
+        "focus": [
+          "cliffhanger",
+          "ending"
+        ]
+      }
+    ]
+  },
+  "sections": [
+    {
+      "id": "s1",
+      "title": "The Alliance Falls Apart",
+      "titleZh": "诸侯联盟解散",
+      "paragraphIds": [
+        "p1",
+        "p2",
+        "p3",
+        "p4",
+        "p5",
+        "p6",
+        "p7",
+        "p8",
+        "p9"
+      ],
+      "startSeconds": 0.179,
+      "endSeconds": 92.897,
+      "summaryZh": "刘备看到洛阳的废墟，呼吁十八路诸侯继续追击董卓。然而孙坚、袁绍等人各有顾虑，军队陆续撤走；曹操决定独自出兵，刘备认为兵力仍不足。",
+      "focus": [
+        "motivation",
+        "cause and effect"
+      ]
+    },
+    {
+      "id": "s2",
+      "title": "The Oath Brothers Return Home",
+      "titleZh": "结义兄弟重返平原",
+      "paragraphIds": [
+        "p10",
+        "p11",
+        "p12",
+        "p13",
+        "p14",
+        "p15",
+        "p16"
+      ],
+      "startSeconds": 92.898,
+      "endSeconds": 145.999,
+      "summaryZh": "刘备、关羽和张飞谈论战争给普通百姓带来的苦难，批评诸侯只关心权力。由于兵力不足，他们第二天带兵返回平原县。",
+      "focus": [
+        "character perspective",
+        "sequence"
+      ]
+    },
+    {
+      "id": "s3",
+      "title": "Dong Zhuo's New Capital",
+      "titleZh": "董卓营建长安新都",
+      "paragraphIds": [
+        "p17",
+        "p18"
+      ],
+      "startSeconds": 146,
+      "endSeconds": 192.041,
+      "summaryZh": "董卓击败曹操后迁都长安。他用从洛阳富户掠夺的财富重建城市，并为自己建造兼具宫殿和堡垒功能的眉坞宫。",
+      "focus": [
+        "historical setting within story",
+        "cause and effect"
+      ]
+    },
+    {
+      "id": "s4",
+      "title": "Cruelty at Meiwo Palace",
+      "titleZh": "眉坞宫宴会的残酷场面",
+      "paragraphIds": [
+        "p19",
+        "p20",
+        "p21",
+        "p22",
+        "p23",
+        "p24",
+        "p25",
+        "p26"
+      ],
+      "startSeconds": 192.042,
+      "endSeconds": 287.499,
+      "summaryZh": "王允不情愿地参加董卓的宴会，看到董卓穿着仅皇帝可穿的黄色袍服。董卓把战俘称为叛徒，在宾客面前羞辱他们，还下令不给食物和饮水。",
+      "focus": [
+        "character inference",
+        "conflict"
+      ]
+    },
+    {
+      "id": "s5",
+      "title": "Diao Chan's Plan",
+      "titleZh": "貂蝉提出计策",
+      "paragraphIds": [
+        "p27",
+        "p28",
+        "p29",
+        "p30"
+      ],
+      "startSeconds": 287.5,
+      "endSeconds": 328.922,
+      "summaryZh": "宴会后王允忧心忡忡，独自在花园散步。深受王允信赖的歌女貂蝉主动上前，说自己已有除掉董卓的计划。",
+      "focus": [
+        "cliffhanger",
+        "ending"
+      ]
+    }
+  ],
+  "vocabulary": [
+    {
+      "word": "warlords",
+      "meaningZh": "军阀；地方势力首领",
+      "example": "The warlords argued about whether to continue the campaign.",
+      "exampleZh": "各路诸侯对是否继续出征意见不一。",
+      "paragraphIds": [
+        "p2"
+      ],
+      "sourceContentId": "C0013412"
+    },
+    {
+      "word": "loyal",
+      "meaningZh": "忠诚的",
+      "example": "Liu Bei wondered whether the generals were loyal to the emperor.",
+      "exampleZh": "刘备质疑将领们是否忠于皇帝。",
+      "paragraphIds": [
+        "p4"
+      ],
+      "sourceContentId": "C0013412"
+    },
+    {
+      "word": "cowards",
+      "meaningZh": "懦夫；胆小鬼",
+      "example": "Cao Cao called the departing commanders cowards.",
+      "exampleZh": "曹操称撤离的将领为懦夫。",
+      "paragraphIds": [
+        "p8"
+      ],
+      "sourceContentId": "C0013412"
+    },
+    {
+      "word": "suffer",
+      "meaningZh": "遭受痛苦",
+      "example": "Liu Bei hated seeing ordinary people suffer during the war.",
+      "exampleZh": "刘备不愿看到百姓在战争中受苦。",
+      "paragraphIds": [
+        "p11"
+      ],
+      "sourceContentId": "C0013412"
+    },
+    {
+      "word": "oath brothers",
+      "meaningZh": "结义兄弟",
+      "example": "The oath brothers returned to Pingyuan County together.",
+      "exampleZh": "结义兄弟一起返回平原县。",
+      "paragraphIds": [
+        "p15"
+      ],
+      "sourceContentId": "C0013412"
+    },
+    {
+      "word": "riches",
+      "meaningZh": "财富；财物",
+      "example": "Dong Zhuo used stolen riches to rebuild Chang'an.",
+      "exampleZh": "董卓用掠夺来的财富重建长安。",
+      "paragraphIds": [
+        "p18"
+      ],
+      "sourceContentId": "C0013412"
+    },
+    {
+      "word": "fortress",
+      "meaningZh": "堡垒；要塞",
+      "example": "Dong Zhuo built a palace that also served as a fortress.",
+      "exampleZh": "董卓建造的宫殿同时也是一座堡垒。",
+      "paragraphIds": [
+        "p18"
+      ],
+      "sourceContentId": "C0013412"
+    },
+    {
+      "word": "reluctantly",
+      "meaningZh": "不情愿地",
+      "example": "Wang Yun reluctantly attended Dong Zhuo's dinner party.",
+      "exampleZh": "王允不情愿地参加董卓的宴会。",
+      "paragraphIds": [
+        "p19"
+      ],
+      "sourceContentId": "C0013412"
+    },
+    {
+      "word": "traitors",
+      "meaningZh": "叛徒；背叛者",
+      "example": "Dong Zhuo called the captured soldiers traitors.",
+      "exampleZh": "董卓把被俘士兵称作叛徒。",
+      "paragraphIds": [
+        "p24"
+      ],
+      "sourceContentId": "C0013412"
+    },
+    {
+      "word": "cruelty",
+      "meaningZh": "残酷；残暴",
+      "example": "Wang Yun was horrified by Dong Zhuo's cruelty.",
+      "exampleZh": "王允对董卓的残暴深感痛心。",
+      "paragraphIds": [
+        "p25"
+      ],
+      "sourceContentId": "C0013412"
+    },
+    {
+      "word": "devoted",
+      "meaningZh": "忠诚尽心的",
+      "example": "Wang Yun trusted Diao Chan because she was wise and devoted.",
+      "exampleZh": "王允因貂蝉聪慧忠诚而信赖她。",
+      "paragraphIds": [
+        "p29"
+      ],
+      "sourceContentId": "C0013412"
+    }
+  ],
+  "quiz": {
+    "questions": [
+      {
+        "id": "q1",
+        "type": "single-choice",
+        "category": "reading",
+        "question": "Why did Sun Jian decide to take his army home?",
+        "options": [
+          {
+            "key": "A",
+            "text": "He had made a secret agreement with Dong Zhuo."
+          },
+          {
+            "key": "B",
+            "text": "He feared another warlord might seize his land while he was away."
+          },
+          {
+            "key": "C",
+            "text": "He had already captured Chang'an."
+          },
+          {
+            "key": "D",
+            "text": "He had been chosen to guard the emperor."
+          }
+        ],
+        "answer": "B",
+        "explanation": "孙坚担心自己离开领地太久，其他诸侯可能趁机占领他的土地，因此决定带兵回家。",
+        "source": "editorial-official-read",
+        "evidence": {
+          "paragraphIds": [
+            "p5"
+          ],
+          "sourceContentId": "C0013412"
+        }
+      },
+      {
+        "id": "q2",
+        "type": "single-choice",
+        "category": "reading",
+        "question": "Why did Liu Bei decide not to follow Cao Cao's troops?",
+        "options": [
+          {
+            "key": "A",
+            "text": "He believed that two armies were not strong enough to face Dong Zhuo."
+          },
+          {
+            "key": "B",
+            "text": "Dong Zhuo had already surrendered to Cao Cao."
+          },
+          {
+            "key": "C",
+            "text": "Yuan Shao ordered him to stay in Luoyang."
+          },
+          {
+            "key": "D",
+            "text": "His brothers had decided to join Dong Zhuo."
+          }
+        ],
+        "answer": "A",
+        "explanation": "刘备判断，即使加入曹操也只有两支军队，兵力远不足以对抗董卓，因此没有跟随曹操出征。",
+        "source": "editorial-official-read",
+        "evidence": {
+          "paragraphIds": [
+            "p9"
+          ],
+          "sourceContentId": "C0013412"
+        }
+      },
+      {
+        "id": "q3",
+        "type": "single-choice",
+        "category": "reading",
+        "question": "How did Dong Zhuo get the money to rebuild Chang'an?",
+        "options": [
+          {
+            "key": "A",
+            "text": "He borrowed money from Liu Bei."
+          },
+          {
+            "key": "B",
+            "text": "The emperor gave him money as a reward."
+          },
+          {
+            "key": "C",
+            "text": "He sold his new palace to the warlords."
+          },
+          {
+            "key": "D",
+            "text": "He had taken the wealth of rich citizens from Luoyang."
+          }
+        ],
+        "answer": "D",
+        "explanation": "董卓毁掉洛阳前，先搜刮当地富人的财产，再用这些掠夺来的财富修建长安和自己的宫殿。",
+        "source": "editorial-official-read",
+        "evidence": {
+          "paragraphIds": [
+            "p18"
+          ],
+          "sourceContentId": "C0013412"
+        }
+      },
+      {
+        "id": "q4",
+        "type": "single-choice",
+        "category": "reading",
+        "question": "How did Dong Zhuo treat the prisoners at his dinner party?",
+        "options": [
+          {
+            "key": "A",
+            "text": "He invited them to sit beside his guests."
+          },
+          {
+            "key": "B",
+            "text": "He praised their courage and freed them."
+          },
+          {
+            "key": "C",
+            "text": "He humiliated them and ordered them given no food or water."
+          },
+          {
+            "key": "D",
+            "text": "He let Wang Yun decide their fate."
+          }
+        ],
+        "answer": "C",
+        "explanation": "董卓把俘虏带到宴席上供人羞辱，随后命令将他们关回牢房，不许给食物或水，表现出他的残暴。",
+        "source": "editorial-official-read",
+        "evidence": {
+          "paragraphIds": [
+            "p25",
+            "p26"
+          ],
+          "sourceContentId": "C0013412"
+        }
+      },
+      {
+        "id": "q5",
+        "type": "single-choice",
+        "category": "reading",
+        "question": "What did Diao Chan tell Wang Yun in the garden?",
+        "options": [
+          {
+            "key": "A",
+            "text": "She had a plan to get rid of Dong Zhuo."
+          },
+          {
+            "key": "B",
+            "text": "She would lead Liu Bei's soldiers to Chang'an."
+          },
+          {
+            "key": "C",
+            "text": "Cao Cao had already defeated Dong Zhuo."
+          },
+          {
+            "key": "D",
+            "text": "The emperor had escaped from the palace."
+          }
+        ],
+        "answer": "A",
+        "explanation": "貂蝉察觉王允因董卓而烦恼，主动告诉他自己已有除掉董卓的计划。故事在这里留下悬念。",
+        "source": "editorial-official-read",
+        "evidence": {
+          "paragraphIds": [
+            "p30"
+          ],
+          "sourceContentId": "C0013412"
+        }
+      }
+    ]
+  },
+  "reviewNotes": "基于2026-11-26 GitHub 私有官方素材附件 littlefox-source-45743028359 的第16集真实30段英文原文、57条有效字幕，英文Text、官方目录、播放器、Storybook均已验证；R2查重为not_published且无集数缺口。5个独立剧情段覆盖原文p1-p30；11个词汇每项精确关联实际段落；5道英文四选一逐题核对本集人物、行动、因果和唯一答案，证据段落p5、p9、p18、p25-26、p30，答案分布B/A/D/C/A。公开GitHub不存储原文或完整字幕，发布器按C-ID重新获取官方数据。"
+}
