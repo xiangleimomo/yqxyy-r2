@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "status": "candidate_requires_official_verification",
+  "publicationAuthorized": false,
+  "seriesId": "three-kingdoms",
+  "officialSeriesId": "FS0182",
+  "episodeNumber": 16,
+  "level": 5,
+  "title": "A New Capital",
+  "releaseDate": "2026-11-25",
+  "contentId": "C0013412",
+  "videoUrl": "https://cdn.littlefox.com/contents_5/hls/1080/3fd2cd8838/1795655829972494a2e9aa540c53cdadab0caa401c/stream.m3u8",
+  "provenance": {
+    "method": "user_supplied_exact_content_id_and_hls_url",
+    "calendarSource": "automation/littlefox-daily/inbox/2026-11-25.json",
+    "note": "User-supplied ID and official-domain HLS URL are candidates. Match real official player, English Text, captions and Storybook; no inferred C-ID."
+  },
+  "officialSourceUrlsToVerify": {
+    "textOriginal": "https://cn.littlefox.com/cn/supplement/org/C0013412",
+    "caption": "https://cdn.littlefox.com/contents/caption/C0013412.xml",
+    "storybook": "https://res.littlefox.com/en/supplement/load_pdf/C0013412"
+  },
+  "verificationRequest": {
+    "workflow": "littlefox-verify-cid-hint.yml",
+    "mode": "read_only_no_publish",
+    "reason": "User supplied exact episode 16 C-ID and HLS video. Verify real official player and source package before any AI-reviewed V2 course."
+  }
+}
