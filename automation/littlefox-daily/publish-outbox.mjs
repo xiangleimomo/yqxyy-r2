@@ -37,6 +37,45 @@ if(!Object.values(['englishText','storybook','subtitleXml','episodeTitleMatched'
 const report={contentId:id,seriesId:out.seriesId,episodeNumber:out.episodeNumber,requestedPublish:req.publish,checkedAt:new Date().toISOString(),status:'checking',stages:[]};
 const step=(name,details={})=>report.stages.push({name,...details});
 const get=async(url,opts={})=>{const r=await fetch(url,{...opts,signal:AbortSignal.timeout(25000)});if(!r.ok)throw Error('Official '+new URL(url).hostname+' HTTP '+r.status);return r;};
+
+const verifyOfficialPdfHeader=async()=>{
+  const response=await get(want.storybook,{headers:{Range:'bytes=0-1023'}});
+  if(![200,206].includes(response.status))throw Error('Storybook not downloadable as PDF');
+  if(!response.body)throw Error('Official Storybook PDF body absent');
+  const reader=response.body.getReader();
+  let bytes=new Uint8Array(0);
+  try{
+    while(bytes.length<5){
+      const {value,done}=await reader.read();
+      if(done)break;
+      const next=new Uint8Array(bytes.length+value.length);
+      next.set(bytes);next.set(value,bytes.length);bytes=next;
+    }
+  }finally{await reader.cancel().catch(()=>{});}
+  if(new TextDecoder().decode(bytes.slice(0,1024)).indexOf('%PDF-')<0)
+    throw Error('Official Storybook returned no PDF header');
+  return {status:response.status,verification:'pdf-header-v2'};
+};
+const episodePdfRow=(ep,series)=>({
+  seriesId:out.seriesId,episodeId:out.episodeNumber,contentId:id,
+  title:ep.title,titleZh:ep.titleZh||'',level:series.level??out.level,
+  coverUrl:series.coverImage||series.coverUrl||'',
+  pdfUrl:want.storybook,availability:'pdf',verification:'pdf-header-v2'
+});
+const checkPdfIndex=(index)=>{
+  if(!Array.isArray(index))throw Error('Invalid R2 episode-PDF index');
+  const conflicts=index.filter(x=>
+    (x.seriesId===out.seriesId&&Number(x.episodeId)===out.episodeNumber)||
+    (x.seriesId===out.seriesId&&x.contentId===id));
+  if(conflicts.length>1)throw Error('Duplicate episode-PDF catalog entries');
+  if(conflicts.length===1&&
+    (conflicts[0].seriesId!==out.seriesId||
+      Number(conflicts[0].episodeId)!==out.episodeNumber||
+      conflicts[0].contentId!==id||
+      conflicts[0].pdfUrl!==want.storybook))
+    throw Error('Episode-PDF catalog conflict; refusing to overwrite');
+  return conflicts[0]||null;
+};
 try{
   const store=await makeR2(process.env,fetch);
   const base='data/'+out.seriesId+'/';
@@ -62,7 +101,50 @@ try{
   if(!Array.isArray(episodes))throw Error('Invalid R2 episode index');
   const existingMatches=episodes.map((e,i)=>({e,i})).filter(({e})=>Number(e.episodeId)===out.episodeNumber||e.sourceContentId===id||e.storyBook?.contentId===id);
   step('r2_real_state_checked',{episodeIndexExists:episodeIndexRaw!==null,existingEpisodes:episodes.length,latestEpisode:episodes.reduce((best,e)=>Number(e.episodeId)>Number(best?.episodeId||0)?{episodeId:Number(e.episodeId),title:e.title||null,contentId:e.sourceContentId||e.storyBook?.contentId||null}:best,null),targetExists:existingMatches.length>0,matchingEntries:existingMatches.map(({e})=>({episodeId:Number(e.episodeId),title:e.title||null,contentId:e.sourceContentId||e.storyBook?.contentId||null}))});
-  if(req.repairVideo===true&&existingMatches.length>0&&!req.forceRepublish){
+  if(req.repairStorybookIndex===true){
+    if(req.publish!==true||req.forceRepublish===true||req.repairVideo===true)
+      throw Error('Storybook index repair requires explicit publish true and no other repair mode');
+    if(existingMatches.length!==1||Number(existingMatches[0].e.episodeId)!==out.episodeNumber||
+       (existingMatches[0].e.sourceContentId||existingMatches[0].e.storyBook?.contentId)!==id)
+      throw Error('Target episode/C-ID not uniquely published; refusing Storybook repair');
+    const ep=existingMatches[0].e;
+    if(ep.storyBook?.contentId!==id||ep.storyBook?.bookId!=='littlefox-'+id.toLowerCase()||
+       ep.storyBook?.pdfUrl!==want.storybook||ep.storyBook?.availability!=='pdf')
+      throw Error('Published episode Storybook metadata mismatch');
+    const [series,indexRaw]=await Promise.all([
+      mustRead(base+'series.json'),
+      store.get('data/littlefox-episode-pdfs.json')
+    ]);
+    if(indexRaw===null)throw Error('R2 episode-PDF index missing; refusing to create unverified global index');
+    const index=JSON.parse(indexRaw);
+    const previous=checkPdfIndex(index);
+    const pdf=await verifyOfficialPdfHeader();
+    step('official_storybook_pdf_header_verified',pdf);
+    if(previous?.availability==='pdf'&&previous?.verification==='pdf-header-v2'){
+      report.status='storybook_index_already_present';
+      step('storybook_catalog_entry_already_present',{contentId:id,episodeNumber:out.episodeNumber});
+    }else if(previous){
+      throw Error('Storybook catalog existing row needs manual review; refusing overwrite');
+    }else{
+      if(process.env.LF_ALLOW_PUBLISH!=='1')throw Error('Storybook index repair is not authorized');
+      const row=episodePdfRow(ep,series);
+      const next=JSON.stringify([...index,row])+'\n';
+      const backup='data/__littlefox-sync/backups/storybook-index-'+id+'-'+
+        new Date().toISOString().replace(/[:.]/g,'-')+'/littlefox-episode-pdfs.json';
+      await store.put(backup,indexRaw);
+      if(await store.get(backup)!==indexRaw)throw Error('Storybook index backup readback failed');
+      step('storybook_index_backup_verified',{key:backup});
+      await store.put('data/littlefox-episode-pdfs.json',next);
+      const got=await store.get('data/littlefox-episode-pdfs.json');
+      if(got!==next)throw Error('Storybook index write/readback mismatch');
+      const verified=JSON.parse(got);
+      if(verified.length!==index.length+1||checkPdfIndex(verified)?.availability!=='pdf'||
+         verified.slice(0,index.length).some((x,i)=>JSON.stringify(x)!==JSON.stringify(index[i])))
+        throw Error('Storybook index post-write integrity validation failed');
+      report.status='storybook_index_repaired_verified';
+      step('storybook_index_written_and_readback',{contentId:id,episodeNumber:out.episodeNumber,previousRows:index.length,currentRows:verified.length,changedObjects:1});
+    }
+  }else if(req.repairVideo===true&&existingMatches.length>0&&!req.forceRepublish){
     // Explicitly requested video-only repair for an existing lesson. Never
     // rewrite learning materials, quiz, subtitles, or series/global indexes.
     if(req.publish!==true)throw Error('Video repair requires explicit publish:true');
@@ -155,6 +237,23 @@ try{
     const prepared=prepareUpdate({seriesId:out.seriesId,release,id,video,cues,paragraphs,course:{vocabulary,quiz:Number(out.level)>=3?{questions}:null},episodes:appendBase,readings,vocabularies,quizzes,series,seriesList,sourceUrls:{text:want.textOriginal,storybook:want.storybook},captionXml:xml});
     if(!prepared)throw Error('Unexpected duplicate after preflight');
     const files=prepared.files;
+    // The reader does not discover books from episodes.json. Keep its separate
+    // PDF index in lockstep with every new reviewed episode publication.
+    if(Number(out.level)>0){
+      const pdfIndexRaw=await store.get('data/littlefox-episode-pdfs.json');
+      if(pdfIndexRaw===null)throw Error('Missing global Storybook PDF index');
+      const pdfIndex=JSON.parse(pdfIndexRaw);
+      const existingPdf=checkPdfIndex(pdfIndex);
+      const pdfCheck=await verifyOfficialPdfHeader();
+      step('official_storybook_pdf_header_verified',pdfCheck);
+      if(existingPdf&&existingPdf.availability!=='pdf')
+        throw Error('Existing Storybook catalog entry is not verified as PDF');
+      if(!existingPdf){
+        const row=episodePdfRow({title:out.title,titleZh:''},series);
+        files['data/littlefox-episode-pdfs.json']=JSON.stringify([...pdfIndex,row])+'\n';
+        step('storybook_catalog_entry_prepared',{contentId:id,episodeNumber:out.episodeNumber,previousRows:pdfIndex.length});
+      }
+    }
     step('r2_patch_prepared',{files:Object.keys(files).length});
     if(!req.publish){
       report.status='dry_run_passed';
