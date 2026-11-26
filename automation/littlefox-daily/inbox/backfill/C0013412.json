@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 2,
+  "date": "2026-11-26",
+  "sourceReleaseDate": "2026-11-25",
+  "hintPath": "automation/littlefox-daily/cid-hints/C0013412.json",
+  "contentId": "C0013412",
+  "status": "checked",
+  "workflowRunId": "45743028359",
+  "privateArtifactName": "littlefox-source-45743028359",
+  "privateArtifactUploaded": true,
+  "items": [
+    {
+      "seriesId": "three-kingdoms",
+      "episodeNumber": 16,
+      "contentId": "C0013412",
+      "title": "A New Capital",
+      "level": 5,
+      "releaseDate": "2026-11-25",
+      "contentIdVerified": true,
+      "sourceArtifact": true,
+      "status": "ready_for_chatgpt",
+      "videoStatus": "verified",
+      "officialCatalogStatus": "matched",
+      "userProvidedVideoVerified": true,
+      "captionCueCount": 57,
+      "paragraphCount": 30,
+      "storybookHeadStatus": 200,
+      "r2Status": "not_published"
+    }
+  ],
+  "errors": [],
+  "privateArtifactId": "15082007667",
+  "sourceReadyCount": 1
+}
