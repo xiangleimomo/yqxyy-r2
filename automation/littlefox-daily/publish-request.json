@@ -1,9 +1,9 @@
 {
   "mode": "reviewed_littlefox_v2",
-  "contentId": "C0013412",
+  "contentId": "C0013411",
   "publish": true,
   "forceRepublish": false,
   "repairVideo": false,
   "repairStorybookIndex": true,
-  "reason": "Repair only the verified Little Fox episode 16 Storybook index entry after published_verified; require official PDF header, R2 backup and readback; do not republish the lesson or deploy site."
+  "reason": "Idempotent Storybook PDF catalog check/repair for Three Kingdoms episode 15, previously published by the same publisher version; index-only backup and readback, no lesson republish."
 }
