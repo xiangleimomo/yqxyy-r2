@@ -41,9 +41,10 @@ const get=async(url,init={})=>{
 try{
   const hint=JSON.parse(await fs.readFile(hintPath,'utf8'));
   if(hint.contentId!==id||hint.seriesId!=='three-kingdoms'||
-     hint.officialSeriesId!=='FS0182'||hint.episodeNumber!==15||
-     hint.title!=='The Journey to Luoyang'||
-     hint.publicationAuthorized!==false)
+     hint.officialSeriesId!=='FS0182'||!Number.isSafeInteger(hint.episodeNumber)||
+     hint.episodeNumber<1||typeof hint.title!=='string'||hint.title.length<3||
+     hint.publicationAuthorized!==false||
+     (hint.videoUrl&&!/^https:\/\/cdn\.littlefox\.com\/contents_\d+\/hls\/\d+\/[^\s]+\/stream\.m3u8(?:\?.*)?$/.test(hint.videoUrl)))
     throw Error('Unexpected episode or untrusted hint payload; do not publish');
   report.sourceReleaseDate=hint.releaseDate;
   const release={
@@ -53,11 +54,25 @@ try{
     date:hint.releaseDate,
     calendarEpisodeNumber:hint.episodeNumber
   };
-  const official=await resolveOfficialSeriesEpisode(release,fetch);
-  if(official.seriesEpisodeNumber!==hint.episodeNumber)
-    throw Error('Official FS0182 catalog episode number does not match hint');
-  if(official.contentId!==id)
-    throw Error('Official FS0182 catalog C-ID mismatch; catalog ID differs from candidate');
+  // If the catalog has not indexed a new title yet, independently verify the
+  // supplied exact C-ID against the official player and real media instead of
+  // silently deriving a C-ID from the preceding episode.
+  let official=null, catalogError=null;
+  try {
+    official=await resolveOfficialSeriesEpisode(release,fetch);
+    if(official.seriesEpisodeNumber!==hint.episodeNumber)
+      throw Error('Official FS0182 catalog episode number does not match hint');
+    if(official.contentId!==id)
+      throw Error('Official FS0182 catalog C-ID mismatch; catalog ID differs from user supplied ID');
+  } catch(e) {
+    if(!String(e.message||e).includes('Title not found in official series catalog')) throw e;
+    catalogError=String(e.message||e);
+  }
+  const independentlyVerifiedPlayer=await readPlayer(id,fetch);
+  if(!isEpisodeMatch(independentlyVerifiedPlayer.item.cont_title,hint.title))
+    throw Error('Official player title does not match user specified episode');
+  const officialPlaylist=await verifyPlaylist(independentlyVerifiedPlayer.video,fetch);
+  if(hint.videoUrl) await verifyPlaylist(hint.videoUrl,fetch);
   const item={
     seriesId:hint.seriesId,episodeNumber:hint.episodeNumber,
     contentId:id,title:hint.title,level:hint.level,releaseDate:hint.releaseDate,
@@ -83,16 +98,13 @@ try{
       storybookStatus=pdf.status;
       await pdf.body?.cancel?.();
     }else throw Error('Storybook HEAD HTTP '+head.status);
-    let playerTitle=null,video=null,videoError=null;
-    try{
-      const p=await readPlayer(id,fetch);
-      playerTitle=p.item.cont_title;
-      if(!isEpisodeMatch(playerTitle,hint.title))
-        throw Error('Official player title mismatch');
-      video=await verifyPlaylist(p.video,fetch);
-    }catch(e){videoError=String(e.message||e).slice(0,250);}
-    item.videoStatus=video?'verified':'awaiting_video';
-    if(videoError)item.videoError=videoError;
+    const playerTitle=independentlyVerifiedPlayer.item.cont_title;
+    const video=officialPlaylist;
+    const videoError=null;
+    item.videoStatus='verified';
+    item.officialCatalogStatus=official?'matched':'title_not_yet_indexed';
+    if(catalogError)item.officialCatalogError=catalogError;
+    if(hint.videoUrl)item.userProvidedVideoVerified=true;
     item.captionCueCount=cues.length;
     item.paragraphCount=paragraphs.length;
     item.storybookHeadStatus=storybookStatus;
@@ -106,7 +118,10 @@ try{
       officialSourceUrls:{textOriginal,caption,storybook},
       paragraphs,captionCues:cues,
       verification:{
-        catalogContentId:id,officialCatalogEpisodeNumber:official.seriesEpisodeNumber,
+        catalogContentId:official?.contentId||null,officialCatalogEpisodeNumber:official?.seriesEpisodeNumber||null,
+        catalogStatus:official?'matched':'title_not_yet_indexed',catalogError,
+        contentIdCheckedByOfficialPlayer:true,confirmedOfficialVideo:video,
+        userProvidedVideoVerified:Boolean(hint.videoUrl),
         textLanguage:'en',paragraphCount:paragraphs.length,
         captionCueCount:cues.length,storybookHeadStatus:storybookStatus,
         playerTitle,videoStatus:item.videoStatus,videoError
