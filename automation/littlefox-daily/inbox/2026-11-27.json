@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "date": "2026-11-27",
+  "status": "checked",
+  "workflowRunId": "45869527219",
+  "privateArtifactName": "littlefox-source-45869527219",
+  "items": [
+    {
+      "seriesId": "little-fox-daisy-dolittle-fs0175",
+      "calendarEpisodeNumber": 4,
+      "calendarKeyword": "Daisy Dolittle, The Disappearing Bird 4: Two Theories",
+      "title": "Two Theories",
+      "level": 5,
+      "status": "blocked",
+      "error": "Title not found in official series catalog; absolute episode number unverified"
+    }
+  ],
+  "errors": [],
+  "privateArtifactId": "15141677335",
+  "privateArtifactUploaded": true,
+  "sourceReadyCount": 0,
+  "retryableItemCount": 1
+}
