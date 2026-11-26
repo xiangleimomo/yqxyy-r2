@@ -1,0 +1,45 @@
+{
+  "contentId": "C0013411",
+  "seriesId": "three-kingdoms",
+  "episodeNumber": 15,
+  "requestedPublish": true,
+  "checkedAt": "2026-11-26T02:38:53.781Z",
+  "status": "storybook_index_repaired_verified",
+  "stages": [
+    {
+      "name": "r2_real_state_checked",
+      "episodeIndexExists": true,
+      "existingEpisodes": 16,
+      "latestEpisode": {
+        "episodeId": 16,
+        "title": "A New Capital",
+        "contentId": "C0013412"
+      },
+      "targetExists": true,
+      "matchingEntries": [
+        {
+          "episodeId": 15,
+          "title": "The Journey to Luoyang",
+          "contentId": "C0013411"
+        }
+      ]
+    },
+    {
+      "name": "official_storybook_pdf_header_verified",
+      "status": 206,
+      "verification": "pdf-header-v2"
+    },
+    {
+      "name": "storybook_index_backup_verified",
+      "key": "data/__littlefox-sync/backups/storybook-index-C0013411-2026-11-26T02-38-56-238Z/littlefox-episode-pdfs.json"
+    },
+    {
+      "name": "storybook_index_written_and_readback",
+      "contentId": "C0013411",
+      "episodeNumber": 15,
+      "previousRows": 6216,
+      "currentRows": 6217,
+      "changedObjects": 1
+    }
+  ]
+}
