@@ -2,8 +2,8 @@
   "schemaVersion": 2,
   "date": "2026-11-27",
   "status": "checked",
-  "workflowRunId": "45869804235",
-  "privateArtifactName": "littlefox-source-45869804235",
+  "workflowRunId": "45870586151",
+  "privateArtifactName": "littlefox-source-45870586151",
   "items": [
     {
       "seriesId": "little-fox-daisy-dolittle-fs0175",
@@ -16,7 +16,7 @@
     }
   ],
   "errors": [],
-  "privateArtifactId": "15142591450",
+  "privateArtifactId": "15142472309",
   "privateArtifactUploaded": true,
   "sourceReadyCount": 0,
   "retryableItemCount": 1
